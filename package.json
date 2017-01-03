@@ -1,0 +1,54 @@
+{
+	"name": "otpauth",
+	"libraryName": "OTPAuth",
+	"version": "1.0.0",
+	"description": "One Time Password (HOTP/TOTP) library for Node.js and browser",
+	"keywords": [
+		"otp", "hotp", "totp", "one time password",
+		"2fa", "2 factor", "two factor", "two-factor",
+		"2step", "2 step", "two step", "two-step",
+		"auth", "authenticator", "google authenticator"
+	],
+	"author": "Héctor Molinero Fernández <hector@molinero.xyz>",
+	"license": "MIT",
+	"homepage": "https://github.com/zant95/otpauth",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/zant95/otpauth.git"
+	},
+	"bugs": {
+		"url": "https://github.com/zant95/otpauth/issues"
+	},
+	"main": "./lib/otpauth.js",
+	"directories": {
+		"lib": "./lib"
+	},
+	"scripts": {
+		"lint": "eslint --config .eslintrc.js .",
+		"build-otpauth": "webpack --display-reasons --config .webpack.js",
+		"build-sjcl": "node .sjcl.js",
+		"build": "run-s build-sjcl build-otpauth",
+		"test-browser": "karma start .karma.js",
+		"test-node": "mocha --reporter dot",
+		"test": "run-s test-node test-browser",
+		"doc": "rimraf ./doc && esdoc -c .esdoc.js",
+		"dist": "run-s lint build test doc"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"google-closure-compiler-js": "20161201.0.0",
+		"sjcl": "1.0.6",
+		"webpack": "2.2.0-rc.3",
+		"chai" : "latest",
+		"esdoc": "latest",
+		"eslint": "latest",
+		"karma": "latest",
+		"karma-chai": "latest",
+		"karma-mocha": "latest",
+		"karma-phantomjs-launcher": "latest",
+		"mocha": "latest",
+		"npm-run-all": "latest",
+		"rimraf": "latest"
+	}
+}
+
