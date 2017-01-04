@@ -32,7 +32,8 @@
 		"test-node": "mocha --reporter dot",
 		"test": "run-s test-node test-browser",
 		"doc": "rimraf ./doc && esdoc -c .esdoc.js",
-		"dist": "run-s lint build test doc"
+		"dist": "run-s lint build test doc",
+		"version": "run-s dist && git add -A lib"
 	},
 	"dependencies": {},
 	"devDependencies": {
