@@ -11,7 +11,7 @@ import {HOTP, TOTP} from './OTP.js';
 
 // otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
 const OTPURI_PARAMS = ['issuer', 'label', 'secret', 'algorithm', 'digits', 'counter', 'period'].join('|');
-const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS})+=[^&]+)+)$`, 'i');
+const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS})=[^&]+)+)$`, 'i');
 
 // RFC 4648 base32 alphabet without pad
 const SECRET_REGEX = /^[2-7A-Z]+$/i;
@@ -62,7 +62,7 @@ export class URI {
 			otpObj = HOTP;
 
 			// counter: required
-			if (INTEGER_REGEX.test(uriParams.counter)) {
+			if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
 				otpCfg.counter = parseInt(uriParams.counter, 10);
 			} else {
 				throw Error('Missing or invalid \'counter\' parameter');
@@ -71,7 +71,7 @@ export class URI {
 			otpObj = TOTP;
 
 			// period: optional
-			if (typeof uriParams.period !== 'undefined' && uriType === 'totp') {
+			if (typeof uriParams.period !== 'undefined') {
 				if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
 					otpCfg.period = parseInt(uriParams.period, 10);
 				} else {
@@ -101,7 +101,7 @@ export class URI {
 		}
 
 		// secret: required
-		if (SECRET_REGEX.test(uriParams.secret)) {
+		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
 			otpCfg.secret = new Secret({'buffer': Utils.b32.encode(uriParams.secret)});
 		} else {
 			throw Error('Missing or invalid \'secret\' parameter');
