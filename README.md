@@ -21,16 +21,26 @@ $ npm install otpauth
 ```javascript
 const OTPAuth = require('otpauth');
 
-let totp = new OTPAuth.TOTP({
+// Generate a random secret
+let randomTOTP = new OTPAuth.TOTP();
+
+// Specify a custom secret
+let customTOTP = new OTPAuth.TOTP({
 	'issuer': 'ACME',
-	'label': 'mail@example.org',
+	'label': 'AzureDiamond',
 	'algorithm': 'SHA512',
 	'digits': 8,
-	'period': 20
+	'period': 20,
+	'secret': new OTPAuth.Secret({
+		'buffer': OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
+	})
 });
 
-let token = totp.generate();
-let uri = totp.toString();
+// Convert to Google Authenticator key URI
+console.log(customTOTP.toString());
+
+// Generate token
+console.log(customTOTP.generate());
 
 ```
 
@@ -38,16 +48,9 @@ let uri = totp.toString();
 ```html
 <script src="otpauth.js"></script>
 <script>
-	var totp = new OTPAuth.TOTP({
-		'issuer': 'ACME',
-		'label': 'mail@example.org',
-		'algorithm': 'SHA512',
-		'digits': 8,
-		'period': 20
-	});
+	var randomTOTP = new OTPAuth.TOTP();
 
-	var token = totp.generate();
-	var uri = totp.toString();
+	// Same as above...
 </script>
 ```
 
