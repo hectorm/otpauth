@@ -2,6 +2,7 @@
 
 import {default as crypto} from 'crypto';
 import {default as sjcl} from './.sjcl.custom.js';
+import {Utils, _Utils} from './Utils.js';
 
 /**
  * Supported HMAC algorithms.
@@ -34,11 +35,16 @@ export class HMAC {
 
 		let digest;
 
-		if (typeof crypto !== 'undefined' && typeof crypto.createHmac !== 'undefined') {
-			const hmac = crypto.createHmac(algorithm, new Uint8Array(key));
-			hmac.update(new Uint8Array(message));
+		if (typeof crypto !== 'undefined' && typeof crypto.createHmac === 'function') {
+			const hmac = crypto.createHmac(algorithm, _Utils.arrbuf2buf(key));
+			hmac.update(_Utils.arrbuf2buf(message));
 
 			digest = hmac.digest();
+
+			// Node.js <= 0.9.2
+			if (typeof digest === 'string') {
+				digest = Utils.raw.encode(digest);
+			}
 		} else if (typeof sjcl !== 'undefined') {
 			const hash = sjcl.hash[HMAC_ALGORITHMS[algorithm]];
 			const fromBits = sjcl.codec.arrayBuffer.fromBits;

@@ -65,7 +65,14 @@ export class Utils {
 		 * @returns {string} String.
 		 */
 		const decode = function (buff) {
-			return String.fromCharCode.apply(null, new Uint8Array(buff));
+			const arr = new Uint8Array(buff);
+			let str = '';
+
+			for (let i = 0; i < arr.length; i++) {
+				str += String.fromCharCode(arr[i]);
+			}
+
+			return str;
 		};
 
 		/**
@@ -210,6 +217,44 @@ export class Utils {
 		};
 
 		return {decode, encode};
+	}
+}
+
+/**
+ * @class _Utils
+ * @private
+ */
+export class _Utils {
+	static buf2arrbuf(buf) {
+		if (buf.buffer instanceof ArrayBuffer) {
+			return buf.buffer;
+		}
+
+		// Node.js < 4.0.0
+		const arrbuf = new ArrayBuffer(buf.length);
+		const arr = new Uint8Array(arrbuf);
+
+		for (let i = 0; i < arr.length; i++) {
+			arr[i] = buf[i];
+		}
+
+		return arrbuf;
+	}
+
+	static arrbuf2buf(arrbuf) {
+		if (typeof Buffer.from === 'function') {
+			return Buffer.from(arrbuf);
+		}
+
+		// Node.js < 5.10.0
+		const buf = new Buffer(arrbuf.byteLength);
+		const arr = new Uint8Array(arrbuf);
+
+		for (let i = 0; i < arr.length; i++) {
+			buf[i] = arr[i];
+		}
+
+		return buf;
 	}
 }
 

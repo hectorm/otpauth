@@ -1,7 +1,7 @@
 'use strict';
 
 import {default as crypto} from 'crypto';
-import {Utils} from './Utils.js';
+import {Utils, _Utils} from './Utils.js';
 
 /**
  * @class Secret
@@ -10,7 +10,7 @@ export class Secret {
 	/**
 	 * Secret key object.
 	 * @param {Object} [config] Configuration options.
-	 * @param {ArrayBuffer} [config.buffer=Secret.getRandomBytes] ArrayBuffer of the secret key.
+	 * @param {ArrayBuffer} [config.buffer=Secret.getRandomBytes] Secret key.
 	 */
 	constructor({buffer} = {}) {
 		/** @type {ArrayBuffer} */
@@ -26,7 +26,7 @@ export class Secret {
 	}
 
 	/**
-	 * Returns an ArrayBuffer of random bytes using Node or Web Cryptography API.
+	 * Generates random bytes.
 	 * @method getRandomBytes
 	 * @param {Object} [config] Configuration options.
 	 * @param {number} [config.size=20] Number of bytes to generate.
@@ -35,23 +35,25 @@ export class Secret {
 	static getRandomBytes({size = 20} = {}) {
 		let bytes;
 
-		if (typeof crypto !== 'undefined' && typeof crypto.randomBytes !== 'undefined') {
-			bytes = new Uint8Array(crypto.randomBytes(size).buffer, 0, size);
+		if (typeof crypto !== 'undefined' && typeof crypto.randomBytes === 'function') {
+			bytes = _Utils.buf2arrbuf(crypto.randomBytes(size));
 		} else {
-			bytes = new Uint8Array(size);
+			const arr = new Uint8Array(size);
 
-			if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues !== 'undefined') {
-				global.crypto.getRandomValues(bytes);
-			} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues !== 'undefined') {
-				global.msCrypto.getRandomValues(bytes);
+			if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {
+				global.crypto.getRandomValues(arr);
+			} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {
+				global.msCrypto.getRandomValues(arr);
 			} else { // WARNING: 'Math.random' is not cryptographically-secure
-				for (let i = 0; i < bytes.length; i++) {
-					bytes[i] = Math.floor(Math.random() * 256);
+				for (let i = 0; i < arr.length; i++) {
+					arr[i] = Math.floor(Math.random() * 256);
 				}
 			}
+
+			bytes = arr.buffer;
 		}
 
-		return bytes.buffer;
+		return bytes;
 	}
 }
 

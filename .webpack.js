@@ -16,6 +16,9 @@ module.exports = {
 	'externals': {
 		'crypto': 'crypto'
 	},
+	'node': {
+		'Buffer': false
+	},
 	'devtool': 'source-map',
 	'plugins': [
 		new ClosureCompilerPlugin({
