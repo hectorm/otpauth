@@ -17,12 +17,42 @@ export class Secret {
 		this.buffer = typeof buffer === 'undefined'
 			? this.buffer = Secret.getRandomBytes()
 			: buffer;
-		/** @type {string} */
-		this.raw = Utils.raw.decode(this.buffer);
-		/** @type {string} */
-		this.b32 = Utils.b32.decode(this.buffer);
-		/** @type {string} */
-		this.hex = Utils.hex.decode(this.buffer);
+	}
+
+	/** @type {string} */
+	get raw() {
+		Object.defineProperty(this, 'raw', {
+			'enumerable': true,
+			'configurable': true,
+			'writable': true,
+			'value': Utils.raw.decode(this.buffer)
+		});
+
+		return this.raw;
+	}
+
+	/** @type {string} */
+	get b32() {
+		Object.defineProperty(this, 'b32', {
+			'enumerable': true,
+			'configurable': true,
+			'writable': true,
+			'value': Utils.b32.decode(this.buffer)
+		});
+
+		return this.b32;
+	}
+
+	/** @type {string} */
+	get hex() {
+		Object.defineProperty(this, 'hex', {
+			'enumerable': true,
+			'configurable': true,
+			'writable': true,
+			'value': Utils.hex.decode(this.buffer)
+		});
+
+		return this.hex;
 	}
 
 	/**
