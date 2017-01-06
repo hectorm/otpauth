@@ -1,0 +1,53 @@
+{
+  "name": "otpauth",
+  "description": "One Time Password (HOTP/TOTP) library for Node.js and browser",
+  "keywords": [
+    "otp",
+    "hotp",
+    "totp",
+    "one",
+    "time",
+    "password",
+    "2fa",
+    "2",
+    "factor",
+    "two",
+    "factor",
+    "two-factor",
+    "2step",
+    "2",
+    "step",
+    "two",
+    "step",
+    "two-step",
+    "auth",
+    "authenticator",
+    "google",
+    "authenticator"
+  ],
+  "authors": [
+    "Héctor Molinero Fernández <hector@molinero.xyz>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/zant95/otpauth",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zant95/otpauth.git"
+  },
+  "main": "./lib/otpauth.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "doc",
+    "node_modules",
+    "src",
+    "test",
+    "package.json"
+  ]
+}
