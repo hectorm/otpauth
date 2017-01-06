@@ -1,7 +1,6 @@
 'use strict';
 
 import {HOTP, TOTP} from './OTP.js';
-import {HMAC} from './HMAC.js';
 import {URI} from './URI.js';
 import {Secret} from './Secret.js';
 import {Utils} from './Utils.js';
@@ -14,7 +13,6 @@ import {Utils} from './Utils.js';
 const OTPAuth = {
 	'HOTP': HOTP,
 	'TOTP': TOTP,
-	'HMAC': HMAC,
 	'URI': URI,
 	'Secret': Secret,
 	'Utils': Utils
