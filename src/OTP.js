@@ -1,8 +1,8 @@
 'use strict';
 
 import {Utils} from './Utils.js';
+import {Crypto} from './Crypto.js';
 import {Secret} from './Secret.js';
-import {HMAC} from './HMAC.js';
 import {URI} from './URI.js';
 
 /**
@@ -62,11 +62,7 @@ export class HOTP {
 	 * @returns {string|number} Token.
 	 */
 	static generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {
-		const digest = new Uint8Array(HMAC.digest({
-			'algorithm': algorithm,
-			'key': secret.buffer,
-			'message': Utils.uint.encode(counter)
-		}));
+		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
 
 		const offset = digest[digest.byteLength - 1] & 15;
 		const binary = (

@@ -13,9 +13,6 @@ module.exports = {
 		'filename': `${pkg.name}.js`,
 		'path': path.join(__dirname, 'lib')
 	},
-	'externals': {
-		'crypto': 'crypto'
-	},
 	'node': {
 		'Buffer': false
 	},

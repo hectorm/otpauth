@@ -22,12 +22,6 @@ var inputs = [{
 	'raw': '\x9E\xA8\xBB\xAB\x27\xAA\x51\x73\xDE\x4A\x9D\x4C\x3A\x14\x08\x18\x2A\x94\xFC\x00\xBB\x5F\xD2\xFA\x36\x71\xC4\xE0\xFD\xFF\x48\xD3\x8F\xD4\xDE\x07\x6A\xC4\xD0\x59',
 	'b32': 'T2ULXKZHVJIXHXSKTVGDUFAIDAVJJ7AAXNP5F6RWOHCOB7P7JDJY7VG6A5VMJUCZ',
 	'hex': '9EA8BBAB27AA5173DE4A9D4C3A1408182A94FC00BB5FD2FA3671C4E0FDFF48D38FD4DE076AC4D059',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '6F16154BB97165F4479F726DC8B8B4FFB9C90B85'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'algorithm': 'SHA1'}
@@ -66,12 +60,6 @@ var inputs = [{
 	'raw': '\xAA\x46\x60\xBD\x57\x6D\x4D\x78\x68\xBB\x91\xC8\x04\x22\xA8\xBB\xBA\x51\xBE\x51\x60\x24\x99\xC0\x38\x78\x7B\x1C\xE3\xA4\x66\xF8\x86\x04\xE0\x2F\xEF\xC5\xAC\x9F',
 	'b32': 'VJDGBPKXNVGXQ2F3SHEAIIVIXO5FDPSRMASJTQBYPB5RZY5EM34IMBHAF7X4LLE7',
 	'hex': 'AA4660BD576D4D7868BB91C80422A8BBBA51BE51602499C038787B1CE3A466F88604E02FEFC5AC9F',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA256', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': 'DED32069DE9874DBB253098C51EC236E7511B895FB714D0ED8B5567FEB19E9FA'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'algorithm': 'SHA256'}
@@ -110,12 +98,6 @@ var inputs = [{
 	'raw': '\x0D\x7F\xB2\xE5\xB0\xD5\x9E\xC6\x4A\x03\x35\x7A\x21\x7E\x1A\xFB\x7F\x8E\x66\xC9\x0E\xC6\xB0\x46\xFD\xFF\x14\x30\xFD\xFF\xB2\x99\x3F\x17\xD8\xD3\xDF\x85\x9D\x49',
 	'b32': 'BV73FZNQ2WPMMSQDGV5CC7Q27N7Y4ZWJB3DLARX574KDB7P7WKMT6F6Y2PPYLHKJ',
 	'hex': '0D7FB2E5B0D59EC64A03357A217E1AFB7F8E66C90EC6B046FDFF1430FDFFB2993F17D8D3DF859D49',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA512', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': 'A7EBB45B42E27F7E54B212EFB5EC8330DCBDAA79940F315D9F059B20B62A625CB68F0147B1C5004DA723D9582C958360E795FDE5B34DC2D8DBF444F4C6F43EDE'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'algorithm': 'SHA512'}
@@ -154,12 +136,6 @@ var inputs = [{
 	'raw': '\x5D\xC7\x4C\x5C\xDE\x83\x97\x1E\xDB\xEC\x99\x84\xDC\xCF\x2B\x86\x27\x77\x31\x4E\x8D\x64\x92\xCE\xC2\x06\x39\x85\xB9\xAA\x36\x86\x7D\x2C\x63\x52\x4A\xA9\x4F\x7F',
 	'b32': 'LXDUYXG6QOLR5W7MTGCNZTZLQYTXOMKORVSJFTWCAY4YLONKG2DH2LDDKJFKST37',
 	'hex': '5DC74C5CDE83971EDBEC9984DCCF2B862777314E8D6492CEC2063985B9AA36867D2C63524AA94F7F',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '016D1B9AF918443FE0AC19878EDD73206681101F'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'digits': 6, 'issuer': 'ACME'},
@@ -198,12 +174,6 @@ var inputs = [{
 	'raw': '\x1A\x54\xFD\xFF\xE1\x7A\x6B\x55\x87\xBB\xC4\x76\x5D\xC2\xE7\xEC\xDE\x57\x4E\xD4\xBA\xB1\xD5\xB2\xEA\xC4\x62\x0D\x62\x60\x5A\x11\xE2\xB0\xC5\xF3\x13\x73\x0E\xC2',
 	'b32': 'DJKP377BPJVVLB53YR3F3QXH5TPFOTWUXKY5LMXKYRRA2YTALII6FMGF6MJXGDWC',
 	'hex': '1A54FDFFE17A6B5587BBC4765DC2E7ECDE574ED4BAB1D5B2EAC4620D62605A11E2B0C5F313730EC2',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '0AE3B1E0BC0FAE94576533F55A147AD1D4A9F643'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'digits': 7, 'label': 'Username'},
@@ -242,12 +212,6 @@ var inputs = [{
 	'raw': '\x36\x39\xF4\xA1\x56\xCF\x8E\x79\xA8\x32\xFB\x6D\x6E\x68\x3C\x0B\x96\x38\xB3\x09\x10\xEE\xEB\x0E\x20\xA8\xD5\xC7\x5A\xEF\x5F\xE0\xCB\xBA\xEC\xB3\x5B\x7C\x10\xFD',
 	'b32': 'GY47JIKWZ6HHTKBS7NWW42B4BOLDRMYJCDXOWDRAVDK4OWXPL7QMXOXMWNNXYEH5',
 	'hex': '3639F4A156CF8E79A832FB6D6E683C0B9638B30910EEEB0E20A8D5C75AEF5FE0CBBAECB35B7C10FD',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': 'E50562A797A5566FEDEA709D814EF6677645D8F8'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {'digits': 8, 'issuer': 'ACME Co', 'label': 'Firstname Lastname'},
@@ -286,12 +250,6 @@ var inputs = [{
 	'raw': '\x28\x1B\xF6\xE7\x4B\xC0\xE4\xB6\xC0\xF3\xCD\xA8\x0E\x05\xA6\x79\x9A\x04\xCC\x55\x47\x8D\x15\x67\x1F\xE6\xCD\x25\x2C\xC8\xF4\x3A\xCA\x4D\x32\x97\x3E\x0E\xCD\xE4',
 	'b32': 'FAN7NZ2LYDSLNQHTZWUA4BNGPGNAJTCVI6GRKZY743GSKLGI6Q5MUTJSS47A5TPE',
 	'hex': '281BF6E74BC0E4B6C0F3CDA80E05A6799A04CC55478D15671FE6CD252CC8F43ACA4D32973E0ECDE4',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '60DAE652A4AB4B695DB6C92E0DC871F16F678C40'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {},
@@ -330,12 +288,6 @@ var inputs = [{
 	'raw': '\xC1\x8C\x96\x07\xCA\xE1\xF3\x33\x31\x18\x44\xEA\xFD\xFF\x9A\xF6\x3C\x3C\x29\x97\x1F\xF1\x9E\x44\x65\x5E\x59\x7C\x7E\xAD\x51\xB6\x55\x59\xAC\x62\xE1\xE7\x46\x92',
 	'b32': 'YGGJMB6K4HZTGMIYITVP37426Y6DYKMXD7YZ4RDFLZMXY7VNKG3FKWNMMLQ6ORUS',
 	'hex': 'C18C9607CAE1F333311844EAFDFF9AF63C3C29971FF19E44655E597C7EAD51B65559AC62E1E74692',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': 'E0AA134E9C768A4764BFADE7BF54ED0B2336939E'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {},
@@ -374,12 +326,6 @@ var inputs = [{
 	'raw': '\xBC\x4F\x78\xC2\xAB\xFF\x61\x62\x63\x4A\x75\x0F\x6F\xBE\x14\x85\xDC\x22\xE5\x6A\x99\x07\xF8\xAB\x7A\x37\xE2\xD3\xCB\xD4\xD4\x93\xAD\x69\x02\xE2\xB1\x26\x15\x91',
 	'b32': 'XRHXRQVL75QWEY2KOUHW7PQUQXOCFZLKTED7RK32G7RNHS6U2SJ222IC4KYSMFMR',
 	'hex': 'BC4F78C2ABFF6162634A750F6FBE1485DC22E56A9907F8AB7A37E2D3CBD4D493AD6902E2B1261591',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '4F26BB608FA336FE0664A5547B066E03D318F8FF'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {},
@@ -418,12 +364,6 @@ var inputs = [{
 	'raw': '\x27\x05\xF0\x0F\x40\x90\x8B\xAB\x4A\xF6\xF9\x80\xFD\xFF\xB5\x83\x11\x6B\x2E\x7E\xF1\xBA\x23\x01\x63\xAD\x7E\xAC\x48\x80\x4F\x81\xF3\x81\xF5\x38\x31\x92\xEF\x3B',
 	'b32': 'E4C7AD2ASCF2WSXW7GAP375VQMIWWLT66G5CGALDVV7KYSEAJ6A7HAPVHAYZF3Z3',
 	'hex': '2705F00F40908BAB4AF6F980FDFFB583116B2E7EF1BA230163AD7EAC48804F81F381F5383192EF3B',
-	'hmac': {
-		'digest': {
-			'input': {'algorithm': 'SHA1', 'message': new Uint8Array([116, 111, 111, 114]).buffer},
-			'output': '72E915157D44125367D1AF8B5B3437EC7D0CB8D6'
-		}
-	},
 	'hotp': {
 		'constructor': {
 			'input': {},
@@ -562,8 +502,7 @@ describe('Test - OTPAuth.Secret', function () {
 	});
 
 	it('constructor[' + inputs.length + ']', function () {
-		var bytes = OTPAuth.Secret.getRandomBytes({'size': 256});
-		var output = new OTPAuth.Secret({'buffer': bytes});
+		var output = new OTPAuth.Secret({'size': 256});
 
 		expect(output).to.be.an('object');
 		expect(output.buffer).to.be.an('arrayBuffer');
@@ -585,39 +524,6 @@ describe('Test - OTPAuth.Secret', function () {
 		expect(output.b32).to.match(/^[2-7A-Z]{32}$/);
 		expect(output.hex).to.be.a('string');
 		expect(output.hex).to.match(/^[0-9A-F]{40}$/);
-	});
-
-	it('getRandomBytes[0]', function () {
-		var output = OTPAuth.Secret.getRandomBytes({'size': 256});
-
-		expect(output).to.be.an('arrayBuffer');
-		expect(output.byteLength).to.equal(256);
-	});
-
-	it('getRandomBytes[1]', function () {
-		var output = OTPAuth.Secret.getRandomBytes();
-
-		expect(output).to.be.an('arrayBuffer');
-		expect(output.byteLength).to.equal(20);
-	});
-
-});
-
-/* ================================================
- * HMAC
- * ================================================
- */
-
-describe('Test - OTPAuth.HMAC', function () {
-
-	inputs.forEach(function(input, index) {
-		it('digest[' + index + ']', function () {
-			var digestInput = input.hmac.digest.input;
-			digestInput.key = input.buffer;
-			var output = OTPAuth.HMAC.digest(digestInput);
-
-			expect(OTPAuth.Utils.hex.decode(output)).to.equal(input.hmac.digest.output);
-		});
 	});
 
 });

@@ -1,7 +1,7 @@
-[![Documentation](https://doc.esdoc.org/github.com/zant95/otpauth/badge.svg)](https://doc.esdoc.org/github.com/zant95/otpauth/)
-[![License](https://img.shields.io/github/license/zant95/otpauth.svg)](LICENSE.md)
+[![Documentation](https://doc.esdoc.org/github.com/zant95/otpauth/badge.svg)][3]
+[![License](https://img.shields.io/github/license/zant95/otpauth.svg)][1]
 
-[![NPM](https://nodei.co/npm/otpauth.png)](https://www.npmjs.com/package/otpauth)
+[![NPM](https://nodei.co/npm/otpauth.png)][2]
 
 ***
 
@@ -54,5 +54,16 @@ console.log(customTOTP.generate());
 </script>
 ```
 
-For more information, see the [documentation](https://doc.esdoc.org/github.com/zant95/otpauth/) page.
+## Supported hashing algorithms
+In Node.js, the same algorithms as [```Crypto.createHmac```][4] function are supported, since it is used internally.
+In browsers, the ```SHA1```, ```SHA256``` and ```SHA512``` algorithms are supported by using the [Stanford Javascript Crypto Library][5].
+
+## Documentation
+See the [documentation][3] page.
+
+[1]: LICENSE.md
+[2]: https://www.npmjs.com/package/otpauth
+[3]: https://doc.esdoc.org/github.com/zant95/otpauth/
+[4]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
+[5]: https://github.com/bitwiseshiftleft/sjcl
 

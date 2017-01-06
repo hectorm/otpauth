@@ -16,7 +16,7 @@ const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI
 // RFC 4648 base32 alphabet without pad
 const SECRET_REGEX = /^[2-7A-Z]+$/i;
 
-// Support all algorithms defined in HMAC class
+// Support all algorithms defined in the format spec
 const ALGORITHM_REGEX = /SHA(?:1|256|512)/i;
 
 // Integer
