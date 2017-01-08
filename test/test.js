@@ -535,6 +535,27 @@ describe('Test - OTPAuth.Secret', function () {
 
 describe('Test - OTPAuth.HOTP', function () {
 
+	it('defaults', function () {
+		var hotp = new OTPAuth.HOTP();
+
+		expect(hotp).to.be.an('object');
+		expect(hotp.issuer).to.equal('');
+		expect(hotp.label).to.equal('OTPAuth');
+		expect(hotp.secret).to.be.instanceof(OTPAuth.Secret);
+		expect(hotp.algorithm).to.equal('SHA1');
+		expect(hotp.digits).to.equal(6);
+		expect(hotp.counter).to.equal(0);
+
+		expect(hotp.generate()).to.be.a('string');
+		expect(hotp.generate()).to.have.lengthOf(6);
+		expect(hotp.generate({'pad': false})).to.a('number');
+
+		expect(hotp.validate({'token': hotp.generate()})).to.equal(-1);
+
+		// Counter is incremented on each 'generate' call
+		expect(hotp.counter).to.equal(4);
+	});
+
 	inputs.forEach(function(input, index) {
 		it('generate[' + index + ']', function () {
 			var constructorInput = input.hotp.constructor.input;
@@ -581,6 +602,24 @@ describe('Test - OTPAuth.HOTP', function () {
  */
 
 describe('Test - OTPAuth.TOTP', function () {
+
+	it('defaults', function () {
+		var totp = new OTPAuth.TOTP();
+
+		expect(totp).to.be.an('object');
+		expect(totp.issuer).to.equal('');
+		expect(totp.label).to.equal('OTPAuth');
+		expect(totp.secret).to.be.instanceof(OTPAuth.Secret);
+		expect(totp.algorithm).to.equal('SHA1');
+		expect(totp.digits).to.equal(6);
+		expect(totp.period).to.equal(30);
+
+		expect(totp.generate()).to.be.a('string');
+		expect(totp.generate()).to.have.lengthOf(6);
+		expect(totp.generate({'pad': false})).to.a('number');
+
+		expect(totp.validate({'token': totp.generate()})).to.equal(0);
+	});
 
 	inputs.forEach(function(input, index) {
 		it('generate[' + index + ']', function () {
