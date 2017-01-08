@@ -37,9 +37,9 @@
   "scripts": {
     "lint": "eslint --config .eslintrc.js .",
     "build": "webpack --display-reasons --config .webpack.js",
-    "test-browser": "karma start .karma.js",
-    "test-node": "mocha --reporter dot",
-    "test": "run-s test-node test-browser",
+    "test:browser": "karma start .karma.js",
+    "test:node": "mocha --reporter dot",
+    "test": "run-s test:*",
     "doc": "rimraf ./doc && esdoc -c .esdoc.js",
     "dist": "run-s lint build test doc",
     "version": "run-s dist && git add -A lib"
