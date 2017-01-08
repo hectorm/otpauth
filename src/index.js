@@ -19,5 +19,8 @@ const OTPAuth = {
 };
 
 export default OTPAuth;
-module.exports = OTPAuth;
+
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+	module.exports = OTPAuth;
+}
 
