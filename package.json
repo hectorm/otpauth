@@ -36,9 +36,7 @@
   },
   "scripts": {
     "lint": "eslint --config .eslintrc.js .",
-    "build-otpauth": "webpack --display-reasons --config .webpack.js",
-    "build-sjcl": "node .sjcl.js",
-    "build": "run-s build-sjcl build-otpauth",
+    "build": "webpack --display-reasons --config .webpack.js",
     "test-browser": "karma start .karma.js",
     "test-node": "mocha --reporter dot",
     "test": "run-s test-node test-browser",
@@ -60,6 +58,7 @@
     "karma-phantomjs-launcher": "latest",
     "mocha": "latest",
     "npm-run-all": "latest",
-    "rimraf": "latest"
+    "rimraf": "latest",
+    "tmp": "latest"
   }
 }

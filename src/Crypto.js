@@ -1,4 +1,4 @@
-import sjcl from './.sjcl.custom.js';
+import sjcl from 'sjcl';
 
 /**
  * An object containing some cryptography functions
