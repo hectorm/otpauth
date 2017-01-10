@@ -10,8 +10,7 @@ export const Crypto = {};
 let nodeCrypto;
 
 if (typeof window === 'undefined' &&
-	typeof module !== 'undefined' &&
-	typeof module.exports !== 'undefined'
+	typeof module !== 'undefined'
 ) {
 	// Dynamically require 'crypto' module to prevent issues with Webpack
 	// eslint-disable-next-line no-eval
