@@ -132,30 +132,44 @@ export class URI {
 	 * Converts an HOTP/TOTP object to a Google Authenticator key URI.
 	 * @method stringify
 	 * @param {Object} otp HOTP/TOTP object.
+	 * @param {Object} [config] Configuration options.
+	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
 	 * @returns {string} Google Authenticator Key URI.
 	 */
-	static stringify(otp) {
+	static stringify(otp, {legacyIssuer = true} = {}) {
 		if (!(otp instanceof HOTP || otp instanceof TOTP)) {
 			throw Error('Invalid \'HOTP/TOTP\' object');
 		}
 
-		return encodeURI('otpauth://'
-			+ (otp instanceof TOTP
-				? 'totp'
-				: 'hotp')
+		// Key URI format:
+		// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+		const uri = 'otpauth://'
+			// Type
+			+ (otp instanceof TOTP ? 'totp' : 'hotp')
+			+ '/'
 
+			// Label and optional issuer
 			+ (otp.issuer.length > 0
-				? `/${otp.issuer}:${otp.label}?issuer=${otp.issuer}&`
-				: `/${otp.label}?`)
+				// Issuer label prefix
+				? (legacyIssuer ? `${otp.issuer}:` : '')
+					// Label and issuer parameter
+					+ `${otp.label}?issuer=${otp.issuer}&`
+				// No issuer
+				: `${otp.label}?`)
 
+			// Generic parameters
 			+ `secret=${otp.secret.b32}`
 			+ `&algorithm=${otp.algorithm}`
 			+ `&digits=${otp.digits}`
 
+			// Extra parameters
 			+ (otp instanceof TOTP
+				// TOTP parameters
 				? `&period=${otp.period}`
-				: `&counter=${otp.counter}`)
-		);
+				// HOTP parameters
+				: `&counter=${otp.counter}`);
+
+		return encodeURI(uri);
 	}
 }
 

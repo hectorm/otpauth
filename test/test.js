@@ -716,5 +716,34 @@ describe('Test - OTPAuth.URI', function () {
 		});
 	});
 
+	it('stringify[' + inputs.length + '] - TOTP', function () {
+		var totp = new OTPAuth.TOTP({
+			'issuer': 'ACME',
+			'label': 'AzureDiamond',
+			'secret': new OTPAuth.Secret({
+				'buffer': OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
+			})
+		});
+
+		var output = OTPAuth.URI.stringify(totp, {'legacyIssuer': true});
+		var expected = 'otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
+
+		expect(output).to.equal(expected);
+	});
+
+	it('stringify[' + (inputs.length + 1) + '] - TOTP', function () {
+		var totp = new OTPAuth.TOTP({
+			'issuer': 'ACME',
+			'label': 'AzureDiamond',
+			'secret': new OTPAuth.Secret({
+				'buffer': OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
+			})
+		});
+
+		var output = OTPAuth.URI.stringify(totp, {'legacyIssuer': false});
+		var expected = 'otpauth://totp/AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
+
+		expect(output).to.equal(expected);
+	});
 });
 
