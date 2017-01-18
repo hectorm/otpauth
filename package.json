@@ -48,7 +48,7 @@
   "devDependencies": {
     "google-closure-compiler-js": "20161201.0.0",
     "sjcl": "1.0.6",
-    "webpack": "2.2.0-rc.3",
+    "webpack": "2.x.x",
     "chai": "3.x.x",
     "esdoc": "0.x.x",
     "eslint": "3.x.x",
