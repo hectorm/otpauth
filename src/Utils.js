@@ -84,7 +84,10 @@ Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 // Based on github.com/LinusU/base32-decode
 Utils.b32.decode = function (buf) {
 	const arr = new Uint8Array(buf);
-	let bits = 0, value = 0, str = '';
+
+	let bits = 0;
+	let value = 0;
+	let str = '';
 
 	for (let i = 0; i < arr.length; i++) {
 		value = value << 8 | arr[i];
@@ -108,7 +111,10 @@ Utils.b32.encode = function (str) {
 	const strUpp = str.toUpperCase();
 	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
 	const arr = new Uint8Array(buf);
-	let bits = 0, value = 0, index = 0;
+
+	let bits = 0;
+	let value = 0;
+	let index = 0;
 
 	for (let i = 0; i < strUpp.length; i++) {
 		let idx = Utils.b32.alphabet.indexOf(strUpp[i]);

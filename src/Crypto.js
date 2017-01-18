@@ -62,7 +62,7 @@ if (typeof nodeCrypto !== 'undefined') {
 	// In Node.js, the command:
 	//   $ openssl list-message-digest-algorithms
 	// displays the available digest algorithms.
-	Crypto.hmacDigest = function(algorithm, key, message) {
+	Crypto.hmacDigest = function (algorithm, key, message) {
 		return bufferTo(
 			nodeCrypto.createHmac(algorithm, bufferFrom(key))
 				.update(bufferFrom(message))
@@ -99,13 +99,14 @@ if (typeof nodeCrypto !== 'undefined') {
 		return arr;
 	};
 
-	Crypto.hmacDigest = function(algorithm, key, message) {
+	Crypto.hmacDigest = function (algorithm, key, message) {
 		const hash = sjcl.hash[algorithm.toLowerCase()];
 
 		if (typeof hash === 'undefined') {
 			throw Error('Unknown hash function');
 		}
 
+		// eslint-disable-next-line new-cap
 		const hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
 		hmac.update(sjcl.codec.arrayBuffer.toBits(message));
 

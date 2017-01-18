@@ -48,7 +48,6 @@
   "devDependencies": {
     "google-closure-compiler-js": "20161201.0.0",
     "sjcl": "1.0.6",
-    "webpack": "2.x.x",
     "chai": "3.x.x",
     "esdoc": "0.x.x",
     "eslint": "3.x.x",
@@ -57,6 +56,8 @@
     "karma-mocha": "1.x.x",
     "karma-phantomjs-launcher": "1.x.x",
     "mocha": "3.x.x",
+    "standard": "8.x.x",
+    "webpack": "2.x.x",
     "npm-run-all": "latest",
     "rimraf": "latest",
     "tmp": "latest"

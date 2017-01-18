@@ -5,8 +5,8 @@ var chai = chai || require('chai');
 var expect = expect || chai.expect;
 
 chai.Assertion.addMethod('bufferEql', function (x) {
-	var expected = new Uint8Array(x),
-		actual = new Uint8Array(this._obj);
+	var expected = new Uint8Array(x);
+	var actual = new Uint8Array(this._obj);
 
 	this.assert(
 		chai.util.eql(actual, expected),
@@ -40,7 +40,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'algorithm': 'SHA1', 'period': 5},
+			'input': {'algorithm': 'SHA1', 'period': 5}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -78,7 +78,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'algorithm': 'SHA256', 'period': 10},
+			'input': {'algorithm': 'SHA256', 'period': 10}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -116,7 +116,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'algorithm': 'SHA512', 'period': 15},
+			'input': {'algorithm': 'SHA512', 'period': 15}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -138,7 +138,7 @@ var inputs = [{
 	'hex': '5DC74C5CDE83971EDBEC9984DCCF2B862777314E8D6492CEC2063985B9AA36867D2C63524AA94F7F',
 	'hotp': {
 		'constructor': {
-			'input': {'digits': 6, 'issuer': 'ACME'},
+			'input': {'digits': 6, 'issuer': 'ACME'}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -154,7 +154,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'digits': 6, 'issuer': 'ACME'},
+			'input': {'digits': 6, 'issuer': 'ACME'}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -176,7 +176,7 @@ var inputs = [{
 	'hex': '1A54FDFFE17A6B5587BBC4765DC2E7ECDE574ED4BAB1D5B2EAC4620D62605A11E2B0C5F313730EC2',
 	'hotp': {
 		'constructor': {
-			'input': {'digits': 7, 'label': 'Username'},
+			'input': {'digits': 7, 'label': 'Username'}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -192,7 +192,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'digits': 7, 'label': 'Username'},
+			'input': {'digits': 7, 'label': 'Username'}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -214,7 +214,7 @@ var inputs = [{
 	'hex': '3639F4A156CF8E79A832FB6D6E683C0B9638B30910EEEB0E20A8D5C75AEF5FE0CBBAECB35B7C10FD',
 	'hotp': {
 		'constructor': {
-			'input': {'digits': 8, 'issuer': 'ACME Co', 'label': 'Firstname Lastname'},
+			'input': {'digits': 8, 'issuer': 'ACME Co', 'label': 'Firstname Lastname'}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -230,7 +230,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {'digits': 8, 'issuer': 'ACME Co', 'label': 'Firstname Lastname'},
+			'input': {'digits': 8, 'issuer': 'ACME Co', 'label': 'Firstname Lastname'}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -252,7 +252,7 @@ var inputs = [{
 	'hex': '281BF6E74BC0E4B6C0F3CDA80E05A6799A04CC55478D15671FE6CD252CC8F43ACA4D32973E0ECDE4',
 	'hotp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -268,7 +268,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -290,7 +290,7 @@ var inputs = [{
 	'hex': 'C18C9607CAE1F333311844EAFDFF9AF63C3C29971FF19E44655E597C7EAD51B65559AC62E1E74692',
 	'hotp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -306,7 +306,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -328,7 +328,7 @@ var inputs = [{
 	'hex': 'BC4F78C2ABFF6162634A750F6FBE1485DC22E56A9907F8AB7A37E2D3CBD4D493AD6902E2B1261591',
 	'hotp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -344,7 +344,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -366,7 +366,7 @@ var inputs = [{
 	'hex': '2705F00F40908BAB4AF6F980FDFFB583116B2E7EF1BA230163AD7EAC48804F81F381F5383192EF3B',
 	'hotp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'counter': 1e10},
@@ -382,7 +382,7 @@ var inputs = [{
 	},
 	'totp': {
 		'constructor': {
-			'input': {},
+			'input': {}
 		},
 		'generate': {
 			'input': {'timestamp': 1451606400000},
@@ -404,7 +404,6 @@ var inputs = [{
  */
 
 describe('OTPAuth.Utils', function () {
-
 	it('uint.decode[0]', function () {
 		var output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
 		expect(output).to.equal(0);
@@ -435,48 +434,47 @@ describe('OTPAuth.Utils', function () {
 		expect(output).to.bufferEql(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('raw.decode[' + index + ']', function () {
 			var output = OTPAuth.Utils.raw.decode(input.buffer);
 			expect(output).to.equal(input.raw);
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('raw.encode[' + index + ']', function () {
 			var output = OTPAuth.Utils.raw.encode(input.raw);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('b32.decode[' + index + ']', function () {
 			var output = OTPAuth.Utils.b32.decode(input.buffer);
 			expect(output).to.equal(input.b32);
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('b32.encode[' + index + ']', function () {
 			var output = OTPAuth.Utils.b32.encode(input.b32);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('hex.decode[' + index + ']', function () {
 			var output = OTPAuth.Utils.hex.decode(input.buffer);
 			expect(output).to.equal(input.hex);
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('hex.encode[' + index + ']', function () {
 			var output = OTPAuth.Utils.hex.encode(input.hex);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
-
 });
 
 /* ================================================
@@ -485,8 +483,7 @@ describe('OTPAuth.Utils', function () {
  */
 
 describe('Test - OTPAuth.Secret', function () {
-
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('constructor[' + index + ']', function () {
 			var output = new OTPAuth.Secret({'buffer': input.buffer});
 
@@ -525,7 +522,6 @@ describe('Test - OTPAuth.Secret', function () {
 		expect(output.hex).to.be.a('string');
 		expect(output.hex).to.match(/^[0-9A-F]{40}$/);
 	});
-
 });
 
 /* ================================================
@@ -534,7 +530,6 @@ describe('Test - OTPAuth.Secret', function () {
  */
 
 describe('Test - OTPAuth.HOTP', function () {
-
 	it('defaults', function () {
 		var hotp = new OTPAuth.HOTP();
 
@@ -556,7 +551,7 @@ describe('Test - OTPAuth.HOTP', function () {
 		expect(hotp.counter).to.equal(4);
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('generate[' + index + ']', function () {
 			var constructorInput = input.hotp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -569,7 +564,7 @@ describe('Test - OTPAuth.HOTP', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('validate[' + index + ']', function () {
 			var constructorInput = input.hotp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -582,7 +577,7 @@ describe('Test - OTPAuth.HOTP', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('toString[' + index + ']', function () {
 			var constructorInput = input.hotp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -593,7 +588,6 @@ describe('Test - OTPAuth.HOTP', function () {
 			expect(output).to.equal(input.hotp.toString.output);
 		});
 	});
-
 });
 
 /* ================================================
@@ -602,7 +596,6 @@ describe('Test - OTPAuth.HOTP', function () {
  */
 
 describe('Test - OTPAuth.TOTP', function () {
-
 	it('defaults', function () {
 		var totp = new OTPAuth.TOTP();
 
@@ -621,7 +614,7 @@ describe('Test - OTPAuth.TOTP', function () {
 		expect(totp.validate({'token': totp.generate()})).to.equal(0);
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('generate[' + index + ']', function () {
 			var constructorInput = input.totp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -634,7 +627,7 @@ describe('Test - OTPAuth.TOTP', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('validate[' + index + ']', function () {
 			var constructorInput = input.totp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -647,7 +640,7 @@ describe('Test - OTPAuth.TOTP', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('toString[' + index + ']', function () {
 			var constructorInput = input.totp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -658,7 +651,6 @@ describe('Test - OTPAuth.TOTP', function () {
 			expect(output).to.equal(input.totp.toString.output);
 		});
 	});
-
 });
 
 /* ================================================
@@ -667,8 +659,7 @@ describe('Test - OTPAuth.TOTP', function () {
  */
 
 describe('Test - OTPAuth.URI', function () {
-
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('parse[' + index + '] - HOTP', function () {
 			var constructorInput = input.hotp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -680,7 +671,7 @@ describe('Test - OTPAuth.URI', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('parse[' + index + '] - TOTP', function () {
 			var constructorInput = input.totp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -692,7 +683,7 @@ describe('Test - OTPAuth.URI', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('stringify[' + index + '] - HOTP', function () {
 			var constructorInput = input.hotp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
@@ -704,7 +695,7 @@ describe('Test - OTPAuth.URI', function () {
 		});
 	});
 
-	inputs.forEach(function(input, index) {
+	inputs.forEach(function (input, index) {
 		it('stringify[' + index + '] - TOTP', function () {
 			var constructorInput = input.totp.constructor.input;
 			constructorInput.secret = new OTPAuth.Secret({'buffer': input.buffer});
