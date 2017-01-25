@@ -522,6 +522,51 @@ describe('Test - OTPAuth.Secret', function () {
 		expect(output.hex).to.be.a('string');
 		expect(output.hex).to.match(/^[0-9A-F]{40}$/);
 	});
+
+	inputs.forEach(function (input, index) {
+		it('fromRaw[' + index + ']', function () {
+			var output = OTPAuth.Secret.fromRaw(input.raw);
+
+			expect(output).to.eql({
+				'raw': input.raw,
+				'b32': input.b32,
+				'hex': input.hex,
+				'buffer': input.buffer
+			});
+
+			expect(output.buffer).to.bufferEql(input.buffer);
+		});
+	});
+
+	inputs.forEach(function (input, index) {
+		it('fromB32[' + index + ']', function () {
+			var output = OTPAuth.Secret.fromB32(input.b32);
+
+			expect(output).to.eql({
+				'raw': input.raw,
+				'b32': input.b32,
+				'hex': input.hex,
+				'buffer': input.buffer
+			});
+
+			expect(output.buffer).to.bufferEql(input.buffer);
+		});
+	});
+
+	inputs.forEach(function (input, index) {
+		it('fromHex[' + index + ']', function () {
+			var output = OTPAuth.Secret.fromHex(input.hex);
+
+			expect(output).to.eql({
+				'raw': input.raw,
+				'b32': input.b32,
+				'hex': input.hex,
+				'buffer': input.buffer
+			});
+
+			expect(output.buffer).to.bufferEql(input.buffer);
+		});
+	});
 });
 
 /* ================================================

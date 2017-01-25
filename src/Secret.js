@@ -20,6 +20,36 @@ export class Secret {
 			: buffer;
 	}
 
+	/**
+	 * Converts a raw string to a Secret object.
+	 * @method fromRaw
+	 * @param {string} str Raw string.
+	 * @returns {Secret} Secret object.
+	 */
+	static fromRaw (str) {
+		return new this({'buffer': Utils.raw.encode(str)});
+	}
+
+	/**
+	 * Converts a base32 string to a Secret object.
+	 * @method fromB32
+	 * @param {string} str Base32 string.
+	 * @returns {Secret} Secret object.
+	 */
+	static fromB32 (str) {
+		return new this({'buffer': Utils.b32.encode(str)});
+	}
+
+	/**
+	 * Converts a hexadecimal string to a Secret object.
+	 * @method fromHex
+	 * @param {string} str Hexadecimal string.
+	 * @returns {Secret} Secret object.
+	 */
+	static fromHex (str) {
+		return new this({'buffer': Utils.hex.encode(str)});
+	}
+
 	/** @type {string} */
 	get raw () {
 		Object.defineProperty(this, 'raw', {

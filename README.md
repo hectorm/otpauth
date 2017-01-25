@@ -31,9 +31,7 @@ let customTOTP = new OTPAuth.TOTP({
 	'algorithm': 'SHA512',
 	'digits': 8,
 	'period': 20,
-	'secret': new OTPAuth.Secret({
-		'buffer': OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
-	})
+	'secret': OTPAuth.Secret.fromB32('NB2W45DFOIZA')
 });
 
 // Convert to Google Authenticator key URI
