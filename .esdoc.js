@@ -17,4 +17,3 @@ module.exports = {
 	'includeSource': true,
 	'lint': true
 }
-

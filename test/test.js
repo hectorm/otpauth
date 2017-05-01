@@ -1,8 +1,10 @@
 'use strict';
 
+/* eslint-disable no-use-before-define */
 var OTPAuth = OTPAuth || require('../lib/otpauth.js');
 var chai = chai || require('chai');
 var expect = expect || chai.expect;
+/* eslint-enable */
 
 chai.Assertion.addMethod('bufferEql', function (x) {
 	var expected = new Uint8Array(x);
@@ -782,4 +784,3 @@ describe('Test - OTPAuth.URI', function () {
 		expect(output).to.equal(expected);
 	});
 });
-

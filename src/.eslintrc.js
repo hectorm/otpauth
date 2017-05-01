@@ -7,4 +7,3 @@ module.exports = {
 		'valid-jsdoc': ['warn']
 	}
 };
-

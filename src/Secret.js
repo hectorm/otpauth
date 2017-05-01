@@ -86,4 +86,3 @@ export class Secret {
 		return this.hex;
 	}
 }
-

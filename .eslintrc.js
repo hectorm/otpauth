@@ -20,4 +20,3 @@ module.exports = {
 		'semi-spacing': ['error', {'before': false, 'after': true}]
 	}
 };
-

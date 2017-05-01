@@ -278,4 +278,3 @@ export class TOTP {
 		return URI.stringify(this);
 	}
 }
-

@@ -64,4 +64,3 @@ See the [documentation][3] page.
 [3]: https://doc.esdoc.org/github.com/zant95/otpauth/
 [4]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
 [5]: https://github.com/bitwiseshiftleft/sjcl
-

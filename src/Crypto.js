@@ -25,6 +25,7 @@ if (typeof nodeCrypto !== 'undefined') {
 	} else {
 		// Node.js < 5.10.0
 		bufferFrom = function (arrbuf) {
+			// eslint-disable-next-line node/no-deprecated-api
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
 
@@ -86,7 +87,6 @@ if (typeof nodeCrypto !== 'undefined') {
 
 		getRandomValues = function (arr) {
 			for (let i = 0; i < arr.length; i++) {
-				// eslint-disable-next-line no-param-reassign
 				arr[i] = Math.floor(Math.random() * 256);
 			}
 		};
@@ -113,4 +113,3 @@ if (typeof nodeCrypto !== 'undefined') {
 		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
 	};
 }
-

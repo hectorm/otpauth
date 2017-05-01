@@ -160,4 +160,3 @@ Utils.hex.encode = function (str) {
 
 	return buf;
 };
-

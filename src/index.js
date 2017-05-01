@@ -10,4 +10,3 @@ import {Utils} from './Utils.js';
  * @author Héctor Molinero Fernández <hector@molinero.xyz>
  */
 export {HOTP, TOTP, URI, Secret, Utils};
-

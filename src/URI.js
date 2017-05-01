@@ -179,4 +179,3 @@ export class URI {
 		return encodeURI(uri);
 	}
 }
-
