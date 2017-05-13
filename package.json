@@ -35,12 +35,12 @@
     "lib": "./lib"
   },
   "scripts": {
-    "lint": "eslint --config .eslintrc.js .",
-    "build": "webpack --display-reasons --config .webpack.js",
-    "test:browser": "karma start .karma.js",
+    "lint": "eslint .",
+    "build": "webpack --display-reasons",
+    "test:browser": "karma start",
     "test:node": "mocha --reporter dot",
     "test": "run-s test:*",
-    "doc": "rimraf ./doc && esdoc -c .esdoc.js",
+    "doc": "rimraf ./doc && esdoc",
     "dist": "run-s lint build test doc",
     "version": "run-s dist && git add -A lib"
   },
@@ -52,6 +52,7 @@
     "google-closure-compiler-js": "20170423.0.0",
     "karma": "1.x.x",
     "karma-chai": "0.x.x",
+    "karma-chrome-launcher": "2.x.x",
     "karma-mocha": "1.x.x",
     "karma-phantomjs-launcher": "1.x.x",
     "mocha": "3.x.x",

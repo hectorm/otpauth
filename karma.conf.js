@@ -1,19 +1,22 @@
 'use strict';
 
+const path = require('path');
+
 module.exports = function (config) {
 	config.set({
 		'frameworks': ['mocha', 'chai'],
 		'files': [
-			__dirname + '/lib/otpauth.js',
-			__dirname + '/test/test.js'
+			path.join(__dirname, 'lib/otpauth.js'),
+			path.join(__dirname, 'test/test.js')
 		],
 		'reporters': ['dots'],
 		'singleRun': true,
 		'autoWatch': false,
-		'browsers': ['PhantomJS'],
+		'browsers': ['ChromeHeadless', 'PhantomJS'],
 		'plugins': [
-			'karma-mocha',
 			'karma-chai',
+			'karma-mocha',
+			'karma-chrome-launcher',
 			'karma-phantomjs-launcher'
 		]
 	});
