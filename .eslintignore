@@ -1,2 +1,5 @@
-doc/
-lib/
+bower_components/
+node_modules/
+
+/doc/
+/lib/
