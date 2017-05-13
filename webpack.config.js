@@ -21,7 +21,7 @@ module.exports = {
 	'node': {'Buffer': false},
 	'plugins': [
 		// Custom build of the Stanford Javascript Crypto Library (SJCL)
-		new webpack.NormalModuleReplacementPlugin(/^sjcl$/, function(result) {
+		new webpack.NormalModuleReplacementPlugin(/^sjcl$/, function (result) {
 			const request = tmp.fileSync().name;
 
 			const root = path.join(__dirname, 'node_modules/sjcl');
@@ -36,7 +36,7 @@ module.exports = {
 				'core/exports.js'
 			];
 
-			fs.writeFileSync(request, sources.reduce(function(code, file) {
+			fs.writeFileSync(request, sources.reduce(function (code, file) {
 				return code + fs.readFileSync(path.join(root, file));
 			}, ''));
 
