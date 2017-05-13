@@ -1,0 +1,20 @@
+extends:
+  - eslint:recommended
+  - standard
+
+parserOptions:
+  ecmaVersion: 6
+  sourceType: module
+
+env:
+  browser: true
+  es6: true
+  node: true
+
+rules:
+  indent: ['error', 'tab']
+  no-console: ['warn']
+  no-tabs: ['off']
+  quote-props: ['error', 'always']
+  semi: ['error', 'always']
+  semi-spacing: ['error', {'before': false, 'after': true}]

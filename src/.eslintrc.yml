@@ -1,0 +1,3 @@
+rules:
+  require-jsdoc: ['warn']
+  valid-jsdoc: ['warn']
