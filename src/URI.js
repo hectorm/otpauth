@@ -17,7 +17,7 @@ const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI
 const SECRET_REGEX = /^[2-7A-Z]+$/i;
 
 // Support all algorithms defined in the format spec
-const ALGORITHM_REGEX = /SHA(?:1|256|512)/i;
+const ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
 
 // Integer
 const INTEGER_REGEX = /^[+-]?[0-9]+$/;
