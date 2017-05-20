@@ -21,33 +21,33 @@ $ npm install otpauth
 ```javascript
 const OTPAuth = require('otpauth');
 
-// Generate a random secret
-let randomTOTP = new OTPAuth.TOTP();
-
-// Specify a custom secret
-let customTOTP = new OTPAuth.TOTP({
+let totp = new OTPAuth.TOTP({
 	'issuer': 'ACME',
 	'label': 'AzureDiamond',
-	'algorithm': 'SHA512',
-	'digits': 8,
-	'period': 20,
+	'algorithm': 'SHA1',
+	'digits': 6,
+	'period': 30,
 	'secret': OTPAuth.Secret.fromB32('NB2W45DFOIZA')
 });
 
+// Generate TOTP token
+let token = totp.generate();
+
+// Validate TOTP token
+let delta = totp.validate({
+	'token': token,
+	'window': 10
+});
+
 // Convert to Google Authenticator key URI
-console.log(customTOTP.toString());
-
-// Generate token
-console.log(customTOTP.generate());
-
+// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+let uri = totp.toString();
 ```
 
 ### Browser
 ```html
 <script src="otpauth.js"></script>
 <script>
-	var randomTOTP = new OTPAuth.TOTP();
-
 	// Same as above...
 </script>
 ```
