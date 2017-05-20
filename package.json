@@ -1,7 +1,7 @@
 {
   "name": "otpauth",
   "libraryName": "OTPAuth",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "One Time Password (HOTP/TOTP) library for Node.js and browser",
   "keywords": [
     "otp",
