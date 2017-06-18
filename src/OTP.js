@@ -10,14 +10,14 @@ import {URI} from './URI.js';
  * @private
  */
 const DC = {
-	'issuer': '',        // HOTP/TOTP
-	'label': 'OTPAuth',  // HOTP/TOTP
-	'algorithm': 'SHA1', // HOTP/TOTP
-	'digits': 6,         // HOTP/TOTP
-	'counter': 0,        // HOTP
-	'period': 30,        // TOTP
-	'window': 50,        // HOTP/TOTP
-	'pad': true          // HOTP/TOTP
+	'issuer': '',
+	'label': 'OTPAuth',
+	'algorithm': 'SHA1',
+	'digits': 6,
+	'counter': 0,
+	'period': 30,
+	'window': 50,
+	'pad': true
 };
 
 /**

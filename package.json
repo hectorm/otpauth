@@ -46,10 +46,11 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "3.x.x",
+    "chai": "4.x.x",
     "esdoc": "0.x.x",
-    "eslint": "3.x.x",
-    "google-closure-compiler-js": "20170423.0.0",
+    "eslint": "4.x.x",
+    "eslint-config-zant": "1.x.x",
+    "google-closure-compiler-js": "20170521.0.0",
     "karma": "1.x.x",
     "karma-chai": "0.x.x",
     "karma-chrome-launcher": "2.x.x",
@@ -59,7 +60,6 @@
     "npm-run-all": "latest",
     "rimraf": "latest",
     "sjcl": "1.0.6",
-    "standard": "10.x.x",
     "tmp": "latest",
     "webpack": "2.x.x"
   }

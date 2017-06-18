@@ -1,6 +1,5 @@
 extends:
-  - eslint:recommended
-  - standard
+  - zant
 
 parserOptions:
   ecmaVersion: 6
@@ -12,9 +11,4 @@ env:
   node: true
 
 rules:
-  indent: ['error', 'tab']
   no-console: ['warn']
-  no-tabs: ['off']
-  quote-props: ['error', 'always']
-  semi: ['error', 'always']
-  semi-spacing: ['error', {'before': false, 'after': true}]
