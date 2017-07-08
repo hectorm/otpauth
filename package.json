@@ -47,7 +47,7 @@
     "esdoc": "0.x.x",
     "eslint": "4.x.x",
     "eslint-config-zant": "1.x.x",
-    "google-closure-compiler-js": "20170521.0.0",
+    "google-closure-compiler-js": "20170626.0.0",
     "karma": "1.x.x",
     "karma-chai": "0.x.x",
     "karma-chrome-launcher": "2.x.x",
@@ -56,8 +56,8 @@
     "mocha": "3.x.x",
     "npm-run-all": "latest",
     "rimraf": "latest",
-    "sjcl": "1.0.6",
+    "sjcl": "1.0.7",
     "tmp": "latest",
-    "webpack": "2.x.x"
+    "webpack": "3.x.x"
   }
 }
