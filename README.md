@@ -46,7 +46,7 @@ let uri = totp.toString();
 
 ### Browser
 ```html
-<script src="otpauth.js"></script>
+<script src="otpauth.min.js"></script>
 <script>
 	// Same as above...
 </script>

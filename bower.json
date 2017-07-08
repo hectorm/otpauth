@@ -34,7 +34,7 @@
     "type": "git",
     "url": "https://github.com/zant95/otpauth.git"
   },
-  "main": "./lib/otpauth.js",
+  "main": "./dist/otpauth.min.js",
   "moduleType": [
     "amd",
     "es6",

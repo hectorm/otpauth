@@ -14,11 +14,13 @@ module.exports = {
 	'output': {
 		'library': `${pkg.libraryName}`,
 		'libraryTarget': 'umd',
-		'filename': `${pkg.name}.js`,
-		'path': path.join(__dirname, 'lib')
+		'filename': `${pkg.name}.min.js`,
+		'path': path.join(__dirname, 'dist')
 	},
 	'devtool': 'source-map',
-	'node': {'Buffer': false},
+	'node': {
+		'Buffer': false
+	},
 	'plugins': [
 		// Custom build of the Stanford Javascript Crypto Library (SJCL)
 		new webpack.NormalModuleReplacementPlugin(/^sjcl$/, function (result) {

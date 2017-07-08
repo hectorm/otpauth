@@ -30,10 +30,7 @@
   "bugs": {
     "url": "https://github.com/zant95/otpauth/issues"
   },
-  "main": "./lib/otpauth.js",
-  "directories": {
-    "lib": "./lib"
-  },
+  "main": "./dist/otpauth.min.js",
   "scripts": {
     "lint": "eslint .",
     "build": "webpack --display-reasons",
@@ -42,7 +39,7 @@
     "test": "run-s test:*",
     "doc": "rimraf ./doc && esdoc",
     "dist": "run-s lint build test doc",
-    "version": "run-s dist && git add -A lib"
+    "version": "run-s dist && git add -A dist"
   },
   "dependencies": {},
   "devDependencies": {

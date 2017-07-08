@@ -1,7 +1,7 @@
 'use strict';
 
 /* eslint-disable no-use-before-define */
-var OTPAuth = OTPAuth || require('../lib/otpauth.js');
+var OTPAuth = OTPAuth || require('../dist/otpauth.min.js');
 var chai = chai || require('chai');
 var expect = expect || chai.expect;
 /* eslint-enable */

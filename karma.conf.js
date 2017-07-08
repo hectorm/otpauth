@@ -6,7 +6,7 @@ module.exports = function (config) {
 	config.set({
 		'frameworks': ['mocha', 'chai'],
 		'files': [
-			path.join(__dirname, 'lib/otpauth.js'),
+			path.join(__dirname, 'dist/otpauth.min.js'),
 			path.join(__dirname, 'test/test.js')
 		],
 		'reporters': ['dots'],
