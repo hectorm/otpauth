@@ -43,11 +43,10 @@
   ],
   "ignore": [
     "**/.*",
-    "bower_components",
-    "doc",
-    "node_modules",
-    "src",
-    "test",
-    "package.json"
+    "/test/",
+    "karma.conf.js",
+    "package-lock.json",
+    "package.json",
+    "webpack.config.js"
   ]
 }
