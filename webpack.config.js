@@ -10,18 +10,18 @@ const webpack = require('webpack');
 const ClosureCompilerPlugin = require('google-closure-compiler-js').webpack;
 
 module.exports = {
-	'entry': path.join(__dirname, 'src/index.js'),
-	'output': {
-		'library': `${pkg.libraryName}`,
-		'libraryTarget': 'umd',
-		'filename': `${pkg.name}.min.js`,
-		'path': path.join(__dirname, 'dist')
+	entry: path.join(__dirname, 'src/index.js'),
+	output: {
+		library: `${pkg.libraryName}`,
+		libraryTarget: 'umd',
+		filename: `${pkg.name}.min.js`,
+		path: path.join(__dirname, 'dist')
 	},
-	'devtool': 'source-map',
-	'node': {
-		'Buffer': false
+	devtool: 'source-map',
+	node: {
+		Buffer: false
 	},
-	'plugins': [
+	plugins: [
 		// Custom build of the Stanford Javascript Crypto Library (SJCL)
 		new webpack.NormalModuleReplacementPlugin(/^sjcl$/, function (result) {
 			const request = tmp.fileSync().name;
@@ -45,19 +45,19 @@ module.exports = {
 			result.request = request;
 		}),
 		new ClosureCompilerPlugin({
-			'options': {
-				'warningLevel': 'QUIET',
-				'languageIn': 'ES6_STRICT',
-				'languageOut': 'ES5_STRICT',
-				'compilationLevel': 'SIMPLE',
-				'createSourceMap': true,
-				'rewritePolyfills': true,
-				'assumeFunctionWrapper': true,
-				'outputWrapper': '(function(){%output%}).call(this);',
-				'externs': [
-					{'src': 'var define'},
-					{'src': 'var exports'},
-					{'src': 'var module'}
+			options: {
+				warningLevel: 'QUIET',
+				languageIn: 'ES6_STRICT',
+				languageOut: 'ES5_STRICT',
+				compilationLevel: 'SIMPLE',
+				createSourceMap: true,
+				rewritePolyfills: true,
+				assumeFunctionWrapper: true,
+				outputWrapper: '(function(){%output%}).call(this);',
+				externs: [
+					{src: 'var define'},
+					{src: 'var exports'},
+					{src: 'var module'}
 				]
 			}
 		}),

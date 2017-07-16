@@ -1,8 +1,6 @@
-'use strict';
-
-import {Utils} from './Utils.js';
-import {Secret} from './Secret.js';
-import {HOTP, TOTP} from './OTP.js';
+import {Utils} from './utils.js';
+import {Secret} from './secret.js';
+import {HOTP, TOTP} from './otp.js';
 
 /*
  * Google Authenticator key URI format:
@@ -35,11 +33,11 @@ export class URI {
 	 * @param {string} uri Google Authenticator Key URI.
 	 * @returns {Object} HOTP/TOTP object.
 	 */
-	static parse (uri) {
+	static parse(uri) {
 		const uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
 
 		if (uriGroups === null) {
-			throw Error('Invalid URI format');
+			throw new TypeError('Invalid URI format');
 		}
 
 		// Extract URI groups
@@ -62,28 +60,28 @@ export class URI {
 		if (uriType === 'hotp') {
 			OTP = HOTP;
 
-			// counter: required
+			// Counter: required
 			if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
 				config.counter = parseInt(uriParams.counter, 10);
 			} else {
-				throw Error('Missing or invalid \'counter\' parameter');
+				throw new TypeError('Missing or invalid \'counter\' parameter');
 			}
 		} else if (uriType === 'totp') {
 			OTP = TOTP;
 
-			// period: optional
+			// Period: optional
 			if (typeof uriParams.period !== 'undefined') {
 				if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
 					config.period = parseInt(uriParams.period, 10);
 				} else {
-					throw Error('Invalid \'period\' parameter');
+					throw new TypeError('Invalid \'period\' parameter');
 				}
 			}
 		} else {
-			throw Error('Unknown OTP type');
+			throw new TypeError('Unknown OTP type');
 		}
 
-		// label: required
+		// Label: required
 		// issuer: optional
 		if (uriLabel.length === 2) {
 			config.label = uriLabel[1];
@@ -92,7 +90,7 @@ export class URI {
 			} else if (uriParams.issuer === uriLabel[0]) {
 				config.issuer = uriParams.issuer;
 			} else {
-				throw Error('Invalid \'issuer\' parameter');
+				throw new TypeError('Invalid \'issuer\' parameter');
 			}
 		} else {
 			config.label = uriLabel[0];
@@ -101,28 +99,30 @@ export class URI {
 			}
 		}
 
-		// secret: required
-		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
-			config.secret = new Secret({'buffer': Utils.b32.encode(uriParams.secret)});
+		// Secret: required
+		if (typeof uriParams.secret !== 'undefined' &&
+			SECRET_REGEX.test(uriParams.secret)
+		) {
+			config.secret = new Secret({buffer: Utils.b32.encode(uriParams.secret)});
 		} else {
-			throw Error('Missing or invalid \'secret\' parameter');
+			throw new TypeError('Missing or invalid \'secret\' parameter');
 		}
 
-		// algorithm: optional
+		// Algorithm: optional
 		if (typeof uriParams.algorithm !== 'undefined') {
 			if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
 				config.algorithm = uriParams.algorithm;
 			} else {
-				throw Error('Invalid \'algorithm\' parameter');
+				throw new TypeError('Invalid \'algorithm\' parameter');
 			}
 		}
 
-		// digits: optional
+		// Digits: optional
 		if (typeof uriParams.digits !== 'undefined') {
 			if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
 				config.digits = parseInt(uriParams.digits, 10);
 			} else {
-				throw Error('Invalid \'digits\' parameter');
+				throw new TypeError('Invalid \'digits\' parameter');
 			}
 		}
 
@@ -137,9 +137,9 @@ export class URI {
 	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
 	 * @returns {string} Google Authenticator Key URI.
 	 */
-	static stringify (otp, {legacyIssuer = true} = {}) {
+	static stringify(otp, {legacyIssuer = true} = {}) {
 		if (!(otp instanceof HOTP || otp instanceof TOTP)) {
-			throw Error('Invalid \'HOTP/TOTP\' object');
+			throw new TypeError('Invalid \'HOTP/TOTP\' object');
 		}
 
 		// Key URI format:

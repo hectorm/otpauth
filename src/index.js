@@ -1,9 +1,7 @@
-'use strict';
-
-import {HOTP, TOTP} from './OTP.js';
-import {URI} from './URI.js';
-import {Secret} from './Secret.js';
-import {Utils} from './Utils.js';
+import {HOTP, TOTP} from './otp.js';
+import {URI} from './uri.js';
+import {Secret} from './secret.js';
+import {Utils} from './utils.js';
 
 /**
  * One Time Password (HOTP/TOTP) library for Node.js and browser.

@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * An object containing some utilities.
  * @type {Object}
@@ -25,7 +23,7 @@
  *   Converts a hexadecimal string to an ArrayBuffer.
  */
 export const Utils = {
-	'uint': {}, 'raw': {}, 'b32': {}, 'hex': {}
+	uint: {}, raw: {}, b32: {}, hex: {}
 };
 
 Utils.uint.decode = function (buf) {
@@ -33,7 +31,10 @@ Utils.uint.decode = function (buf) {
 	let num = 0;
 
 	for (let i = 0; i < arr.length; i++) {
-		if (arr[i] === 0) continue;
+		if (arr[i] === 0) {
+			continue;
+		}
+
 		num *= 256;
 		num += arr[i];
 	}
@@ -47,7 +48,10 @@ Utils.uint.encode = function (num) {
 	let acc = num;
 
 	for (let i = 7; i >= 0; i--) {
-		if (acc === 0) break;
+		if (acc === 0) {
+			break;
+		}
+
 		arr[i] = acc & 255;
 		acc -= arr[i];
 		acc /= 256;
@@ -90,17 +94,17 @@ Utils.b32.decode = function (buf) {
 	let str = '';
 
 	for (let i = 0; i < arr.length; i++) {
-		value = value << 8 | arr[i];
+		value = (value << 8) | arr[i];
 		bits += 8;
 
 		while (bits >= 5) {
-			str += Utils.b32.alphabet[value >>> bits - 5 & 31];
+			str += Utils.b32.alphabet[(value >>> bits - 5) & 31];
 			bits -= 5;
 		}
 	}
 
 	if (bits > 0) {
-		str += Utils.b32.alphabet[value << 5 - bits & 31];
+		str += Utils.b32.alphabet[(value << 5 - bits) & 31];
 	}
 
 	return str;
@@ -120,14 +124,14 @@ Utils.b32.encode = function (str) {
 		let idx = Utils.b32.alphabet.indexOf(strUpp[i]);
 
 		if (idx === -1) {
-			throw new Error('Invalid character found: ' + strUpp[i]);
+			throw new TypeError('Invalid character found: ' + strUpp[i]);
 		}
 
-		value = value << 5 | idx;
+		value = (value << 5) | idx;
 		bits += 5;
 
 		if (bits >= 8) {
-			arr[index++] = value >>> bits - 8 & 255;
+			arr[index++] = (value >>> bits - 8) & 255;
 			bits -= 8;
 		}
 	}

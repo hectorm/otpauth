@@ -17,7 +17,49 @@ if (typeof window === 'undefined' &&
 	nodeCrypto = eval('require')('crypto');
 }
 
-if (typeof nodeCrypto !== 'undefined') {
+if (typeof nodeCrypto === 'undefined') {
+	let getRandomValues;
+
+	if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {
+		getRandomValues = function (arr) {
+			global.crypto.getRandomValues(arr);
+		};
+	} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {
+		getRandomValues = function (arr) {
+			global.msCrypto.getRandomValues(arr);
+		};
+	} else {
+		// eslint-disable-next-line no-console
+		console.warn('Cryptography API not available, falling back to \'Math.random\'...');
+
+		getRandomValues = function (arr) {
+			for (let i = 0; i < arr.length; i++) {
+				arr[i] = Math.floor(Math.random() * 256);
+			}
+		};
+	}
+
+	Crypto.randomBytes = function (size) {
+		const arr = new Uint8Array(size);
+		getRandomValues(arr);
+
+		return arr;
+	};
+
+	Crypto.hmacDigest = function (algorithm, key, message) {
+		const hash = sjcl.hash[algorithm.toLowerCase()];
+
+		if (typeof hash === 'undefined') {
+			throw new TypeError('Unknown hash function');
+		}
+
+		// eslint-disable-next-line new-cap
+		const hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
+		hmac.update(sjcl.codec.arrayBuffer.toBits(message));
+
+		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
+	};
+} else {
 	let bufferFrom;
 
 	if (typeof Buffer.from === 'function') {
@@ -25,7 +67,7 @@ if (typeof nodeCrypto !== 'undefined') {
 	} else {
 		// Node.js < 5.10.0
 		bufferFrom = function (arrbuf) {
-			// eslint-disable-next-line node/no-deprecated-api
+			// eslint-disable-next-line unicorn/no-new-buffer
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
 
@@ -69,47 +111,5 @@ if (typeof nodeCrypto !== 'undefined') {
 				.update(bufferFrom(message))
 				.digest()
 		);
-	};
-} else {
-	let getRandomValues;
-
-	if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {
-		getRandomValues = function (arr) {
-			global.crypto.getRandomValues(arr);
-		};
-	} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {
-		getRandomValues = function (arr) {
-			global.msCrypto.getRandomValues(arr);
-		};
-	} else {
-		// eslint-disable-next-line no-console
-		console.warn('Cryptography API not available, falling back to \'Math.random\'...');
-
-		getRandomValues = function (arr) {
-			for (let i = 0; i < arr.length; i++) {
-				arr[i] = Math.floor(Math.random() * 256);
-			}
-		};
-	}
-
-	Crypto.randomBytes = function (size) {
-		const arr = new Uint8Array(size);
-		getRandomValues(arr);
-
-		return arr;
-	};
-
-	Crypto.hmacDigest = function (algorithm, key, message) {
-		const hash = sjcl.hash[algorithm.toLowerCase()];
-
-		if (typeof hash === 'undefined') {
-			throw Error('Unknown hash function');
-		}
-
-		// eslint-disable-next-line new-cap
-		const hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
-		hmac.update(sjcl.codec.arrayBuffer.toBits(message));
-
-		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
 	};
 }
