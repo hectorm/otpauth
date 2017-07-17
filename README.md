@@ -22,12 +22,12 @@ $ npm install otpauth
 const OTPAuth = require('otpauth');
 
 let totp = new OTPAuth.TOTP({
-	'issuer': 'ACME',
-	'label': 'AzureDiamond',
-	'algorithm': 'SHA1',
-	'digits': 6,
-	'period': 30,
-	'secret': OTPAuth.Secret.fromB32('NB2W45DFOIZA')
+	issuer: 'ACME',
+	label: 'AzureDiamond',
+	algorithm: 'SHA1',
+	digits: 6,
+	period: 30,
+	secret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')
 });
 
 // Generate TOTP token
@@ -35,8 +35,8 @@ let token = totp.generate();
 
 // Validate TOTP token
 let delta = totp.validate({
-	'token': token,
-	'window': 10
+	token: token,
+	window: 10
 });
 
 // Convert to Google Authenticator key URI
