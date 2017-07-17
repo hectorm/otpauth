@@ -140,7 +140,10 @@ export class URI {
 	 * @returns {string} Google Authenticator Key URI.
 	 */
 	static stringify(otp, {legacyIssuer = true} = {}) {
-		if (!(otp instanceof HOTP || otp instanceof TOTP)) {
+		const isHOTP = otp instanceof HOTP;
+		const isTOTP = otp instanceof TOTP;
+
+		if (!isHOTP && !isTOTP) {
 			throw new TypeError('Invalid \'HOTP/TOTP\' object');
 		}
 
@@ -149,7 +152,7 @@ export class URI {
 		let uri = 'otpauth://';
 
 		// Type
-		uri += (otp instanceof TOTP ? 'totp' : 'hotp') + '/';
+		uri += (isTOTP ? 'totp' : 'hotp') + '/';
 
 		// Label and optional issuer
 		if (otp.issuer.length > 0) {
@@ -170,7 +173,7 @@ export class URI {
 			`&digits=${otp.digits}`;
 
 		// Extra parameters
-		if (otp instanceof TOTP) {
+		if (isTOTP) {
 			// TOTP parameters
 			uri += `&period=${otp.period}`;
 		} else {
