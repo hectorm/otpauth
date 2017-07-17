@@ -34,10 +34,14 @@ export class URI {
 	 * @returns {Object} HOTP/TOTP object.
 	 */
 	static parse(uri) {
-		const uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
+		let uriGroups;
 
-		if (uriGroups === null) {
-			throw new TypeError('Invalid URI format');
+		try {
+			uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
+		} catch (err) {}
+
+		if (!Array.isArray(uriGroups)) {
+			throw new URIError('Invalid URI format');
 		}
 
 		// Extract URI groups
@@ -82,7 +86,7 @@ export class URI {
 		}
 
 		// Label: required
-		// issuer: optional
+		// Issuer: optional
 		if (uriLabel.length === 2) {
 			config.label = uriLabel[1];
 			if (typeof uriParams.issuer === 'undefined') {
@@ -100,9 +104,7 @@ export class URI {
 		}
 
 		// Secret: required
-		if (typeof uriParams.secret !== 'undefined' &&
-			SECRET_REGEX.test(uriParams.secret)
-		) {
+		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
 			config.secret = new Secret({buffer: Utils.b32.encode(uriParams.secret)});
 		} else {
 			throw new TypeError('Missing or invalid \'secret\' parameter');
