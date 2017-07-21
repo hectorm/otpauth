@@ -1,4 +1,4 @@
-![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)
+[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][2]
 [![Dependency status](https://img.shields.io/david/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth)
 [![Dev Dependencies Status](https://img.shields.io/david/dev/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth?type=dev)
 [![NPM Status](https://img.shields.io/npm/dm/otpauth.svg)][2]
