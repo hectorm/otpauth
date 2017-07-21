@@ -6,6 +6,7 @@ import {URI} from './uri.js';
 /**
  * Default Configuration.
  * @private
+ * @type {Object}
  */
 const DC = {
 	issuer: '',
@@ -19,41 +20,57 @@ const DC = {
 };
 
 /**
- * @class HOTP
+ * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
+ * @see https://tools.ietf.org/html/rfc4226
  */
 export class HOTP {
 	/**
-	 * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226)
-	 * @see https://tools.ietf.org/html/rfc4226
 	 * @param {Object} [config] Configuration options.
-	 * @param {string} [config.issuer] Account provider.
-	 * @param {string} [config.label=OTPAuth] Account label.
+	 * @param {string} [config.issuer=''] Account provider.
+	 * @param {string} [config.label='OTPAuth'] Account label.
 	 * @param {Secret} [config.secret=Secret] Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.counter=0] Initial counter value.
 	 */
 	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter} = {}) {
-		/** @type {string} */
+		/**
+		 * Account provider.
+		 * @type {string}
+		 */
 		this.issuer = issuer;
-		/** @type {string} */
+		/**
+		 * Account label.
+		 * @type {string}
+		 */
 		this.label = label;
-		/** @type {string} */
-		this.algorithm = algorithm;
-		/** @type {Secret} */
+		/**
+		 * Secret key.
+		 * @type {Secret}
+		 */
 		this.secret = secret;
-		/** @type {number} */
+		/**
+		 * HMAC hashing algorithm.
+		 * @type {string}
+		 */
+		this.algorithm = algorithm;
+		/**
+		 * Token length.
+		 * @type {number}
+		 */
 		this.digits = digits;
-		/** @type {number} */
+		/**
+		 * Initial counter value.
+		 * @type {number}
+		 */
 		this.counter = counter;
 	}
 
 	/**
 	 * Generates an HOTP token.
-	 * @method generate
 	 * @param {Object} config Configuration options.
 	 * @param {Secret} config.secret Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.counter=0] Counter value.
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
@@ -78,7 +95,6 @@ export class HOTP {
 
 	/**
 	 * Generates an HOTP token.
-	 * @method generate
 	 * @param {Object} [config] Configuration options.
 	 * @param {number} [config.counter=this.counter++] Counter value.
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
@@ -96,11 +112,10 @@ export class HOTP {
 
 	/**
 	 * Validates an HOTP token.
-	 * @method validate
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {Secret} config.secret Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.counter=0] Counter value.
 	 * @param {number} [config.window=50] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
@@ -127,7 +142,6 @@ export class HOTP {
 
 	/**
 	 * Validates an HOTP token.
-	 * @method validate
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {number} [config.counter=this.counter] Counter value.
@@ -146,7 +160,6 @@ export class HOTP {
 
 	/**
 	 * Returns a Google Authenticator key URI.
-	 * @method toString
 	 * @returns {string} URI.
 	 */
 	toString() {
@@ -155,41 +168,57 @@ export class HOTP {
 }
 
 /**
- * @class TOTP
+ * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).
+ * @see https://tools.ietf.org/html/rfc6238
  */
 export class TOTP {
 	/**
-	 * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).
-	 * @see https://tools.ietf.org/html/rfc6238
 	 * @param {Object} [config] Configuration options.
-	 * @param {string} [config.issuer] Account provider.
-	 * @param {string} [config.label=OTPAuth] Account label.
+	 * @param {string} [config.issuer=''] Account provider.
+	 * @param {string} [config.label='OTPAuth'] Account label.
 	 * @param {Secret} [config.secret=Secret] Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 */
 	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, period = DC.period} = {}) {
-		/** @type {string} */
+		/**
+		 * Account provider.
+		 * @type {string}
+		 */
 		this.issuer = issuer;
-		/** @type {string} */
+		/**
+		 * Account label.
+		 * @type {string}
+		 */
 		this.label = label;
-		/** @type {string} */
+		/**
+		 * Secret key.
+		 * @type {string}
+		 */
 		this.secret = secret;
-		/** @type {Secret} */
+		/**
+		 * HMAC hashing algorithm.
+		 * @type {Secret}
+		 */
 		this.algorithm = algorithm;
-		/** @type {number} */
+		/**
+		 * Token length.
+		 * @type {number}
+		 */
 		this.digits = digits;
-		/** @type {number} */
+		/**
+		 * Token time-step duration.
+		 * @type {number}
+		 */
 		this.period = period;
 	}
 
 	/**
 	 * Generates a TOTP token.
-	 * @method generate
 	 * @param {Object} config Configuration options.
 	 * @param {Secret} config.secret Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
@@ -208,7 +237,6 @@ export class TOTP {
 
 	/**
 	 * Generates a TOTP token.
-	 * @method generate
 	 * @param {Object} [config] Configuration options.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
@@ -227,11 +255,10 @@ export class TOTP {
 
 	/**
 	 * Validates a TOTP token.
-	 * @method validate
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {Secret} config.secret Secret key.
-	 * @param {string} [config.algorithm=SHA1] HMAC hashing algorithm.
+	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
 	 * @param {number} [config.window=50] Window of counter values to test.
@@ -249,7 +276,6 @@ export class TOTP {
 
 	/**
 	 * Validates a TOTP token.
-	 * @method validate
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
@@ -269,7 +295,6 @@ export class TOTP {
 
 	/**
 	 * Returns a Google Authenticator key URI.
-	 * @method toString
 	 * @returns {string} URI.
 	 */
 	toString() {

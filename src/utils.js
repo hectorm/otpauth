@@ -1,31 +1,20 @@
 /**
  * An object containing some utilities.
  * @type {Object}
- *
- * @property {function(buf: ArrayBuffer): number} uint.decode
- *   Converts an ArrayBuffer to an integer.
- * @property {function(num: number): ArrayBuffer} uint.encode
- *   Converts an integer to an ArrayBuffer.
- *
- * @property {function(buf: ArrayBuffer): string} raw.decode
- *   Converts an ArrayBuffer to a string.
- * @property {function(str: string): ArrayBuffer} raw.encode
- *   Converts a string to an ArrayBuffer.
- *
- * @property {function(buf: ArrayBuffer): string} b32.decode
- *   Converts an ArrayBuffer to a base32 string (RFC 4648).
- * @property {function(str: string): ArrayBuffer} b32.encode
- *   Converts a base32 string to an ArrayBuffer (RFC 4648).
- *
- * @property {function(buf: ArrayBuffer): string} hex.decode
- *   Converts an ArrayBuffer to a hexadecimal string.
- * @property {function(str: string): ArrayBuffer} hex.encode
- *   Converts a hexadecimal string to an ArrayBuffer.
  */
-export const Utils = {
-	uint: {}, raw: {}, b32: {}, hex: {}
-};
+export const Utils = {};
 
+/**
+ * UInt conversion.
+ * @type {Object}
+ */
+Utils.uint = {};
+
+/**
+ * Converts an ArrayBuffer to an integer.
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {number} Integer.
+ */
 Utils.uint.decode = function (buf) {
 	const arr = new Uint8Array(buf);
 	let num = 0;
@@ -42,6 +31,11 @@ Utils.uint.decode = function (buf) {
 	return num;
 };
 
+/**
+ * Converts an integer to an ArrayBuffer.
+ * @param {number} num Integer.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
 Utils.uint.encode = function (num) {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
@@ -60,6 +54,17 @@ Utils.uint.encode = function (num) {
 	return buf;
 };
 
+/**
+ * Raw string conversion.
+ * @type {Object}
+ */
+Utils.raw = {};
+
+/**
+ * Converts an ArrayBuffer to a string.
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} String.
+ */
 Utils.raw.decode = function (buf) {
 	const arr = new Uint8Array(buf);
 	let str = '';
@@ -71,6 +76,11 @@ Utils.raw.decode = function (buf) {
 	return str;
 };
 
+/**
+ * Converts a string to an ArrayBuffer.
+ * @param {string} str String.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
 Utils.raw.encode = function (str) {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
@@ -82,10 +92,24 @@ Utils.raw.encode = function (str) {
 	return buf;
 };
 
-// RFC 4648 base32 alphabet without pad
+/**
+ * Base32 string conversion.
+ * @type {Object}
+ */
+Utils.b32 = {};
+
+/**
+ * RFC 4648 base32 alphabet without pad.
+ * @type {string}
+ */
 Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
-// Based on github.com/LinusU/base32-decode
+/**
+ * Converts an ArrayBuffer to a base32 string (RFC 4648).
+ * @see https://github.com/LinusU/base32-decode
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} Base32 string.
+ */
 Utils.b32.decode = function (buf) {
 	const arr = new Uint8Array(buf);
 
@@ -110,7 +134,12 @@ Utils.b32.decode = function (buf) {
 	return str;
 };
 
-// Based on github.com/LinusU/base32-encode
+/**
+ * Converts a base32 string to an ArrayBuffer (RFC 4648).
+ * @see https://github.com/LinusU/base32-encode
+ * @param {string} str Base32 string.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
 Utils.b32.encode = function (str) {
 	const strUpp = str.toUpperCase();
 	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
@@ -139,6 +168,17 @@ Utils.b32.encode = function (str) {
 	return buf;
 };
 
+/**
+ * Hexadecimal string conversion.
+ * @type {Object}
+ */
+Utils.hex = {};
+
+/**
+ * Converts an ArrayBuffer to a hexadecimal string.
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} Hexadecimal string.
+ */
 Utils.hex.decode = function (buf) {
 	const arr = new Uint8Array(buf);
 	let str = '';
@@ -154,6 +194,11 @@ Utils.hex.decode = function (buf) {
 	return str.toUpperCase();
 };
 
+/**
+ * Converts a hexadecimal string to an ArrayBuffer.
+ * @param {string} str Hexadecimal string.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
 Utils.hex.encode = function (str) {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
@@ -163,4 +208,28 @@ Utils.hex.encode = function (str) {
 	}
 
 	return buf;
+};
+
+/**
+ * An object containing some utilities (for internal use only).
+ * @private
+ * @type {Object}
+ */
+export const InternalUtils = {};
+
+/**
+ * Detect if running in "Node.js".
+ * @type {boolean}
+ */
+// eslint-disable-next-line dot-notation
+InternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[object process]';
+
+/**
+ * Dynamically import "Node.js" modules.
+ * @param {string} name Name.
+ * @returns {Object} Module.
+ */
+InternalUtils.require = function (name) {
+	// eslint-disable-next-line no-eval
+	return InternalUtils.isNode ? eval('require')(name) : null;
 };

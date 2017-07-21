@@ -1,0 +1,23 @@
+{
+  "source": "./src",
+  "destination": "./docs",
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "brand": {
+          "title": "OTPAuth",
+          "description": "One Time Password (HOTP/TOTP) library for Node.js and browser",
+          "repository": "https://github.com/zant95/otpauth",
+          "author": "Héctor Molinero Fernández <hector@molinero.xyz>"
+        },
+        "lint": {"enable": true},
+        "coverage": {"enable": true},
+        "accessor": {"access": ["public", "protected"], "autoPrivate": true},
+        "undocumentIdentifier": {"enable": true},
+        "unexportedIdentifier": {"enable": false},
+        "typeInference": {"enable": true}
+      }
+    }
+  ]
+}

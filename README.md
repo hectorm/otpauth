@@ -11,8 +11,8 @@ One Time Password (HOTP/TOTP) library for Node.js and browser.
 ## Installation
 Install the module via `npm`.
 
-```
-$ npm install otpauth
+```sh
+npm install otpauth
 ```
 
 ## Usage
@@ -30,17 +30,17 @@ let totp = new OTPAuth.TOTP({
 	secret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')
 });
 
-// Generate TOTP token
+// Generate TOTP token.
 let token = totp.generate();
 
-// Validate TOTP token
+// Validate TOTP token.
 let delta = totp.validate({
 	token: token,
 	window: 10
 });
 
-// Convert to Google Authenticator key URI
-// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+// Convert to Google Authenticator key URI:
+//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
 let uri = totp.toString();
 ```
 

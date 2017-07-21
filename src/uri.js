@@ -2,29 +2,52 @@ import {Utils} from './utils.js';
 import {Secret} from './secret.js';
 import {HOTP, TOTP} from './otp.js';
 
-/*
- * Google Authenticator key URI format:
- *   https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+/**
+ * Valid key URI parameters.
+ * @private
+ * @type {Array}
  */
+const OTPURI_PARAMS = ['issuer', 'label', 'secret', 'algorithm', 'digits', 'counter', 'period'];
 
-// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
-const OTPURI_PARAMS = ['issuer', 'label', 'secret', 'algorithm', 'digits', 'counter', 'period'].join('|');
-const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS})=[^&]+)+)$`, 'i');
+/**
+ * Key URI regex.
+ *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+ * @private
+ * @type {RegExp}
+ */
+const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');
 
-// RFC 4648 base32 alphabet without pad
+/**
+ * RFC 4648 base32 alphabet without pad.
+ * @private
+ * @type {string}
+ */
 const SECRET_REGEX = /^[2-7A-Z]+$/i;
 
-// Support all algorithms defined in the format spec
+/**
+ * Regex for supported algorithms.
+ * @private
+ * @type {RegExp}
+ */
 const ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
 
-// Integer
+/**
+ * Integer regex.
+ * @private
+ * @type {RegExp}
+ */
 const INTEGER_REGEX = /^[+-]?[0-9]+$/;
 
-// Positive integer, excluding 0
+/**
+ * Positive integer regex.
+ * @private
+ * @type {RegExp}
+ */
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9][0-9]*$/;
 
 /**
- * @class URI
+ * HOTP/TOTP object/string conversion.
+ * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format
  */
 export class URI {
 	/**
