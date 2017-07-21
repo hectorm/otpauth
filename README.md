@@ -1,7 +1,9 @@
-[![Documentation](https://doc.esdoc.org/github.com/zant95/otpauth/badge.svg)][3]
+![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)
+[![Dependency status](https://img.shields.io/david/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth)
+[![Dev Dependencies Status](https://img.shields.io/david/dev/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth?type=dev)
+[![NPM Status](https://img.shields.io/npm/dm/otpauth.svg)][2]
+[![Documentation](https://zant95.github.io/otpauth/badge.svg)][3]
 [![License](https://img.shields.io/github/license/zant95/otpauth.svg)][1]
-
-[![NPM](https://nodei.co/npm/otpauth.png)][2]
 
 ***
 
@@ -61,6 +63,6 @@ See the [documentation][3] page.
 
 [1]: LICENSE.md
 [2]: https://www.npmjs.com/package/otpauth
-[3]: https://doc.esdoc.org/github.com/zant95/otpauth/
+[3]: https://zant95.github.io/otpauth/index.html
 [4]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
 [5]: https://github.com/bitwiseshiftleft/sjcl
