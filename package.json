@@ -39,7 +39,7 @@
     "test": "run-s test:*",
     "docs": "rimraf docs && esdoc",
     "dist": "run-s lint build test docs",
-    "version": "run-s dist && git add -A dist"
+    "version": "run-s dist && git add -A dist docs"
   },
   "dependencies": {},
   "devDependencies": {
