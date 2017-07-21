@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/otp.js | OTPAuth</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="One Time Password (HOTP/TOTP) library for Node.js and browser"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="OTPAuth"><meta property="twitter:description" content="One Time Password (HOTP/TOTP) library for Node.js and browser"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/zant95/otpauth"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/otp.js~HOTP.html">HOTP</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/otp.js~TOTP.html">TOTP</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/secret.js~Secret.html">Secret</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/uri.js~URI.html">URI</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-Utils">Utils</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/otp.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Utils} from &apos;./utils.js&apos;;
+import {Crypto} from &apos;./crypto.js&apos;;
+import {Secret} from &apos;./secret.js&apos;;
+import {URI} from &apos;./uri.js&apos;;
+
+/**
+ * Default Configuration.
+ * @private
+ * @type {Object}
+ */
+const DC = {
+	issuer: &apos;&apos;,
+	label: &apos;OTPAuth&apos;,
+	algorithm: &apos;SHA1&apos;,
+	digits: 6,
+	counter: 0,
+	period: 30,
+	window: 50,
+	pad: true
+};
+
+/**
+ * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
+ * @see https://tools.ietf.org/html/rfc4226
+ */
+export class HOTP {
+	/**
+	 * @param {Object} [config] Configuration options.
+	 * @param {string} [config.issuer=&apos;&apos;] Account provider.
+	 * @param {string} [config.label=&apos;OTPAuth&apos;] Account label.
+	 * @param {Secret} [config.secret=Secret] Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.digits=6] Token length.
+	 * @param {number} [config.counter=0] Initial counter value.
+	 */
+	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter} = {}) {
+		/**
+		 * Account provider.
+		 * @type {string}
+		 */
+		this.issuer = issuer;
+		/**
+		 * Account label.
+		 * @type {string}
+		 */
+		this.label = label;
+		/**
+		 * Secret key.
+		 * @type {Secret}
+		 */
+		this.secret = secret;
+		/**
+		 * HMAC hashing algorithm.
+		 * @type {string}
+		 */
+		this.algorithm = algorithm;
+		/**
+		 * Token length.
+		 * @type {number}
+		 */
+		this.digits = digits;
+		/**
+		 * Initial counter value.
+		 * @type {number}
+		 */
+		this.counter = counter;
+	}
+
+	/**
+	 * Generates an HOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {Secret} config.secret Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.digits=6] Token length.
+	 * @param {number} [config.counter=0] Counter value.
+	 * @param {boolean} [config.pad=true] Add leading zeros to result.
+	 * @returns {string|number} Token.
+	 */
+	static generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {
+		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
+
+		const offset = digest[digest.byteLength - 1] &amp; 15;
+		const binary = (
+			((digest[offset] &amp; 127) &lt;&lt; 24) |
+			((digest[offset + 1] &amp; 255) &lt;&lt; 16) |
+			((digest[offset + 2] &amp; 255) &lt;&lt; 8) |
+			(digest[offset + 3] &amp; 255)
+		) % Math.pow(10, digits);
+
+		return pad
+			// ? &apos;0&apos;.repeat(digits - String(binary).length) + binary
+			? Array(1 + digits - String(binary).length).join(&apos;0&apos;) + binary
+			: binary;
+	}
+
+	/**
+	 * Generates an HOTP token.
+	 * @param {Object} [config] Configuration options.
+	 * @param {number} [config.counter=this.counter++] Counter value.
+	 * @param {boolean} [config.pad=true] Add leading zeros to result.
+	 * @returns {string|number} Token.
+	 */
+	generate({counter = this.counter++, pad} = {}) {
+		return HOTP.generate({
+			secret: this.secret,
+			algorithm: this.algorithm,
+			digits: this.digits,
+			counter: counter,
+			pad: pad
+		});
+	}
+
+	/**
+	 * Validates an HOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {string} config.token Token value.
+	 * @param {Secret} config.secret Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.counter=0] Counter value.
+	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @returns {number|null} Token delta, or null if the token is not found.
+	 */
+	static validate({token, secret, algorithm, counter = DC.counter, window = DC.window}) {
+		const searchToken = parseInt(token, 10);
+
+		for (let i = counter - window; i &lt;= counter + window; ++i) {
+			const generatedToken = HOTP.generate({
+				secret: secret,
+				algorithm: algorithm,
+				counter: i,
+				digits: token.length,
+				pad: false
+			});
+
+			if (searchToken === generatedToken) {
+				return i - counter;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Validates an HOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {string} config.token Token value.
+	 * @param {number} [config.counter=this.counter] Counter value.
+	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @returns {number|null} Token delta, or null if the token is not found.
+	 */
+	validate({token, counter = this.counter, window}) {
+		return HOTP.validate({
+			token: token,
+			secret: this.secret,
+			algorithm: this.algorithm,
+			counter: counter,
+			window: window
+		});
+	}
+
+	/**
+	 * Returns a Google Authenticator key URI.
+	 * @returns {string} URI.
+	 */
+	toString() {
+		return URI.stringify(this);
+	}
+}
+
+/**
+ * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).
+ * @see https://tools.ietf.org/html/rfc6238
+ */
+export class TOTP {
+	/**
+	 * @param {Object} [config] Configuration options.
+	 * @param {string} [config.issuer=&apos;&apos;] Account provider.
+	 * @param {string} [config.label=&apos;OTPAuth&apos;] Account label.
+	 * @param {Secret} [config.secret=Secret] Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.digits=6] Token length.
+	 * @param {number} [config.period=30] Token time-step duration.
+	 */
+	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, period = DC.period} = {}) {
+		/**
+		 * Account provider.
+		 * @type {string}
+		 */
+		this.issuer = issuer;
+		/**
+		 * Account label.
+		 * @type {string}
+		 */
+		this.label = label;
+		/**
+		 * Secret key.
+		 * @type {string}
+		 */
+		this.secret = secret;
+		/**
+		 * HMAC hashing algorithm.
+		 * @type {Secret}
+		 */
+		this.algorithm = algorithm;
+		/**
+		 * Token length.
+		 * @type {number}
+		 */
+		this.digits = digits;
+		/**
+		 * Token time-step duration.
+		 * @type {number}
+		 */
+		this.period = period;
+	}
+
+	/**
+	 * Generates a TOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {Secret} config.secret Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.digits=6] Token length.
+	 * @param {number} [config.period=30] Token time-step duration.
+	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+	 * @param {boolean} [config.pad=true] Add leading zeros to result.
+	 * @returns {string|number} Token.
+	 */
+	static generate({secret, algorithm, digits, period = DC.period, timestamp = Date.now(), pad}) {
+		return HOTP.generate({
+			secret: secret,
+			algorithm: algorithm,
+			digits: digits,
+			counter: Math.floor(timestamp / 1000 / period),
+			pad: pad
+		});
+	}
+
+	/**
+	 * Generates a TOTP token.
+	 * @param {Object} [config] Configuration options.
+	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+	 * @param {boolean} [config.pad=true] Add leading zeros to result.
+	 * @returns {string|number} Token.
+	 */
+	generate({timestamp = Date.now(), pad} = {}) {
+		return TOTP.generate({
+			secret: this.secret,
+			algorithm: this.algorithm,
+			digits: this.digits,
+			period: this.period,
+			timestamp: timestamp,
+			pad: pad
+		});
+	}
+
+	/**
+	 * Validates a TOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {string} config.token Token value.
+	 * @param {Secret} config.secret Secret key.
+	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
+	 * @param {number} [config.period=30] Token time-step duration.
+	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @returns {number|null} Token delta, or null if the token is not found.
+	 */
+	static validate({token, secret, algorithm, period = DC.period, timestamp = Date.now(), window}) {
+		return HOTP.validate({
+			token: token,
+			secret: secret,
+			algorithm: algorithm,
+			counter: Math.floor(timestamp / 1000 / period),
+			window: window
+		});
+	}
+
+	/**
+	 * Validates a TOTP token.
+	 * @param {Object} config Configuration options.
+	 * @param {string} config.token Token value.
+	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @returns {number|null} Token delta, or null if the token is not found.
+	 */
+	validate({token, timestamp, window}) {
+		return TOTP.validate({
+			token: token,
+			secret: this.secret,
+			algorithm: this.algorithm,
+			period: this.period,
+			timestamp: timestamp,
+			window: window
+		});
+	}
+
+	/**
+	 * Returns a Google Authenticator key URI.
+	 * @returns {string} URI.
+	 */
+	toString() {
+		return URI.stringify(this);
+	}
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.0-alpha.8)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

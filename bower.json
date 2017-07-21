@@ -43,10 +43,11 @@
   ],
   "ignore": [
     "**/.*",
+    "/docs/",
     "/test/",
-    "karma.conf.js",
-    "package-lock.json",
-    "package.json",
-    "webpack.config.js"
+    "/karma.conf.js",
+    "/package-lock.json",
+    "/package.json",
+    "/webpack.config.js"
   ]
 }
