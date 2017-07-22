@@ -58,10 +58,10 @@
     "karma-mocha": "1.x.x",
     "karma-phantomjs-launcher": "1.x.x",
     "mocha": "3.x.x",
-    "npm-run-all": "latest",
-    "rimraf": "latest",
+    "npm-run-all": "4.x.x",
+    "rimraf": "2.x.x",
     "sjcl": "1.0.7",
-    "tmp": "latest",
+    "tmp": "0.x.x",
     "webpack": "3.x.x"
   }
 }
