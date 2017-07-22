@@ -1,9 +1,8 @@
-[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][2]
-[![Dependency status](https://img.shields.io/david/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth)
-[![Dev Dependencies Status](https://img.shields.io/david/dev/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth?type=dev)
-[![NPM Status](https://img.shields.io/npm/dm/otpauth.svg)][2]
-[![Documentation](https://zant95.github.io/otpauth/badge.svg)][3]
-[![License](https://img.shields.io/github/license/zant95/otpauth.svg)][1]
+[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][tags]
+[![Dependencies status](https://img.shields.io/david/zant95/otpauth.svg)][dependencies]
+[![Dev dependencies status](https://img.shields.io/david/dev/zant95/otpauth.svg)][devDependencies]
+[![NPM status](https://img.shields.io/npm/dm/otpauth.svg)][npm]
+[![Documentation](https://zant95.github.io/otpauth/badge.svg)][docs]
 
 ***
 
@@ -55,14 +54,21 @@ let uri = totp.toString();
 ```
 
 ## Supported hashing algorithms
-In Node.js, the same algorithms as [```Crypto.createHmac```][4] function are supported, since it is used internally.
-In browsers, the ```SHA1```, ```SHA256``` and ```SHA512``` algorithms are supported by using the [Stanford Javascript Crypto Library][5].
+In Node.js, the same algorithms as [`Crypto.createHmac`][createHmac] function are supported, since it is used internally.
+In browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using the [Stanford Javascript Crypto Library][sjcl].
 
 ## Documentation
-See the [documentation][3] page.
+See the [documentation][docs] page.
 
-[1]: LICENSE.md
-[2]: https://www.npmjs.com/package/otpauth
-[3]: https://zant95.github.io/otpauth/index.html
-[4]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
-[5]: https://github.com/bitwiseshiftleft/sjcl
+## License
+[MIT License][license] © [Héctor Molinero Fernández](https://molinero.xyz/).
+
+[license]: LICENSE.md
+[docs]: https://zant95.github.io/otpauth/index.html
+[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
+[tags]: https://github.com/zant95/otpauth/tags
+[npm]: https://www.npmjs.com/package/otpauth
+[dependencies]: https://david-dm.org/zant95/otpauth
+[devDependencies]: https://david-dm.org/zant95/otpauth?type=dev
+[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
+[sjcl]: https://github.com/bitwiseshiftleft/sjcl
