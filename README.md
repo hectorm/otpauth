@@ -63,9 +63,8 @@ See the [documentation][docs] page.
 ## License
 [MIT License][license] © [Héctor Molinero Fernández](https://molinero.xyz/).
 
-[license]: LICENSE.md
 [docs]: https://zant95.github.io/otpauth/index.html
-[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
+[license]: https://github.com/zant95/otpauth/blob/master/LICENSE.md
 [tags]: https://github.com/zant95/otpauth/tags
 [npm]: https://www.npmjs.com/package/otpauth
 [dependencies]: https://david-dm.org/zant95/otpauth
