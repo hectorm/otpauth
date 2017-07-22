@@ -45,6 +45,7 @@ import {InternalUtils} from &apos;./utils.js&apos;;
 /**
  * Node.js Crypto module.
  * @private
+ * @type {Object}
  */
 const NodeCrypto = InternalUtils.require(&apos;crypto&apos;);
 
@@ -121,9 +122,7 @@ if (NodeCrypto) {
 			global.msCrypto.getRandomValues(arr);
 		};
 	} else {
-		// eslint-disable-next-line no-console
 		console.warn(&apos;Cryptography API not available, falling back to \&apos;Math.random\&apos;...&apos;);
-
 		getRandomValues = function (arr) {
 			for (let i = 0; i &lt; arr.length; i++) {
 				arr[i] = Math.floor(Math.random() * 256);
@@ -134,13 +133,11 @@ if (NodeCrypto) {
 	Crypto.randomBytes = function (size) {
 		const arr = new Uint8Array(size);
 		getRandomValues(arr);
-
 		return arr;
 	};
 
 	Crypto.hmacDigest = function (algorithm, key, message) {
 		const hash = sjcl.hash[algorithm.toLowerCase()];
-
 		if (typeof hash === &apos;undefined&apos;) {
 			throw new TypeError(&apos;Unknown hash function&apos;);
 		}

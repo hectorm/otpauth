@@ -45,7 +45,7 @@ import {Secret} from &apos;./secret.js&apos;;
 import {URI} from &apos;./uri.js&apos;;
 
 /**
- * Default Configuration.
+ * Default configuration.
  * @private
  * @type {Object}
  */
@@ -129,7 +129,6 @@ export class HOTP {
 		) % Math.pow(10, digits);
 
 		return pad
-			// ? &apos;0&apos;.repeat(digits - String(binary).length) + binary
 			? Array(1 + digits - String(binary).length).join(&apos;0&apos;) + binary
 			: binary;
 	}

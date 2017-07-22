@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/crypto.js",
-    "content": "import sjcl from 'sjcl';\nimport {InternalUtils} from './utils.js';\n\n/**\n * Node.js Crypto module.\n * @private\n */\nconst NodeCrypto = InternalUtils.require('crypto');\n\n/**\n * An object containing some cryptography functions\n * with dirty workarounds for Node.js and browsers.\n * @private\n * @type {Object}\n */\nexport const Crypto = {};\n\nif (NodeCrypto) {\n\tlet bufferFrom;\n\n\tif (typeof Buffer.from === 'function') {\n\t\tbufferFrom = Buffer.from;\n\t} else {\n\t\t// Node.js < 5.10.0\n\t\tbufferFrom = function (arrbuf) {\n\t\t\t// eslint-disable-next-line unicorn/no-new-buffer\n\t\t\tconst nodeBuf = new Buffer(arrbuf.byteLength);\n\t\t\tconst arr = new Uint8Array(arrbuf);\n\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tnodeBuf[i] = arr[i];\n\t\t\t}\n\n\t\t\treturn nodeBuf;\n\t\t};\n\t}\n\n\tlet bufferTo;\n\n\tif (Buffer.prototype instanceof Uint8Array) {\n\t\tbufferTo = function (nodeBuf) {\n\t\t\treturn nodeBuf;\n\t\t};\n\t} else {\n\t\t// Node.js < 4.0.0\n\t\tbufferTo = function (nodeBuf) {\n\t\t\tconst arr = new Uint8Array(nodeBuf.length);\n\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tarr[i] = nodeBuf[i];\n\t\t\t}\n\n\t\t\treturn arr;\n\t\t};\n\t}\n\n\tCrypto.randomBytes = function (size) {\n\t\treturn bufferTo(NodeCrypto.randomBytes(size));\n\t};\n\n\t// In Node.js, the command:\n\t//   $ openssl list-message-digest-algorithms\n\t// displays the available digest algorithms.\n\tCrypto.hmacDigest = function (algorithm, key, message) {\n\t\treturn bufferTo(\n\t\t\tNodeCrypto.createHmac(algorithm, bufferFrom(key))\n\t\t\t\t.update(bufferFrom(message))\n\t\t\t\t.digest()\n\t\t);\n\t};\n} else {\n\tlet getRandomValues;\n\n\tif (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {\n\t\tgetRandomValues = function (arr) {\n\t\t\tglobal.crypto.getRandomValues(arr);\n\t\t};\n\t} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {\n\t\tgetRandomValues = function (arr) {\n\t\t\tglobal.msCrypto.getRandomValues(arr);\n\t\t};\n\t} else {\n\t\t// eslint-disable-next-line no-console\n\t\tconsole.warn('Cryptography API not available, falling back to \\'Math.random\\'...');\n\n\t\tgetRandomValues = function (arr) {\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tarr[i] = Math.floor(Math.random() * 256);\n\t\t\t}\n\t\t};\n\t}\n\n\tCrypto.randomBytes = function (size) {\n\t\tconst arr = new Uint8Array(size);\n\t\tgetRandomValues(arr);\n\n\t\treturn arr;\n\t};\n\n\tCrypto.hmacDigest = function (algorithm, key, message) {\n\t\tconst hash = sjcl.hash[algorithm.toLowerCase()];\n\n\t\tif (typeof hash === 'undefined') {\n\t\t\tthrow new TypeError('Unknown hash function');\n\t\t}\n\n\t\t// eslint-disable-next-line new-cap\n\t\tconst hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);\n\t\thmac.update(sjcl.codec.arrayBuffer.toBits(message));\n\n\t\treturn sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);\n\t};\n}\n",
+    "content": "import sjcl from 'sjcl';\nimport {InternalUtils} from './utils.js';\n\n/**\n * Node.js Crypto module.\n * @private\n * @type {Object}\n */\nconst NodeCrypto = InternalUtils.require('crypto');\n\n/**\n * An object containing some cryptography functions\n * with dirty workarounds for Node.js and browsers.\n * @private\n * @type {Object}\n */\nexport const Crypto = {};\n\nif (NodeCrypto) {\n\tlet bufferFrom;\n\n\tif (typeof Buffer.from === 'function') {\n\t\tbufferFrom = Buffer.from;\n\t} else {\n\t\t// Node.js < 5.10.0\n\t\tbufferFrom = function (arrbuf) {\n\t\t\t// eslint-disable-next-line unicorn/no-new-buffer\n\t\t\tconst nodeBuf = new Buffer(arrbuf.byteLength);\n\t\t\tconst arr = new Uint8Array(arrbuf);\n\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tnodeBuf[i] = arr[i];\n\t\t\t}\n\n\t\t\treturn nodeBuf;\n\t\t};\n\t}\n\n\tlet bufferTo;\n\n\tif (Buffer.prototype instanceof Uint8Array) {\n\t\tbufferTo = function (nodeBuf) {\n\t\t\treturn nodeBuf;\n\t\t};\n\t} else {\n\t\t// Node.js < 4.0.0\n\t\tbufferTo = function (nodeBuf) {\n\t\t\tconst arr = new Uint8Array(nodeBuf.length);\n\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tarr[i] = nodeBuf[i];\n\t\t\t}\n\n\t\t\treturn arr;\n\t\t};\n\t}\n\n\tCrypto.randomBytes = function (size) {\n\t\treturn bufferTo(NodeCrypto.randomBytes(size));\n\t};\n\n\t// In Node.js, the command:\n\t//   $ openssl list-message-digest-algorithms\n\t// displays the available digest algorithms.\n\tCrypto.hmacDigest = function (algorithm, key, message) {\n\t\treturn bufferTo(\n\t\t\tNodeCrypto.createHmac(algorithm, bufferFrom(key))\n\t\t\t\t.update(bufferFrom(message))\n\t\t\t\t.digest()\n\t\t);\n\t};\n} else {\n\tlet getRandomValues;\n\n\tif (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {\n\t\tgetRandomValues = function (arr) {\n\t\t\tglobal.crypto.getRandomValues(arr);\n\t\t};\n\t} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {\n\t\tgetRandomValues = function (arr) {\n\t\t\tglobal.msCrypto.getRandomValues(arr);\n\t\t};\n\t} else {\n\t\tconsole.warn('Cryptography API not available, falling back to \\'Math.random\\'...');\n\t\tgetRandomValues = function (arr) {\n\t\t\tfor (let i = 0; i < arr.length; i++) {\n\t\t\t\tarr[i] = Math.floor(Math.random() * 256);\n\t\t\t}\n\t\t};\n\t}\n\n\tCrypto.randomBytes = function (size) {\n\t\tconst arr = new Uint8Array(size);\n\t\tgetRandomValues(arr);\n\t\treturn arr;\n\t};\n\n\tCrypto.hmacDigest = function (algorithm, key, message) {\n\t\tconst hash = sjcl.hash[algorithm.toLowerCase()];\n\t\tif (typeof hash === 'undefined') {\n\t\t\tthrow new TypeError('Unknown hash function');\n\t\t}\n\n\t\t// eslint-disable-next-line new-cap\n\t\tconst hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);\n\t\thmac.update(sjcl.codec.arrayBuffer.toBits(message));\n\n\t\treturn sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);\n\t};\n}\n",
     "static": true,
     "longname": "/home/zant/Projects/otpauth/src/crypto.js",
     "access": "public",
@@ -586,13 +586,16 @@
     "importPath": "otpauth/src/crypto.js",
     "importStyle": null,
     "description": "Node.js Crypto module.",
-    "lineNumber": 8,
-    "ignore": true,
+    "lineNumber": 9,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
-    }
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    },
+    "ignore": true
   },
   {
     "__docId__": 50,
@@ -606,7 +609,7 @@
     "importPath": "otpauth/src/crypto.js",
     "importStyle": "{Crypto}",
     "description": "An object containing some cryptography functions\nwith dirty workarounds for Node.js and browsers.",
-    "lineNumber": 16,
+    "lineNumber": 17,
     "type": {
       "nullable": null,
       "types": [
@@ -632,7 +635,7 @@
     "__docId__": 52,
     "kind": "file",
     "name": "src/otp.js",
-    "content": "import {Utils} from './utils.js';\nimport {Crypto} from './crypto.js';\nimport {Secret} from './secret.js';\nimport {URI} from './uri.js';\n\n/**\n * Default Configuration.\n * @private\n * @type {Object}\n */\nconst DC = {\n\tissuer: '',\n\tlabel: 'OTPAuth',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tcounter: 0,\n\tperiod: 30,\n\twindow: 50,\n\tpad: true\n};\n\n/**\n * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).\n * @see https://tools.ietf.org/html/rfc4226\n */\nexport class HOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Initial counter value.\n\t */\n\tconstructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {string}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Initial counter value.\n\t\t * @type {number}\n\t\t */\n\t\tthis.counter = counter;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {\n\t\tconst digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));\n\n\t\tconst offset = digest[digest.byteLength - 1] & 15;\n\t\tconst binary = (\n\t\t\t((digest[offset] & 127) << 24) |\n\t\t\t((digest[offset + 1] & 255) << 16) |\n\t\t\t((digest[offset + 2] & 255) << 8) |\n\t\t\t(digest[offset + 3] & 255)\n\t\t) % Math.pow(10, digits);\n\n\t\treturn pad\n\t\t\t// ? '0'.repeat(digits - String(binary).length) + binary\n\t\t\t? Array(1 + digits - String(binary).length).join('0') + binary\n\t\t\t: binary;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.counter=this.counter++] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({counter = this.counter++, pad} = {}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tcounter: counter,\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({token, secret, algorithm, counter = DC.counter, window = DC.window}) {\n\t\tconst searchToken = parseInt(token, 10);\n\n\t\tfor (let i = counter - window; i <= counter + window; ++i) {\n\t\t\tconst generatedToken = HOTP.generate({\n\t\t\t\tsecret: secret,\n\t\t\t\talgorithm: algorithm,\n\t\t\t\tcounter: i,\n\t\t\t\tdigits: token.length,\n\t\t\t\tpad: false\n\t\t\t});\n\n\t\t\tif (searchToken === generatedToken) {\n\t\t\t\treturn i - counter;\n\t\t\t}\n\t\t}\n\n\t\treturn null;\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.counter=this.counter] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({token, counter = this.counter, window}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tcounter: counter,\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n\n/**\n * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).\n * @see https://tools.ietf.org/html/rfc6238\n */\nexport class TOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t */\n\tconstructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, period = DC.period} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {string}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Token time-step duration.\n\t\t * @type {number}\n\t\t */\n\t\tthis.period = period;\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({secret, algorithm, digits, period = DC.period, timestamp = Date.now(), pad}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: secret,\n\t\t\talgorithm: algorithm,\n\t\t\tdigits: digits,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({timestamp = Date.now(), pad} = {}) {\n\t\treturn TOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp: timestamp,\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({token, secret, algorithm, period = DC.period, timestamp = Date.now(), window}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: secret,\n\t\t\talgorithm: algorithm,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({token, timestamp, window}) {\n\t\treturn TOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp: timestamp,\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n",
+    "content": "import {Utils} from './utils.js';\nimport {Crypto} from './crypto.js';\nimport {Secret} from './secret.js';\nimport {URI} from './uri.js';\n\n/**\n * Default configuration.\n * @private\n * @type {Object}\n */\nconst DC = {\n\tissuer: '',\n\tlabel: 'OTPAuth',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tcounter: 0,\n\tperiod: 30,\n\twindow: 50,\n\tpad: true\n};\n\n/**\n * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).\n * @see https://tools.ietf.org/html/rfc4226\n */\nexport class HOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Initial counter value.\n\t */\n\tconstructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {string}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Initial counter value.\n\t\t * @type {number}\n\t\t */\n\t\tthis.counter = counter;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {\n\t\tconst digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));\n\n\t\tconst offset = digest[digest.byteLength - 1] & 15;\n\t\tconst binary = (\n\t\t\t((digest[offset] & 127) << 24) |\n\t\t\t((digest[offset + 1] & 255) << 16) |\n\t\t\t((digest[offset + 2] & 255) << 8) |\n\t\t\t(digest[offset + 3] & 255)\n\t\t) % Math.pow(10, digits);\n\n\t\treturn pad\n\t\t\t? Array(1 + digits - String(binary).length).join('0') + binary\n\t\t\t: binary;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.counter=this.counter++] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({counter = this.counter++, pad} = {}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tcounter: counter,\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({token, secret, algorithm, counter = DC.counter, window = DC.window}) {\n\t\tconst searchToken = parseInt(token, 10);\n\n\t\tfor (let i = counter - window; i <= counter + window; ++i) {\n\t\t\tconst generatedToken = HOTP.generate({\n\t\t\t\tsecret: secret,\n\t\t\t\talgorithm: algorithm,\n\t\t\t\tcounter: i,\n\t\t\t\tdigits: token.length,\n\t\t\t\tpad: false\n\t\t\t});\n\n\t\t\tif (searchToken === generatedToken) {\n\t\t\t\treturn i - counter;\n\t\t\t}\n\t\t}\n\n\t\treturn null;\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.counter=this.counter] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({token, counter = this.counter, window}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tcounter: counter,\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n\n/**\n * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).\n * @see https://tools.ietf.org/html/rfc6238\n */\nexport class TOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t */\n\tconstructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, period = DC.period} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {string}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Token time-step duration.\n\t\t * @type {number}\n\t\t */\n\t\tthis.period = period;\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({secret, algorithm, digits, period = DC.period, timestamp = Date.now(), pad}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: secret,\n\t\t\talgorithm: algorithm,\n\t\t\tdigits: digits,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({timestamp = Date.now(), pad} = {}) {\n\t\treturn TOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp: timestamp,\n\t\t\tpad: pad\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({token, secret, algorithm, period = DC.period, timestamp = Date.now(), window}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: secret,\n\t\t\talgorithm: algorithm,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({token, timestamp, window}) {\n\t\treturn TOTP.validate({\n\t\t\ttoken: token,\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp: timestamp,\n\t\t\twindow: window\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n",
     "static": true,
     "longname": "/home/zant/Projects/otpauth/src/otp.js",
     "access": "public",
@@ -650,7 +653,7 @@
     "export": false,
     "importPath": "otpauth/src/otp.js",
     "importStyle": null,
-    "description": "Default Configuration.",
+    "description": "Default configuration.",
     "lineNumber": 11,
     "type": {
       "nullable": null,
@@ -1000,7 +1003,7 @@
     "longname": "src/otp.js~HOTP#generate",
     "access": "public",
     "description": "Generates an HOTP token.",
-    "lineNumber": 103,
+    "lineNumber": 102,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1064,7 +1067,7 @@
     "longname": "src/otp.js~HOTP.validate",
     "access": "public",
     "description": "Validates an HOTP token.",
-    "lineNumber": 123,
+    "lineNumber": 122,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1160,7 +1163,7 @@
     "longname": "src/otp.js~HOTP#validate",
     "access": "public",
     "description": "Validates an HOTP token.",
-    "lineNumber": 151,
+    "lineNumber": 150,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1234,7 +1237,7 @@
     "longname": "src/otp.js~HOTP#toString",
     "access": "public",
     "description": "Returns a Google Authenticator key URI.",
-    "lineNumber": 165,
+    "lineNumber": 164,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1266,7 +1269,7 @@
     "see": [
       "https://tools.ietf.org/html/rfc6238"
     ],
-    "lineNumber": 174,
+    "lineNumber": 173,
     "interface": false
   },
   {
@@ -1280,7 +1283,7 @@
     "longname": "src/otp.js~TOTP#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 184,
+    "lineNumber": 183,
     "params": [
       {
         "nullable": null,
@@ -1375,7 +1378,7 @@
     "longname": "src/otp.js~TOTP#issuer",
     "access": "public",
     "description": "Account provider.",
-    "lineNumber": 189,
+    "lineNumber": 188,
     "type": {
       "nullable": null,
       "types": [
@@ -1394,7 +1397,7 @@
     "longname": "src/otp.js~TOTP#label",
     "access": "public",
     "description": "Account label.",
-    "lineNumber": 194,
+    "lineNumber": 193,
     "type": {
       "nullable": null,
       "types": [
@@ -1413,7 +1416,7 @@
     "longname": "src/otp.js~TOTP#secret",
     "access": "public",
     "description": "Secret key.",
-    "lineNumber": 199,
+    "lineNumber": 198,
     "type": {
       "nullable": null,
       "types": [
@@ -1432,7 +1435,7 @@
     "longname": "src/otp.js~TOTP#algorithm",
     "access": "public",
     "description": "HMAC hashing algorithm.",
-    "lineNumber": 204,
+    "lineNumber": 203,
     "type": {
       "nullable": null,
       "types": [
@@ -1451,7 +1454,7 @@
     "longname": "src/otp.js~TOTP#digits",
     "access": "public",
     "description": "Token length.",
-    "lineNumber": 209,
+    "lineNumber": 208,
     "type": {
       "nullable": null,
       "types": [
@@ -1470,7 +1473,7 @@
     "longname": "src/otp.js~TOTP#period",
     "access": "public",
     "description": "Token time-step duration.",
-    "lineNumber": 214,
+    "lineNumber": 213,
     "type": {
       "nullable": null,
       "types": [
@@ -1491,7 +1494,7 @@
     "longname": "src/otp.js~TOTP.generate",
     "access": "public",
     "description": "Generates a TOTP token.",
-    "lineNumber": 228,
+    "lineNumber": 227,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1601,7 +1604,7 @@
     "longname": "src/otp.js~TOTP#generate",
     "access": "public",
     "description": "Generates a TOTP token.",
-    "lineNumber": 245,
+    "lineNumber": 244,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1665,7 +1668,7 @@
     "longname": "src/otp.js~TOTP.validate",
     "access": "public",
     "description": "Validates a TOTP token.",
-    "lineNumber": 267,
+    "lineNumber": 266,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1773,7 +1776,7 @@
     "longname": "src/otp.js~TOTP#validate",
     "access": "public",
     "description": "Validates a TOTP token.",
-    "lineNumber": 285,
+    "lineNumber": 284,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1847,7 +1850,7 @@
     "longname": "src/otp.js~TOTP#toString",
     "access": "public",
     "description": "Returns a Google Authenticator key URI.",
-    "lineNumber": 300,
+    "lineNumber": 299,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2876,7 +2879,7 @@
   },
   {
     "kind": "index",
-    "content": "[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][2]\n[![Dependency status](https://img.shields.io/david/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth)\n[![Dev Dependencies Status](https://img.shields.io/david/dev/zant95/otpauth.svg)](https://david-dm.org/zant95/otpauth?type=dev)\n[![NPM Status](https://img.shields.io/npm/dm/otpauth.svg)][2]\n[![Documentation](https://zant95.github.io/otpauth/badge.svg)][3]\n[![License](https://img.shields.io/github/license/zant95/otpauth.svg)][1]\n\n***\n\n# OTPAuth\nOne Time Password (HOTP/TOTP) library for Node.js and browser.\n\n## Installation\nInstall the module via `npm`.\n\n```sh\nnpm install otpauth\n```\n\n## Usage\n\n### Node.js\n```javascript\nconst OTPAuth = require('otpauth');\n\nlet totp = new OTPAuth.TOTP({\n\tissuer: 'ACME',\n\tlabel: 'AzureDiamond',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tperiod: 30,\n\tsecret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')\n});\n\n// Generate TOTP token.\nlet token = totp.generate();\n\n// Validate TOTP token.\nlet delta = totp.validate({\n\ttoken: token,\n\twindow: 10\n});\n\n// Convert to Google Authenticator key URI:\n//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30\nlet uri = totp.toString();\n```\n\n### Browser\n```html\n<script src=\"otpauth.min.js\"></script>\n<script>\n\t// Same as above...\n</script>\n```\n\n## Supported hashing algorithms\nIn Node.js, the same algorithms as [```Crypto.createHmac```][4] function are supported, since it is used internally.\nIn browsers, the ```SHA1```, ```SHA256``` and ```SHA512``` algorithms are supported by using the [Stanford Javascript Crypto Library][5].\n\n## Documentation\nSee the [documentation][3] page.\n\n[1]: LICENSE.md\n[2]: https://www.npmjs.com/package/otpauth\n[3]: https://zant95.github.io/otpauth/index.html\n[4]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key\n[5]: https://github.com/bitwiseshiftleft/sjcl\n",
+    "content": "[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][tags]\n[![Dependencies status](https://img.shields.io/david/zant95/otpauth.svg)][dependencies]\n[![Dev dependencies status](https://img.shields.io/david/dev/zant95/otpauth.svg)][devDependencies]\n[![NPM status](https://img.shields.io/npm/dm/otpauth.svg)][npm]\n[![Documentation](https://zant95.github.io/otpauth/badge.svg)][docs]\n\n***\n\n# OTPAuth\nOne Time Password (HOTP/TOTP) library for Node.js and browser.\n\n## Installation\nInstall the module via `npm`.\n\n```sh\nnpm install otpauth\n```\n\n## Usage\n\n### Node.js\n```javascript\nconst OTPAuth = require('otpauth');\n\nlet totp = new OTPAuth.TOTP({\n\tissuer: 'ACME',\n\tlabel: 'AzureDiamond',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tperiod: 30,\n\tsecret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')\n});\n\n// Generate TOTP token.\nlet token = totp.generate();\n\n// Validate TOTP token.\nlet delta = totp.validate({\n\ttoken: token,\n\twindow: 10\n});\n\n// Convert to Google Authenticator key URI:\n//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30\nlet uri = totp.toString();\n```\n\n### Browser\n```html\n<script src=\"otpauth.min.js\"></script>\n<script>\n\t// Same as above...\n</script>\n```\n\n## Supported hashing algorithms\nIn Node.js, the same algorithms as [`Crypto.createHmac`][createHmac] function are supported, since it is used internally.\nIn browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using the [Stanford Javascript Crypto Library][sjcl].\n\n## Documentation\nSee the [documentation][docs] page.\n\n## License\n[MIT License][license] © [Héctor Molinero Fernández](https://molinero.xyz/).\n\n[docs]: https://zant95.github.io/otpauth/index.html\n[license]: https://github.com/zant95/otpauth/blob/master/LICENSE.md\n[tags]: https://github.com/zant95/otpauth/tags\n[npm]: https://www.npmjs.com/package/otpauth\n[dependencies]: https://david-dm.org/zant95/otpauth\n[devDependencies]: https://david-dm.org/zant95/otpauth?type=dev\n[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key\n[sjcl]: https://github.com/bitwiseshiftleft/sjcl\n",
     "longname": "/home/zant/Projects/otpauth/README.md",
     "name": "./README.md",
     "static": true,
@@ -2884,7 +2887,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"otpauth\",\n  \"libraryName\": \"OTPAuth\",\n  \"version\": \"3.0.4\",\n  \"description\": \"One Time Password (HOTP/TOTP) library for Node.js and browser\",\n  \"keywords\": [\n    \"otp\",\n    \"hotp\",\n    \"totp\",\n    \"one time password\",\n    \"2fa\",\n    \"2 factor\",\n    \"two factor\",\n    \"two-factor\",\n    \"2step\",\n    \"2 step\",\n    \"two step\",\n    \"two-step\",\n    \"auth\",\n    \"authenticator\",\n    \"google authenticator\"\n  ],\n  \"author\": \"Héctor Molinero Fernández <hector@molinero.xyz>\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/zant95/otpauth\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/zant95/otpauth.git\"\n  },\n  \"bugs\": {\n    \"url\": \"https://github.com/zant95/otpauth/issues\"\n  },\n  \"main\": \"./dist/otpauth.min.js\",\n  \"scripts\": {\n    \"lint\": \"eslint .\",\n    \"build\": \"webpack --display-reasons\",\n    \"test:browser\": \"karma start\",\n    \"test:node\": \"mocha --reporter dot\",\n    \"test\": \"run-s test:*\",\n    \"docs\": \"rimraf docs && esdoc\",\n    \"dist\": \"run-s lint build test docs\",\n    \"version\": \"run-s dist && git add -A dist docs\"\n  },\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"chai\": \"4.x.x\",\n    \"esdoc\": \"^1.0.0-alpha\",\n    \"esdoc-standard-plugin\": \"0.x.x\",\n    \"eslint\": \"4.x.x\",\n    \"eslint-config-xo\": \"0.x.x\",\n    \"eslint-config-zant\": \"2.x.x\",\n    \"eslint-plugin-import\": \"2.x.x\",\n    \"eslint-plugin-unicorn\": \"2.x.x\",\n    \"google-closure-compiler-js\": \"20170626.0.0\",\n    \"karma\": \"1.x.x\",\n    \"karma-chai\": \"0.x.x\",\n    \"karma-chrome-launcher\": \"2.x.x\",\n    \"karma-mocha\": \"1.x.x\",\n    \"karma-phantomjs-launcher\": \"1.x.x\",\n    \"mocha\": \"3.x.x\",\n    \"npm-run-all\": \"latest\",\n    \"rimraf\": \"latest\",\n    \"sjcl\": \"1.0.7\",\n    \"tmp\": \"latest\",\n    \"webpack\": \"3.x.x\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"otpauth\",\n  \"libraryName\": \"OTPAuth\",\n  \"version\": \"3.0.5\",\n  \"description\": \"One Time Password (HOTP/TOTP) library for Node.js and browser\",\n  \"keywords\": [\n    \"otp\",\n    \"hotp\",\n    \"totp\",\n    \"one time password\",\n    \"2fa\",\n    \"2 factor\",\n    \"two factor\",\n    \"two-factor\",\n    \"2step\",\n    \"2 step\",\n    \"two step\",\n    \"two-step\",\n    \"auth\",\n    \"authenticator\",\n    \"google authenticator\"\n  ],\n  \"author\": \"Héctor Molinero Fernández <hector@molinero.xyz>\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/zant95/otpauth\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/zant95/otpauth.git\"\n  },\n  \"bugs\": {\n    \"url\": \"https://github.com/zant95/otpauth/issues\"\n  },\n  \"main\": \"./dist/otpauth.min.js\",\n  \"scripts\": {\n    \"lint\": \"eslint .\",\n    \"build\": \"webpack --display-reasons\",\n    \"test:browser\": \"karma start\",\n    \"test:node\": \"mocha --reporter dot\",\n    \"test\": \"run-s test:*\",\n    \"docs\": \"rimraf docs && esdoc\",\n    \"dist\": \"run-s lint build test docs\",\n    \"version\": \"run-s dist && git add -A dist docs\"\n  },\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"chai\": \"4.x.x\",\n    \"esdoc\": \"^1.0.0-alpha\",\n    \"esdoc-standard-plugin\": \"0.x.x\",\n    \"eslint\": \"4.x.x\",\n    \"eslint-config-xo\": \"0.x.x\",\n    \"eslint-config-zant\": \"2.x.x\",\n    \"eslint-plugin-import\": \"2.x.x\",\n    \"eslint-plugin-unicorn\": \"2.x.x\",\n    \"google-closure-compiler-js\": \"20170626.0.0\",\n    \"karma\": \"1.x.x\",\n    \"karma-chai\": \"0.x.x\",\n    \"karma-chrome-launcher\": \"2.x.x\",\n    \"karma-mocha\": \"1.x.x\",\n    \"karma-phantomjs-launcher\": \"1.x.x\",\n    \"mocha\": \"3.x.x\",\n    \"npm-run-all\": \"4.x.x\",\n    \"rimraf\": \"2.x.x\",\n    \"sjcl\": \"1.0.7\",\n    \"tmp\": \"0.x.x\",\n    \"webpack\": \"3.x.x\"\n  }\n}\n",
     "longname": "/home/zant/Projects/otpauth/package.json",
     "name": "package.json",
     "static": true,
