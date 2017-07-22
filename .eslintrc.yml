@@ -1,5 +1,2 @@
 extends:
   - zant
-
-rules:
-  no-console: ['warn']
