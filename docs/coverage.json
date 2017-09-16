@@ -8,7 +8,7 @@
       "actualCount": 2,
       "undocumentLines": []
     },
-    "src/index.js": {
+    "src/main.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []

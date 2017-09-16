@@ -30,9 +30,9 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "otpauth/src/index.js~version",
+    "otpauth/src/main.js~version",
     "variable/index.html#static-variable-version",
-    "<span>version</span> <span class=\"search-result-import-path\">otpauth/src/index.js</span>",
+    "<span>version</span> <span class=\"search-result-import-path\">otpauth/src/main.js</span>",
     "variable"
   ],
   [
@@ -324,9 +324,9 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/index.js",
-    "file/src/index.js.html",
-    "src/index.js",
+    "src/main.js",
+    "file/src/main.js.html",
+    "src/main.js",
     "file"
   ],
   [
