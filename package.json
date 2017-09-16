@@ -29,7 +29,11 @@
   "bugs": {
     "url": "https://github.com/zant95/otpauth/issues"
   },
-  "main": "./dist/otpauth.min.js",
+  "main": "dist/otpauth.min.js",
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "scripts": {
     "lint": "eslint .",
     "build": "webpack --display-reasons",
