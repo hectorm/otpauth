@@ -20,6 +20,9 @@ module.exports = {
 	devtool: 'source-map',
 	node: {Buffer: false},
 	plugins: [
+		new webpack.EnvironmentPlugin({
+			VERSION: pkg.version
+		}),
 		// Custom build of the Stanford Javascript Crypto Library (SJCL)
 		new webpack.NormalModuleReplacementPlugin(/^sjcl$/, function (result) {
 			const file = tmp.fileSync();

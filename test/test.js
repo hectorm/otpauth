@@ -784,3 +784,14 @@ describe('Test - OTPAuth.URI', function () {
 		expect(output).to.equal(expected);
 	});
 });
+
+/* ================================================
+ * Version
+ * ================================================
+ */
+
+describe('Test - OTPAuth.version', function () {
+	it('version', function () {
+		expect(OTPAuth.version).to.be.a('string');
+	});
+});
