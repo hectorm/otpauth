@@ -12,11 +12,15 @@ module.exports = function (config) {
 		reporters: ['dots'],
 		singleRun: true,
 		autoWatch: false,
-		browsers: ['ChromeHeadless', 'PhantomJS'],
+		browsers: ['FirefoxHeadless', 'ChromeHeadless', 'PhantomJS'],
+		customLaunchers: {
+			FirefoxHeadless: {base: 'Firefox', flags: ['-headless']}
+		},
 		plugins: [
 			'karma-chai',
-			'karma-mocha',
 			'karma-chrome-launcher',
+			'karma-firefox-launcher',
+			'karma-mocha',
 			'karma-phantomjs-launcher'
 		]
 	});
