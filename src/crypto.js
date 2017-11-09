@@ -24,7 +24,7 @@ if (NodeCrypto) {
 	} else {
 		// Node.js < 5.10.0
 		bufferFrom = function (arrbuf) {
-			// eslint-disable-next-line unicorn/no-new-buffer
+			// eslint-disable-next-line no-buffer-constructor, unicorn/no-new-buffer
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
 
@@ -63,11 +63,9 @@ if (NodeCrypto) {
 	//   $ openssl list-message-digest-algorithms
 	// displays the available digest algorithms.
 	Crypto.hmacDigest = function (algorithm, key, message) {
-		return bufferTo(
-			NodeCrypto.createHmac(algorithm, bufferFrom(key))
-				.update(bufferFrom(message))
-				.digest()
-		);
+		return bufferTo(NodeCrypto.createHmac(algorithm, bufferFrom(key))
+			.update(bufferFrom(message))
+			.digest());
 	};
 } else {
 	let getRandomValues;

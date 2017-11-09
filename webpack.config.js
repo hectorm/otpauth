@@ -63,8 +63,6 @@ module.exports = {
 				]
 			}
 		}),
-		new webpack.BannerPlugin(
-			`${pkg.libraryName} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
-		)
+		new webpack.BannerPlugin(`${pkg.libraryName} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`)
 	]
 };

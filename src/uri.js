@@ -15,7 +15,7 @@ const OTPURI_PARAMS = ['issuer', 'label', 'secret', 'algorithm', 'digits', 'coun
  * @private
  * @type {RegExp}
  */
-const OTPURI_REGEX = RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');
+const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');
 
 /**
  * RFC 4648 base32 alphabet without pad.
@@ -36,14 +36,14 @@ const ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
  * @private
  * @type {RegExp}
  */
-const INTEGER_REGEX = /^[+-]?[0-9]+$/;
+const INTEGER_REGEX = /^[+-]?\d+$/;
 
 /**
  * Positive integer regex.
  * @private
  * @type {RegExp}
  */
-const POSITIVE_INTEGER_REGEX = /^\+?[1-9][0-9]*$/;
+const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
 /**
  * HOTP/TOTP object/string conversion.

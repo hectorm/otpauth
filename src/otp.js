@@ -78,9 +78,8 @@ export class HOTP {
 	 */
 	static generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {
 		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
-
 		const offset = digest[digest.byteLength - 1] & 15;
-		const binary = (
+		const otp = (
 			((digest[offset] & 127) << 24) |
 			((digest[offset + 1] & 255) << 16) |
 			((digest[offset + 2] & 255) << 8) |
@@ -88,8 +87,8 @@ export class HOTP {
 		) % Math.pow(10, digits);
 
 		return pad
-			? Array(1 + digits - String(binary).length).join('0') + binary
-			: binary;
+			? new Array(1 + digits - String(otp).length).join('0') + otp
+			: otp;
 	}
 
 	/**
