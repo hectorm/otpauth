@@ -3,7 +3,7 @@
   "destination": "./docs",
   "plugins": [
     {
-      "name": "esdoc-standard-plugin",
+      "name": "esdoc2-standard-plugin",
       "option": {
         "brand": {
           "title": "OTPAuth",

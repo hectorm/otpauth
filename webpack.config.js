@@ -10,10 +10,12 @@ const webpack = require('webpack');
 const ClosureCompilerPlugin = require('google-closure-compiler-js').webpack;
 
 module.exports = {
+	mode: 'production',
 	entry: path.join(__dirname, 'src/main.js'),
 	output: {
 		library: 'OTPAuth',
 		libraryTarget: 'umd',
+		globalObject: 'this',
 		filename: 'otpauth.min.js',
 		path: path.join(__dirname, 'dist')
 	},

@@ -13,9 +13,6 @@ module.exports = function (config) {
 		singleRun: true,
 		autoWatch: false,
 		browsers: ['FirefoxHeadless', 'ChromeHeadless', 'PhantomJS'],
-		customLaunchers: {
-			FirefoxHeadless: {base: 'Firefox', flags: ['-headless']}
-		},
 		plugins: [
 			'karma-chai',
 			'karma-chrome-launcher',
