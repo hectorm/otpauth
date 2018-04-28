@@ -34,6 +34,7 @@ function generateConfig(filename) {
 						compress: false,
 						mangle: false,
 						output: {
+							comments: true,
 							beautify: !isMinified,
 							max_line_len: 512,
 							indent_level: 1
@@ -90,7 +91,9 @@ function generateConfig(filename) {
 					]
 				}
 			}),
-			new webpack.BannerPlugin(`${pkg.libraryName} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`)
+			new webpack.BannerPlugin({
+				banner: `${pkg.name} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
+			})
 		]
 	};
 }
