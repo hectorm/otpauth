@@ -1,7 +1,10 @@
 'use strict';
 
 /* eslint-disable no-use-before-define */
-var OTPAuth = OTPAuth || require('../dist/otpauth.min.js');
+var OTPAuth = OTPAuth || require(process.env.IS_MINIFIED
+	? '../dist/otpauth.min.js'
+	: '../dist/otpauth.js'
+);
 var chai = chai || require('chai');
 var expect = expect || chai.expect;
 /* eslint-enable */

@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/zant95/otpauth/issues"
   },
-  "main": "dist/otpauth.min.js",
+  "main": "dist/otpauth.js",
   "files": [
     "/dist",
     "/src"
@@ -37,8 +37,12 @@
   "scripts": {
     "lint": "eslint .",
     "build": "webpack --display-reasons",
-    "test:browser": "karma start",
-    "test:node": "mocha --reporter dot",
+    "test:browser:unminified": "karma start",
+    "test:browser:minified": "IS_MINIFIED=true karma start",
+    "test:browser": "run-s test:browser:*",
+    "test:node:unminified": "mocha --reporter dot",
+    "test:node:minified": "IS_MINIFIED=true mocha --reporter dot",
+    "test:node": "run-s test:node:*",
     "test": "run-s test:*",
     "docs": "rimraf docs && esdoc2",
     "dist": "run-s lint build test docs",
@@ -49,24 +53,25 @@
     "chai": "~4.1.2",
     "esdoc2-standard-plugin": "~2.1.2",
     "esdoc2": "~2.1.3",
-    "eslint-config-xo": "~0.20.1",
+    "eslint-config-xo": "~0.22.0",
     "eslint-config-zant": "~2.0.0",
-    "eslint-plugin-import": "~2.9.0",
-    "eslint-plugin-unicorn": "~4.0.2",
+    "eslint-plugin-import": "~2.11.0",
+    "eslint-plugin-unicorn": "~4.0.3",
     "eslint": "~4.19.1",
-    "google-closure-compiler-js": "~20180204.0.0",
+    "google-closure-compiler-js": "~20180402.0.0",
     "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~2.2.0",
     "karma-firefox-launcher": "~1.1.0",
     "karma-mocha": "~1.3.0",
     "karma-phantomjs-launcher": "~1.0.4",
-    "karma": "~2.0.0",
-    "mocha": "~5.0.5",
+    "karma": "~2.0.2",
+    "mocha": "~5.1.1",
     "npm-run-all": "~4.1.2",
     "rimraf": "~2.6.2",
     "sjcl": "1.0.7",
     "tmp": "~0.0.33",
-    "webpack-cli": "~2.0.13",
-    "webpack": "~4.2.0"
+    "uglifyjs-webpack-plugin": "~1.2.5",
+    "webpack-cli": "~2.0.15",
+    "webpack": "~4.6.0"
   }
 }
