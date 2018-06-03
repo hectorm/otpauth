@@ -1,4 +1,4 @@
-/*! otpauth v3.2.0 | (c) Héctor Molinero Fernández <hector@molinero.xyz> | https://github.com/zant95/otpauth | MIT */
+/*! otpauth v3.2.1 | (c) Héctor Molinero Fernández <hector@molinero.xyz> | https://github.com/hectorm/otpauth | MIT */
 (function() {
  "use strict";
  var $jscomp = $jscomp || {};
@@ -7,6 +7,57 @@
   return "undefined" != typeof window && window === maybeGlobal ? maybeGlobal : "undefined" != typeof global && null != global ? global : maybeGlobal;
  };
  $jscomp.global = $jscomp.getGlobal(this);
+ $jscomp.ASSUME_ES5 = !1;
+ $jscomp.ASSUME_NO_NATIVE_MAP = !1;
+ $jscomp.ASSUME_NO_NATIVE_SET = !1;
+ $jscomp.defineProperty = $jscomp.ASSUME_ES5 || "function" == typeof Object.defineProperties ? Object.defineProperty : function(target, property, descriptor) {
+  target != Array.prototype && target != Object.prototype && (target[property] = descriptor.value);
+ };
+ $jscomp.SYMBOL_PREFIX = "jscomp_symbol_";
+ $jscomp.initSymbol = function() {
+  $jscomp.initSymbol = function() {};
+  $jscomp.global.Symbol || ($jscomp.global.Symbol = $jscomp.Symbol);
+ };
+ $jscomp.Symbol = function() {
+  var counter = 0;
+  return function(opt_description) {
+   return $jscomp.SYMBOL_PREFIX + (opt_description || "") + counter++;
+  };
+ }();
+ $jscomp.initSymbolIterator = function() {
+  $jscomp.initSymbol();
+  var symbolIterator = $jscomp.global.Symbol.iterator;
+  symbolIterator || (symbolIterator = $jscomp.global.Symbol.iterator = $jscomp.global.Symbol("iterator"));
+  "function" != typeof Array.prototype[symbolIterator] && $jscomp.defineProperty(Array.prototype, symbolIterator, {
+   configurable: !0,
+   writable: !0,
+   value: function() {
+    return $jscomp.arrayIterator(this);
+   }
+  });
+  $jscomp.initSymbolIterator = function() {};
+ };
+ $jscomp.arrayIterator = function(array) {
+  var index = 0;
+  return $jscomp.iteratorPrototype(function() {
+   return index < array.length ? {
+    done: !1,
+    value: array[index++]
+   } : {
+    done: !0
+   };
+  });
+ };
+ $jscomp.iteratorPrototype = function(next) {
+  $jscomp.initSymbolIterator();
+  next = {
+   next: next
+  };
+  next[$jscomp.global.Symbol.iterator] = function() {
+   return this;
+  };
+  return next;
+ };
  function factory$jscomp$inline_1() {
   return function(modules) {
    function __webpack_require__(moduleId) {
@@ -25,15 +76,33 @@
    __webpack_require__.c = installedModules;
    __webpack_require__.d = function(exports, name, getter) {
     __webpack_require__.o(exports, name) || Object.defineProperty(exports, name, {
-     configurable: !1,
      enumerable: !0,
      get: getter
     });
    };
    __webpack_require__.r = function(exports) {
+    $jscomp.initSymbol();
+    $jscomp.initSymbol();
+    "undefined" !== typeof Symbol && Symbol.toStringTag && ($jscomp.initSymbol(), Object.defineProperty(exports, Symbol.toStringTag, {
+     value: "Module"
+    }));
     Object.defineProperty(exports, "__esModule", {
      value: !0
     });
+   };
+   __webpack_require__.t = function(value, mode) {
+    mode & 1 && (value = __webpack_require__(value));
+    if (mode & 8 || mode & 4 && "object" === typeof value && value && value.__esModule) return value;
+    var ns = Object.create(null);
+    __webpack_require__.r(ns);
+    Object.defineProperty(ns, "default", {
+     enumerable: !0,
+     value: value
+    });
+    if (mode & 2 && "string" != typeof value) for (var key$jscomp$0 in value) __webpack_require__.d(ns, key$jscomp$0, function(key) {
+     return value[key];
+    }.bind(null, key$jscomp$0));
+    return ns;
    };
    __webpack_require__.n = function(module) {
     var getter = module && module.__esModule ? function() {
@@ -217,7 +286,7 @@
    "undefined" === typeof ArrayBuffer && function(globals) {
     globals.ArrayBuffer = function() {};
     globals.DataView = function() {};
-   }(this);
+   }(void 0);
    sjcl.codec.arrayBuffer = {
     fromBits: function(arr, padding, padding_count) {
      padding = void 0 == padding ? !0 : padding;
@@ -863,7 +932,7 @@
     return uri_URI.stringify(this);
    };
    __webpack_require__.d(__webpack_exports__, "version", function() {
-    return "3.2.0";
+    return "3.2.1";
    });
    __webpack_require__.d(__webpack_exports__, "HOTP", function() {
     return otp_HOTP;
