@@ -29,10 +29,10 @@
     "Héctor Molinero Fernández <hector@molinero.xyz>"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/zant95/otpauth",
+  "homepage": "https://github.com/hectorm/otpauth",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zant95/otpauth.git"
+    "url": "https://github.com/hectorm/otpauth.git"
   },
   "main": "./dist/otpauth.min.js",
   "moduleType": [

@@ -8,7 +8,7 @@
         "brand": {
           "title": "OTPAuth",
           "description": "One Time Password (HOTP/TOTP) library for Node.js and browser",
-          "repository": "https://github.com/zant95/otpauth",
+          "repository": "https://github.com/hectorm/otpauth",
           "author": "Héctor Molinero Fernández <hector@molinero.xyz>"
         },
         "lint": {"enable": true},

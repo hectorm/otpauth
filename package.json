@@ -21,13 +21,13 @@
   ],
   "author": "Héctor Molinero Fernández <hector@molinero.xyz>",
   "license": "MIT",
-  "homepage": "https://github.com/zant95/otpauth",
+  "homepage": "https://github.com/hectorm/otpauth",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zant95/otpauth.git"
+    "url": "https://github.com/hectorm/otpauth.git"
   },
   "bugs": {
-    "url": "https://github.com/zant95/otpauth/issues"
+    "url": "https://github.com/hectorm/otpauth/issues"
   },
   "main": "dist/otpauth.js",
   "files": [

@@ -1,8 +1,8 @@
-[![Last version](https://img.shields.io/github/tag/zant95/otpauth.svg)][tags]
-[![Dependencies status](https://img.shields.io/david/zant95/otpauth.svg)][dependencies]
-[![Dev dependencies status](https://img.shields.io/david/dev/zant95/otpauth.svg)][devDependencies]
+[![Last version](https://img.shields.io/github/tag/hectorm/otpauth.svg)][tags]
+[![Dependencies status](https://img.shields.io/david/hectorm/otpauth.svg)][dependencies]
+[![Dev dependencies status](https://img.shields.io/david/dev/hectorm/otpauth.svg)][devDependencies]
 [![NPM status](https://img.shields.io/npm/dm/otpauth.svg)][npm]
-[![Documentation](https://zant95.github.io/otpauth/badge.svg)][docs]
+[![Documentation](https://hectorm.github.io/otpauth/badge.svg)][docs]
 
 ***
 
@@ -63,11 +63,11 @@ See the [documentation][docs] page.
 ## License
 [MIT License][license] © [Héctor Molinero Fernández](https://molinero.xyz/).
 
-[docs]: https://zant95.github.io/otpauth/index.html
-[license]: https://github.com/zant95/otpauth/blob/master/LICENSE.md
-[tags]: https://github.com/zant95/otpauth/tags
+[docs]: https://hectorm.github.io/otpauth/index.html
+[license]: https://github.com/hectorm/otpauth/blob/master/LICENSE.md
+[tags]: https://github.com/hectorm/otpauth/tags
 [npm]: https://www.npmjs.com/package/otpauth
-[dependencies]: https://david-dm.org/zant95/otpauth
-[devDependencies]: https://david-dm.org/zant95/otpauth?type=dev
+[dependencies]: https://david-dm.org/hectorm/otpauth
+[devDependencies]: https://david-dm.org/hectorm/otpauth?type=dev
 [createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
 [sjcl]: https://github.com/bitwiseshiftleft/sjcl
