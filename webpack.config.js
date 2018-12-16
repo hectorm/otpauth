@@ -7,8 +7,7 @@ const fs = require('fs');
 const tmp = require('tmp');
 
 const webpack = require('webpack');
-const ClosureCompilerPlugin = require('google-closure-compiler-js').webpack;
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ClosurePlugin = require('closure-webpack-plugin');
 
 function generateConfig(filename) {
 	const isMinified = filename.endsWith('.min.js');
@@ -27,20 +26,19 @@ function generateConfig(filename) {
 		optimization: {
 			minimize: true,
 			minimizer: [
-				new UglifyJsPlugin({
-					sourceMap: true,
-					uglifyOptions: {
-						/* eslint-disable camelcase */
-						compress: false,
-						mangle: false,
-						output: {
-							comments: true,
-							beautify: !isMinified,
-							max_line_len: 512,
-							indent_level: 1
-						}
-						/* eslint-enable camelcase */
-					}
+				new ClosurePlugin({
+					mode: 'STANDARD',
+					platform: ['native', 'java']
+				}, {
+					/* eslint-disable camelcase */
+					warning_level: 'QUIET',
+					language_in: 'ECMASCRIPT_NEXT',
+					language_out: 'ECMASCRIPT5_STRICT',
+					compilation_level: 'SIMPLE',
+					create_source_map: true,
+					renaming: isMinified,
+					...(!isMinified && {formatting: 'PRETTY_PRINT'})
+					/* eslint-enable camelcase */
 				})
 			]
 		},
@@ -71,25 +69,6 @@ function generateConfig(filename) {
 
 				fs.writeFileSync(file.name, code);
 				result.request = file.name;
-			}),
-			new ClosureCompilerPlugin({
-				options: {
-					warningLevel: 'QUIET',
-					languageIn: 'ES6_STRICT',
-					languageOut: 'ES5_STRICT',
-					compilationLevel: 'SIMPLE',
-					rewritePolyfills: true,
-					createSourceMap: true,
-					assumeFunctionWrapper: true,
-					outputWrapper: '(function(){%output%}).call(this);',
-					renaming: isMinified,
-					externs: [
-						{src: 'let Buffer'},
-						{src: 'let define'},
-						{src: 'let exports'},
-						{src: 'let module'}
-					]
-				}
 			}),
 			new webpack.BannerPlugin({
 				banner: `${pkg.name} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
