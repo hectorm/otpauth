@@ -61,7 +61,7 @@ export class URI {
 
 		try {
 			uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
-		} catch (err) {}
+		} catch (error) {}
 
 		if (!Array.isArray(uriGroups)) {
 			throw new URIError('Invalid URI format');

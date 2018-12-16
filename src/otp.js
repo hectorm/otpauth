@@ -84,7 +84,7 @@ export class HOTP {
 			((digest[offset + 1] & 255) << 16) |
 			((digest[offset + 2] & 255) << 8) |
 			(digest[offset + 3] & 255)
-		) % Math.pow(10, digits);
+		) % (10 ** digits);
 
 		return pad
 			? new Array(1 + digits - String(otp).length).join('0') + otp
