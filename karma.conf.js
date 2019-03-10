@@ -15,13 +15,12 @@ module.exports = function (config) {
 		reporters: ['dots'],
 		singleRun: true,
 		autoWatch: false,
-		browsers: ['FirefoxHeadless', 'ChromeHeadless', 'PhantomJS'],
+		browsers: ['FirefoxHeadless', 'ChromeHeadless'],
 		plugins: [
 			'karma-chai',
 			'karma-chrome-launcher',
 			'karma-firefox-launcher',
-			'karma-mocha',
-			'karma-phantomjs-launcher'
+			'karma-mocha'
 		]
 	});
 };
