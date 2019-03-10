@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.2 | (c) Héctor Molinero Fernández <hector@molinero.xyz> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -29,16 +29,27 @@ $jscomp.initSymbol = function() {
   };
   $jscomp.global.Symbol || ($jscomp.global.Symbol = $jscomp.Symbol);
 };
+$jscomp.SymbolClass = function(id, opt_description) {
+  this.$jscomp$symbol$id_ = id;
+  $jscomp.defineProperty(this, "description", {configurable:!0, writable:!0, value:opt_description});
+};
+$jscomp.SymbolClass.prototype.toString = function() {
+  return this.$jscomp$symbol$id_;
+};
 $jscomp.Symbol = function() {
+  function Symbol(opt_description) {
+    if (this instanceof Symbol) {
+      throw new TypeError("Symbol is not a constructor");
+    }
+    return new $jscomp.SymbolClass($jscomp.SYMBOL_PREFIX + (opt_description || "") + "_" + counter++, opt_description);
+  }
   var counter = 0;
-  return function(opt_description) {
-    return $jscomp.SYMBOL_PREFIX + (opt_description || "") + counter++;
-  };
+  return Symbol;
 }();
 $jscomp.initSymbolIterator = function() {
   $jscomp.initSymbol();
   var symbolIterator = $jscomp.global.Symbol.iterator;
-  symbolIterator || (symbolIterator = $jscomp.global.Symbol.iterator = $jscomp.global.Symbol("iterator"));
+  symbolIterator || (symbolIterator = $jscomp.global.Symbol.iterator = $jscomp.global.Symbol("Symbol.iterator"));
   "function" != typeof Array.prototype[symbolIterator] && $jscomp.defineProperty(Array.prototype, symbolIterator, {configurable:!0, writable:!0, value:function() {
     return $jscomp.iteratorPrototype($jscomp.arrayIteratorImpl(this));
   }});
@@ -48,7 +59,7 @@ $jscomp.initSymbolIterator = function() {
 $jscomp.initSymbolAsyncIterator = function() {
   $jscomp.initSymbol();
   var symbolAsyncIterator = $jscomp.global.Symbol.asyncIterator;
-  symbolAsyncIterator || (symbolAsyncIterator = $jscomp.global.Symbol.asyncIterator = $jscomp.global.Symbol("asyncIterator"));
+  symbolAsyncIterator || (symbolAsyncIterator = $jscomp.global.Symbol.asyncIterator = $jscomp.global.Symbol("Symbol.asyncIterator"));
   $jscomp.initSymbolAsyncIterator = function() {
   };
 };
@@ -765,11 +776,11 @@ $jscomp.iteratorPrototype = function(next) {
     module.exports = exports;
   }, function(module, __webpack_exports__, __webpack_require__) {
     __webpack_require__.r(__webpack_exports__);
-    var utils = __webpack_require__(0), src_crypto = __webpack_require__(2), secret_Secret = function(config) {
-      var $jscomp$destructuring$var0 = void 0 === config ? {} : config;
-      config = $jscomp$destructuring$var0.buffer;
-      $jscomp$destructuring$var0 = void 0 === $jscomp$destructuring$var0.size ? 20 : $jscomp$destructuring$var0.size;
-      this.buffer = "undefined" === typeof config ? src_crypto.a.randomBytes($jscomp$destructuring$var0).buffer : config;
+    var utils = __webpack_require__(0), src_crypto = __webpack_require__(2), secret_Secret = function($jscomp$destructuring$var0) {
+      var $jscomp$destructuring$var1 = void 0 === $jscomp$destructuring$var0 ? {} : $jscomp$destructuring$var0;
+      $jscomp$destructuring$var0 = $jscomp$destructuring$var1.buffer;
+      $jscomp$destructuring$var1 = void 0 === $jscomp$destructuring$var1.size ? 20 : $jscomp$destructuring$var1.size;
+      this.buffer = "undefined" === typeof $jscomp$destructuring$var0 ? src_crypto.a.randomBytes($jscomp$destructuring$var1).buffer : $jscomp$destructuring$var0;
     };
     secret_Secret.fromRaw = function(str) {
       return new this({buffer:utils.b.raw.encode(str)});
@@ -862,47 +873,47 @@ $jscomp.iteratorPrototype = function(next) {
       }
       return new uriType(config);
     };
-    uri_URI.stringify = function(otp, config) {
-      config = void 0 === config ? {} : config;
-      config = void 0 === config.legacyIssuer ? !0 : config.legacyIssuer;
+    uri_URI.stringify = function(otp, $jscomp$destructuring$var2) {
+      $jscomp$destructuring$var2 = void 0 === $jscomp$destructuring$var2 ? {} : $jscomp$destructuring$var2;
+      $jscomp$destructuring$var2 = void 0 === $jscomp$destructuring$var2.legacyIssuer ? !0 : $jscomp$destructuring$var2.legacyIssuer;
       var isTOTP = otp instanceof otp_TOTP;
       if (!(otp instanceof otp_HOTP || isTOTP)) {
         throw new TypeError("Invalid 'HOTP/TOTP' object");
       }
       var uri = "otpauth://" + ((isTOTP ? "totp" : "hotp") + "/");
-      0 < otp.issuer.length ? (config && (uri += otp.issuer + ":"), uri += otp.label + "?issuer=" + otp.issuer + "&") : uri += otp.label + "?";
+      0 < otp.issuer.length ? ($jscomp$destructuring$var2 && (uri += otp.issuer + ":"), uri += otp.label + "?issuer=" + otp.issuer + "&") : uri += otp.label + "?";
       uri += "secret=" + otp.secret.b32 + ("&algorithm=" + otp.algorithm) + ("&digits=" + otp.digits);
       uri = isTOTP ? uri + ("&period=" + otp.period) : uri + ("&counter=" + otp.counter);
       return encodeURI(uri);
     };
-    var otp_HOTP = function(config) {
-      var $jscomp$destructuring$var2 = void 0 === config ? {} : config;
-      config = void 0 === $jscomp$destructuring$var2.issuer ? "" : $jscomp$destructuring$var2.issuer;
-      var label = void 0 === $jscomp$destructuring$var2.label ? "OTPAuth" : $jscomp$destructuring$var2.label, secret = void 0 === $jscomp$destructuring$var2.secret ? new secret_Secret : $jscomp$destructuring$var2.secret, algorithm = void 0 === $jscomp$destructuring$var2.algorithm ? "SHA1" : $jscomp$destructuring$var2.algorithm, digits = void 0 === $jscomp$destructuring$var2.digits ? 6 : $jscomp$destructuring$var2.digits;
-      $jscomp$destructuring$var2 = void 0 === $jscomp$destructuring$var2.counter ? 0 : $jscomp$destructuring$var2.counter;
-      this.issuer = config;
+    var otp_HOTP = function($jscomp$destructuring$var4) {
+      var $jscomp$destructuring$var5 = void 0 === $jscomp$destructuring$var4 ? {} : $jscomp$destructuring$var4;
+      $jscomp$destructuring$var4 = void 0 === $jscomp$destructuring$var5.issuer ? "" : $jscomp$destructuring$var5.issuer;
+      var label = void 0 === $jscomp$destructuring$var5.label ? "OTPAuth" : $jscomp$destructuring$var5.label, secret = void 0 === $jscomp$destructuring$var5.secret ? new secret_Secret : $jscomp$destructuring$var5.secret, algorithm = void 0 === $jscomp$destructuring$var5.algorithm ? "SHA1" : $jscomp$destructuring$var5.algorithm, digits = void 0 === $jscomp$destructuring$var5.digits ? 6 : $jscomp$destructuring$var5.digits;
+      $jscomp$destructuring$var5 = void 0 === $jscomp$destructuring$var5.counter ? 0 : $jscomp$destructuring$var5.counter;
+      this.issuer = $jscomp$destructuring$var4;
       this.label = label;
       this.secret = secret;
       this.algorithm = algorithm;
       this.digits = digits;
-      this.counter = $jscomp$destructuring$var2;
+      this.counter = $jscomp$destructuring$var5;
     };
-    otp_HOTP.generate = function(config) {
-      var digits = void 0 === config.digits ? 6 : config.digits, pad = void 0 === config.pad ? !0 : config.pad;
-      config = new Uint8Array(src_crypto.a.hmacDigest(void 0 === config.algorithm ? "SHA1" : config.algorithm, config.secret.buffer, utils.b.uint.encode(void 0 === config.counter ? 0 : config.counter)));
-      var offset = config[config.byteLength - 1] & 15;
-      config = ((config[offset] & 127) << 24 | (config[offset + 1] & 255) << 16 | (config[offset + 2] & 255) << 8 | config[offset + 3] & 255) % Math.pow(10, digits);
-      return pad ? Array(1 + digits - String(config).length).join("0") + config : config;
+    otp_HOTP.generate = function($jscomp$destructuring$var6) {
+      var digits = void 0 === $jscomp$destructuring$var6.digits ? 6 : $jscomp$destructuring$var6.digits, pad = void 0 === $jscomp$destructuring$var6.pad ? !0 : $jscomp$destructuring$var6.pad;
+      $jscomp$destructuring$var6 = new Uint8Array(src_crypto.a.hmacDigest(void 0 === $jscomp$destructuring$var6.algorithm ? "SHA1" : $jscomp$destructuring$var6.algorithm, $jscomp$destructuring$var6.secret.buffer, utils.b.uint.encode(void 0 === $jscomp$destructuring$var6.counter ? 0 : $jscomp$destructuring$var6.counter)));
+      var offset = $jscomp$destructuring$var6[$jscomp$destructuring$var6.byteLength - 1] & 15;
+      $jscomp$destructuring$var6 = (($jscomp$destructuring$var6[offset] & 127) << 24 | ($jscomp$destructuring$var6[offset + 1] & 255) << 16 | ($jscomp$destructuring$var6[offset + 2] & 255) << 8 | $jscomp$destructuring$var6[offset + 3] & 255) % Math.pow(10, digits);
+      return pad ? Array(1 + digits - String($jscomp$destructuring$var6).length).join("0") + $jscomp$destructuring$var6 : $jscomp$destructuring$var6;
     };
-    otp_HOTP.prototype.generate = function(config) {
-      config = void 0 === config ? {} : config;
-      var counter = void 0 === config.counter ? this.counter++ : config.counter;
-      return otp_HOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, counter:counter, pad:config.pad});
+    otp_HOTP.prototype.generate = function($jscomp$destructuring$var8) {
+      $jscomp$destructuring$var8 = void 0 === $jscomp$destructuring$var8 ? {} : $jscomp$destructuring$var8;
+      var counter = void 0 === $jscomp$destructuring$var8.counter ? this.counter++ : $jscomp$destructuring$var8.counter;
+      return otp_HOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, counter:counter, pad:$jscomp$destructuring$var8.pad});
     };
-    otp_HOTP.validate = function(config) {
-      var token = config.token, secret = config.secret, algorithm = config.algorithm, counter = void 0 === config.counter ? 0 : config.counter;
-      config = void 0 === config.window ? 50 : config.window;
-      for (var searchToken = parseInt(token, 10), i = counter - config; i <= counter + config; ++i) {
+    otp_HOTP.validate = function($jscomp$destructuring$var10) {
+      var token = $jscomp$destructuring$var10.token, secret = $jscomp$destructuring$var10.secret, algorithm = $jscomp$destructuring$var10.algorithm, counter = void 0 === $jscomp$destructuring$var10.counter ? 0 : $jscomp$destructuring$var10.counter;
+      $jscomp$destructuring$var10 = void 0 === $jscomp$destructuring$var10.window ? 50 : $jscomp$destructuring$var10.window;
+      for (var searchToken = parseInt(token, 10), i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
         var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, counter:i, digits:token.length, pad:!1});
         if (searchToken === generatedToken) {
           return i - counter;
@@ -910,45 +921,45 @@ $jscomp.iteratorPrototype = function(next) {
       }
       return null;
     };
-    otp_HOTP.prototype.validate = function(config) {
-      return otp_HOTP.validate({token:config.token, secret:this.secret, algorithm:this.algorithm, counter:void 0 === config.counter ? this.counter : config.counter, window:config.window});
+    otp_HOTP.prototype.validate = function($jscomp$destructuring$var12) {
+      return otp_HOTP.validate({token:$jscomp$destructuring$var12.token, secret:this.secret, algorithm:this.algorithm, counter:void 0 === $jscomp$destructuring$var12.counter ? this.counter : $jscomp$destructuring$var12.counter, window:$jscomp$destructuring$var12.window});
     };
     otp_HOTP.prototype.toString = function() {
       return uri_URI.stringify(this);
     };
-    var otp_TOTP = function(config) {
-      var $jscomp$destructuring$var7 = void 0 === config ? {} : config;
-      config = void 0 === $jscomp$destructuring$var7.issuer ? "" : $jscomp$destructuring$var7.issuer;
-      var label = void 0 === $jscomp$destructuring$var7.label ? "OTPAuth" : $jscomp$destructuring$var7.label, secret = void 0 === $jscomp$destructuring$var7.secret ? new secret_Secret : $jscomp$destructuring$var7.secret, algorithm = void 0 === $jscomp$destructuring$var7.algorithm ? "SHA1" : $jscomp$destructuring$var7.algorithm, digits = void 0 === $jscomp$destructuring$var7.digits ? 6 : $jscomp$destructuring$var7.digits;
-      $jscomp$destructuring$var7 = void 0 === $jscomp$destructuring$var7.period ? 30 : $jscomp$destructuring$var7.period;
-      this.issuer = config;
+    var otp_TOTP = function($jscomp$destructuring$var14) {
+      var $jscomp$destructuring$var15 = void 0 === $jscomp$destructuring$var14 ? {} : $jscomp$destructuring$var14;
+      $jscomp$destructuring$var14 = void 0 === $jscomp$destructuring$var15.issuer ? "" : $jscomp$destructuring$var15.issuer;
+      var label = void 0 === $jscomp$destructuring$var15.label ? "OTPAuth" : $jscomp$destructuring$var15.label, secret = void 0 === $jscomp$destructuring$var15.secret ? new secret_Secret : $jscomp$destructuring$var15.secret, algorithm = void 0 === $jscomp$destructuring$var15.algorithm ? "SHA1" : $jscomp$destructuring$var15.algorithm, digits = void 0 === $jscomp$destructuring$var15.digits ? 6 : $jscomp$destructuring$var15.digits;
+      $jscomp$destructuring$var15 = void 0 === $jscomp$destructuring$var15.period ? 30 : $jscomp$destructuring$var15.period;
+      this.issuer = $jscomp$destructuring$var14;
       this.label = label;
       this.secret = secret;
       this.algorithm = algorithm;
       this.digits = digits;
-      this.period = $jscomp$destructuring$var7;
+      this.period = $jscomp$destructuring$var15;
     };
-    otp_TOTP.generate = function(config) {
-      var secret = config.secret, algorithm = config.algorithm, digits = config.digits, period = void 0 === config.period ? 30 : config.period, timestamp = void 0 === config.timestamp ? Date.now() : config.timestamp;
-      return otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:Math.floor(timestamp / 1000 / period), pad:config.pad});
+    otp_TOTP.generate = function($jscomp$destructuring$var16) {
+      var secret = $jscomp$destructuring$var16.secret, algorithm = $jscomp$destructuring$var16.algorithm, digits = $jscomp$destructuring$var16.digits, period = void 0 === $jscomp$destructuring$var16.period ? 30 : $jscomp$destructuring$var16.period, timestamp = void 0 === $jscomp$destructuring$var16.timestamp ? Date.now() : $jscomp$destructuring$var16.timestamp;
+      return otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:Math.floor(timestamp / 1000 / period), pad:$jscomp$destructuring$var16.pad});
     };
-    otp_TOTP.prototype.generate = function(config) {
-      config = void 0 === config ? {} : config;
-      var timestamp = void 0 === config.timestamp ? Date.now() : config.timestamp;
-      return otp_TOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, period:this.period, timestamp:timestamp, pad:config.pad});
+    otp_TOTP.prototype.generate = function($jscomp$destructuring$var18) {
+      $jscomp$destructuring$var18 = void 0 === $jscomp$destructuring$var18 ? {} : $jscomp$destructuring$var18;
+      var timestamp = void 0 === $jscomp$destructuring$var18.timestamp ? Date.now() : $jscomp$destructuring$var18.timestamp;
+      return otp_TOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, period:this.period, timestamp:timestamp, pad:$jscomp$destructuring$var18.pad});
     };
-    otp_TOTP.validate = function(config) {
-      var token = config.token, secret = config.secret, algorithm = config.algorithm, period = void 0 === config.period ? 30 : config.period, timestamp = void 0 === config.timestamp ? Date.now() : config.timestamp;
-      return otp_HOTP.validate({token:token, secret:secret, algorithm:algorithm, counter:Math.floor(timestamp / 1000 / period), window:config.window});
+    otp_TOTP.validate = function($jscomp$destructuring$var20) {
+      var token = $jscomp$destructuring$var20.token, secret = $jscomp$destructuring$var20.secret, algorithm = $jscomp$destructuring$var20.algorithm, period = void 0 === $jscomp$destructuring$var20.period ? 30 : $jscomp$destructuring$var20.period, timestamp = void 0 === $jscomp$destructuring$var20.timestamp ? Date.now() : $jscomp$destructuring$var20.timestamp;
+      return otp_HOTP.validate({token:token, secret:secret, algorithm:algorithm, counter:Math.floor(timestamp / 1000 / period), window:$jscomp$destructuring$var20.window});
     };
-    otp_TOTP.prototype.validate = function(config) {
-      return otp_TOTP.validate({token:config.token, secret:this.secret, algorithm:this.algorithm, period:this.period, timestamp:config.timestamp, window:config.window});
+    otp_TOTP.prototype.validate = function($jscomp$destructuring$var22) {
+      return otp_TOTP.validate({token:$jscomp$destructuring$var22.token, secret:this.secret, algorithm:this.algorithm, period:this.period, timestamp:$jscomp$destructuring$var22.timestamp, window:$jscomp$destructuring$var22.window});
     };
     otp_TOTP.prototype.toString = function() {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.2";
+      return "3.2.3";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
