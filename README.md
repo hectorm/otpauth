@@ -61,7 +61,7 @@ In browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using
 See the [documentation][docs] page.
 
 ## License
-[MIT License][license] © [Héctor Molinero Fernández](https://molinero.xyz/).
+[MIT License][license] © [Héctor Molinero Fernández](https://molinero.dev/).
 
 [docs]: https://hectorm.github.io/otpauth/index.html
 [license]: https://github.com/hectorm/otpauth/blob/master/LICENSE.md

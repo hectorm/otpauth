@@ -19,7 +19,7 @@
     "authenticator",
     "google authenticator"
   ],
-  "author": "Héctor Molinero Fernández <hector@molinero.xyz>",
+  "author": "Héctor Molinero Fernández <hector@molinero.dev>",
   "license": "MIT",
   "homepage": "https://github.com/hectorm/otpauth",
   "repository": {
