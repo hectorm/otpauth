@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 59,
-  "actualCount": 59,
+  "expectCount": 50,
+  "actualCount": 50,
   "files": {
     "src/crypto.js": {
       "expectCount": 2,
@@ -29,8 +29,8 @@
       "undocumentLines": []
     },
     "src/utils.js": {
-      "expectCount": 11,
-      "actualCount": 11,
+      "expectCount": 2,
+      "actualCount": 2,
       "undocumentLines": []
     }
   }

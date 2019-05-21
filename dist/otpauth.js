@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -729,10 +729,12 @@ $jscomp.iteratorPrototype = function(next) {
           return arr;
         };
         Crypto.randomBytes = function(size) {
-          return bufferTo(NodeCrypto.randomBytes(size));
+          size = NodeCrypto.randomBytes(size);
+          return bufferTo(size);
         };
         Crypto.hmacDigest = function(algorithm, key, message) {
-          return bufferTo(NodeCrypto.createHmac(algorithm, bufferFrom(key)).update(bufferFrom(message)).digest());
+          algorithm = NodeCrypto.createHmac(algorithm, bufferFrom(key));
+          return bufferTo(algorithm).update(bufferFrom(message)).digest();
         };
       } else {
         if ("undefined" !== typeof global.crypto && "function" === typeof global.crypto.getRandomValues) {
@@ -881,10 +883,9 @@ $jscomp.iteratorPrototype = function(next) {
         throw new TypeError("Invalid 'HOTP/TOTP' object");
       }
       var uri = "otpauth://" + ((isTOTP ? "totp" : "hotp") + "/");
-      0 < otp.issuer.length ? ($jscomp$destructuring$var2 && (uri += otp.issuer + ":"), uri += otp.label + "?issuer=" + otp.issuer + "&") : uri += otp.label + "?";
-      uri += "secret=" + otp.secret.b32 + ("&algorithm=" + otp.algorithm) + ("&digits=" + otp.digits);
-      uri = isTOTP ? uri + ("&period=" + otp.period) : uri + ("&counter=" + otp.counter);
-      return encodeURI(uri);
+      0 < otp.issuer.length ? ($jscomp$destructuring$var2 && (uri += encodeURIComponent(otp.issuer) + ":"), uri += encodeURIComponent(otp.label) + "?", uri += "issuer=" + encodeURIComponent(otp.issuer) + "&") : uri += encodeURIComponent(otp.label) + "?";
+      uri += "secret=" + encodeURIComponent(otp.secret.b32) + ("&algorithm=" + encodeURIComponent(otp.algorithm)) + ("&digits=" + encodeURIComponent(otp.digits));
+      return uri = isTOTP ? uri + ("&period=" + encodeURIComponent(otp.period)) : uri + ("&counter=" + encodeURIComponent(otp.counter));
     };
     var otp_HOTP = function($jscomp$destructuring$var4) {
       var $jscomp$destructuring$var5 = void 0 === $jscomp$destructuring$var4 ? {} : $jscomp$destructuring$var4;
@@ -959,7 +960,7 @@ $jscomp.iteratorPrototype = function(next) {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.3";
+      return "3.2.4";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;

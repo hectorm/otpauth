@@ -40,9 +40,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/uri.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {Utils} from &apos;./utils.js&apos;;
-import {Secret} from &apos;./secret.js&apos;;
-import {HOTP, TOTP} from &apos;./otp.js&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Utils } from &apos;./utils&apos;;
+import { Secret } from &apos;./secret&apos;;
+/* eslint-disable-next-line import/no-cycle */
+import { HOTP, TOTP } from &apos;./otp&apos;;
 
 /**
  * Valid key URI parameters.
@@ -103,7 +104,7 @@ export class URI {
 
 		try {
 			uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
-		} catch (error) {}
+		} catch (error) { /* Handled below */ }
 
 		if (!Array.isArray(uriGroups)) {
 			throw new URIError(&apos;Invalid URI format&apos;);
@@ -112,7 +113,7 @@ export class URI {
 		// Extract URI groups
 		const uriType = uriGroups[1].toLowerCase();
 		const uriLabel = uriGroups[2].split(/:(.+)/, 2);
-		const uriParams = uriGroups[3].split(&apos;&amp;&apos;).reduce(function (acc, cur) {
+		const uriParams = uriGroups[3].split(&apos;&amp;&apos;).reduce((acc, cur) =&gt; {
 			const pairArr = cur.split(/=(.+)/, 2);
 			const pairKey = pairArr[0].toLowerCase();
 			const pairVal = pairArr[1];
@@ -124,7 +125,7 @@ export class URI {
 
 		// &apos;OTP&apos; will be instantiated with &apos;config&apos; argument
 		let OTP;
-		let config = {};
+		const config = {};
 
 		if (uriType === &apos;hotp&apos;) {
 			OTP = HOTP;
@@ -170,7 +171,7 @@ export class URI {
 
 		// Secret: required
 		if (typeof uriParams.secret !== &apos;undefined&apos; &amp;&amp; SECRET_REGEX.test(uriParams.secret)) {
-			config.secret = new Secret({buffer: Utils.b32.encode(uriParams.secret)});
+			config.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });
 		} else {
 			throw new TypeError(&apos;Missing or invalid \&apos;secret\&apos; parameter&apos;);
 		}
@@ -204,7 +205,7 @@ export class URI {
 	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
 	 * @returns {string} Google Authenticator Key URI.
 	 */
-	static stringify(otp, {legacyIssuer = true} = {}) {
+	static stringify(otp, { legacyIssuer = true } = {}) {
 		const isHOTP = otp instanceof HOTP;
 		const isTOTP = otp instanceof TOTP;
 
@@ -217,36 +218,36 @@ export class URI {
 		let uri = &apos;otpauth://&apos;;
 
 		// Type
-		uri += (isTOTP ? &apos;totp&apos; : &apos;hotp&apos;) + &apos;/&apos;;
+		uri += `${isTOTP ? &apos;totp&apos; : &apos;hotp&apos;}/`;
 
 		// Label and optional issuer
 		if (otp.issuer.length &gt; 0) {
-			// Issuer label prefix
-			if (legacyIssuer) {
-				uri += `${otp.issuer}:`;
-			}
-
-			uri += `${otp.label}?issuer=${otp.issuer}&amp;`;
+			// Legacy label prefix
+			if (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
+			// Issuer
+			uri += `issuer=${encodeURIComponent(otp.issuer)}&amp;`;
 		} else {
-			// No issuer
-			uri += `${otp.label}?`;
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
 		}
 
 		// Generic parameters
-		uri += `secret=${otp.secret.b32}` +
-			`&amp;algorithm=${otp.algorithm}` +
-			`&amp;digits=${otp.digits}`;
+		uri += `secret=${encodeURIComponent(otp.secret.b32)}`
+			+ `&amp;algorithm=${encodeURIComponent(otp.algorithm)}`
+			+ `&amp;digits=${encodeURIComponent(otp.digits)}`;
 
 		// Extra parameters
 		if (isTOTP) {
 			// TOTP parameters
-			uri += `&amp;period=${otp.period}`;
+			uri += `&amp;period=${encodeURIComponent(otp.period)}`;
 		} else {
 			// HOTP parameters
-			uri += `&amp;counter=${otp.counter}`;
+			uri += `&amp;counter=${encodeURIComponent(otp.counter)}`;
 		}
 
-		return encodeURI(uri);
+		return uri;
 	}
 }
 </code></pre>

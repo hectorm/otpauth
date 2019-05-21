@@ -40,8 +40,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/crypto.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import sjcl from &apos;sjcl&apos;;
-import {InternalUtils} from &apos;./utils.js&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/* eslint-disable-next-line import/no-extraneous-dependencies */
+import sjcl from &apos;sjcl&apos;; // SJCL is included during compilation.
+
+import { InternalUtils } from &apos;./utils&apos;;
 
 /**
  * Node.js Crypto module.
@@ -65,8 +67,8 @@ if (NodeCrypto) {
 		bufferFrom = Buffer.from;
 	} else {
 		// Node.js &lt; 5.10.0
-		bufferFrom = function (arrbuf) {
-			// eslint-disable-next-line no-buffer-constructor, unicorn/no-new-buffer
+		bufferFrom = (arrbuf) =&gt; {
+			// eslint-disable-next-line no-buffer-constructor
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
 
@@ -81,12 +83,10 @@ if (NodeCrypto) {
 	let bufferTo;
 
 	if (Buffer.prototype instanceof Uint8Array) {
-		bufferTo = function (nodeBuf) {
-			return nodeBuf;
-		};
+		bufferTo = nodeBuf =&gt; nodeBuf;
 	} else {
 		// Node.js &lt; 4.0.0
-		bufferTo = function (nodeBuf) {
+		bufferTo = (nodeBuf) =&gt; {
 			const arr = new Uint8Array(nodeBuf.length);
 
 			for (let i = 0; i &lt; arr.length; i++) {
@@ -97,45 +97,45 @@ if (NodeCrypto) {
 		};
 	}
 
-	Crypto.randomBytes = function (size) {
-		return bufferTo(NodeCrypto.randomBytes(size));
+	Crypto.randomBytes = (size) =&gt; {
+		const buff = NodeCrypto.randomBytes(size);
+		return bufferTo(buff);
 	};
 
 	// In Node.js, the command:
-	//   $ openssl list-message-digest-algorithms
+	// $ openssl list -digest-algorithms
 	// displays the available digest algorithms.
-	Crypto.hmacDigest = function (algorithm, key, message) {
-		return bufferTo(NodeCrypto.createHmac(algorithm, bufferFrom(key))
-			.update(bufferFrom(message))
-			.digest());
+	Crypto.hmacDigest = (algorithm, key, message) =&gt; {
+		const buff = NodeCrypto.createHmac(algorithm, bufferFrom(key));
+		return bufferTo(buff).update(bufferFrom(message)).digest();
 	};
 } else {
 	let getRandomValues;
 
 	if (typeof global.crypto !== &apos;undefined&apos; &amp;&amp; typeof global.crypto.getRandomValues === &apos;function&apos;) {
-		getRandomValues = function (arr) {
+		getRandomValues = (arr) =&gt; {
 			global.crypto.getRandomValues(arr);
 		};
 	} else if (typeof global.msCrypto !== &apos;undefined&apos; &amp;&amp; typeof global.msCrypto.getRandomValues === &apos;function&apos;) {
-		getRandomValues = function (arr) {
+		getRandomValues = (arr) =&gt; {
 			global.msCrypto.getRandomValues(arr);
 		};
 	} else {
 		console.warn(&apos;Cryptography API not available, falling back to \&apos;Math.random\&apos;...&apos;);
-		getRandomValues = function (arr) {
+		getRandomValues = (arr) =&gt; {
 			for (let i = 0; i &lt; arr.length; i++) {
 				arr[i] = Math.floor(Math.random() * 256);
 			}
 		};
 	}
 
-	Crypto.randomBytes = function (size) {
+	Crypto.randomBytes = (size) =&gt; {
 		const arr = new Uint8Array(size);
 		getRandomValues(arr);
 		return arr;
 	};
 
-	Crypto.hmacDigest = function (algorithm, key, message) {
+	Crypto.hmacDigest = (algorithm, key, message) =&gt; {
 		const hash = sjcl.hash[algorithm.toLowerCase()];
 		if (typeof hash === &apos;undefined&apos;) {
 			throw new TypeError(&apos;Unknown hash function&apos;);
