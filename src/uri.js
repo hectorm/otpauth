@@ -1,6 +1,7 @@
-import {Utils} from './utils.js';
-import {Secret} from './secret.js';
-import {HOTP, TOTP} from './otp.js';
+import { Utils } from './utils';
+import { Secret } from './secret';
+/* eslint-disable-next-line import/no-cycle */
+import { HOTP, TOTP } from './otp';
 
 /**
  * Valid key URI parameters.
@@ -61,7 +62,7 @@ export class URI {
 
 		try {
 			uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
-		} catch (error) {}
+		} catch (error) { /* Handled below */ }
 
 		if (!Array.isArray(uriGroups)) {
 			throw new URIError('Invalid URI format');
@@ -70,7 +71,7 @@ export class URI {
 		// Extract URI groups
 		const uriType = uriGroups[1].toLowerCase();
 		const uriLabel = uriGroups[2].split(/:(.+)/, 2);
-		const uriParams = uriGroups[3].split('&').reduce(function (acc, cur) {
+		const uriParams = uriGroups[3].split('&').reduce((acc, cur) => {
 			const pairArr = cur.split(/=(.+)/, 2);
 			const pairKey = pairArr[0].toLowerCase();
 			const pairVal = pairArr[1];
@@ -82,7 +83,7 @@ export class URI {
 
 		// 'OTP' will be instantiated with 'config' argument
 		let OTP;
-		let config = {};
+		const config = {};
 
 		if (uriType === 'hotp') {
 			OTP = HOTP;
@@ -128,7 +129,7 @@ export class URI {
 
 		// Secret: required
 		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
-			config.secret = new Secret({buffer: Utils.b32.encode(uriParams.secret)});
+			config.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });
 		} else {
 			throw new TypeError('Missing or invalid \'secret\' parameter');
 		}
@@ -162,7 +163,7 @@ export class URI {
 	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
 	 * @returns {string} Google Authenticator Key URI.
 	 */
-	static stringify(otp, {legacyIssuer = true} = {}) {
+	static stringify(otp, { legacyIssuer = true } = {}) {
 		const isHOTP = otp instanceof HOTP;
 		const isTOTP = otp instanceof TOTP;
 
@@ -175,35 +176,35 @@ export class URI {
 		let uri = 'otpauth://';
 
 		// Type
-		uri += (isTOTP ? 'totp' : 'hotp') + '/';
+		uri += `${isTOTP ? 'totp' : 'hotp'}/`;
 
 		// Label and optional issuer
 		if (otp.issuer.length > 0) {
-			// Issuer label prefix
-			if (legacyIssuer) {
-				uri += `${otp.issuer}:`;
-			}
-
-			uri += `${otp.label}?issuer=${otp.issuer}&`;
+			// Legacy label prefix
+			if (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
+			// Issuer
+			uri += `issuer=${encodeURIComponent(otp.issuer)}&`;
 		} else {
-			// No issuer
-			uri += `${otp.label}?`;
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
 		}
 
 		// Generic parameters
-		uri += `secret=${otp.secret.b32}` +
-			`&algorithm=${otp.algorithm}` +
-			`&digits=${otp.digits}`;
+		uri += `secret=${encodeURIComponent(otp.secret.b32)}`
+			+ `&algorithm=${encodeURIComponent(otp.algorithm)}`
+			+ `&digits=${encodeURIComponent(otp.digits)}`;
 
 		// Extra parameters
 		if (isTOTP) {
 			// TOTP parameters
-			uri += `&period=${otp.period}`;
+			uri += `&period=${encodeURIComponent(otp.period)}`;
 		} else {
 			// HOTP parameters
-			uri += `&counter=${otp.counter}`;
+			uri += `&counter=${encodeURIComponent(otp.counter)}`;
 		}
 
-		return encodeURI(uri);
+		return uri;
 	}
 }

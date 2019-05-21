@@ -1,17 +1,19 @@
-'use strict';
+const chai = typeof this.chai === 'undefined'
+	? require('chai')
+	: this.chai;
 
-/* eslint-disable no-use-before-define */
-var OTPAuth = OTPAuth || require(process.env.IS_MINIFIED
-	? '../dist/otpauth.min.js'
-	: '../dist/otpauth.js'
-);
-var chai = chai || require('chai');
-var expect = expect || chai.expect;
-/* eslint-enable */
+const expect = typeof this.expect === 'undefined'
+	? chai.expect
+	: this.expect;
 
-chai.Assertion.addMethod('bufferEql', function (x) {
-	var expected = new Uint8Array(x);
-	var actual = new Uint8Array(this._obj);
+const OTPAuth = typeof this.OTPAuth === 'undefined'
+	/* eslint-disable-next-line import/no-dynamic-require */
+	? require(process.env.IS_MINIFIED ? '../dist/otpauth.min.js' : '../dist/otpauth.js')
+	: this.OTPAuth;
+
+chai.Assertion.addMethod('bufferEql', function bufferEql(x) {
+	const expected = new Uint8Array(x);
+	const actual = new Uint8Array(this._obj);
 
 	this.assert(
 		chai.util.eql(actual, expected),
@@ -21,7 +23,7 @@ chai.Assertion.addMethod('bufferEql', function (x) {
 	);
 });
 
-var inputs = [{
+const inputs = [{
 	// 00
 	buffer: new Uint16Array([43166, 43963, 43559, 29521, 19166, 19613, 5178, 6152, 37930, 252, 24507, 64210, 28982, 57540, 65533, 54088, 54415, 2014, 50282, 22992]).buffer,
 	raw: '\u009E\u00A8\u00BB\u00AB\u0027\u00AA\u0051\u0073\u00DE\u004A\u009D\u004C\u003A\u0014\u0008\u0018\u002A\u0094\u00FC\u0000\u00BB\u005F\u00D2\u00FA\u0036\u0071\u00C4\u00E0\u00FD\u00FF\u0048\u00D3\u008F\u00D4\u00DE\u0007\u006A\u00C4\u00D0\u0059',
@@ -29,14 +31,14 @@ var inputs = [{
 	hex: '9EA8BBAB27AA5173DE4A9D4C3A1408182A94FC00BB5FD2FA3671C4E0FDFF48D38FD4DE076AC4D059',
 	hotp: {
 		constructor: {
-			input: {algorithm: 'SHA1'}
+			input: { algorithm: 'SHA1' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '136591'
 		},
 		validate: {
-			input: {token: '136591', counter: 1e10 - 90, window: 100},
+			input: { token: '136591', counter: 1e10 - 90, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -45,14 +47,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {algorithm: 'SHA1', period: 5}
+			input: { algorithm: 'SHA1', period: 5 }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '823248'
 		},
 		validate: {
-			input: {token: '823248', timestamp: 1451606450000},
+			input: { token: '823248', timestamp: 1451606450000 },
 			output: -10
 		},
 		toString: {
@@ -67,14 +69,14 @@ var inputs = [{
 	hex: 'AA4660BD576D4D7868BB91C80422A8BBBA51BE51602499C038787B1CE3A466F88604E02FEFC5AC9F',
 	hotp: {
 		constructor: {
-			input: {algorithm: 'SHA256'}
+			input: { algorithm: 'SHA256' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '728219'
 		},
 		validate: {
-			input: {token: '728219', counter: 1e10 - 90, window: 100},
+			input: { token: '728219', counter: 1e10 - 90, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -83,14 +85,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {algorithm: 'SHA256', period: 10}
+			input: { algorithm: 'SHA256', period: 10 }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '530988'
 		},
 		validate: {
-			input: {token: '530988', timestamp: 1451606500000},
+			input: { token: '530988', timestamp: 1451606500000 },
 			output: -10
 		},
 		toString: {
@@ -105,14 +107,14 @@ var inputs = [{
 	hex: '0D7FB2E5B0D59EC64A03357A217E1AFB7F8E66C90EC6B046FDFF1430FDFFB2993F17D8D3DF859D49',
 	hotp: {
 		constructor: {
-			input: {algorithm: 'SHA512'}
+			input: { algorithm: 'SHA512' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '812759'
 		},
 		validate: {
-			input: {token: '812759', counter: 1e10 - 90, window: 100},
+			input: { token: '812759', counter: 1e10 - 90, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -121,14 +123,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {algorithm: 'SHA512', period: 15}
+			input: { algorithm: 'SHA512', period: 15 }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '069364'
 		},
 		validate: {
-			input: {token: '069364', timestamp: 1451606550000},
+			input: { token: '069364', timestamp: 1451606550000 },
 			output: -10
 		},
 		toString: {
@@ -143,14 +145,14 @@ var inputs = [{
 	hex: '5DC74C5CDE83971EDBEC9984DCCF2B862777314E8D6492CEC2063985B9AA36867D2C63524AA94F7F',
 	hotp: {
 		constructor: {
-			input: {digits: 6, issuer: 'ACME'}
+			input: { digits: 6, issuer: 'ACME' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '692310'
 		},
 		validate: {
-			input: {token: '692310', counter: 0},
+			input: { token: '692310', counter: 0 },
 			output: null
 		},
 		toString: {
@@ -159,14 +161,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {digits: 6, issuer: 'ACME'}
+			input: { digits: 6, issuer: 'ACME' }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '096972'
 		},
 		validate: {
-			input: {token: '096972', timestamp: 0},
+			input: { token: '096972', timestamp: 0 },
 			output: null
 		},
 		toString: {
@@ -181,14 +183,14 @@ var inputs = [{
 	hex: '1A54FDFFE17A6B5587BBC4765DC2E7ECDE574ED4BAB1D5B2EAC4620D62605A11E2B0C5F313730EC2',
 	hotp: {
 		constructor: {
-			input: {digits: 7, label: 'Username'}
+			input: { digits: 7, label: 'Username' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '9926814'
 		},
 		validate: {
-			input: {token: '9926814', counter: 0},
+			input: { token: '9926814', counter: 0 },
 			output: null
 		},
 		toString: {
@@ -197,14 +199,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {digits: 7, label: 'Username'}
+			input: { digits: 7, label: 'Username' }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '6614389'
 		},
 		validate: {
-			input: {token: '6614389', timestamp: 0},
+			input: { token: '6614389', timestamp: 0 },
 			output: null
 		},
 		toString: {
@@ -219,14 +221,14 @@ var inputs = [{
 	hex: '3639F4A156CF8E79A832FB6D6E683C0B9638B30910EEEB0E20A8D5C75AEF5FE0CBBAECB35B7C10FD',
 	hotp: {
 		constructor: {
-			input: {digits: 8, issuer: 'ACME Co', label: 'Firstname Lastname'}
+			input: { digits: 8, issuer: 'ACME Co', label: 'Firstname Lastname' }
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '76351593'
 		},
 		validate: {
-			input: {token: '76351593', counter: 0},
+			input: { token: '76351593', counter: 0 },
 			output: null
 		},
 		toString: {
@@ -235,14 +237,14 @@ var inputs = [{
 	},
 	totp: {
 		constructor: {
-			input: {digits: 8, issuer: 'ACME Co', label: 'Firstname Lastname'}
+			input: { digits: 8, issuer: 'ACME Co', label: 'Firstname Lastname' }
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '57578252'
 		},
 		validate: {
-			input: {token: '57578252', timestamp: 0},
+			input: { token: '57578252', timestamp: 0 },
 			output: null
 		},
 		toString: {
@@ -260,11 +262,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '462236'
 		},
 		validate: {
-			input: {token: '462236', counter: 1e10 + 10},
+			input: { token: '462236', counter: 1e10 + 10 },
 			output: -10
 		},
 		toString: {
@@ -276,11 +278,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '211496'
 		},
 		validate: {
-			input: {token: '211496', timestamp: 1451603700000, window: 100},
+			input: { token: '211496', timestamp: 1451603700000, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -298,11 +300,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '203969'
 		},
 		validate: {
-			input: {token: '203969', counter: 1e10 + 10},
+			input: { token: '203969', counter: 1e10 + 10 },
 			output: -10
 		},
 		toString: {
@@ -314,11 +316,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '946384'
 		},
 		validate: {
-			input: {token: '946384', timestamp: 1451603700000, window: 100},
+			input: { token: '946384', timestamp: 1451603700000, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -336,11 +338,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '833717'
 		},
 		validate: {
-			input: {token: '833717', counter: 1e10 + 10},
+			input: { token: '833717', counter: 1e10 + 10 },
 			output: -10
 		},
 		toString: {
@@ -352,11 +354,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '875381'
 		},
 		validate: {
-			input: {token: '875381', timestamp: 1451603700000, window: 100},
+			input: { token: '875381', timestamp: 1451603700000, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -374,11 +376,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {counter: 1e10},
+			input: { counter: 1e10 },
 			output: '865988'
 		},
 		validate: {
-			input: {token: '865988', counter: 1e10 + 10},
+			input: { token: '865988', counter: 1e10 + 10 },
 			output: -10
 		},
 		toString: {
@@ -390,11 +392,11 @@ var inputs = [{
 			input: {}
 		},
 		generate: {
-			input: {timestamp: 1451606400000},
+			input: { timestamp: 1451606400000 },
 			output: '893785'
 		},
 		validate: {
-			input: {token: '893785', timestamp: 1451603700000, window: 100},
+			input: { token: '893785', timestamp: 1451603700000, window: 100 },
 			output: 90
 		},
 		toString: {
@@ -408,75 +410,75 @@ var inputs = [{
  * ================================================
  */
 
-describe('OTPAuth.Utils', function () {
-	it('uint.decode[0]', function () {
-		var output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
+describe('OTPAuth.Utils', () => {
+	it('uint.decode[0]', () => {
+		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
 		expect(output).to.equal(0);
 	});
 
-	it('uint.decode[1]', function () {
-		var output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
+	it('uint.decode[1]', () => {
+		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
 		expect(output).to.equal(4294967295);
 	});
 
-	it('uint.decode[2]', function () { // MAX_SAFE_INTEGER
-		var output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
+	it('uint.decode[2]', () => { // MAX_SAFE_INTEGER
+		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
 		expect(output).to.equal(9007199254740991);
 	});
 
-	it('uint.encode[0]', function () {
-		var output = OTPAuth.Utils.uint.encode(0);
+	it('uint.encode[0]', () => {
+		const output = OTPAuth.Utils.uint.encode(0);
 		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
 	});
 
-	it('uint.encode[1]', function () {
-		var output = OTPAuth.Utils.uint.encode(4294967295);
+	it('uint.encode[1]', () => {
+		const output = OTPAuth.Utils.uint.encode(4294967295);
 		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
 	});
 
-	it('uint.encode[2]', function () { // MAX_SAFE_INTEGER
-		var output = OTPAuth.Utils.uint.encode(9007199254740991);
+	it('uint.encode[2]', () => { // MAX_SAFE_INTEGER
+		const output = OTPAuth.Utils.uint.encode(9007199254740991);
 		expect(output).to.bufferEql(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
 	});
 
-	inputs.forEach(function (input, index) {
-		it('raw.decode[' + index + ']', function () {
-			var output = OTPAuth.Utils.raw.decode(input.buffer);
+	inputs.forEach((input, index) => {
+		it(`raw.decode[${index}]`, () => {
+			const output = OTPAuth.Utils.raw.decode(input.buffer);
 			expect(output).to.equal(input.raw);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('raw.encode[' + index + ']', function () {
-			var output = OTPAuth.Utils.raw.encode(input.raw);
+	inputs.forEach((input, index) => {
+		it(`raw.encode[${index}]`, () => {
+			const output = OTPAuth.Utils.raw.encode(input.raw);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('b32.decode[' + index + ']', function () {
-			var output = OTPAuth.Utils.b32.decode(input.buffer);
+	inputs.forEach((input, index) => {
+		it(`b32.decode[${index}]`, () => {
+			const output = OTPAuth.Utils.b32.decode(input.buffer);
 			expect(output).to.equal(input.b32);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('b32.encode[' + index + ']', function () {
-			var output = OTPAuth.Utils.b32.encode(input.b32);
+	inputs.forEach((input, index) => {
+		it(`b32.encode[${index}]`, () => {
+			const output = OTPAuth.Utils.b32.encode(input.b32);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('hex.decode[' + index + ']', function () {
-			var output = OTPAuth.Utils.hex.decode(input.buffer);
+	inputs.forEach((input, index) => {
+		it(`hex.decode[${index}]`, () => {
+			const output = OTPAuth.Utils.hex.decode(input.buffer);
 			expect(output).to.equal(input.hex);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('hex.encode[' + index + ']', function () {
-			var output = OTPAuth.Utils.hex.encode(input.hex);
+	inputs.forEach((input, index) => {
+		it(`hex.encode[${index}]`, () => {
+			const output = OTPAuth.Utils.hex.encode(input.hex);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
@@ -487,10 +489,10 @@ describe('OTPAuth.Utils', function () {
  * ================================================
  */
 
-describe('Test - OTPAuth.Secret', function () {
-	inputs.forEach(function (input, index) {
-		it('constructor[' + index + ']', function () {
-			var output = new OTPAuth.Secret({buffer: input.buffer});
+describe('Test - OTPAuth.Secret', () => {
+	inputs.forEach((input, index) => {
+		it(`constructor[${index}]`, () => {
+			const output = new OTPAuth.Secret({ buffer: input.buffer });
 
 			expect(output).to.eql({
 				raw: input.raw,
@@ -503,8 +505,8 @@ describe('Test - OTPAuth.Secret', function () {
 		});
 	});
 
-	it('constructor[' + inputs.length + ']', function () {
-		var output = new OTPAuth.Secret({size: 256});
+	it(`constructor[${inputs.length}]`, () => {
+		const output = new OTPAuth.Secret({ size: 256 });
 
 		expect(output).to.be.an('object');
 		expect(output.buffer).to.be.an('arrayBuffer');
@@ -516,8 +518,8 @@ describe('Test - OTPAuth.Secret', function () {
 		expect(output.hex).to.match(/^[0-9A-F]{512}$/);
 	});
 
-	it('constructor[' + (inputs.length + 1) + ']', function () {
-		var output = new OTPAuth.Secret();
+	it(`constructor[${inputs.length + 1}]`, () => {
+		const output = new OTPAuth.Secret();
 
 		expect(output).to.be.an('object');
 		expect(output.buffer).to.be.an('arrayBuffer');
@@ -528,9 +530,9 @@ describe('Test - OTPAuth.Secret', function () {
 		expect(output.hex).to.match(/^[0-9A-F]{40}$/);
 	});
 
-	inputs.forEach(function (input, index) {
-		it('fromRaw[' + index + ']', function () {
-			var output = OTPAuth.Secret.fromRaw(input.raw);
+	inputs.forEach((input, index) => {
+		it(`fromRaw[${index}]`, () => {
+			const output = OTPAuth.Secret.fromRaw(input.raw);
 
 			expect(output).to.eql({
 				raw: input.raw,
@@ -543,9 +545,9 @@ describe('Test - OTPAuth.Secret', function () {
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('fromB32[' + index + ']', function () {
-			var output = OTPAuth.Secret.fromB32(input.b32);
+	inputs.forEach((input, index) => {
+		it(`fromB32[${index}]`, () => {
+			const output = OTPAuth.Secret.fromB32(input.b32);
 
 			expect(output).to.eql({
 				raw: input.raw,
@@ -558,9 +560,9 @@ describe('Test - OTPAuth.Secret', function () {
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('fromHex[' + index + ']', function () {
-			var output = OTPAuth.Secret.fromHex(input.hex);
+	inputs.forEach((input, index) => {
+		it(`fromHex[${index}]`, () => {
+			const output = OTPAuth.Secret.fromHex(input.hex);
 
 			expect(output).to.eql({
 				raw: input.raw,
@@ -579,9 +581,9 @@ describe('Test - OTPAuth.Secret', function () {
  * ================================================
  */
 
-describe('Test - OTPAuth.HOTP', function () {
-	it('defaults', function () {
-		var hotp = new OTPAuth.HOTP();
+describe('Test - OTPAuth.HOTP', () => {
+	it('defaults', () => {
+		const hotp = new OTPAuth.HOTP();
 
 		expect(hotp).to.be.an('object');
 		expect(hotp.issuer).to.equal('');
@@ -593,47 +595,47 @@ describe('Test - OTPAuth.HOTP', function () {
 
 		expect(hotp.generate()).to.be.a('string');
 		expect(hotp.generate()).to.have.lengthOf(6);
-		expect(hotp.generate({pad: false})).to.a('number');
+		expect(hotp.generate({ pad: false })).to.a('number');
 
-		expect(hotp.validate({token: hotp.generate()})).to.equal(-1);
+		expect(hotp.validate({ token: hotp.generate() })).to.equal(-1);
 
 		// Counter is incremented on each 'generate' call
 		expect(hotp.counter).to.equal(4);
 	});
 
-	inputs.forEach(function (input, index) {
-		it('generate[' + index + ']', function () {
-			var constructorInput = input.hotp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var hotp = new OTPAuth.HOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`generate[${index}]`, () => {
+			const constructorInput = input.hotp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const hotp = new OTPAuth.HOTP(constructorInput);
 
-			var generateInput = input.hotp.generate.input;
-			var output = hotp.generate(generateInput);
+			const generateInput = input.hotp.generate.input;
+			const output = hotp.generate(generateInput);
 
 			expect(output).to.equal(input.hotp.generate.output);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('validate[' + index + ']', function () {
-			var constructorInput = input.hotp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var hotp = new OTPAuth.HOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`validate[${index}]`, () => {
+			const constructorInput = input.hotp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const hotp = new OTPAuth.HOTP(constructorInput);
 
-			var validateInput = input.hotp.validate.input;
-			var output = hotp.validate(validateInput);
+			const validateInput = input.hotp.validate.input;
+			const output = hotp.validate(validateInput);
 
 			expect(output).to.equal(input.hotp.validate.output);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('toString[' + index + ']', function () {
-			var constructorInput = input.hotp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var hotp = new OTPAuth.HOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`toString[${index}]`, () => {
+			const constructorInput = input.hotp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const hotp = new OTPAuth.HOTP(constructorInput);
 
-			var output = hotp.toString();
+			const output = hotp.toString();
 
 			expect(output).to.equal(input.hotp.toString.output);
 		});
@@ -645,9 +647,9 @@ describe('Test - OTPAuth.HOTP', function () {
  * ================================================
  */
 
-describe('Test - OTPAuth.TOTP', function () {
-	it('defaults', function () {
-		var totp = new OTPAuth.TOTP();
+describe('Test - OTPAuth.TOTP', () => {
+	it('defaults', () => {
+		const totp = new OTPAuth.TOTP();
 
 		expect(totp).to.be.an('object');
 		expect(totp.issuer).to.equal('');
@@ -659,44 +661,44 @@ describe('Test - OTPAuth.TOTP', function () {
 
 		expect(totp.generate()).to.be.a('string');
 		expect(totp.generate()).to.have.lengthOf(6);
-		expect(totp.generate({pad: false})).to.a('number');
+		expect(totp.generate({ pad: false })).to.a('number');
 
-		expect(totp.validate({token: totp.generate()})).to.equal(0);
+		expect(totp.validate({ token: totp.generate() })).to.equal(0);
 	});
 
-	inputs.forEach(function (input, index) {
-		it('generate[' + index + ']', function () {
-			var constructorInput = input.totp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var totp = new OTPAuth.TOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`generate[${index}]`, () => {
+			const constructorInput = input.totp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const totp = new OTPAuth.TOTP(constructorInput);
 
-			var generateInput = input.totp.generate.input;
-			var output = totp.generate(generateInput);
+			const generateInput = input.totp.generate.input;
+			const output = totp.generate(generateInput);
 
 			expect(output).to.equal(input.totp.generate.output);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('validate[' + index + ']', function () {
-			var constructorInput = input.totp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var totp = new OTPAuth.TOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`validate[${index}]`, () => {
+			const constructorInput = input.totp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const totp = new OTPAuth.TOTP(constructorInput);
 
-			var validateInput = input.totp.validate.input;
-			var output = totp.validate(validateInput);
+			const validateInput = input.totp.validate.input;
+			const output = totp.validate(validateInput);
 
 			expect(output).to.equal(input.totp.validate.output);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('toString[' + index + ']', function () {
-			var constructorInput = input.totp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var totp = new OTPAuth.TOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`toString[${index}]`, () => {
+			const constructorInput = input.totp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const totp = new OTPAuth.TOTP(constructorInput);
 
-			var output = totp.toString();
+			const output = totp.toString();
 
 			expect(output).to.equal(input.totp.toString.output);
 		});
@@ -708,57 +710,57 @@ describe('Test - OTPAuth.TOTP', function () {
  * ================================================
  */
 
-describe('Test - OTPAuth.URI', function () {
-	inputs.forEach(function (input, index) {
-		it('parse[' + index + '] - HOTP', function () {
-			var constructorInput = input.hotp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var hotp = new OTPAuth.HOTP(constructorInput);
+describe('Test - OTPAuth.URI', () => {
+	inputs.forEach((input, index) => {
+		it(`parse[${index}] - HOTP`, () => {
+			const constructorInput = input.hotp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const hotp = new OTPAuth.HOTP(constructorInput);
 
-			var output = OTPAuth.URI.parse(input.hotp.toString.output);
+			const output = OTPAuth.URI.parse(input.hotp.toString.output);
 
 			expect(output).to.eql(hotp);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('parse[' + index + '] - TOTP', function () {
-			var constructorInput = input.totp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var totp = new OTPAuth.TOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`parse[${index}] - TOTP`, () => {
+			const constructorInput = input.totp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const totp = new OTPAuth.TOTP(constructorInput);
 
-			var output = OTPAuth.URI.parse(input.totp.toString.output);
+			const output = OTPAuth.URI.parse(input.totp.toString.output);
 
 			expect(output).to.eql(totp);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('stringify[' + index + '] - HOTP', function () {
-			var constructorInput = input.hotp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var hotp = new OTPAuth.HOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`stringify[${index}] - HOTP`, () => {
+			const constructorInput = input.hotp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const hotp = new OTPAuth.HOTP(constructorInput);
 
-			var output = OTPAuth.URI.stringify(hotp);
+			const output = OTPAuth.URI.stringify(hotp);
 
 			expect(output).to.equal(input.hotp.toString.output);
 		});
 	});
 
-	inputs.forEach(function (input, index) {
-		it('stringify[' + index + '] - TOTP', function () {
-			var constructorInput = input.totp.constructor.input;
-			constructorInput.secret = new OTPAuth.Secret({buffer: input.buffer});
-			var totp = new OTPAuth.TOTP(constructorInput);
+	inputs.forEach((input, index) => {
+		it(`stringify[${index}] - TOTP`, () => {
+			const constructorInput = input.totp.constructor.input;
+			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
+			const totp = new OTPAuth.TOTP(constructorInput);
 
-			var output = OTPAuth.URI.stringify(totp);
+			const output = OTPAuth.URI.stringify(totp);
 
 			expect(output).to.equal(input.totp.toString.output);
 		});
 	});
 
-	it('stringify[' + inputs.length + '] - TOTP', function () {
-		var totp = new OTPAuth.TOTP({
+	it(`stringify[${inputs.length}] - TOTP`, () => {
+		const totp = new OTPAuth.TOTP({
 			issuer: 'ACME',
 			label: 'AzureDiamond',
 			secret: new OTPAuth.Secret({
@@ -766,14 +768,14 @@ describe('Test - OTPAuth.URI', function () {
 			})
 		});
 
-		var output = OTPAuth.URI.stringify(totp, {legacyIssuer: true});
-		var expected = 'otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
+		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: true });
+		const expected = 'otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
 
 		expect(output).to.equal(expected);
 	});
 
-	it('stringify[' + (inputs.length + 1) + '] - TOTP', function () {
-		var totp = new OTPAuth.TOTP({
+	it(`stringify[${inputs.length + 1}] - TOTP`, () => {
+		const totp = new OTPAuth.TOTP({
 			issuer: 'ACME',
 			label: 'AzureDiamond',
 			secret: new OTPAuth.Secret({
@@ -781,8 +783,8 @@ describe('Test - OTPAuth.URI', function () {
 			})
 		});
 
-		var output = OTPAuth.URI.stringify(totp, {legacyIssuer: false});
-		var expected = 'otpauth://totp/AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
+		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: false });
+		const expected = 'otpauth://totp/AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
 
 		expect(output).to.equal(expected);
 	});
@@ -793,8 +795,8 @@ describe('Test - OTPAuth.URI', function () {
  * ================================================
  */
 
-describe('Test - OTPAuth.version', function () {
-	it('version', function () {
+describe('Test - OTPAuth.version', () => {
+	it('version', () => {
 		expect(OTPAuth.version).to.be.a('string');
 	});
 });

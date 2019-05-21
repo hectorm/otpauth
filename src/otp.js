@@ -1,14 +1,15 @@
-import {Utils} from './utils.js';
-import {Crypto} from './crypto.js';
-import {Secret} from './secret.js';
-import {URI} from './uri.js';
+import { Utils } from './utils';
+import { Crypto } from './crypto';
+import { Secret } from './secret';
+/* eslint-disable-next-line import/no-cycle */
+import { URI } from './uri';
 
 /**
  * Default configuration.
  * @private
  * @type {Object}
  */
-const DC = {
+const defaults = {
 	issuer: '',
 	label: 'OTPAuth',
 	algorithm: 'SHA1',
@@ -33,7 +34,14 @@ export class HOTP {
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.counter=0] Initial counter value.
 	 */
-	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter} = {}) {
+	constructor({
+		issuer = defaults.issuer,
+		label = defaults.label,
+		secret = new Secret(),
+		algorithm = defaults.algorithm,
+		digits = defaults.digits,
+		counter = defaults.counter
+	} = {}) {
 		/**
 		 * Account provider.
 		 * @type {string}
@@ -76,14 +84,20 @@ export class HOTP {
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
 	 * @returns {string|number} Token.
 	 */
-	static generate({secret, algorithm = DC.algorithm, digits = DC.digits, counter = DC.counter, pad = DC.pad}) {
+	static generate({
+		secret,
+		algorithm = defaults.algorithm,
+		digits = defaults.digits,
+		counter = defaults.counter,
+		pad = defaults.pad
+	}) {
 		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
 		const offset = digest[digest.byteLength - 1] & 15;
 		const otp = (
-			((digest[offset] & 127) << 24) |
-			((digest[offset + 1] & 255) << 16) |
-			((digest[offset + 2] & 255) << 8) |
-			(digest[offset + 3] & 255)
+			((digest[offset] & 127) << 24)
+			| ((digest[offset + 1] & 255) << 16)
+			| ((digest[offset + 2] & 255) << 8)
+			| (digest[offset + 3] & 255)
 		) % (10 ** digits);
 
 		return pad
@@ -98,13 +112,16 @@ export class HOTP {
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
 	 * @returns {string|number} Token.
 	 */
-	generate({counter = this.counter++, pad} = {}) {
+	generate({
+		counter = this.counter++,
+		pad
+	} = {}) {
 		return HOTP.generate({
 			secret: this.secret,
 			algorithm: this.algorithm,
 			digits: this.digits,
-			counter: counter,
-			pad: pad
+			counter,
+			pad
 		});
 	}
 
@@ -118,13 +135,19 @@ export class HOTP {
 	 * @param {number} [config.window=50] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
-	static validate({token, secret, algorithm, counter = DC.counter, window = DC.window}) {
+	static validate({
+		token,
+		secret,
+		algorithm,
+		counter = defaults.counter,
+		window = defaults.window
+	}) {
 		const searchToken = parseInt(token, 10);
 
 		for (let i = counter - window; i <= counter + window; ++i) {
 			const generatedToken = HOTP.generate({
-				secret: secret,
-				algorithm: algorithm,
+				secret,
+				algorithm,
 				counter: i,
 				digits: token.length,
 				pad: false
@@ -146,13 +169,17 @@ export class HOTP {
 	 * @param {number} [config.window=50] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
-	validate({token, counter = this.counter, window}) {
+	validate({
+		token,
+		counter = this.counter,
+		window
+	}) {
 		return HOTP.validate({
-			token: token,
+			token,
 			secret: this.secret,
 			algorithm: this.algorithm,
-			counter: counter,
-			window: window
+			counter,
+			window
 		});
 	}
 
@@ -179,7 +206,14 @@ export class TOTP {
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 */
-	constructor({issuer = DC.issuer, label = DC.label, secret = new Secret(), algorithm = DC.algorithm, digits = DC.digits, period = DC.period} = {}) {
+	constructor({
+		issuer = defaults.issuer,
+		label = defaults.label,
+		secret = new Secret(),
+		algorithm = defaults.algorithm,
+		digits = defaults.digits,
+		period = defaults.period
+	} = {}) {
 		/**
 		 * Account provider.
 		 * @type {string}
@@ -223,13 +257,20 @@ export class TOTP {
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
 	 * @returns {string|number} Token.
 	 */
-	static generate({secret, algorithm, digits, period = DC.period, timestamp = Date.now(), pad}) {
+	static generate({
+		secret,
+		algorithm,
+		digits,
+		period = defaults.period,
+		timestamp = Date.now(),
+		pad
+	}) {
 		return HOTP.generate({
-			secret: secret,
-			algorithm: algorithm,
-			digits: digits,
+			secret,
+			algorithm,
+			digits,
 			counter: Math.floor(timestamp / 1000 / period),
-			pad: pad
+			pad
 		});
 	}
 
@@ -240,14 +281,17 @@ export class TOTP {
 	 * @param {boolean} [config.pad=true] Add leading zeros to result.
 	 * @returns {string|number} Token.
 	 */
-	generate({timestamp = Date.now(), pad} = {}) {
+	generate({
+		timestamp = Date.now(),
+		pad
+	} = {}) {
 		return TOTP.generate({
 			secret: this.secret,
 			algorithm: this.algorithm,
 			digits: this.digits,
 			period: this.period,
-			timestamp: timestamp,
-			pad: pad
+			timestamp,
+			pad
 		});
 	}
 
@@ -262,13 +306,20 @@ export class TOTP {
 	 * @param {number} [config.window=50] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
-	static validate({token, secret, algorithm, period = DC.period, timestamp = Date.now(), window}) {
+	static validate({
+		token,
+		secret,
+		algorithm,
+		period = defaults.period,
+		timestamp = Date.now(),
+		window
+	}) {
 		return HOTP.validate({
-			token: token,
-			secret: secret,
-			algorithm: algorithm,
+			token,
+			secret,
+			algorithm,
 			counter: Math.floor(timestamp / 1000 / period),
-			window: window
+			window
 		});
 	}
 
@@ -280,14 +331,18 @@ export class TOTP {
 	 * @param {number} [config.window=50] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
-	validate({token, timestamp, window}) {
+	validate({
+		token,
+		timestamp,
+		window
+	}) {
 		return TOTP.validate({
-			token: token,
+			token,
 			secret: this.secret,
 			algorithm: this.algorithm,
 			period: this.period,
-			timestamp: timestamp,
-			window: window
+			timestamp,
+			window
 		});
 	}
 

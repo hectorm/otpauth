@@ -1,5 +1,5 @@
-import {Utils} from './utils.js';
-import {Crypto} from './crypto.js';
+import { Utils } from './utils';
+import { Crypto } from './crypto';
 
 /**
  * Secret key object.
@@ -10,7 +10,7 @@ export class Secret {
 	 * @param {ArrayBuffer} [config.buffer=Crypto.randomBytes] Secret key.
 	 * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
 	 */
-	constructor({buffer, size = 20} = {}) {
+	constructor({ buffer, size = 20 } = {}) {
 		/**
 		 * Secret key.
 		 * @type {ArrayBuffer}
@@ -27,7 +27,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromRaw(str) {
-		return new this({buffer: Utils.raw.encode(str)});
+		return new this({ buffer: Utils.raw.encode(str) });
 	}
 
 	/**
@@ -37,7 +37,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromB32(str) {
-		return new this({buffer: Utils.b32.encode(str)});
+		return new this({ buffer: Utils.b32.encode(str) });
 	}
 
 	/**
@@ -47,7 +47,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromHex(str) {
-		return new this({buffer: Utils.hex.encode(str)});
+		return new this({ buffer: Utils.hex.encode(str) });
 	}
 
 	/**

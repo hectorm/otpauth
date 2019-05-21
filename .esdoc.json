@@ -11,12 +11,12 @@
           "repository": "https://github.com/hectorm/otpauth",
           "author": "Héctor Molinero Fernández <hector@molinero.dev>"
         },
-        "lint": {"enable": true},
-        "coverage": {"enable": true},
-        "accessor": {"access": ["public", "protected"], "autoPrivate": true},
-        "undocumentIdentifier": {"enable": true},
-        "unexportedIdentifier": {"enable": false},
-        "typeInference": {"enable": true}
+        "lint": { "enable": true },
+        "coverage": { "enable": true },
+        "accessor": { "access": ["public", "protected"], "autoPrivate": true },
+        "undocumentIdentifier": { "enable": true },
+        "unexportedIdentifier": { "enable": false },
+        "typeInference": { "enable": true }
       }
     }
   ]

@@ -1,6 +1,0 @@
-parserOptions:
-  sourceType: module
-
-rules:
-  require-jsdoc: ['warn']
-  valid-jsdoc: ['warn']

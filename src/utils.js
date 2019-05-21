@@ -15,17 +15,15 @@ Utils.uint = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
-Utils.uint.decode = function (buf) {
+Utils.uint.decode = (buf) => {
 	const arr = new Uint8Array(buf);
 	let num = 0;
 
 	for (let i = 0; i < arr.length; i++) {
-		if (arr[i] === 0) {
-			continue;
+		if (arr[i] !== 0) {
+			num *= 256;
+			num += arr[i];
 		}
-
-		num *= 256;
-		num += arr[i];
 	}
 
 	return num;
@@ -36,7 +34,7 @@ Utils.uint.decode = function (buf) {
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.uint.encode = function (num) {
+Utils.uint.encode = (num) => {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
 	let acc = num;
@@ -65,7 +63,7 @@ Utils.raw = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
-Utils.raw.decode = function (buf) {
+Utils.raw.decode = (buf) => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -81,7 +79,7 @@ Utils.raw.decode = function (buf) {
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.raw.encode = function (str) {
+Utils.raw.encode = (str) => {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
 
@@ -110,7 +108,7 @@ Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
-Utils.b32.decode = function (buf) {
+Utils.b32.decode = (buf) => {
 	const arr = new Uint8Array(buf);
 
 	let bits = 0;
@@ -140,7 +138,7 @@ Utils.b32.decode = function (buf) {
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.b32.encode = function (str) {
+Utils.b32.encode = (str) => {
 	const strUpp = str.toUpperCase();
 	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
 	const arr = new Uint8Array(buf);
@@ -150,10 +148,10 @@ Utils.b32.encode = function (str) {
 	let index = 0;
 
 	for (let i = 0; i < strUpp.length; i++) {
-		let idx = Utils.b32.alphabet.indexOf(strUpp[i]);
+		const idx = Utils.b32.alphabet.indexOf(strUpp[i]);
 
 		if (idx === -1) {
-			throw new TypeError('Invalid character found: ' + strUpp[i]);
+			throw new TypeError(`Invalid character found: ${strUpp[i]}`);
 		}
 
 		value = (value << 5) | idx;
@@ -179,7 +177,7 @@ Utils.hex = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
-Utils.hex.decode = function (buf) {
+Utils.hex.decode = (buf) => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -187,7 +185,7 @@ Utils.hex.decode = function (buf) {
 		const hexByte = arr[i].toString(16);
 
 		str += hexByte.length === 1
-			? '0' + hexByte
+			? `0${hexByte}`
 			: hexByte;
 	}
 
@@ -199,7 +197,7 @@ Utils.hex.decode = function (buf) {
  * @param {string} str Hexadecimal string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.hex.encode = function (str) {
+Utils.hex.encode = (str) => {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
 
@@ -229,7 +227,5 @@ InternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[o
  * @param {string} name Name.
  * @returns {Object} Module.
  */
-InternalUtils.require = function (name) {
-	// eslint-disable-next-line no-eval
-	return InternalUtils.isNode ? eval('require')(name) : null;
-};
+// eslint-disable-next-line no-eval
+InternalUtils.require = name => (InternalUtils.isNode ? eval('require')(name) : null);
