@@ -35,7 +35,7 @@
     "/src"
   ],
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint --fix .",
     "build": "webpack --display-reasons",
     "test:browser:unminified": "karma start",
     "test:browser:minified": "IS_MINIFIED=true karma start",
@@ -56,7 +56,7 @@
     "esdoc2-standard-plugin": "~2.1.2",
     "eslint": "~5.16.0",
     "eslint-config-airbnb-base": "~13.1.0",
-    "eslint-config-zant": "~3.0.0",
+    "eslint-config-hectorm": "~1.0.0",
     "eslint-plugin-import": "~2.17.2",
     "google-closure-compiler": "~20190513.0.0",
     "karma": "~4.1.0",
@@ -69,7 +69,7 @@
     "rimraf": "~2.6.3",
     "sjcl": "1.0.8",
     "tmp": "~0.1.0",
-    "webpack": "~4.32.0",
+    "webpack": "~4.32.1",
     "webpack-cli": "~3.3.2"
   }
 }
