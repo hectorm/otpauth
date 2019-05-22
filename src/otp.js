@@ -1,7 +1,7 @@
 import { Utils } from './utils';
 import { Crypto } from './crypto';
 import { Secret } from './secret';
-/* eslint-disable-next-line import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import { URI } from './uri';
 
 /**
@@ -142,7 +142,7 @@ export class HOTP {
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
-		const searchToken = parseInt(token, 10);
+		const searchToken = Number.parseInt(token, 10);
 
 		for (let i = counter - window; i <= counter + window; ++i) {
 			const generatedToken = HOTP.generate({

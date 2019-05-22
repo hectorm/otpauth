@@ -48,7 +48,7 @@ function generateConfig(filename) {
 				VERSION: pkg.version
 			}),
 			// Custom build of the Stanford Javascript Crypto Library (SJCL)
-			new webpack.NormalModuleReplacementPlugin(/^sjcl$/, ((result) => {
+			new webpack.NormalModuleReplacementPlugin(/^sjcl$/, (result => {
 				const file = tmp.fileSync();
 
 				const base = path.join(__dirname, 'node_modules/sjcl');

@@ -15,7 +15,7 @@ Utils.uint = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
-Utils.uint.decode = (buf) => {
+Utils.uint.decode = buf => {
 	const arr = new Uint8Array(buf);
 	let num = 0;
 
@@ -34,7 +34,7 @@ Utils.uint.decode = (buf) => {
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.uint.encode = (num) => {
+Utils.uint.encode = num => {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
 	let acc = num;
@@ -63,7 +63,7 @@ Utils.raw = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
-Utils.raw.decode = (buf) => {
+Utils.raw.decode = buf => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -79,7 +79,7 @@ Utils.raw.decode = (buf) => {
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.raw.encode = (str) => {
+Utils.raw.encode = str => {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
 
@@ -108,7 +108,7 @@ Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
-Utils.b32.decode = (buf) => {
+Utils.b32.decode = buf => {
 	const arr = new Uint8Array(buf);
 
 	let bits = 0;
@@ -138,7 +138,7 @@ Utils.b32.decode = (buf) => {
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.b32.encode = (str) => {
+Utils.b32.encode = str => {
 	const strUpp = str.toUpperCase();
 	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
 	const arr = new Uint8Array(buf);
@@ -177,7 +177,7 @@ Utils.hex = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
-Utils.hex.decode = (buf) => {
+Utils.hex.decode = buf => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -197,12 +197,12 @@ Utils.hex.decode = (buf) => {
  * @param {string} str Hexadecimal string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.hex.encode = (str) => {
+Utils.hex.encode = str => {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
 
 	for (let i = 0; i < arr.length; i++) {
-		arr[i] = parseInt(str.substr(i * 2, 2), 16);
+		arr[i] = Number.parseInt(str.substr(i * 2, 2), 16);
 	}
 
 	return buf;

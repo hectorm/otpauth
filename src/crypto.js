@@ -1,4 +1,4 @@
-/* eslint-disable-next-line import/no-extraneous-dependencies */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import sjcl from 'sjcl'; // SJCL is included during compilation.
 
 import { InternalUtils } from './utils';
@@ -25,7 +25,7 @@ if (NodeCrypto) {
 		bufferFrom = Buffer.from;
 	} else {
 		// Node.js < 5.10.0
-		bufferFrom = (arrbuf) => {
+		bufferFrom = arrbuf => {
 			// eslint-disable-next-line no-buffer-constructor
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
@@ -44,7 +44,7 @@ if (NodeCrypto) {
 		bufferTo = nodeBuf => nodeBuf;
 	} else {
 		// Node.js < 4.0.0
-		bufferTo = (nodeBuf) => {
+		bufferTo = nodeBuf => {
 			const arr = new Uint8Array(nodeBuf.length);
 
 			for (let i = 0; i < arr.length; i++) {
@@ -55,7 +55,7 @@ if (NodeCrypto) {
 		};
 	}
 
-	Crypto.randomBytes = (size) => {
+	Crypto.randomBytes = size => {
 		const buff = NodeCrypto.randomBytes(size);
 		return bufferTo(buff);
 	};
@@ -71,23 +71,23 @@ if (NodeCrypto) {
 	let getRandomValues;
 
 	if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {
-		getRandomValues = (arr) => {
+		getRandomValues = arr => {
 			global.crypto.getRandomValues(arr);
 		};
 	} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {
-		getRandomValues = (arr) => {
+		getRandomValues = arr => {
 			global.msCrypto.getRandomValues(arr);
 		};
 	} else {
 		console.warn('Cryptography API not available, falling back to \'Math.random\'...');
-		getRandomValues = (arr) => {
+		getRandomValues = arr => {
 			for (let i = 0; i < arr.length; i++) {
 				arr[i] = Math.floor(Math.random() * 256);
 			}
 		};
 	}
 
-	Crypto.randomBytes = (size) => {
+	Crypto.randomBytes = size => {
 		const arr = new Uint8Array(size);
 		getRandomValues(arr);
 		return arr;

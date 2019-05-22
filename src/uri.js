@@ -1,6 +1,6 @@
 import { Utils } from './utils';
 import { Secret } from './secret';
-/* eslint-disable-next-line import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import { HOTP, TOTP } from './otp';
 
 /**
@@ -90,7 +90,7 @@ export class URI {
 
 			// Counter: required
 			if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
-				config.counter = parseInt(uriParams.counter, 10);
+				config.counter = Number.parseInt(uriParams.counter, 10);
 			} else {
 				throw new TypeError('Missing or invalid \'counter\' parameter');
 			}
@@ -100,7 +100,7 @@ export class URI {
 			// Period: optional
 			if (typeof uriParams.period !== 'undefined') {
 				if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
-					config.period = parseInt(uriParams.period, 10);
+					config.period = Number.parseInt(uriParams.period, 10);
 				} else {
 					throw new TypeError('Invalid \'period\' parameter');
 				}
@@ -146,7 +146,7 @@ export class URI {
 		// Digits: optional
 		if (typeof uriParams.digits !== 'undefined') {
 			if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
-				config.digits = parseInt(uriParams.digits, 10);
+				config.digits = Number.parseInt(uriParams.digits, 10);
 			} else {
 				throw new TypeError('Invalid \'digits\' parameter');
 			}
