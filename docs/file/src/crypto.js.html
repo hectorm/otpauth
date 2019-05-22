@@ -40,7 +40,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/crypto.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/* eslint-disable-next-line import/no-extraneous-dependencies */
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// eslint-disable-next-line import/no-extraneous-dependencies
 import sjcl from &apos;sjcl&apos;; // SJCL is included during compilation.
 
 import { InternalUtils } from &apos;./utils&apos;;
@@ -67,7 +67,7 @@ if (NodeCrypto) {
 		bufferFrom = Buffer.from;
 	} else {
 		// Node.js &lt; 5.10.0
-		bufferFrom = (arrbuf) =&gt; {
+		bufferFrom = arrbuf =&gt; {
 			// eslint-disable-next-line no-buffer-constructor
 			const nodeBuf = new Buffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
@@ -86,7 +86,7 @@ if (NodeCrypto) {
 		bufferTo = nodeBuf =&gt; nodeBuf;
 	} else {
 		// Node.js &lt; 4.0.0
-		bufferTo = (nodeBuf) =&gt; {
+		bufferTo = nodeBuf =&gt; {
 			const arr = new Uint8Array(nodeBuf.length);
 
 			for (let i = 0; i &lt; arr.length; i++) {
@@ -97,7 +97,7 @@ if (NodeCrypto) {
 		};
 	}
 
-	Crypto.randomBytes = (size) =&gt; {
+	Crypto.randomBytes = size =&gt; {
 		const buff = NodeCrypto.randomBytes(size);
 		return bufferTo(buff);
 	};
@@ -113,23 +113,23 @@ if (NodeCrypto) {
 	let getRandomValues;
 
 	if (typeof global.crypto !== &apos;undefined&apos; &amp;&amp; typeof global.crypto.getRandomValues === &apos;function&apos;) {
-		getRandomValues = (arr) =&gt; {
+		getRandomValues = arr =&gt; {
 			global.crypto.getRandomValues(arr);
 		};
 	} else if (typeof global.msCrypto !== &apos;undefined&apos; &amp;&amp; typeof global.msCrypto.getRandomValues === &apos;function&apos;) {
-		getRandomValues = (arr) =&gt; {
+		getRandomValues = arr =&gt; {
 			global.msCrypto.getRandomValues(arr);
 		};
 	} else {
 		console.warn(&apos;Cryptography API not available, falling back to \&apos;Math.random\&apos;...&apos;);
-		getRandomValues = (arr) =&gt; {
+		getRandomValues = arr =&gt; {
 			for (let i = 0; i &lt; arr.length; i++) {
 				arr[i] = Math.floor(Math.random() * 256);
 			}
 		};
 	}
 
-	Crypto.randomBytes = (size) =&gt; {
+	Crypto.randomBytes = size =&gt; {
 		const arr = new Uint8Array(size);
 		getRandomValues(arr);
 		return arr;

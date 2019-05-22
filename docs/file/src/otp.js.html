@@ -43,7 +43,7 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Utils } from &apos;./utils&apos;;
 import { Crypto } from &apos;./crypto&apos;;
 import { Secret } from &apos;./secret&apos;;
-/* eslint-disable-next-line import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import { URI } from &apos;./uri&apos;;
 
 /**
@@ -184,7 +184,7 @@ export class HOTP {
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
-		const searchToken = parseInt(token, 10);
+		const searchToken = Number.parseInt(token, 10);
 
 		for (let i = counter - window; i &lt;= counter + window; ++i) {
 			const generatedToken = HOTP.generate({

@@ -42,7 +42,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/uri.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { Utils } from &apos;./utils&apos;;
 import { Secret } from &apos;./secret&apos;;
-/* eslint-disable-next-line import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import { HOTP, TOTP } from &apos;./otp&apos;;
 
 /**
@@ -132,7 +132,7 @@ export class URI {
 
 			// Counter: required
 			if (typeof uriParams.counter !== &apos;undefined&apos; &amp;&amp; INTEGER_REGEX.test(uriParams.counter)) {
-				config.counter = parseInt(uriParams.counter, 10);
+				config.counter = Number.parseInt(uriParams.counter, 10);
 			} else {
 				throw new TypeError(&apos;Missing or invalid \&apos;counter\&apos; parameter&apos;);
 			}
@@ -142,7 +142,7 @@ export class URI {
 			// Period: optional
 			if (typeof uriParams.period !== &apos;undefined&apos;) {
 				if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
-					config.period = parseInt(uriParams.period, 10);
+					config.period = Number.parseInt(uriParams.period, 10);
 				} else {
 					throw new TypeError(&apos;Invalid \&apos;period\&apos; parameter&apos;);
 				}
@@ -188,7 +188,7 @@ export class URI {
 		// Digits: optional
 		if (typeof uriParams.digits !== &apos;undefined&apos;) {
 			if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
-				config.digits = parseInt(uriParams.digits, 10);
+				config.digits = Number.parseInt(uriParams.digits, 10);
 			} else {
 				throw new TypeError(&apos;Invalid \&apos;digits\&apos; parameter&apos;);
 			}

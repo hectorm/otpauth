@@ -57,7 +57,7 @@ Utils.uint = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
-Utils.uint.decode = (buf) =&gt; {
+Utils.uint.decode = buf =&gt; {
 	const arr = new Uint8Array(buf);
 	let num = 0;
 
@@ -76,7 +76,7 @@ Utils.uint.decode = (buf) =&gt; {
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.uint.encode = (num) =&gt; {
+Utils.uint.encode = num =&gt; {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
 	let acc = num;
@@ -105,7 +105,7 @@ Utils.raw = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
-Utils.raw.decode = (buf) =&gt; {
+Utils.raw.decode = buf =&gt; {
 	const arr = new Uint8Array(buf);
 	let str = &apos;&apos;;
 
@@ -121,7 +121,7 @@ Utils.raw.decode = (buf) =&gt; {
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.raw.encode = (str) =&gt; {
+Utils.raw.encode = str =&gt; {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
 
@@ -150,7 +150,7 @@ Utils.b32.alphabet = &apos;ABCDEFGHIJKLMNOPQRSTUVWXYZ234567&apos;;
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
-Utils.b32.decode = (buf) =&gt; {
+Utils.b32.decode = buf =&gt; {
 	const arr = new Uint8Array(buf);
 
 	let bits = 0;
@@ -180,7 +180,7 @@ Utils.b32.decode = (buf) =&gt; {
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.b32.encode = (str) =&gt; {
+Utils.b32.encode = str =&gt; {
 	const strUpp = str.toUpperCase();
 	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
 	const arr = new Uint8Array(buf);
@@ -219,7 +219,7 @@ Utils.hex = {};
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
-Utils.hex.decode = (buf) =&gt; {
+Utils.hex.decode = buf =&gt; {
 	const arr = new Uint8Array(buf);
 	let str = &apos;&apos;;
 
@@ -239,12 +239,12 @@ Utils.hex.decode = (buf) =&gt; {
  * @param {string} str Hexadecimal string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.hex.encode = (str) =&gt; {
+Utils.hex.encode = str =&gt; {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
 
 	for (let i = 0; i &lt; arr.length; i++) {
-		arr[i] = parseInt(str.substr(i * 2, 2), 16);
+		arr[i] = Number.parseInt(str.substr(i * 2, 2), 16);
 	}
 
 	return buf;

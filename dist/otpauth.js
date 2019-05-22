@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -71,6 +71,24 @@ $jscomp.iteratorPrototype = function(next) {
   };
   return next;
 };
+$jscomp.polyfill = function(target, polyfill, fromLang, toLang) {
+  if (polyfill) {
+    fromLang = $jscomp.global;
+    target = target.split(".");
+    for (toLang = 0; toLang < target.length - 1; toLang++) {
+      var key = target[toLang];
+      key in fromLang || (fromLang[key] = {});
+      fromLang = fromLang[key];
+    }
+    target = target[target.length - 1];
+    toLang = fromLang[target];
+    polyfill = polyfill(toLang);
+    polyfill != toLang && null != polyfill && $jscomp.defineProperty(fromLang, target, {configurable:!0, writable:!0, value:polyfill});
+  }
+};
+$jscomp.polyfill("Number.parseInt", function(orig) {
+  return orig || parseInt;
+}, "es6", "es3");
 (function(root, factory) {
   "object" === typeof exports && "object" === typeof module ? module.exports = factory() : "function" === typeof define && define.amd ? define([], factory) : "object" === typeof exports ? exports.OTPAuth = factory() : root.OTPAuth = factory();
 })(this, function() {
@@ -200,7 +218,7 @@ $jscomp.iteratorPrototype = function(next) {
       };
       Utils.hex.encode = function(str) {
         for (var buf = new ArrayBuffer(str.length / 2), arr = new Uint8Array(buf), i = 0; i < arr.length; i++) {
-          arr[i] = parseInt(str.substr(2 * i, 2), 16);
+          arr[i] = Number.parseInt(str.substr(2 * i, 2), 16);
         }
         return buf;
       };
@@ -824,7 +842,7 @@ $jscomp.iteratorPrototype = function(next) {
       var config = {};
       if ("hotp" === uriType) {
         if (uriType = otp_HOTP, "undefined" !== typeof uriGroups.counter && INTEGER_REGEX.test(uriGroups.counter)) {
-          config.counter = parseInt(uriGroups.counter, 10);
+          config.counter = Number.parseInt(uriGroups.counter, 10);
         } else {
           throw new TypeError("Missing or invalid 'counter' parameter");
         }
@@ -832,7 +850,7 @@ $jscomp.iteratorPrototype = function(next) {
         if ("totp" === uriType) {
           if (uriType = otp_TOTP, "undefined" !== typeof uriGroups.period) {
             if (POSITIVE_INTEGER_REGEX.test(uriGroups.period)) {
-              config.period = parseInt(uriGroups.period, 10);
+              config.period = Number.parseInt(uriGroups.period, 10);
             } else {
               throw new TypeError("Invalid 'period' parameter");
             }
@@ -868,7 +886,7 @@ $jscomp.iteratorPrototype = function(next) {
       }
       if ("undefined" !== typeof uriGroups.digits) {
         if (POSITIVE_INTEGER_REGEX.test(uriGroups.digits)) {
-          config.digits = parseInt(uriGroups.digits, 10);
+          config.digits = Number.parseInt(uriGroups.digits, 10);
         } else {
           throw new TypeError("Invalid 'digits' parameter");
         }
@@ -914,7 +932,7 @@ $jscomp.iteratorPrototype = function(next) {
     otp_HOTP.validate = function($jscomp$destructuring$var10) {
       var token = $jscomp$destructuring$var10.token, secret = $jscomp$destructuring$var10.secret, algorithm = $jscomp$destructuring$var10.algorithm, counter = void 0 === $jscomp$destructuring$var10.counter ? 0 : $jscomp$destructuring$var10.counter;
       $jscomp$destructuring$var10 = void 0 === $jscomp$destructuring$var10.window ? 50 : $jscomp$destructuring$var10.window;
-      for (var searchToken = parseInt(token, 10), i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
+      for (var searchToken = Number.parseInt(token, 10), i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
         var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, counter:i, digits:token.length, pad:!1});
         if (searchToken === generatedToken) {
           return i - counter;
@@ -960,7 +978,7 @@ $jscomp.iteratorPrototype = function(next) {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.4";
+      return "3.2.5";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
