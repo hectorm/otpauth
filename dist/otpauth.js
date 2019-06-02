@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -978,7 +978,7 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.5";
+      return "3.2.6";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
