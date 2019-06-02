@@ -56,9 +56,9 @@
     "esdoc2-standard-plugin": "~2.1.2",
     "eslint": "~5.16.0",
     "eslint-config-airbnb-base": "~13.1.0",
-    "eslint-config-hectorm": "~1.0.0",
-    "eslint-plugin-import": "~2.17.2",
-    "google-closure-compiler": "~20190513.0.0",
+    "eslint-config-hectorm": "~1.0.1",
+    "eslint-plugin-import": "~2.17.3",
+    "google-closure-compiler": "~20190528.0.0",
     "karma": "~4.1.0",
     "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~2.2.0",
@@ -69,7 +69,7 @@
     "rimraf": "~2.6.3",
     "sjcl": "1.0.8",
     "tmp": "~0.1.0",
-    "webpack": "~4.32.1",
+    "webpack": "~4.32.2",
     "webpack-cli": "~3.3.2"
   }
 }
