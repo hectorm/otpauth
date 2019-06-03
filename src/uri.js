@@ -8,7 +8,7 @@ import { HOTP, TOTP } from './otp';
  * @private
  * @type {Array}
  */
-const OTPURI_PARAMS = ['issuer', 'label', 'secret', 'algorithm', 'digits', 'counter', 'period'];
+const OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
 
 /**
  * Key URI regex.
@@ -61,18 +61,18 @@ export class URI {
 		let uriGroups;
 
 		try {
-			uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
+			uriGroups = uri.match(OTPURI_REGEX);
 		} catch (error) { /* Handled below */ }
 
 		if (!Array.isArray(uriGroups)) {
 			throw new URIError('Invalid URI format');
 		}
 
-		// Extract URI groups
+		// Extract URI groups.
 		const uriType = uriGroups[1].toLowerCase();
-		const uriLabel = uriGroups[2].split(/:(.+)/, 2);
+		const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
 		const uriParams = uriGroups[3].split('&').reduce((acc, cur) => {
-			const pairArr = cur.split(/=(.+)/, 2);
+			const pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
 			const pairKey = pairArr[0].toLowerCase();
 			const pairVal = pairArr[1];
 			const pairAcc = acc;
