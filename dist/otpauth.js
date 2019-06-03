@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.7 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -821,20 +821,20 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       Object.defineProperty(this, "hex", {enumerable:!0, configurable:!0, writable:!0, value:utils.b.hex.decode(this.buffer)});
       return this.hex;
     }}});
-    var OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?(?:issuer|label|secret|algorithm|digits|counter|period)=[^&]+)+)$/i, SECRET_REGEX = /^[2-7A-Z]+$/i, ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i, INTEGER_REGEX = /^[+-]?\d+$/, POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/, uri_URI = function() {
+    var OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?(?:issuer|secret|algorithm|digits|counter|period)=[^&]+)+)$/i, SECRET_REGEX = /^[2-7A-Z]+$/i, ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i, INTEGER_REGEX = /^[+-]?\d+$/, POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/, uri_URI = function() {
     };
     uri_URI.parse = function(uri) {
       try {
-        var uriGroups = decodeURIComponent(uri).match(OTPURI_REGEX);
+        var uriGroups = uri.match(OTPURI_REGEX);
       } catch (error) {
       }
       if (!Array.isArray(uriGroups)) {
         throw new URIError("Invalid URI format");
       }
       var uriType = uriGroups[1].toLowerCase();
-      uri = uriGroups[2].split(/:(.+)/, 2);
+      uri = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
       uriGroups = uriGroups[3].split("&").reduce(function(acc, cur) {
-        cur = cur.split(/=(.+)/, 2);
+        cur = cur.split(/=(.+)/, 2).map(decodeURIComponent);
         var pairKey = cur[0].toLowerCase();
         acc[pairKey] = cur[1];
         return acc;
@@ -978,7 +978,7 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.6";
+      return "3.2.7";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
