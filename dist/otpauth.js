@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.7 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v3.2.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -221,6 +221,13 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
           arr[i] = Number.parseInt(str.substr(2 * i, 2), 16);
         }
         return buf;
+      };
+      Utils.pad = function(num, digits) {
+        var prefix = "";
+        for (digits -= String(num).length; 0 < digits--;) {
+          prefix += "0";
+        }
+        return "" + prefix + num;
       };
       var InternalUtils = {};
       InternalUtils.isNode = "[object process]" === Object.prototype.toString.call(global.process);
@@ -922,7 +929,7 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       $jscomp$destructuring$var6 = new Uint8Array(src_crypto.a.hmacDigest(void 0 === $jscomp$destructuring$var6.algorithm ? "SHA1" : $jscomp$destructuring$var6.algorithm, $jscomp$destructuring$var6.secret.buffer, utils.b.uint.encode(void 0 === $jscomp$destructuring$var6.counter ? 0 : $jscomp$destructuring$var6.counter)));
       var offset = $jscomp$destructuring$var6[$jscomp$destructuring$var6.byteLength - 1] & 15;
       $jscomp$destructuring$var6 = (($jscomp$destructuring$var6[offset] & 127) << 24 | ($jscomp$destructuring$var6[offset + 1] & 255) << 16 | ($jscomp$destructuring$var6[offset + 2] & 255) << 8 | $jscomp$destructuring$var6[offset + 3] & 255) % Math.pow(10, digits);
-      return pad ? Array(1 + digits - String($jscomp$destructuring$var6).length).join("0") + $jscomp$destructuring$var6 : $jscomp$destructuring$var6;
+      return pad ? utils.b.pad($jscomp$destructuring$var6, digits) : $jscomp$destructuring$var6;
     };
     otp_HOTP.prototype.generate = function($jscomp$destructuring$var8) {
       $jscomp$destructuring$var8 = void 0 === $jscomp$destructuring$var8 ? {} : $jscomp$destructuring$var8;
@@ -932,16 +939,19 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
     otp_HOTP.validate = function($jscomp$destructuring$var10) {
       var token = $jscomp$destructuring$var10.token, secret = $jscomp$destructuring$var10.secret, algorithm = $jscomp$destructuring$var10.algorithm, counter = void 0 === $jscomp$destructuring$var10.counter ? 0 : $jscomp$destructuring$var10.counter;
       $jscomp$destructuring$var10 = void 0 === $jscomp$destructuring$var10.window ? 50 : $jscomp$destructuring$var10.window;
-      for (var searchToken = Number.parseInt(token, 10), i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
-        var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, counter:i, digits:token.length, pad:!1});
-        if (searchToken === generatedToken) {
+      var digits = token.length;
+      token = Number.parseInt(token, 10);
+      for (var i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
+        var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:i, pad:!1});
+        if (token === generatedToken) {
           return i - counter;
         }
       }
       return null;
     };
     otp_HOTP.prototype.validate = function($jscomp$destructuring$var12) {
-      return otp_HOTP.validate({token:$jscomp$destructuring$var12.token, secret:this.secret, algorithm:this.algorithm, counter:void 0 === $jscomp$destructuring$var12.counter ? this.counter : $jscomp$destructuring$var12.counter, window:$jscomp$destructuring$var12.window});
+      var counter = void 0 === $jscomp$destructuring$var12.counter ? this.counter : $jscomp$destructuring$var12.counter, window = $jscomp$destructuring$var12.window;
+      return otp_HOTP.validate({token:utils.b.pad($jscomp$destructuring$var12.token, this.digits), secret:this.secret, algorithm:this.algorithm, counter:counter, window:window});
     };
     otp_HOTP.prototype.toString = function() {
       return uri_URI.stringify(this);
@@ -972,13 +982,14 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       return otp_HOTP.validate({token:token, secret:secret, algorithm:algorithm, counter:Math.floor(timestamp / 1000 / period), window:$jscomp$destructuring$var20.window});
     };
     otp_TOTP.prototype.validate = function($jscomp$destructuring$var22) {
-      return otp_TOTP.validate({token:$jscomp$destructuring$var22.token, secret:this.secret, algorithm:this.algorithm, period:this.period, timestamp:$jscomp$destructuring$var22.timestamp, window:$jscomp$destructuring$var22.window});
+      var timestamp = $jscomp$destructuring$var22.timestamp, window = $jscomp$destructuring$var22.window;
+      return otp_TOTP.validate({token:utils.b.pad($jscomp$destructuring$var22.token, this.digits), secret:this.secret, algorithm:this.algorithm, period:this.period, timestamp:timestamp, window:window});
     };
     otp_TOTP.prototype.toString = function() {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.7";
+      return "3.2.8";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
