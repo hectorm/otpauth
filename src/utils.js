@@ -209,6 +209,19 @@ Utils.hex.encode = str => {
 };
 
 /**
+ * Pads a number with leading zeros.
+ * @param {number} num Number.
+ * @param {number} digits Digits.
+ * @returns {string} Padded number.
+ */
+Utils.pad = (num, digits) => {
+	let prefix = '';
+	let repeat = digits - String(num).length;
+	while (repeat-- > 0) prefix += '0';
+	return `${prefix}${num}`;
+};
+
+/**
  * An object containing some utilities (for internal use only).
  * @private
  * @type {Object}

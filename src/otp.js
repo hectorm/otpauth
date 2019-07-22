@@ -101,7 +101,7 @@ export class HOTP {
 		) % (10 ** digits);
 
 		return pad
-			? new Array(1 + digits - String(otp).length).join('0') + otp
+			? Utils.pad(otp, digits)
 			: otp;
 	}
 
@@ -142,18 +142,19 @@ export class HOTP {
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
-		const searchToken = Number.parseInt(token, 10);
+		const digits = token.length;
+		const unpaddedToken = Number.parseInt(token, 10);
 
 		for (let i = counter - window; i <= counter + window; ++i) {
 			const generatedToken = HOTP.generate({
 				secret,
 				algorithm,
+				digits,
 				counter: i,
-				digits: token.length,
 				pad: false
 			});
 
-			if (searchToken === generatedToken) {
+			if (unpaddedToken === generatedToken) {
 				return i - counter;
 			}
 		}
@@ -175,7 +176,7 @@ export class HOTP {
 		window
 	}) {
 		return HOTP.validate({
-			token,
+			token: Utils.pad(token, this.digits),
 			secret: this.secret,
 			algorithm: this.algorithm,
 			counter,
@@ -337,7 +338,7 @@ export class TOTP {
 		window
 	}) {
 		return TOTP.validate({
-			token,
+			token: Utils.pad(token, this.digits),
 			secret: this.secret,
 			algorithm: this.algorithm,
 			period: this.period,

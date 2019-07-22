@@ -482,6 +482,26 @@ describe('OTPAuth.Utils', () => {
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
+
+	it('uint.pad[0]', () => {
+		const output = OTPAuth.Utils.pad(123, 6);
+		expect(output).to.equal('000123');
+	});
+
+	it('uint.pad[1]', () => {
+		const output = OTPAuth.Utils.pad(123456, -4);
+		expect(output).to.equal('123456');
+	});
+
+	it('uint.pad[2]', () => {
+		const output = OTPAuth.Utils.pad(123456, 0);
+		expect(output).to.equal('123456');
+	});
+
+	it('uint.pad[3]', () => {
+		const output = OTPAuth.Utils.pad(123456, 4);
+		expect(output).to.equal('123456');
+	});
 });
 
 /* ================================================
