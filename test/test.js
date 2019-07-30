@@ -624,7 +624,7 @@ describe('Test - OTPAuth.HOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
-			const constructorInput = input.hotp.constructor.input;
+			const constructorInput = { ...input.hotp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const hotp = new OTPAuth.HOTP(constructorInput);
 
@@ -637,7 +637,7 @@ describe('Test - OTPAuth.HOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
-			const constructorInput = input.hotp.constructor.input;
+			const constructorInput = { ...input.hotp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const hotp = new OTPAuth.HOTP(constructorInput);
 
@@ -650,7 +650,7 @@ describe('Test - OTPAuth.HOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
-			const constructorInput = input.hotp.constructor.input;
+			const constructorInput = { ...input.hotp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const hotp = new OTPAuth.HOTP(constructorInput);
 
@@ -686,7 +686,7 @@ describe('Test - OTPAuth.TOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
-			const constructorInput = input.totp.constructor.input;
+			const constructorInput = { ...input.totp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const totp = new OTPAuth.TOTP(constructorInput);
 
@@ -699,7 +699,7 @@ describe('Test - OTPAuth.TOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
-			const constructorInput = input.totp.constructor.input;
+			const constructorInput = { ...input.totp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const totp = new OTPAuth.TOTP(constructorInput);
 
@@ -712,7 +712,7 @@ describe('Test - OTPAuth.TOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
-			const constructorInput = input.totp.constructor.input;
+			const constructorInput = { ...input.totp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const totp = new OTPAuth.TOTP(constructorInput);
 
@@ -731,7 +731,7 @@ describe('Test - OTPAuth.TOTP', () => {
 describe('Test - OTPAuth.URI', () => {
 	inputs.forEach((input, index) => {
 		it(`parse[${index}] - HOTP`, () => {
-			const constructorInput = input.hotp.constructor.input;
+			const constructorInput = { ...input.hotp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const hotp = new OTPAuth.HOTP(constructorInput);
 
@@ -743,7 +743,7 @@ describe('Test - OTPAuth.URI', () => {
 
 	inputs.forEach((input, index) => {
 		it(`parse[${index}] - TOTP`, () => {
-			const constructorInput = input.totp.constructor.input;
+			const constructorInput = { ...input.totp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const totp = new OTPAuth.TOTP(constructorInput);
 
@@ -755,7 +755,7 @@ describe('Test - OTPAuth.URI', () => {
 
 	inputs.forEach((input, index) => {
 		it(`stringify[${index}] - HOTP`, () => {
-			const constructorInput = input.hotp.constructor.input;
+			const constructorInput = { ...input.hotp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const hotp = new OTPAuth.HOTP(constructorInput);
 
@@ -767,7 +767,7 @@ describe('Test - OTPAuth.URI', () => {
 
 	inputs.forEach((input, index) => {
 		it(`stringify[${index}] - TOTP`, () => {
-			const constructorInput = input.totp.constructor.input;
+			const constructorInput = { ...input.totp.constructor.input };
 			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
 			const totp = new OTPAuth.TOTP(constructorInput);
 
