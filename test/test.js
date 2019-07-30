@@ -499,8 +499,8 @@ describe('OTPAuth.Utils', () => {
 	});
 
 	it('uint.pad[3]', () => {
-		const output = OTPAuth.Utils.pad(123456, 4);
-		expect(output).to.equal('123456');
+		const output = OTPAuth.Utils.pad('0123', 6);
+		expect(output).to.equal('000123');
 	});
 });
 
@@ -615,12 +615,11 @@ describe('Test - OTPAuth.HOTP', () => {
 
 		expect(hotp.generate()).to.be.a('string');
 		expect(hotp.generate()).to.have.lengthOf(6);
-		expect(hotp.generate({ pad: false })).to.a('number');
 
 		expect(hotp.validate({ token: hotp.generate() })).to.equal(-1);
 
 		// Counter is incremented on each 'generate' call
-		expect(hotp.counter).to.equal(4);
+		expect(hotp.counter).to.equal(3);
 	});
 
 	inputs.forEach((input, index) => {
@@ -681,7 +680,6 @@ describe('Test - OTPAuth.TOTP', () => {
 
 		expect(totp.generate()).to.be.a('string');
 		expect(totp.generate()).to.have.lengthOf(6);
-		expect(totp.generate({ pad: false })).to.a('number');
 
 		expect(totp.validate({ token: totp.generate() })).to.equal(0);
 	});

@@ -210,7 +210,7 @@ Utils.hex.encode = str => {
 
 /**
  * Pads a number with leading zeros.
- * @param {number} num Number.
+ * @param {number|string} num Number.
  * @param {number} digits Digits.
  * @returns {string} Padded number.
  */
