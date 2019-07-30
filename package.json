@@ -30,9 +30,11 @@
     "url": "https://github.com/hectorm/otpauth/issues"
   },
   "main": "dist/otpauth.js",
+  "types": "types/index.d.ts",
   "files": [
     "/dist",
-    "/src"
+    "/src",
+    "/types"
   ],
   "scripts": {
     "lint": "eslint --fix .",
