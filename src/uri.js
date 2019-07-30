@@ -55,7 +55,7 @@ export class URI {
 	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
 	 * @method parse
 	 * @param {string} uri Google Authenticator Key URI.
-	 * @returns {Object} HOTP/TOTP object.
+	 * @returns {HOTP|TOTP} HOTP/TOTP object.
 	 */
 	static parse(uri) {
 		let uriGroups;
@@ -158,7 +158,7 @@ export class URI {
 	/**
 	 * Converts an HOTP/TOTP object to a Google Authenticator key URI.
 	 * @method stringify
-	 * @param {Object} otp HOTP/TOTP object.
+	 * @param {HOTP|TOTP} otp HOTP/TOTP object.
 	 * @param {Object} [config] Configuration options.
 	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
 	 * @returns {string} Google Authenticator Key URI.
