@@ -657,7 +657,7 @@
     "__docId__": 53,
     "kind": "file",
     "name": "src/otp.js",
-    "content": "import { Utils } from './utils';\nimport { Crypto } from './crypto';\nimport { Secret } from './secret';\n// eslint-disable-next-line import/no-cycle\nimport { URI } from './uri';\n\n/**\n * Default configuration.\n * @private\n * @type {Object}\n */\nconst defaults = {\n\tissuer: '',\n\tlabel: 'OTPAuth',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tcounter: 0,\n\tperiod: 30,\n\twindow: 50,\n\tpad: true\n};\n\n/**\n * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).\n * @see https://tools.ietf.org/html/rfc4226\n */\nexport class HOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Initial counter value.\n\t */\n\tconstructor({\n\t\tissuer = defaults.issuer,\n\t\tlabel = defaults.label,\n\t\tsecret = new Secret(),\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tcounter = defaults.counter\n\t} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {string}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Initial counter value.\n\t\t * @type {number}\n\t\t */\n\t\tthis.counter = counter;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({\n\t\tsecret,\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tcounter = defaults.counter,\n\t\tpad = defaults.pad\n\t}) {\n\t\tconst digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));\n\t\tconst offset = digest[digest.byteLength - 1] & 15;\n\t\tconst otp = (\n\t\t\t((digest[offset] & 127) << 24)\n\t\t\t| ((digest[offset + 1] & 255) << 16)\n\t\t\t| ((digest[offset + 2] & 255) << 8)\n\t\t\t| (digest[offset + 3] & 255)\n\t\t) % (10 ** digits);\n\n\t\treturn pad\n\t\t\t? Utils.pad(otp, digits)\n\t\t\t: otp;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.counter=this.counter++] Counter value.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({\n\t\tcounter = this.counter++,\n\t\tpad\n\t} = {}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tcounter,\n\t\t\tpad\n\t\t});\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({\n\t\ttoken,\n\t\tsecret,\n\t\talgorithm,\n\t\tcounter = defaults.counter,\n\t\twindow = defaults.window\n\t}) {\n\t\tconst digits = token.length;\n\t\tconst unpaddedToken = Number.parseInt(token, 10);\n\n\t\tfor (let i = counter - window; i <= counter + window; ++i) {\n\t\t\tconst generatedToken = HOTP.generate({\n\t\t\t\tsecret,\n\t\t\t\talgorithm,\n\t\t\t\tdigits,\n\t\t\t\tcounter: i,\n\t\t\t\tpad: false\n\t\t\t});\n\n\t\t\tif (unpaddedToken === generatedToken) {\n\t\t\t\treturn i - counter;\n\t\t\t}\n\t\t}\n\n\t\treturn null;\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.counter=this.counter] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({\n\t\ttoken,\n\t\tcounter = this.counter,\n\t\twindow\n\t}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: Utils.pad(token, this.digits),\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tcounter,\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n\n/**\n * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).\n * @see https://tools.ietf.org/html/rfc6238\n */\nexport class TOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t */\n\tconstructor({\n\t\tissuer = defaults.issuer,\n\t\tlabel = defaults.label,\n\t\tsecret = new Secret(),\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tperiod = defaults.period\n\t} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {string}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Token time-step duration.\n\t\t * @type {number}\n\t\t */\n\t\tthis.period = period;\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tstatic generate({\n\t\tsecret,\n\t\talgorithm,\n\t\tdigits,\n\t\tperiod = defaults.period,\n\t\ttimestamp = Date.now(),\n\t\tpad\n\t}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret,\n\t\t\talgorithm,\n\t\t\tdigits,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\tpad\n\t\t});\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {boolean} [config.pad=true] Add leading zeros to result.\n\t * @returns {string|number} Token.\n\t */\n\tgenerate({\n\t\ttimestamp = Date.now(),\n\t\tpad\n\t} = {}) {\n\t\treturn TOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp,\n\t\t\tpad\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({\n\t\ttoken,\n\t\tsecret,\n\t\talgorithm,\n\t\tperiod = defaults.period,\n\t\ttimestamp = Date.now(),\n\t\twindow\n\t}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken,\n\t\t\tsecret,\n\t\t\talgorithm,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({\n\t\ttoken,\n\t\ttimestamp,\n\t\twindow\n\t}) {\n\t\treturn TOTP.validate({\n\t\t\ttoken: Utils.pad(token, this.digits),\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp,\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n",
+    "content": "import { Utils } from './utils';\nimport { Crypto } from './crypto';\nimport { Secret } from './secret';\n// eslint-disable-next-line import/no-cycle\nimport { URI } from './uri';\n\n/**\n * Default configuration.\n * @private\n * @type {Object}\n */\nconst defaults = {\n\tissuer: '',\n\tlabel: 'OTPAuth',\n\talgorithm: 'SHA1',\n\tdigits: 6,\n\tcounter: 0,\n\tperiod: 30,\n\twindow: 50\n};\n\n/**\n * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).\n * @see https://tools.ietf.org/html/rfc4226\n */\nexport class HOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Initial counter value.\n\t */\n\tconstructor({\n\t\tissuer = defaults.issuer,\n\t\tlabel = defaults.label,\n\t\tsecret = new Secret(),\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tcounter = defaults.counter\n\t} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {string}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Initial counter value.\n\t\t * @type {number}\n\t\t */\n\t\tthis.counter = counter;\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @returns {string} Token.\n\t */\n\tstatic generate({\n\t\tsecret,\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tcounter = defaults.counter\n\t}) {\n\t\tconst digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));\n\t\tconst offset = digest[digest.byteLength - 1] & 15;\n\t\tconst otp = (\n\t\t\t((digest[offset] & 127) << 24)\n\t\t\t| ((digest[offset + 1] & 255) << 16)\n\t\t\t| ((digest[offset + 2] & 255) << 8)\n\t\t\t| (digest[offset + 3] & 255)\n\t\t) % (10 ** digits);\n\n\t\treturn Utils.pad(otp, digits);\n\t}\n\n\t/**\n\t * Generates an HOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.counter=this.counter++] Counter value.\n\t * @returns {string} Token.\n\t */\n\tgenerate({\n\t\tcounter = this.counter++\n\t} = {}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tcounter\n\t\t});\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.counter=0] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({\n\t\ttoken,\n\t\tsecret,\n\t\talgorithm,\n\t\tcounter = defaults.counter,\n\t\twindow = defaults.window\n\t}) {\n\t\tfor (let i = counter - window; i <= counter + window; ++i) {\n\t\t\tconst generatedToken = HOTP.generate({\n\t\t\t\tsecret,\n\t\t\t\talgorithm,\n\t\t\t\tdigits: token.length,\n\t\t\t\tcounter: i\n\t\t\t});\n\n\t\t\tif (token === generatedToken) {\n\t\t\t\treturn i - counter;\n\t\t\t}\n\t\t}\n\n\t\treturn null;\n\t}\n\n\t/**\n\t * Validates an HOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.counter=this.counter] Counter value.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({\n\t\ttoken,\n\t\tcounter = this.counter,\n\t\twindow\n\t}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken: Utils.pad(token, this.digits),\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tcounter,\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n\n/**\n * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).\n * @see https://tools.ietf.org/html/rfc6238\n */\nexport class TOTP {\n\t/**\n\t * @param {Object} [config] Configuration options.\n\t * @param {string} [config.issuer=''] Account provider.\n\t * @param {string} [config.label='OTPAuth'] Account label.\n\t * @param {Secret} [config.secret=Secret] Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t */\n\tconstructor({\n\t\tissuer = defaults.issuer,\n\t\tlabel = defaults.label,\n\t\tsecret = new Secret(),\n\t\talgorithm = defaults.algorithm,\n\t\tdigits = defaults.digits,\n\t\tperiod = defaults.period\n\t} = {}) {\n\t\t/**\n\t\t * Account provider.\n\t\t * @type {string}\n\t\t */\n\t\tthis.issuer = issuer;\n\t\t/**\n\t\t * Account label.\n\t\t * @type {string}\n\t\t */\n\t\tthis.label = label;\n\t\t/**\n\t\t * Secret key.\n\t\t * @type {string}\n\t\t */\n\t\tthis.secret = secret;\n\t\t/**\n\t\t * HMAC hashing algorithm.\n\t\t * @type {Secret}\n\t\t */\n\t\tthis.algorithm = algorithm;\n\t\t/**\n\t\t * Token length.\n\t\t * @type {number}\n\t\t */\n\t\tthis.digits = digits;\n\t\t/**\n\t\t * Token time-step duration.\n\t\t * @type {number}\n\t\t */\n\t\tthis.period = period;\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.digits=6] Token length.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @returns {string} Token.\n\t */\n\tstatic generate({\n\t\tsecret,\n\t\talgorithm,\n\t\tdigits,\n\t\tperiod = defaults.period,\n\t\ttimestamp = Date.now()\n\t}) {\n\t\treturn HOTP.generate({\n\t\t\tsecret,\n\t\t\talgorithm,\n\t\t\tdigits,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period)\n\t\t});\n\t}\n\n\t/**\n\t * Generates a TOTP token.\n\t * @param {Object} [config] Configuration options.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @returns {string} Token.\n\t */\n\tgenerate({\n\t\ttimestamp = Date.now()\n\t} = {}) {\n\t\treturn TOTP.generate({\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tdigits: this.digits,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {Secret} config.secret Secret key.\n\t * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.\n\t * @param {number} [config.period=30] Token time-step duration.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tstatic validate({\n\t\ttoken,\n\t\tsecret,\n\t\talgorithm,\n\t\tperiod = defaults.period,\n\t\ttimestamp = Date.now(),\n\t\twindow\n\t}) {\n\t\treturn HOTP.validate({\n\t\t\ttoken,\n\t\t\tsecret,\n\t\t\talgorithm,\n\t\t\tcounter: Math.floor(timestamp / 1000 / period),\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Validates a TOTP token.\n\t * @param {Object} config Configuration options.\n\t * @param {string} config.token Token value.\n\t * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.\n\t * @param {number} [config.window=50] Window of counter values to test.\n\t * @returns {number|null} Token delta, or null if the token is not found.\n\t */\n\tvalidate({\n\t\ttoken,\n\t\ttimestamp,\n\t\twindow\n\t}) {\n\t\treturn TOTP.validate({\n\t\t\ttoken: Utils.pad(token, this.digits),\n\t\t\tsecret: this.secret,\n\t\t\talgorithm: this.algorithm,\n\t\t\tperiod: this.period,\n\t\t\ttimestamp,\n\t\t\twindow\n\t\t});\n\t}\n\n\t/**\n\t * Returns a Google Authenticator key URI.\n\t * @returns {string} URI.\n\t */\n\ttoString() {\n\t\treturn URI.stringify(this);\n\t}\n}\n",
     "static": true,
     "longname": "/home/hectorm/Projects/otpauth/src/otp.js",
     "access": "public",
@@ -702,7 +702,7 @@
     "see": [
       "https://tools.ietf.org/html/rfc4226"
     ],
-    "lineNumber": 27,
+    "lineNumber": 26,
     "interface": false
   },
   {
@@ -716,7 +716,7 @@
     "longname": "src/otp.js~HOTP#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 37,
+    "lineNumber": 36,
     "params": [
       {
         "nullable": null,
@@ -811,7 +811,7 @@
     "longname": "src/otp.js~HOTP#issuer",
     "access": "public",
     "description": "Account provider.",
-    "lineNumber": 49,
+    "lineNumber": 48,
     "type": {
       "nullable": null,
       "types": [
@@ -830,7 +830,7 @@
     "longname": "src/otp.js~HOTP#label",
     "access": "public",
     "description": "Account label.",
-    "lineNumber": 54,
+    "lineNumber": 53,
     "type": {
       "nullable": null,
       "types": [
@@ -849,7 +849,7 @@
     "longname": "src/otp.js~HOTP#secret",
     "access": "public",
     "description": "Secret key.",
-    "lineNumber": 59,
+    "lineNumber": 58,
     "type": {
       "nullable": null,
       "types": [
@@ -868,7 +868,7 @@
     "longname": "src/otp.js~HOTP#algorithm",
     "access": "public",
     "description": "HMAC hashing algorithm.",
-    "lineNumber": 64,
+    "lineNumber": 63,
     "type": {
       "nullable": null,
       "types": [
@@ -887,7 +887,7 @@
     "longname": "src/otp.js~HOTP#digits",
     "access": "public",
     "description": "Token length.",
-    "lineNumber": 69,
+    "lineNumber": 68,
     "type": {
       "nullable": null,
       "types": [
@@ -906,7 +906,7 @@
     "longname": "src/otp.js~HOTP#counter",
     "access": "public",
     "description": "Initial counter value.",
-    "lineNumber": 74,
+    "lineNumber": 73,
     "type": {
       "nullable": null,
       "types": [
@@ -927,11 +927,11 @@
     "longname": "src/otp.js~HOTP.generate",
     "access": "public",
     "description": "Generates an HOTP token.",
-    "lineNumber": 87,
+    "lineNumber": 85,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{string|number} Token."
+        "tagValue": "{string} Token."
       }
     ],
     "params": [
@@ -990,25 +990,12 @@
         "defaultRaw": 0,
         "name": "config.counter",
         "description": "Counter value."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "true",
-        "defaultRaw": true,
-        "name": "config.pad",
-        "description": "Add leading zeros to result."
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "string",
-        "number"
+        "string"
       ],
       "spread": false,
       "description": "Token."
@@ -1025,11 +1012,11 @@
     "longname": "src/otp.js~HOTP#generate",
     "access": "public",
     "description": "Generates an HOTP token.",
-    "lineNumber": 115,
+    "lineNumber": 109,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{string|number} Token."
+        "tagValue": "{string} Token."
       }
     ],
     "params": [
@@ -1054,25 +1041,12 @@
         "defaultRaw": "this.counter++",
         "name": "config.counter",
         "description": "Counter value."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "true",
-        "defaultRaw": true,
-        "name": "config.pad",
-        "description": "Add leading zeros to result."
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "string",
-        "number"
+        "string"
       ],
       "spread": false,
       "description": "Token."
@@ -1089,7 +1063,7 @@
     "longname": "src/otp.js~HOTP.validate",
     "access": "public",
     "description": "Validates an HOTP token.",
-    "lineNumber": 138,
+    "lineNumber": 130,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1185,7 +1159,7 @@
     "longname": "src/otp.js~HOTP#validate",
     "access": "public",
     "description": "Validates an HOTP token.",
-    "lineNumber": 173,
+    "lineNumber": 161,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1259,7 +1233,7 @@
     "longname": "src/otp.js~HOTP#toString",
     "access": "public",
     "description": "Returns a Google Authenticator key URI.",
-    "lineNumber": 191,
+    "lineNumber": 179,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1291,7 +1265,7 @@
     "see": [
       "https://tools.ietf.org/html/rfc6238"
     ],
-    "lineNumber": 200,
+    "lineNumber": 188,
     "interface": false
   },
   {
@@ -1305,7 +1279,7 @@
     "longname": "src/otp.js~TOTP#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 210,
+    "lineNumber": 198,
     "params": [
       {
         "nullable": null,
@@ -1400,7 +1374,7 @@
     "longname": "src/otp.js~TOTP#issuer",
     "access": "public",
     "description": "Account provider.",
-    "lineNumber": 222,
+    "lineNumber": 210,
     "type": {
       "nullable": null,
       "types": [
@@ -1419,7 +1393,7 @@
     "longname": "src/otp.js~TOTP#label",
     "access": "public",
     "description": "Account label.",
-    "lineNumber": 227,
+    "lineNumber": 215,
     "type": {
       "nullable": null,
       "types": [
@@ -1438,7 +1412,7 @@
     "longname": "src/otp.js~TOTP#secret",
     "access": "public",
     "description": "Secret key.",
-    "lineNumber": 232,
+    "lineNumber": 220,
     "type": {
       "nullable": null,
       "types": [
@@ -1457,7 +1431,7 @@
     "longname": "src/otp.js~TOTP#algorithm",
     "access": "public",
     "description": "HMAC hashing algorithm.",
-    "lineNumber": 237,
+    "lineNumber": 225,
     "type": {
       "nullable": null,
       "types": [
@@ -1476,7 +1450,7 @@
     "longname": "src/otp.js~TOTP#digits",
     "access": "public",
     "description": "Token length.",
-    "lineNumber": 242,
+    "lineNumber": 230,
     "type": {
       "nullable": null,
       "types": [
@@ -1495,7 +1469,7 @@
     "longname": "src/otp.js~TOTP#period",
     "access": "public",
     "description": "Token time-step duration.",
-    "lineNumber": 247,
+    "lineNumber": 235,
     "type": {
       "nullable": null,
       "types": [
@@ -1516,11 +1490,11 @@
     "longname": "src/otp.js~TOTP.generate",
     "access": "public",
     "description": "Generates a TOTP token.",
-    "lineNumber": 261,
+    "lineNumber": 248,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{string|number} Token."
+        "tagValue": "{string} Token."
       }
     ],
     "params": [
@@ -1591,25 +1565,12 @@
         "defaultRaw": "Date.now",
         "name": "config.timestamp",
         "description": "Timestamp value in milliseconds."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "true",
-        "defaultRaw": true,
-        "name": "config.pad",
-        "description": "Add leading zeros to result."
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "string",
-        "number"
+        "string"
       ],
       "spread": false,
       "description": "Token."
@@ -1626,11 +1587,11 @@
     "longname": "src/otp.js~TOTP#generate",
     "access": "public",
     "description": "Generates a TOTP token.",
-    "lineNumber": 285,
+    "lineNumber": 269,
     "unknown": [
       {
         "tagName": "@returns",
-        "tagValue": "{string|number} Token."
+        "tagValue": "{string} Token."
       }
     ],
     "params": [
@@ -1655,25 +1616,12 @@
         "defaultRaw": "Date.now",
         "name": "config.timestamp",
         "description": "Timestamp value in milliseconds."
-      },
-      {
-        "nullable": null,
-        "types": [
-          "boolean"
-        ],
-        "spread": false,
-        "optional": true,
-        "defaultValue": "true",
-        "defaultRaw": true,
-        "name": "config.pad",
-        "description": "Add leading zeros to result."
       }
     ],
     "return": {
       "nullable": null,
       "types": [
-        "string",
-        "number"
+        "string"
       ],
       "spread": false,
       "description": "Token."
@@ -1690,7 +1638,7 @@
     "longname": "src/otp.js~TOTP.validate",
     "access": "public",
     "description": "Validates a TOTP token.",
-    "lineNumber": 310,
+    "lineNumber": 292,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1798,7 +1746,7 @@
     "longname": "src/otp.js~TOTP#validate",
     "access": "public",
     "description": "Validates a TOTP token.",
-    "lineNumber": 335,
+    "lineNumber": 317,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1872,7 +1820,7 @@
     "longname": "src/otp.js~TOTP#toString",
     "access": "public",
     "description": "Returns a Google Authenticator key URI.",
-    "lineNumber": 354,
+    "lineNumber": 336,
     "unknown": [
       {
         "tagName": "@returns",
@@ -2179,7 +2127,7 @@
     "__docId__": 91,
     "kind": "file",
     "name": "src/uri.js",
-    "content": "import { Utils } from './utils';\nimport { Secret } from './secret';\n// eslint-disable-next-line import/no-cycle\nimport { HOTP, TOTP } from './otp';\n\n/**\n * Valid key URI parameters.\n * @private\n * @type {Array}\n */\nconst OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];\n\n/**\n * Key URI regex.\n *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS\n * @private\n * @type {RegExp}\n */\nconst OTPURI_REGEX = new RegExp(`^otpauth:\\\\/\\\\/([ht]otp)\\\\/(.+)\\\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');\n\n/**\n * RFC 4648 base32 alphabet without pad.\n * @private\n * @type {string}\n */\nconst SECRET_REGEX = /^[2-7A-Z]+$/i;\n\n/**\n * Regex for supported algorithms.\n * @private\n * @type {RegExp}\n */\nconst ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;\n\n/**\n * Integer regex.\n * @private\n * @type {RegExp}\n */\nconst INTEGER_REGEX = /^[+-]?\\d+$/;\n\n/**\n * Positive integer regex.\n * @private\n * @type {RegExp}\n */\nconst POSITIVE_INTEGER_REGEX = /^\\+?[1-9]\\d*$/;\n\n/**\n * HOTP/TOTP object/string conversion.\n * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format\n */\nexport class URI {\n\t/**\n\t * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.\n\t * @method parse\n\t * @param {string} uri Google Authenticator Key URI.\n\t * @returns {Object} HOTP/TOTP object.\n\t */\n\tstatic parse(uri) {\n\t\tlet uriGroups;\n\n\t\ttry {\n\t\t\turiGroups = uri.match(OTPURI_REGEX);\n\t\t} catch (error) { /* Handled below */ }\n\n\t\tif (!Array.isArray(uriGroups)) {\n\t\t\tthrow new URIError('Invalid URI format');\n\t\t}\n\n\t\t// Extract URI groups.\n\t\tconst uriType = uriGroups[1].toLowerCase();\n\t\tconst uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);\n\t\tconst uriParams = uriGroups[3].split('&').reduce((acc, cur) => {\n\t\t\tconst pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);\n\t\t\tconst pairKey = pairArr[0].toLowerCase();\n\t\t\tconst pairVal = pairArr[1];\n\t\t\tconst pairAcc = acc;\n\n\t\t\tpairAcc[pairKey] = pairVal;\n\t\t\treturn pairAcc;\n\t\t}, {});\n\n\t\t// 'OTP' will be instantiated with 'config' argument\n\t\tlet OTP;\n\t\tconst config = {};\n\n\t\tif (uriType === 'hotp') {\n\t\t\tOTP = HOTP;\n\n\t\t\t// Counter: required\n\t\t\tif (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {\n\t\t\t\tconfig.counter = Number.parseInt(uriParams.counter, 10);\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Missing or invalid \\'counter\\' parameter');\n\t\t\t}\n\t\t} else if (uriType === 'totp') {\n\t\t\tOTP = TOTP;\n\n\t\t\t// Period: optional\n\t\t\tif (typeof uriParams.period !== 'undefined') {\n\t\t\t\tif (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {\n\t\t\t\t\tconfig.period = Number.parseInt(uriParams.period, 10);\n\t\t\t\t} else {\n\t\t\t\t\tthrow new TypeError('Invalid \\'period\\' parameter');\n\t\t\t\t}\n\t\t\t}\n\t\t} else {\n\t\t\tthrow new TypeError('Unknown OTP type');\n\t\t}\n\n\t\t// Label: required\n\t\t// Issuer: optional\n\t\tif (uriLabel.length === 2) {\n\t\t\tconfig.label = uriLabel[1];\n\t\t\tif (typeof uriParams.issuer === 'undefined') {\n\t\t\t\tconfig.issuer = uriLabel[0];\n\t\t\t} else if (uriParams.issuer === uriLabel[0]) {\n\t\t\t\tconfig.issuer = uriParams.issuer;\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'issuer\\' parameter');\n\t\t\t}\n\t\t} else {\n\t\t\tconfig.label = uriLabel[0];\n\t\t\tif (typeof uriParams.issuer !== 'undefined') {\n\t\t\t\tconfig.issuer = uriParams.issuer;\n\t\t\t}\n\t\t}\n\n\t\t// Secret: required\n\t\tif (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {\n\t\t\tconfig.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });\n\t\t} else {\n\t\t\tthrow new TypeError('Missing or invalid \\'secret\\' parameter');\n\t\t}\n\n\t\t// Algorithm: optional\n\t\tif (typeof uriParams.algorithm !== 'undefined') {\n\t\t\tif (ALGORITHM_REGEX.test(uriParams.algorithm)) {\n\t\t\t\tconfig.algorithm = uriParams.algorithm;\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'algorithm\\' parameter');\n\t\t\t}\n\t\t}\n\n\t\t// Digits: optional\n\t\tif (typeof uriParams.digits !== 'undefined') {\n\t\t\tif (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {\n\t\t\t\tconfig.digits = Number.parseInt(uriParams.digits, 10);\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'digits\\' parameter');\n\t\t\t}\n\t\t}\n\n\t\treturn new OTP(config);\n\t}\n\n\t/**\n\t * Converts an HOTP/TOTP object to a Google Authenticator key URI.\n\t * @method stringify\n\t * @param {Object} otp HOTP/TOTP object.\n\t * @param {Object} [config] Configuration options.\n\t * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.\n\t * @returns {string} Google Authenticator Key URI.\n\t */\n\tstatic stringify(otp, { legacyIssuer = true } = {}) {\n\t\tconst isHOTP = otp instanceof HOTP;\n\t\tconst isTOTP = otp instanceof TOTP;\n\n\t\tif (!isHOTP && !isTOTP) {\n\t\t\tthrow new TypeError('Invalid \\'HOTP/TOTP\\' object');\n\t\t}\n\n\t\t// Key URI format:\n\t\t// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS\n\t\tlet uri = 'otpauth://';\n\n\t\t// Type\n\t\turi += `${isTOTP ? 'totp' : 'hotp'}/`;\n\n\t\t// Label and optional issuer\n\t\tif (otp.issuer.length > 0) {\n\t\t\t// Legacy label prefix\n\t\t\tif (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;\n\t\t\t// Label\n\t\t\turi += `${encodeURIComponent(otp.label)}?`;\n\t\t\t// Issuer\n\t\t\turi += `issuer=${encodeURIComponent(otp.issuer)}&`;\n\t\t} else {\n\t\t\t// Label\n\t\t\turi += `${encodeURIComponent(otp.label)}?`;\n\t\t}\n\n\t\t// Generic parameters\n\t\turi += `secret=${encodeURIComponent(otp.secret.b32)}`\n\t\t\t+ `&algorithm=${encodeURIComponent(otp.algorithm)}`\n\t\t\t+ `&digits=${encodeURIComponent(otp.digits)}`;\n\n\t\t// Extra parameters\n\t\tif (isTOTP) {\n\t\t\t// TOTP parameters\n\t\t\turi += `&period=${encodeURIComponent(otp.period)}`;\n\t\t} else {\n\t\t\t// HOTP parameters\n\t\t\turi += `&counter=${encodeURIComponent(otp.counter)}`;\n\t\t}\n\n\t\treturn uri;\n\t}\n}\n",
+    "content": "import { Utils } from './utils';\nimport { Secret } from './secret';\n// eslint-disable-next-line import/no-cycle\nimport { HOTP, TOTP } from './otp';\n\n/**\n * Valid key URI parameters.\n * @private\n * @type {Array}\n */\nconst OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];\n\n/**\n * Key URI regex.\n *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS\n * @private\n * @type {RegExp}\n */\nconst OTPURI_REGEX = new RegExp(`^otpauth:\\\\/\\\\/([ht]otp)\\\\/(.+)\\\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');\n\n/**\n * RFC 4648 base32 alphabet without pad.\n * @private\n * @type {string}\n */\nconst SECRET_REGEX = /^[2-7A-Z]+$/i;\n\n/**\n * Regex for supported algorithms.\n * @private\n * @type {RegExp}\n */\nconst ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;\n\n/**\n * Integer regex.\n * @private\n * @type {RegExp}\n */\nconst INTEGER_REGEX = /^[+-]?\\d+$/;\n\n/**\n * Positive integer regex.\n * @private\n * @type {RegExp}\n */\nconst POSITIVE_INTEGER_REGEX = /^\\+?[1-9]\\d*$/;\n\n/**\n * HOTP/TOTP object/string conversion.\n * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format\n */\nexport class URI {\n\t/**\n\t * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.\n\t * @method parse\n\t * @param {string} uri Google Authenticator Key URI.\n\t * @returns {HOTP|TOTP} HOTP/TOTP object.\n\t */\n\tstatic parse(uri) {\n\t\tlet uriGroups;\n\n\t\ttry {\n\t\t\turiGroups = uri.match(OTPURI_REGEX);\n\t\t} catch (error) { /* Handled below */ }\n\n\t\tif (!Array.isArray(uriGroups)) {\n\t\t\tthrow new URIError('Invalid URI format');\n\t\t}\n\n\t\t// Extract URI groups.\n\t\tconst uriType = uriGroups[1].toLowerCase();\n\t\tconst uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);\n\t\tconst uriParams = uriGroups[3].split('&').reduce((acc, cur) => {\n\t\t\tconst pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);\n\t\t\tconst pairKey = pairArr[0].toLowerCase();\n\t\t\tconst pairVal = pairArr[1];\n\t\t\tconst pairAcc = acc;\n\n\t\t\tpairAcc[pairKey] = pairVal;\n\t\t\treturn pairAcc;\n\t\t}, {});\n\n\t\t// 'OTP' will be instantiated with 'config' argument\n\t\tlet OTP;\n\t\tconst config = {};\n\n\t\tif (uriType === 'hotp') {\n\t\t\tOTP = HOTP;\n\n\t\t\t// Counter: required\n\t\t\tif (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {\n\t\t\t\tconfig.counter = Number.parseInt(uriParams.counter, 10);\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Missing or invalid \\'counter\\' parameter');\n\t\t\t}\n\t\t} else if (uriType === 'totp') {\n\t\t\tOTP = TOTP;\n\n\t\t\t// Period: optional\n\t\t\tif (typeof uriParams.period !== 'undefined') {\n\t\t\t\tif (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {\n\t\t\t\t\tconfig.period = Number.parseInt(uriParams.period, 10);\n\t\t\t\t} else {\n\t\t\t\t\tthrow new TypeError('Invalid \\'period\\' parameter');\n\t\t\t\t}\n\t\t\t}\n\t\t} else {\n\t\t\tthrow new TypeError('Unknown OTP type');\n\t\t}\n\n\t\t// Label: required\n\t\t// Issuer: optional\n\t\tif (uriLabel.length === 2) {\n\t\t\tconfig.label = uriLabel[1];\n\t\t\tif (typeof uriParams.issuer === 'undefined') {\n\t\t\t\tconfig.issuer = uriLabel[0];\n\t\t\t} else if (uriParams.issuer === uriLabel[0]) {\n\t\t\t\tconfig.issuer = uriParams.issuer;\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'issuer\\' parameter');\n\t\t\t}\n\t\t} else {\n\t\t\tconfig.label = uriLabel[0];\n\t\t\tif (typeof uriParams.issuer !== 'undefined') {\n\t\t\t\tconfig.issuer = uriParams.issuer;\n\t\t\t}\n\t\t}\n\n\t\t// Secret: required\n\t\tif (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {\n\t\t\tconfig.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });\n\t\t} else {\n\t\t\tthrow new TypeError('Missing or invalid \\'secret\\' parameter');\n\t\t}\n\n\t\t// Algorithm: optional\n\t\tif (typeof uriParams.algorithm !== 'undefined') {\n\t\t\tif (ALGORITHM_REGEX.test(uriParams.algorithm)) {\n\t\t\t\tconfig.algorithm = uriParams.algorithm;\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'algorithm\\' parameter');\n\t\t\t}\n\t\t}\n\n\t\t// Digits: optional\n\t\tif (typeof uriParams.digits !== 'undefined') {\n\t\t\tif (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {\n\t\t\t\tconfig.digits = Number.parseInt(uriParams.digits, 10);\n\t\t\t} else {\n\t\t\t\tthrow new TypeError('Invalid \\'digits\\' parameter');\n\t\t\t}\n\t\t}\n\n\t\treturn new OTP(config);\n\t}\n\n\t/**\n\t * Converts an HOTP/TOTP object to a Google Authenticator key URI.\n\t * @method stringify\n\t * @param {HOTP|TOTP} otp HOTP/TOTP object.\n\t * @param {Object} [config] Configuration options.\n\t * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.\n\t * @returns {string} Google Authenticator Key URI.\n\t */\n\tstatic stringify(otp, { legacyIssuer = true } = {}) {\n\t\tconst isHOTP = otp instanceof HOTP;\n\t\tconst isTOTP = otp instanceof TOTP;\n\n\t\tif (!isHOTP && !isTOTP) {\n\t\t\tthrow new TypeError('Invalid \\'HOTP/TOTP\\' object');\n\t\t}\n\n\t\t// Key URI format:\n\t\t// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS\n\t\tlet uri = 'otpauth://';\n\n\t\t// Type\n\t\turi += `${isTOTP ? 'totp' : 'hotp'}/`;\n\n\t\t// Label and optional issuer\n\t\tif (otp.issuer.length > 0) {\n\t\t\t// Legacy label prefix\n\t\t\tif (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;\n\t\t\t// Label\n\t\t\turi += `${encodeURIComponent(otp.label)}?`;\n\t\t\t// Issuer\n\t\t\turi += `issuer=${encodeURIComponent(otp.issuer)}&`;\n\t\t} else {\n\t\t\t// Label\n\t\t\turi += `${encodeURIComponent(otp.label)}?`;\n\t\t}\n\n\t\t// Generic parameters\n\t\turi += `secret=${encodeURIComponent(otp.secret.b32)}`\n\t\t\t+ `&algorithm=${encodeURIComponent(otp.algorithm)}`\n\t\t\t+ `&digits=${encodeURIComponent(otp.digits)}`;\n\n\t\t// Extra parameters\n\t\tif (isTOTP) {\n\t\t\t// TOTP parameters\n\t\t\turi += `&period=${encodeURIComponent(otp.period)}`;\n\t\t} else {\n\t\t\t// HOTP parameters\n\t\t\turi += `&counter=${encodeURIComponent(otp.counter)}`;\n\t\t}\n\n\t\treturn uri;\n\t}\n}\n",
     "static": true,
     "longname": "/home/hectorm/Projects/otpauth/src/uri.js",
     "access": "public",
@@ -2361,7 +2309,7 @@
       },
       {
         "tagName": "@returns",
-        "tagValue": "{Object} HOTP/TOTP object."
+        "tagValue": "{HOTP|TOTP} HOTP/TOTP object."
       }
     ],
     "params": [
@@ -2379,7 +2327,8 @@
     "return": {
       "nullable": null,
       "types": [
-        "Object"
+        "HOTP",
+        "TOTP"
       ],
       "spread": false,
       "description": "HOTP/TOTP object."
@@ -2411,7 +2360,8 @@
       {
         "nullable": null,
         "types": [
-          "Object"
+          "HOTP",
+          "TOTP"
         ],
         "spread": false,
         "optional": false,
@@ -2454,7 +2404,7 @@
     "__docId__": 101,
     "kind": "file",
     "name": "src/utils.js",
-    "content": "/**\n * An object containing some utilities.\n * @type {Object}\n */\nexport const Utils = {};\n\n/**\n * UInt conversion.\n * @type {Object}\n */\nUtils.uint = {};\n\n/**\n * Converts an ArrayBuffer to an integer.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {number} Integer.\n */\nUtils.uint.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet num = 0;\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tif (arr[i] !== 0) {\n\t\t\tnum *= 256;\n\t\t\tnum += arr[i];\n\t\t}\n\t}\n\n\treturn num;\n};\n\n/**\n * Converts an integer to an ArrayBuffer.\n * @param {number} num Integer.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.uint.encode = num => {\n\tconst buf = new ArrayBuffer(8);\n\tconst arr = new Uint8Array(buf);\n\tlet acc = num;\n\n\tfor (let i = 7; i >= 0; i--) {\n\t\tif (acc === 0) {\n\t\t\tbreak;\n\t\t}\n\n\t\tarr[i] = acc & 255;\n\t\tacc -= arr[i];\n\t\tacc /= 256;\n\t}\n\n\treturn buf;\n};\n\n/**\n * Raw string conversion.\n * @type {Object}\n */\nUtils.raw = {};\n\n/**\n * Converts an ArrayBuffer to a string.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} String.\n */\nUtils.raw.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tstr += String.fromCharCode(arr[i]);\n\t}\n\n\treturn str;\n};\n\n/**\n * Converts a string to an ArrayBuffer.\n * @param {string} str String.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.raw.encode = str => {\n\tconst buf = new ArrayBuffer(str.length);\n\tconst arr = new Uint8Array(buf);\n\n\tfor (let i = 0; i < str.length; i++) {\n\t\tarr[i] = str.charCodeAt(i);\n\t}\n\n\treturn buf;\n};\n\n/**\n * Base32 string conversion.\n * @type {Object}\n */\nUtils.b32 = {};\n\n/**\n * RFC 4648 base32 alphabet without pad.\n * @type {string}\n */\nUtils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';\n\n/**\n * Converts an ArrayBuffer to a base32 string (RFC 4648).\n * @see https://github.com/LinusU/base32-decode\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} Base32 string.\n */\nUtils.b32.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\n\tlet bits = 0;\n\tlet value = 0;\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tvalue = (value << 8) | arr[i];\n\t\tbits += 8;\n\n\t\twhile (bits >= 5) {\n\t\t\tstr += Utils.b32.alphabet[(value >>> bits - 5) & 31];\n\t\t\tbits -= 5;\n\t\t}\n\t}\n\n\tif (bits > 0) {\n\t\tstr += Utils.b32.alphabet[(value << 5 - bits) & 31];\n\t}\n\n\treturn str;\n};\n\n/**\n * Converts a base32 string to an ArrayBuffer (RFC 4648).\n * @see https://github.com/LinusU/base32-encode\n * @param {string} str Base32 string.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.b32.encode = str => {\n\tconst strUpp = str.toUpperCase();\n\tconst buf = new ArrayBuffer(str.length * 5 / 8 | 0);\n\tconst arr = new Uint8Array(buf);\n\n\tlet bits = 0;\n\tlet value = 0;\n\tlet index = 0;\n\n\tfor (let i = 0; i < strUpp.length; i++) {\n\t\tconst idx = Utils.b32.alphabet.indexOf(strUpp[i]);\n\n\t\tif (idx === -1) {\n\t\t\tthrow new TypeError(`Invalid character found: ${strUpp[i]}`);\n\t\t}\n\n\t\tvalue = (value << 5) | idx;\n\t\tbits += 5;\n\n\t\tif (bits >= 8) {\n\t\t\tarr[index++] = (value >>> bits - 8) & 255;\n\t\t\tbits -= 8;\n\t\t}\n\t}\n\n\treturn buf;\n};\n\n/**\n * Hexadecimal string conversion.\n * @type {Object}\n */\nUtils.hex = {};\n\n/**\n * Converts an ArrayBuffer to a hexadecimal string.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} Hexadecimal string.\n */\nUtils.hex.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tconst hexByte = arr[i].toString(16);\n\n\t\tstr += hexByte.length === 1\n\t\t\t? `0${hexByte}`\n\t\t\t: hexByte;\n\t}\n\n\treturn str.toUpperCase();\n};\n\n/**\n * Converts a hexadecimal string to an ArrayBuffer.\n * @param {string} str Hexadecimal string.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.hex.encode = str => {\n\tconst buf = new ArrayBuffer(str.length / 2);\n\tconst arr = new Uint8Array(buf);\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tarr[i] = Number.parseInt(str.substr(i * 2, 2), 16);\n\t}\n\n\treturn buf;\n};\n\n/**\n * Pads a number with leading zeros.\n * @param {number} num Number.\n * @param {number} digits Digits.\n * @returns {string} Padded number.\n */\nUtils.pad = (num, digits) => {\n\tlet prefix = '';\n\tlet repeat = digits - String(num).length;\n\twhile (repeat-- > 0) prefix += '0';\n\treturn `${prefix}${num}`;\n};\n\n/**\n * An object containing some utilities (for internal use only).\n * @private\n * @type {Object}\n */\nexport const InternalUtils = {};\n\n/**\n * Detect if running in \"Node.js\".\n * @type {boolean}\n */\n// eslint-disable-next-line dot-notation\nInternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[object process]';\n\n/**\n * Dynamically import \"Node.js\" modules.\n * @param {string} name Name.\n * @returns {Object} Module.\n */\n// eslint-disable-next-line no-eval\nInternalUtils.require = name => (InternalUtils.isNode ? eval('require')(name) : null);\n",
+    "content": "/**\n * An object containing some utilities.\n * @type {Object}\n */\nexport const Utils = {};\n\n/**\n * UInt conversion.\n * @type {Object}\n */\nUtils.uint = {};\n\n/**\n * Converts an ArrayBuffer to an integer.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {number} Integer.\n */\nUtils.uint.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet num = 0;\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tif (arr[i] !== 0) {\n\t\t\tnum *= 256;\n\t\t\tnum += arr[i];\n\t\t}\n\t}\n\n\treturn num;\n};\n\n/**\n * Converts an integer to an ArrayBuffer.\n * @param {number} num Integer.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.uint.encode = num => {\n\tconst buf = new ArrayBuffer(8);\n\tconst arr = new Uint8Array(buf);\n\tlet acc = num;\n\n\tfor (let i = 7; i >= 0; i--) {\n\t\tif (acc === 0) {\n\t\t\tbreak;\n\t\t}\n\n\t\tarr[i] = acc & 255;\n\t\tacc -= arr[i];\n\t\tacc /= 256;\n\t}\n\n\treturn buf;\n};\n\n/**\n * Raw string conversion.\n * @type {Object}\n */\nUtils.raw = {};\n\n/**\n * Converts an ArrayBuffer to a string.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} String.\n */\nUtils.raw.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tstr += String.fromCharCode(arr[i]);\n\t}\n\n\treturn str;\n};\n\n/**\n * Converts a string to an ArrayBuffer.\n * @param {string} str String.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.raw.encode = str => {\n\tconst buf = new ArrayBuffer(str.length);\n\tconst arr = new Uint8Array(buf);\n\n\tfor (let i = 0; i < str.length; i++) {\n\t\tarr[i] = str.charCodeAt(i);\n\t}\n\n\treturn buf;\n};\n\n/**\n * Base32 string conversion.\n * @type {Object}\n */\nUtils.b32 = {};\n\n/**\n * RFC 4648 base32 alphabet without pad.\n * @type {string}\n */\nUtils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';\n\n/**\n * Converts an ArrayBuffer to a base32 string (RFC 4648).\n * @see https://github.com/LinusU/base32-decode\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} Base32 string.\n */\nUtils.b32.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\n\tlet bits = 0;\n\tlet value = 0;\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tvalue = (value << 8) | arr[i];\n\t\tbits += 8;\n\n\t\twhile (bits >= 5) {\n\t\t\tstr += Utils.b32.alphabet[(value >>> bits - 5) & 31];\n\t\t\tbits -= 5;\n\t\t}\n\t}\n\n\tif (bits > 0) {\n\t\tstr += Utils.b32.alphabet[(value << 5 - bits) & 31];\n\t}\n\n\treturn str;\n};\n\n/**\n * Converts a base32 string to an ArrayBuffer (RFC 4648).\n * @see https://github.com/LinusU/base32-encode\n * @param {string} str Base32 string.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.b32.encode = str => {\n\tconst strUpp = str.toUpperCase();\n\tconst buf = new ArrayBuffer(str.length * 5 / 8 | 0);\n\tconst arr = new Uint8Array(buf);\n\n\tlet bits = 0;\n\tlet value = 0;\n\tlet index = 0;\n\n\tfor (let i = 0; i < strUpp.length; i++) {\n\t\tconst idx = Utils.b32.alphabet.indexOf(strUpp[i]);\n\n\t\tif (idx === -1) {\n\t\t\tthrow new TypeError(`Invalid character found: ${strUpp[i]}`);\n\t\t}\n\n\t\tvalue = (value << 5) | idx;\n\t\tbits += 5;\n\n\t\tif (bits >= 8) {\n\t\t\tarr[index++] = (value >>> bits - 8) & 255;\n\t\t\tbits -= 8;\n\t\t}\n\t}\n\n\treturn buf;\n};\n\n/**\n * Hexadecimal string conversion.\n * @type {Object}\n */\nUtils.hex = {};\n\n/**\n * Converts an ArrayBuffer to a hexadecimal string.\n * @param {ArrayBuffer} buf ArrayBuffer.\n * @returns {string} Hexadecimal string.\n */\nUtils.hex.decode = buf => {\n\tconst arr = new Uint8Array(buf);\n\tlet str = '';\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tconst hexByte = arr[i].toString(16);\n\n\t\tstr += hexByte.length === 1\n\t\t\t? `0${hexByte}`\n\t\t\t: hexByte;\n\t}\n\n\treturn str.toUpperCase();\n};\n\n/**\n * Converts a hexadecimal string to an ArrayBuffer.\n * @param {string} str Hexadecimal string.\n * @returns {ArrayBuffer} ArrayBuffer.\n */\nUtils.hex.encode = str => {\n\tconst buf = new ArrayBuffer(str.length / 2);\n\tconst arr = new Uint8Array(buf);\n\n\tfor (let i = 0; i < arr.length; i++) {\n\t\tarr[i] = Number.parseInt(str.substr(i * 2, 2), 16);\n\t}\n\n\treturn buf;\n};\n\n/**\n * Pads a number with leading zeros.\n * @param {number|string} num Number.\n * @param {number} digits Digits.\n * @returns {string} Padded number.\n */\nUtils.pad = (num, digits) => {\n\tlet prefix = '';\n\tlet repeat = digits - String(num).length;\n\twhile (repeat-- > 0) prefix += '0';\n\treturn `${prefix}${num}`;\n};\n\n/**\n * An object containing some utilities (for internal use only).\n * @private\n * @type {Object}\n */\nexport const InternalUtils = {};\n\n/**\n * Detect if running in \"Node.js\".\n * @type {boolean}\n */\n// eslint-disable-next-line dot-notation\nInternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[object process]';\n\n/**\n * Dynamically import \"Node.js\" modules.\n * @param {string} name Name.\n * @returns {Object} Module.\n */\n// eslint-disable-next-line no-eval\nInternalUtils.require = name => (InternalUtils.isNode ? eval('require')(name) : null);\n",
     "static": true,
     "longname": "/home/hectorm/Projects/otpauth/src/utils.js",
     "access": "public",
@@ -2516,7 +2466,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"otpauth\",\n  \"version\": \"3.2.8\",\n  \"description\": \"One Time Password (HOTP/TOTP) library for Node.js and browser\",\n  \"keywords\": [\n    \"otp\",\n    \"hotp\",\n    \"totp\",\n    \"one time password\",\n    \"2fa\",\n    \"2 factor\",\n    \"two factor\",\n    \"two-factor\",\n    \"2step\",\n    \"2 step\",\n    \"two step\",\n    \"two-step\",\n    \"auth\",\n    \"authenticator\",\n    \"google authenticator\"\n  ],\n  \"author\": \"Héctor Molinero Fernández <hector@molinero.dev>\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/hectorm/otpauth\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/hectorm/otpauth.git\"\n  },\n  \"bugs\": {\n    \"url\": \"https://github.com/hectorm/otpauth/issues\"\n  },\n  \"main\": \"dist/otpauth.js\",\n  \"files\": [\n    \"/dist\",\n    \"/src\"\n  ],\n  \"scripts\": {\n    \"lint\": \"eslint --fix .\",\n    \"build\": \"webpack --display-reasons\",\n    \"test:browser:unminified\": \"karma start\",\n    \"test:browser:minified\": \"IS_MINIFIED=true karma start\",\n    \"test:browser\": \"run-s test:browser:*\",\n    \"test:node:unminified\": \"mocha --reporter dot\",\n    \"test:node:minified\": \"IS_MINIFIED=true mocha --reporter dot\",\n    \"test:node\": \"run-s test:node:*\",\n    \"test\": \"run-s test:*\",\n    \"docs\": \"rimraf docs && esdoc2\",\n    \"dist\": \"run-s lint build test docs\",\n    \"version\": \"run-s dist && git add -A dist docs\"\n  },\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"chai\": \"~4.2.0\",\n    \"closure-webpack-plugin\": \"~2.0.1\",\n    \"esdoc2\": \"~2.1.5\",\n    \"esdoc2-standard-plugin\": \"~2.1.2\",\n    \"eslint\": \"~6.1.0\",\n    \"eslint-config-airbnb-base\": \"~13.2.0\",\n    \"eslint-config-hectorm\": \"~1.0.1\",\n    \"eslint-plugin-import\": \"~2.18.2\",\n    \"google-closure-compiler\": \"~20190709.0.0\",\n    \"karma\": \"~4.2.0\",\n    \"karma-chai\": \"~0.1.0\",\n    \"karma-chrome-launcher\": \"~3.0.0\",\n    \"karma-firefox-launcher\": \"~1.1.0\",\n    \"karma-mocha\": \"~1.3.0\",\n    \"mocha\": \"~6.2.0\",\n    \"npm-run-all\": \"~4.1.5\",\n    \"rimraf\": \"~2.6.3\",\n    \"sjcl\": \"1.0.8\",\n    \"tmp\": \"~0.1.0\",\n    \"webpack\": \"~4.36.1\",\n    \"webpack-cli\": \"~3.3.6\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"otpauth\",\n  \"version\": \"4.0.0\",\n  \"description\": \"One Time Password (HOTP/TOTP) library for Node.js and browser\",\n  \"keywords\": [\n    \"otp\",\n    \"hotp\",\n    \"totp\",\n    \"one time password\",\n    \"2fa\",\n    \"2 factor\",\n    \"two factor\",\n    \"two-factor\",\n    \"2step\",\n    \"2 step\",\n    \"two step\",\n    \"two-step\",\n    \"auth\",\n    \"authenticator\",\n    \"google authenticator\"\n  ],\n  \"author\": \"Héctor Molinero Fernández <hector@molinero.dev>\",\n  \"license\": \"MIT\",\n  \"homepage\": \"https://github.com/hectorm/otpauth\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/hectorm/otpauth.git\"\n  },\n  \"bugs\": {\n    \"url\": \"https://github.com/hectorm/otpauth/issues\"\n  },\n  \"main\": \"dist/otpauth.js\",\n  \"types\": \"types/index.d.ts\",\n  \"files\": [\n    \"/dist\",\n    \"/src\",\n    \"/types\"\n  ],\n  \"scripts\": {\n    \"lint\": \"eslint --fix .\",\n    \"build\": \"webpack --display-reasons\",\n    \"test:browser:unminified\": \"karma start\",\n    \"test:browser:minified\": \"IS_MINIFIED=true karma start\",\n    \"test:browser\": \"run-s test:browser:*\",\n    \"test:node:unminified\": \"mocha --reporter dot\",\n    \"test:node:minified\": \"IS_MINIFIED=true mocha --reporter dot\",\n    \"test:node\": \"run-s test:node:*\",\n    \"test\": \"run-s test:*\",\n    \"docs\": \"rimraf docs && esdoc2\",\n    \"dist\": \"run-s lint build test docs\",\n    \"version\": \"run-s dist && git add -A dist docs\"\n  },\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"chai\": \"~4.2.0\",\n    \"closure-webpack-plugin\": \"~2.0.1\",\n    \"esdoc2\": \"~2.1.5\",\n    \"esdoc2-standard-plugin\": \"~2.1.2\",\n    \"eslint\": \"~6.1.0\",\n    \"eslint-config-airbnb-base\": \"~13.2.0\",\n    \"eslint-config-hectorm\": \"~1.0.1\",\n    \"eslint-plugin-import\": \"~2.18.2\",\n    \"google-closure-compiler\": \"~20190709.0.0\",\n    \"karma\": \"~4.2.0\",\n    \"karma-chai\": \"~0.1.0\",\n    \"karma-chrome-launcher\": \"~3.0.0\",\n    \"karma-firefox-launcher\": \"~1.1.0\",\n    \"karma-mocha\": \"~1.3.0\",\n    \"mocha\": \"~6.2.0\",\n    \"npm-run-all\": \"~4.1.5\",\n    \"rimraf\": \"~2.6.3\",\n    \"sjcl\": \"1.0.8\",\n    \"tmp\": \"~0.1.0\",\n    \"webpack\": \"~4.39.1\",\n    \"webpack-cli\": \"~3.3.6\"\n  }\n}\n",
     "longname": "/home/hectorm/Projects/otpauth/package.json",
     "name": "package.json",
     "static": true,

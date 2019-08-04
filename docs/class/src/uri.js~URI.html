@@ -98,7 +98,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/uri.js~URI.html#static-method-parse">parse</a></span></span><span class="code" data-ice="signature">(uri: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/uri.js~URI.html#static-method-parse">parse</a></span></span><span class="code" data-ice="signature">(uri: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span></span>
         </p>
       </div>
       <div>
@@ -127,7 +127,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/uri.js~URI.html#static-method-stringify">stringify</a></span></span><span class="code" data-ice="signature">(otp: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, config: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/uri.js~URI.html#static-method-stringify">stringify</a></span></span><span class="code" data-ice="signature">(otp: <span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span>, config: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -162,7 +162,7 @@
     
     
     
-    <span class="code" data-ice="name">parse</span><span class="code" data-ice="signature">(uri: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
+    <span class="code" data-ice="name">parse</span><span class="code" data-ice="signature">(uri: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span></span>
     <span class="right-info">
       
       
@@ -203,7 +203,7 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span></td>
           <td class="return-desc" data-ice="returnDescription"><p>HOTP/TOTP object.</p>
 </td>
         </tr>
@@ -236,7 +236,7 @@
     
     
     
-    <span class="code" data-ice="name">stringify</span><span class="code" data-ice="signature">(otp: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, config: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">stringify</span><span class="code" data-ice="signature">(otp: <span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span>, config: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
@@ -262,7 +262,7 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">otp</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="type" class="code"><span><a href="class/src/otp.js~HOTP.html">HOTP</a></span> | <span><a href="class/src/otp.js~TOTP.html">TOTP</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>HOTP/TOTP object.</p>
 </td>

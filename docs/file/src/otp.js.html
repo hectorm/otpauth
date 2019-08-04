@@ -58,8 +58,7 @@ const defaults = {
 	digits: 6,
 	counter: 0,
 	period: 30,
-	window: 50,
-	pad: true
+	window: 50
 };
 
 /**
@@ -123,15 +122,13 @@ export class HOTP {
 	 * @param {string} [config.algorithm=&apos;SHA1&apos;] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.counter=0] Counter value.
-	 * @param {boolean} [config.pad=true] Add leading zeros to result.
-	 * @returns {string|number} Token.
+	 * @returns {string} Token.
 	 */
 	static generate({
 		secret,
 		algorithm = defaults.algorithm,
 		digits = defaults.digits,
-		counter = defaults.counter,
-		pad = defaults.pad
+		counter = defaults.counter
 	}) {
 		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
 		const offset = digest[digest.byteLength - 1] &amp; 15;
@@ -142,28 +139,23 @@ export class HOTP {
 			| (digest[offset + 3] &amp; 255)
 		) % (10 ** digits);
 
-		return pad
-			? Utils.pad(otp, digits)
-			: otp;
+		return Utils.pad(otp, digits);
 	}
 
 	/**
 	 * Generates an HOTP token.
 	 * @param {Object} [config] Configuration options.
 	 * @param {number} [config.counter=this.counter++] Counter value.
-	 * @param {boolean} [config.pad=true] Add leading zeros to result.
-	 * @returns {string|number} Token.
+	 * @returns {string} Token.
 	 */
 	generate({
-		counter = this.counter++,
-		pad
+		counter = this.counter++
 	} = {}) {
 		return HOTP.generate({
 			secret: this.secret,
 			algorithm: this.algorithm,
 			digits: this.digits,
-			counter,
-			pad
+			counter
 		});
 	}
 
@@ -184,19 +176,15 @@ export class HOTP {
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
-		const digits = token.length;
-		const unpaddedToken = Number.parseInt(token, 10);
-
 		for (let i = counter - window; i &lt;= counter + window; ++i) {
 			const generatedToken = HOTP.generate({
 				secret,
 				algorithm,
-				digits,
-				counter: i,
-				pad: false
+				digits: token.length,
+				counter: i
 			});
 
-			if (unpaddedToken === generatedToken) {
+			if (token === generatedToken) {
 				return i - counter;
 			}
 		}
@@ -297,23 +285,20 @@ export class TOTP {
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-	 * @param {boolean} [config.pad=true] Add leading zeros to result.
-	 * @returns {string|number} Token.
+	 * @returns {string} Token.
 	 */
 	static generate({
 		secret,
 		algorithm,
 		digits,
 		period = defaults.period,
-		timestamp = Date.now(),
-		pad
+		timestamp = Date.now()
 	}) {
 		return HOTP.generate({
 			secret,
 			algorithm,
 			digits,
-			counter: Math.floor(timestamp / 1000 / period),
-			pad
+			counter: Math.floor(timestamp / 1000 / period)
 		});
 	}
 
@@ -321,20 +306,17 @@ export class TOTP {
 	 * Generates a TOTP token.
 	 * @param {Object} [config] Configuration options.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-	 * @param {boolean} [config.pad=true] Add leading zeros to result.
-	 * @returns {string|number} Token.
+	 * @returns {string} Token.
 	 */
 	generate({
-		timestamp = Date.now(),
-		pad
+		timestamp = Date.now()
 	} = {}) {
 		return TOTP.generate({
 			secret: this.secret,
 			algorithm: this.algorithm,
 			digits: this.digits,
 			period: this.period,
-			timestamp,
-			pad
+			timestamp
 		});
 	}
 

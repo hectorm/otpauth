@@ -1,5 +1,5 @@
 (function(){/*
- otpauth v3.2.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+ otpauth v4.0.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 'use strict';
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
@@ -925,24 +925,21 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       this.counter = $jscomp$destructuring$var5;
     };
     otp_HOTP.generate = function($jscomp$destructuring$var6) {
-      var digits = void 0 === $jscomp$destructuring$var6.digits ? 6 : $jscomp$destructuring$var6.digits, pad = void 0 === $jscomp$destructuring$var6.pad ? !0 : $jscomp$destructuring$var6.pad;
+      var digits = void 0 === $jscomp$destructuring$var6.digits ? 6 : $jscomp$destructuring$var6.digits;
       $jscomp$destructuring$var6 = new Uint8Array(src_crypto.a.hmacDigest(void 0 === $jscomp$destructuring$var6.algorithm ? "SHA1" : $jscomp$destructuring$var6.algorithm, $jscomp$destructuring$var6.secret.buffer, utils.b.uint.encode(void 0 === $jscomp$destructuring$var6.counter ? 0 : $jscomp$destructuring$var6.counter)));
       var offset = $jscomp$destructuring$var6[$jscomp$destructuring$var6.byteLength - 1] & 15;
-      $jscomp$destructuring$var6 = (($jscomp$destructuring$var6[offset] & 127) << 24 | ($jscomp$destructuring$var6[offset + 1] & 255) << 16 | ($jscomp$destructuring$var6[offset + 2] & 255) << 8 | $jscomp$destructuring$var6[offset + 3] & 255) % Math.pow(10, digits);
-      return pad ? utils.b.pad($jscomp$destructuring$var6, digits) : $jscomp$destructuring$var6;
+      return utils.b.pad((($jscomp$destructuring$var6[offset] & 127) << 24 | ($jscomp$destructuring$var6[offset + 1] & 255) << 16 | ($jscomp$destructuring$var6[offset + 2] & 255) << 8 | $jscomp$destructuring$var6[offset + 3] & 255) % Math.pow(10, digits), digits);
     };
     otp_HOTP.prototype.generate = function($jscomp$destructuring$var8) {
       $jscomp$destructuring$var8 = void 0 === $jscomp$destructuring$var8 ? {} : $jscomp$destructuring$var8;
-      var counter = void 0 === $jscomp$destructuring$var8.counter ? this.counter++ : $jscomp$destructuring$var8.counter;
-      return otp_HOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, counter:counter, pad:$jscomp$destructuring$var8.pad});
+      $jscomp$destructuring$var8 = void 0 === $jscomp$destructuring$var8.counter ? this.counter++ : $jscomp$destructuring$var8.counter;
+      return otp_HOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, counter:$jscomp$destructuring$var8});
     };
     otp_HOTP.validate = function($jscomp$destructuring$var10) {
       var token = $jscomp$destructuring$var10.token, secret = $jscomp$destructuring$var10.secret, algorithm = $jscomp$destructuring$var10.algorithm, counter = void 0 === $jscomp$destructuring$var10.counter ? 0 : $jscomp$destructuring$var10.counter;
       $jscomp$destructuring$var10 = void 0 === $jscomp$destructuring$var10.window ? 50 : $jscomp$destructuring$var10.window;
-      var digits = token.length;
-      token = Number.parseInt(token, 10);
       for (var i = counter - $jscomp$destructuring$var10; i <= counter + $jscomp$destructuring$var10; ++i) {
-        var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:i, pad:!1});
+        var generatedToken = otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:token.length, counter:i});
         if (token === generatedToken) {
           return i - counter;
         }
@@ -969,13 +966,14 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       this.period = $jscomp$destructuring$var15;
     };
     otp_TOTP.generate = function($jscomp$destructuring$var16) {
-      var secret = $jscomp$destructuring$var16.secret, algorithm = $jscomp$destructuring$var16.algorithm, digits = $jscomp$destructuring$var16.digits, period = void 0 === $jscomp$destructuring$var16.period ? 30 : $jscomp$destructuring$var16.period, timestamp = void 0 === $jscomp$destructuring$var16.timestamp ? Date.now() : $jscomp$destructuring$var16.timestamp;
-      return otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:Math.floor(timestamp / 1000 / period), pad:$jscomp$destructuring$var16.pad});
+      var secret = $jscomp$destructuring$var16.secret, algorithm = $jscomp$destructuring$var16.algorithm, digits = $jscomp$destructuring$var16.digits, period = void 0 === $jscomp$destructuring$var16.period ? 30 : $jscomp$destructuring$var16.period;
+      $jscomp$destructuring$var16 = void 0 === $jscomp$destructuring$var16.timestamp ? Date.now() : $jscomp$destructuring$var16.timestamp;
+      return otp_HOTP.generate({secret:secret, algorithm:algorithm, digits:digits, counter:Math.floor($jscomp$destructuring$var16 / 1000 / period)});
     };
     otp_TOTP.prototype.generate = function($jscomp$destructuring$var18) {
       $jscomp$destructuring$var18 = void 0 === $jscomp$destructuring$var18 ? {} : $jscomp$destructuring$var18;
-      var timestamp = void 0 === $jscomp$destructuring$var18.timestamp ? Date.now() : $jscomp$destructuring$var18.timestamp;
-      return otp_TOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, period:this.period, timestamp:timestamp, pad:$jscomp$destructuring$var18.pad});
+      $jscomp$destructuring$var18 = void 0 === $jscomp$destructuring$var18.timestamp ? Date.now() : $jscomp$destructuring$var18.timestamp;
+      return otp_TOTP.generate({secret:this.secret, algorithm:this.algorithm, digits:this.digits, period:this.period, timestamp:$jscomp$destructuring$var18});
     };
     otp_TOTP.validate = function($jscomp$destructuring$var20) {
       var token = $jscomp$destructuring$var20.token, secret = $jscomp$destructuring$var20.secret, algorithm = $jscomp$destructuring$var20.algorithm, period = void 0 === $jscomp$destructuring$var20.period ? 30 : $jscomp$destructuring$var20.period, timestamp = void 0 === $jscomp$destructuring$var20.timestamp ? Date.now() : $jscomp$destructuring$var20.timestamp;
@@ -989,7 +987,7 @@ $jscomp.polyfill("Number.parseInt", function(orig) {
       return uri_URI.stringify(this);
     };
     __webpack_require__.d(__webpack_exports__, "version", function() {
-      return "3.2.8";
+      return "4.0.0";
     });
     __webpack_require__.d(__webpack_exports__, "HOTP", function() {
       return otp_HOTP;
