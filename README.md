@@ -2,7 +2,6 @@
 [![Dependencies status](https://img.shields.io/david/hectorm/otpauth.svg)][dependencies]
 [![Dev dependencies status](https://img.shields.io/david/dev/hectorm/otpauth.svg)][devDependencies]
 [![NPM status](https://img.shields.io/npm/dm/otpauth.svg)][npm]
-[![Documentation](https://hectorm.github.io/otpauth/badge.svg)][docs]
 
 ***
 
