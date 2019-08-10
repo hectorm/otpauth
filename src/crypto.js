@@ -70,7 +70,7 @@ if (InternalUtils.isNode) {
 			BrowserCrypto.getRandomValues(arr);
 		};
 	} else {
-		console.warn('Cryptography API not available, falling back to \'Math.random\'...');
+		InternalUtils.console.warn('Cryptography API not available, falling back to \'Math.random\'...');
 		getRandomValues = arr => {
 			for (let i = 0; i < arr.length; i++) {
 				arr[i] = Math.floor(Math.random() * 256);

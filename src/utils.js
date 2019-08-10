@@ -231,7 +231,7 @@ export const InternalUtils = {};
 /**
  * "globalThis" ponyfill.
  * @see https://mathiasbynens.be/notes/globalthis
- * @type {Object} globalThis
+ * @type {Object}
  */
 InternalUtils.globalThis = (function getGlobalThis() {
 	/* eslint-disable no-extend-native, no-undef */
@@ -240,6 +240,15 @@ InternalUtils.globalThis = (function getGlobalThis() {
 	try { return __gt__; } finally { delete Object.prototype.__gt__; }
 	/* eslint-enable */
 })();
+
+/**
+ * "console" ponyfill.
+ * (NOTICE: only some methods are implemented).
+ * @type {Object}
+ */
+InternalUtils.console = typeof InternalUtils.globalThis.console !== 'object'
+	? ['log', 'info', 'error', 'warn'].reduce((c, n) => { c[n] = () => {}; return c; }, {})
+	: InternalUtils.globalThis.console;
 
 /**
  * Detect if running in "Node.js".
