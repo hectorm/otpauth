@@ -229,11 +229,23 @@ Utils.pad = (num, digits) => {
 export const InternalUtils = {};
 
 /**
+ * "globalThis" ponyfill.
+ * @see https://mathiasbynens.be/notes/globalthis
+ * @type {Object} globalThis
+ */
+InternalUtils.globalThis = (function getGlobalThis() {
+	/* eslint-disable no-extend-native, no-undef */
+	if (typeof globalThis === 'object') return globalThis;
+	Object.defineProperty(Object.prototype, '__gt__', { get() { return this; }, configurable: true });
+	try { return __gt__; } finally { delete Object.prototype.__gt__; }
+	/* eslint-enable */
+})();
+
+/**
  * Detect if running in "Node.js".
  * @type {boolean}
  */
-// eslint-disable-next-line dot-notation
-InternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[object process]';
+InternalUtils.isNode = Object.prototype.toString.call(InternalUtils.globalThis.process) === '[object process]';
 
 /**
  * Dynamically import "Node.js" modules.
@@ -241,4 +253,4 @@ InternalUtils.isNode = Object.prototype.toString.call(global['process']) === '[o
  * @returns {Object} Module.
  */
 // eslint-disable-next-line no-eval
-InternalUtils.require = name => (InternalUtils.isNode ? eval('require')(name) : null);
+InternalUtils.require = name => eval('require')(name);

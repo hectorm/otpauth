@@ -39,7 +39,6 @@ function generateConfig(filename) {
 				})
 			]
 		},
-		node: { Buffer: false },
 		plugins: [
 			new webpack.EnvironmentPlugin({
 				VERSION: pkg.version

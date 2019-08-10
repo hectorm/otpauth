@@ -4,13 +4,6 @@ import sjcl from 'sjcl'; // SJCL is included during compilation.
 import { InternalUtils } from './utils';
 
 /**
- * Node.js Crypto module.
- * @private
- * @type {Object}
- */
-const NodeCrypto = InternalUtils.require('crypto');
-
-/**
  * An object containing some cryptography functions
  * with dirty workarounds for Node.js and browsers.
  * @private
@@ -18,16 +11,18 @@ const NodeCrypto = InternalUtils.require('crypto');
  */
 export const Crypto = {};
 
-if (NodeCrypto) {
-	let bufferFrom;
+if (InternalUtils.isNode) {
+	const NodeBuffer = InternalUtils.globalThis.Buffer;
+	const NodeCrypto = InternalUtils.require('crypto');
 
-	if (typeof Buffer.from === 'function') {
-		bufferFrom = Buffer.from;
+	let bufferFrom;
+	if (typeof NodeBuffer.from === 'function') {
+		bufferFrom = NodeBuffer.from;
 	} else {
 		// Node.js < 5.10.0
 		bufferFrom = arrbuf => {
 			// eslint-disable-next-line no-buffer-constructor
-			const nodeBuf = new Buffer(arrbuf.byteLength);
+			const nodeBuf = new NodeBuffer(arrbuf.byteLength);
 			const arr = new Uint8Array(arrbuf);
 
 			for (let i = 0; i < arr.length; i++) {
@@ -39,8 +34,7 @@ if (NodeCrypto) {
 	}
 
 	let bufferTo;
-
-	if (Buffer.prototype instanceof Uint8Array) {
+	if (NodeBuffer.prototype instanceof Uint8Array) {
 		bufferTo = nodeBuf => nodeBuf;
 	} else {
 		// Node.js < 4.0.0
@@ -68,15 +62,12 @@ if (NodeCrypto) {
 		return bufferTo(buff).update(bufferFrom(message)).digest();
 	};
 } else {
-	let getRandomValues;
+	const BrowserCrypto = InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto;
 
-	if (typeof global.crypto !== 'undefined' && typeof global.crypto.getRandomValues === 'function') {
+	let getRandomValues;
+	if (typeof BrowserCrypto !== 'undefined' && typeof BrowserCrypto.getRandomValues === 'function') {
 		getRandomValues = arr => {
-			global.crypto.getRandomValues(arr);
-		};
-	} else if (typeof global.msCrypto !== 'undefined' && typeof global.msCrypto.getRandomValues === 'function') {
-		getRandomValues = arr => {
-			global.msCrypto.getRandomValues(arr);
+			BrowserCrypto.getRandomValues(arr);
 		};
 	} else {
 		console.warn('Cryptography API not available, falling back to \'Math.random\'...');
