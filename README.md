@@ -60,7 +60,7 @@ In browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using
 See the [documentation][docs] page.
 
 ## License
-[MIT License][license] © [Héctor Molinero Fernández](https://molinero.dev/).
+[MIT License][license] © [Héctor Molinero Fernández](https://hector.molinero.dev/).
 
 [docs]: https://hectorm.github.io/otpauth/index.html
 [license]: https://github.com/hectorm/otpauth/blob/master/LICENSE.md
@@ -68,5 +68,5 @@ See the [documentation][docs] page.
 [npm]: https://www.npmjs.com/package/otpauth
 [dependencies]: https://david-dm.org/hectorm/otpauth
 [devDependencies]: https://david-dm.org/hectorm/otpauth?type=dev
-[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key
+[createHmac]: https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key_options
 [sjcl]: https://github.com/bitwiseshiftleft/sjcl
