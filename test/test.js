@@ -602,7 +602,7 @@ describe('Test - OTPAuth.HOTP', () => {
 
 		expect(hotp.validate({ token: hotp.generate() })).to.equal(-1);
 
-		// Counter is incremented on each 'generate' call
+		// Counter is incremented on each 'generate' call.
 		expect(hotp.counter).to.equal(3);
 	});
 

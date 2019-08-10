@@ -1,9 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const tmp = require('tmp');
 
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+
+const tmp = require('tmp');
+// Enable graceful cleanup.
+tmp.setGracefulCleanup();
 
 const pkg = require('./package.json');
 
@@ -46,9 +49,9 @@ function generateConfig(filename) {
 			new webpack.BannerPlugin({
 				banner: `${pkg.name} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
 			}),
-			// Custom build of the Stanford Javascript Crypto Library (SJCL)
+			// Custom build of the Stanford Javascript Crypto Library (SJCL).
 			new webpack.NormalModuleReplacementPlugin(/^sjcl$/, (result => {
-				const file = tmp.fileSync();
+				const file = tmp.fileSync({ prefix: 'builtin-sjcl-' });
 
 				const base = path.join(__dirname, 'node_modules/sjcl');
 				const fragments = [
