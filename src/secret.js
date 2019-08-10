@@ -16,7 +16,7 @@ export class Secret {
 		 * @type {ArrayBuffer}
 		 */
 		this.buffer = typeof buffer === 'undefined'
-			? Crypto.randomBytes(size).buffer
+			? Crypto.randomBytes(size)
 			: buffer;
 	}
 
