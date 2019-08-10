@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * An object containing some utilities.
+ * @namespace Utils
+ * @type {Object}
+ */
+export const Utils = {};
+
+/**
+ * UInt conversion.
+ * @memberof Utils
+ * @namespace Utils.uint
+ * @type {Object}
+ */
+Utils.uint = {};
+
+/**
+ * Converts an ArrayBuffer to an integer.
+ * @memberof Utils.uint
+ * @method decode
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {number} Integer.
+ */
+Utils.uint.decode = buf => {
+	const arr = new Uint8Array(buf);
+	let num = 0;
+
+	for (let i = 0; i &lt; arr.length; i++) {
+		if (arr[i] !== 0) {
+			num *= 256;
+			num += arr[i];
+		}
+	}
+
+	return num;
+};
+
+/**
+ * Converts an integer to an ArrayBuffer.
+ * @memberof Utils.uint
+ * @method encode
+ * @param {number} num Integer.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
+Utils.uint.encode = num => {
+	const buf = new ArrayBuffer(8);
+	const arr = new Uint8Array(buf);
+	let acc = num;
+
+	for (let i = 7; i >= 0; i--) {
+		if (acc === 0) {
+			break;
+		}
+
+		arr[i] = acc &amp; 255;
+		acc -= arr[i];
+		acc /= 256;
+	}
+
+	return buf;
+};
+
+/**
+ * Raw string conversion.
+ * @memberof Utils
+ * @namespace Utils.raw
+ * @type {Object}
+ */
+Utils.raw = {};
+
+/**
+ * Converts an ArrayBuffer to a string.
+ * @memberof Utils.raw
+ * @method decode
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} String.
+ */
+Utils.raw.decode = buf => {
+	const arr = new Uint8Array(buf);
+	let str = '';
+
+	for (let i = 0; i &lt; arr.length; i++) {
+		str += String.fromCharCode(arr[i]);
+	}
+
+	return str;
+};
+
+/**
+ * Converts a string to an ArrayBuffer.
+ * @memberof Utils.raw
+ * @method encode
+ * @param {string} str String.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
+Utils.raw.encode = str => {
+	const buf = new ArrayBuffer(str.length);
+	const arr = new Uint8Array(buf);
+
+	for (let i = 0; i &lt; str.length; i++) {
+		arr[i] = str.charCodeAt(i);
+	}
+
+	return buf;
+};
+
+/**
+ * Base32 string conversion.
+ * @memberof Utils
+ * @namespace Utils.b32
+ * @type {Object}
+ */
+Utils.b32 = {};
+
+/**
+ * RFC 4648 base32 alphabet without pad.
+ * @memberof Utils.b32
+ * @type {string}
+ */
+Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+/**
+ * Converts an ArrayBuffer to a base32 string (RFC 4648).
+ * @see https://github.com/LinusU/base32-decode
+ * @memberof Utils.b32
+ * @method decode
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} Base32 string.
+ */
+Utils.b32.decode = buf => {
+	const arr = new Uint8Array(buf);
+
+	let bits = 0;
+	let value = 0;
+	let str = '';
+
+	for (let i = 0; i &lt; arr.length; i++) {
+		value = (value &lt;&lt; 8) | arr[i];
+		bits += 8;
+
+		while (bits >= 5) {
+			str += Utils.b32.alphabet[(value >>> bits - 5) &amp; 31];
+			bits -= 5;
+		}
+	}
+
+	if (bits > 0) {
+		str += Utils.b32.alphabet[(value &lt;&lt; 5 - bits) &amp; 31];
+	}
+
+	return str;
+};
+
+/**
+ * Converts a base32 string to an ArrayBuffer (RFC 4648).
+ * @see https://github.com/LinusU/base32-encode
+ * @memberof Utils.b32
+ * @method encode
+ * @param {string} str Base32 string.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
+Utils.b32.encode = str => {
+	const strUpp = str.toUpperCase();
+	const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
+	const arr = new Uint8Array(buf);
+
+	let bits = 0;
+	let value = 0;
+	let index = 0;
+
+	for (let i = 0; i &lt; strUpp.length; i++) {
+		const idx = Utils.b32.alphabet.indexOf(strUpp[i]);
+
+		if (idx === -1) {
+			throw new TypeError(`Invalid character found: ${strUpp[i]}`);
+		}
+
+		value = (value &lt;&lt; 5) | idx;
+		bits += 5;
+
+		if (bits >= 8) {
+			arr[index++] = (value >>> bits - 8) &amp; 255;
+			bits -= 8;
+		}
+	}
+
+	return buf;
+};
+
+/**
+ * Hexadecimal string conversion.
+ * @memberof Utils
+ * @namespace Utils.hex
+ * @type {Object}
+ */
+Utils.hex = {};
+
+/**
+ * Converts an ArrayBuffer to a hexadecimal string.
+ * @memberof Utils.hex
+ * @method decode
+ * @param {ArrayBuffer} buf ArrayBuffer.
+ * @returns {string} Hexadecimal string.
+ */
+Utils.hex.decode = buf => {
+	const arr = new Uint8Array(buf);
+	let str = '';
+
+	for (let i = 0; i &lt; arr.length; i++) {
+		const hexByte = arr[i].toString(16);
+
+		str += hexByte.length === 1
+			? `0${hexByte}`
+			: hexByte;
+	}
+
+	return str.toUpperCase();
+};
+
+/**
+ * Converts a hexadecimal string to an ArrayBuffer.
+ * @memberof Utils.hex
+ * @method encode
+ * @param {string} str Hexadecimal string.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
+Utils.hex.encode = str => {
+	const buf = new ArrayBuffer(str.length / 2);
+	const arr = new Uint8Array(buf);
+
+	for (let i = 0; i &lt; arr.length; i++) {
+		arr[i] = parseInt(str.substr(i * 2, 2), 16);
+	}
+
+	return buf;
+};
+
+/**
+ * Pads a number with leading zeros.
+ * @memberof Utils
+ * @method pad
+ * @param {number|string} num Number.
+ * @param {number} digits Digits.
+ * @returns {string} Padded number.
+ */
+Utils.pad = (num, digits) => {
+	let prefix = '';
+	let repeat = digits - String(num).length;
+	while (repeat-- > 0) prefix += '0';
+	return `${prefix}${num}`;
+};
+
+/**
+ * An object containing some utilities (for internal use only).
+ * @private
+ * @namespace InternalUtils
+ * @type {Object}
+ */
+export const InternalUtils = {};
+
+/**
+ * "globalThis" ponyfill.
+ * @see https://mathiasbynens.be/notes/globalthis
+ * @memberof InternalUtils
+ * @type {Object}
+ */
+InternalUtils.globalThis = (function getGlobalThis() {
+	/* eslint-disable no-extend-native, no-undef */
+	if (typeof globalThis === 'object') return globalThis;
+	Object.defineProperty(Object.prototype, '__gt__', { get() { return this; }, configurable: true });
+	try { return __gt__; } finally { delete Object.prototype.__gt__; }
+	/* eslint-enable */
+})();
+
+/**
+ * "console" ponyfill.
+ * (NOTICE: only some methods are implemented).
+ * @memberof InternalUtils
+ * @type {Object}
+ */
+InternalUtils.console = typeof InternalUtils.globalThis.console !== 'object'
+	? ['log', 'info', 'error', 'warn'].reduce((c, n) => { c[n] = () => {}; return c; }, {})
+	: InternalUtils.globalThis.console;
+
+/**
+ * Detect if running in "Node.js".
+ * @memberof InternalUtils
+ * @type {boolean}
+ */
+InternalUtils.isNode = Object.prototype.toString.call(InternalUtils.globalThis.process) === '[object process]';
+
+/**
+ * Dynamically import "Node.js" modules.
+ * @memberof InternalUtils
+ * @method require
+ * @param {string} name Name.
+ * @returns {Object} Module.
+ */
+// eslint-disable-next-line no-eval
+InternalUtils.require = name => eval('require')(name);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-OTPAuth.html">OTPAuth</a></li></ul><h3>Namespaces</h3><ul><li><a href="Utils.html">Utils</a></li><li><a href="Utils.b32.html">b32</a></li><li><a href="Utils.hex.html">hex</a></li><li><a href="Utils.raw.html">raw</a></li><li><a href="Utils.uint.html">uint</a></li></ul><h3>Classes</h3><ul><li><a href="HOTP.html">HOTP</a></li><li><a href="Secret.html">Secret</a></li><li><a href="TOTP.html">TOTP</a></li><li><a href="URI.html">URI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sat Aug 10 2019 21:29:10 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

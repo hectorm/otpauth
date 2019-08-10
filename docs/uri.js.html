@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: uri.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: uri.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Utils } from './utils';
+import { Secret } from './secret';
+// eslint-disable-next-line import/no-cycle
+import { HOTP, TOTP } from './otp';
+
+/**
+ * Valid key URI parameters.
+ * @private
+ * @type {Array}
+ */
+const OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
+
+/**
+ * Key URI regex.
+ *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+ * @private
+ * @type {RegExp}
+ */
+const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&amp;?(?:${OTPURI_PARAMS.join('|')})=[^&amp;]+)+)$`, 'i');
+
+/**
+ * RFC 4648 base32 alphabet without pad.
+ * @private
+ * @type {string}
+ */
+const SECRET_REGEX = /^[2-7A-Z]+$/i;
+
+/**
+ * Regex for supported algorithms.
+ * @private
+ * @type {RegExp}
+ */
+const ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
+
+/**
+ * Integer regex.
+ * @private
+ * @type {RegExp}
+ */
+const INTEGER_REGEX = /^[+-]?\d+$/;
+
+/**
+ * Positive integer regex.
+ * @private
+ * @type {RegExp}
+ */
+const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
+
+/**
+ * HOTP/TOTP object/string conversion.
+ * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+ */
+export class URI {
+	/**
+	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
+	 * @param {string} uri Google Authenticator Key URI.
+	 * @returns {HOTP|TOTP} HOTP/TOTP object.
+	 */
+	static parse(uri) {
+		let uriGroups;
+
+		try {
+			uriGroups = uri.match(OTPURI_REGEX);
+		} catch (error) { /* Handled below */ }
+
+		if (!Array.isArray(uriGroups)) {
+			throw new URIError('Invalid URI format');
+		}
+
+		// Extract URI groups.
+		const uriType = uriGroups[1].toLowerCase();
+		const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
+		const uriParams = uriGroups[3].split('&amp;').reduce((acc, cur) => {
+			const pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
+			const pairKey = pairArr[0].toLowerCase();
+			const pairVal = pairArr[1];
+			const pairAcc = acc;
+
+			pairAcc[pairKey] = pairVal;
+			return pairAcc;
+		}, {});
+
+		// 'OTP' will be instantiated with 'config' argument
+		let OTP;
+		const config = {};
+
+		if (uriType === 'hotp') {
+			OTP = HOTP;
+
+			// Counter: required
+			if (typeof uriParams.counter !== 'undefined' &amp;&amp; INTEGER_REGEX.test(uriParams.counter)) {
+				config.counter = parseInt(uriParams.counter, 10);
+			} else {
+				throw new TypeError('Missing or invalid \'counter\' parameter');
+			}
+		} else if (uriType === 'totp') {
+			OTP = TOTP;
+
+			// Period: optional
+			if (typeof uriParams.period !== 'undefined') {
+				if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
+					config.period = parseInt(uriParams.period, 10);
+				} else {
+					throw new TypeError('Invalid \'period\' parameter');
+				}
+			}
+		} else {
+			throw new TypeError('Unknown OTP type');
+		}
+
+		// Label: required
+		// Issuer: optional
+		if (uriLabel.length === 2) {
+			config.label = uriLabel[1];
+			if (typeof uriParams.issuer === 'undefined') {
+				config.issuer = uriLabel[0];
+			} else if (uriParams.issuer === uriLabel[0]) {
+				config.issuer = uriParams.issuer;
+			} else {
+				throw new TypeError('Invalid \'issuer\' parameter');
+			}
+		} else {
+			config.label = uriLabel[0];
+			if (typeof uriParams.issuer !== 'undefined') {
+				config.issuer = uriParams.issuer;
+			}
+		}
+
+		// Secret: required
+		if (typeof uriParams.secret !== 'undefined' &amp;&amp; SECRET_REGEX.test(uriParams.secret)) {
+			config.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });
+		} else {
+			throw new TypeError('Missing or invalid \'secret\' parameter');
+		}
+
+		// Algorithm: optional
+		if (typeof uriParams.algorithm !== 'undefined') {
+			if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
+				config.algorithm = uriParams.algorithm;
+			} else {
+				throw new TypeError('Invalid \'algorithm\' parameter');
+			}
+		}
+
+		// Digits: optional
+		if (typeof uriParams.digits !== 'undefined') {
+			if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
+				config.digits = parseInt(uriParams.digits, 10);
+			} else {
+				throw new TypeError('Invalid \'digits\' parameter');
+			}
+		}
+
+		return new OTP(config);
+	}
+
+	/**
+	 * Converts an HOTP/TOTP object to a Google Authenticator key URI.
+	 * @param {HOTP|TOTP} otp HOTP/TOTP object.
+	 * @param {Object} [config] Configuration options.
+	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
+	 * @returns {string} Google Authenticator Key URI.
+	 */
+	static stringify(otp, { legacyIssuer = true } = {}) {
+		const isHOTP = otp instanceof HOTP;
+		const isTOTP = otp instanceof TOTP;
+
+		if (!isHOTP &amp;&amp; !isTOTP) {
+			throw new TypeError('Invalid \'HOTP/TOTP\' object');
+		}
+
+		// Key URI format:
+		// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+		let uri = 'otpauth://';
+
+		// Type
+		uri += `${isTOTP ? 'totp' : 'hotp'}/`;
+
+		// Label and optional issuer
+		if (otp.issuer.length > 0) {
+			// Legacy label prefix
+			if (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
+			// Issuer
+			uri += `issuer=${encodeURIComponent(otp.issuer)}&amp;`;
+		} else {
+			// Label
+			uri += `${encodeURIComponent(otp.label)}?`;
+		}
+
+		// Generic parameters
+		uri += `secret=${encodeURIComponent(otp.secret.b32)}`
+			+ `&amp;algorithm=${encodeURIComponent(otp.algorithm)}`
+			+ `&amp;digits=${encodeURIComponent(otp.digits)}`;
+
+		// Extra parameters
+		if (isTOTP) {
+			// TOTP parameters
+			uri += `&amp;period=${encodeURIComponent(otp.period)}`;
+		} else {
+			// HOTP parameters
+			uri += `&amp;counter=${encodeURIComponent(otp.counter)}`;
+		}
+
+		return uri;
+	}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-OTPAuth.html">OTPAuth</a></li></ul><h3>Namespaces</h3><ul><li><a href="Utils.html">Utils</a></li><li><a href="Utils.b32.html">b32</a></li><li><a href="Utils.hex.html">hex</a></li><li><a href="Utils.raw.html">raw</a></li><li><a href="Utils.uint.html">uint</a></li></ul><h3>Classes</h3><ul><li><a href="HOTP.html">HOTP</a></li><li><a href="Secret.html">Secret</a></li><li><a href="TOTP.html">TOTP</a></li><li><a href="URI.html">URI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Sat Aug 10 2019 21:29:10 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
