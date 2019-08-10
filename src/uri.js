@@ -53,7 +53,6 @@ const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 export class URI {
 	/**
 	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
-	 * @method parse
 	 * @param {string} uri Google Authenticator Key URI.
 	 * @returns {HOTP|TOTP} HOTP/TOTP object.
 	 */
@@ -157,7 +156,6 @@ export class URI {
 
 	/**
 	 * Converts an HOTP/TOTP object to a Google Authenticator key URI.
-	 * @method stringify
 	 * @param {HOTP|TOTP} otp HOTP/TOTP object.
 	 * @param {Object} [config] Configuration options.
 	 * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.

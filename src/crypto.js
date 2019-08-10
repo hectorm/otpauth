@@ -7,9 +7,31 @@ import { InternalUtils } from './utils';
  * An object containing some cryptography functions
  * with dirty workarounds for Node.js and browsers.
  * @private
+ * @namespace Crypto
  * @type {Object}
  */
 export const Crypto = {};
+
+/**
+ * Returns random bytes.
+ * @memberof Crypto
+ * @method randomBytes
+ * @param {number} size Size.
+ * @returns {Uint8Array} Random bytes.
+ */
+Crypto.randomBytes = undefined;
+
+/**
+ * Calculates an HMAC digest.
+ * In Node.js, the command `openssl list -digest-algorithms` displays the available digest algorithms.
+ * @memberof Crypto
+ * @method hmacDigest
+ * @param {string} algorithm Algorithm.
+ * @param {ArrayBuffer} key Key.
+ * @param {ArrayBuffer} message Message.
+ * @returns {ArrayBuffer} Digest.
+ */
+Crypto.hmacDigest = undefined;
 
 if (InternalUtils.isNode) {
 	const NodeBuffer = InternalUtils.globalThis.Buffer;
@@ -54,9 +76,6 @@ if (InternalUtils.isNode) {
 		return bufferTo(buff);
 	};
 
-	// In Node.js, the command:
-	// $ openssl list -digest-algorithms
-	// displays the available digest algorithms.
 	Crypto.hmacDigest = (algorithm, key, message) => {
 		const buff = NodeCrypto.createHmac(algorithm, bufferFrom(key));
 		return bufferTo(buff).update(bufferFrom(message)).digest();

@@ -22,7 +22,6 @@ export class Secret {
 
 	/**
 	 * Converts a raw string to a Secret object.
-	 * @method fromRaw
 	 * @param {string} str Raw string.
 	 * @returns {Secret} Secret object.
 	 */
@@ -32,7 +31,6 @@ export class Secret {
 
 	/**
 	 * Converts a base32 string to a Secret object.
-	 * @method fromB32
 	 * @param {string} str Base32 string.
 	 * @returns {Secret} Secret object.
 	 */
@@ -42,7 +40,6 @@ export class Secret {
 
 	/**
 	 * Converts a hexadecimal string to a Secret object.
-	 * @method fromHex
 	 * @param {string} str Hexadecimal string.
 	 * @returns {Secret} Secret object.
 	 */

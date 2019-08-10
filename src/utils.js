@@ -1,17 +1,22 @@
 /**
  * An object containing some utilities.
+ * @namespace Utils
  * @type {Object}
  */
 export const Utils = {};
 
 /**
  * UInt conversion.
+ * @memberof Utils
+ * @namespace Utils.uint
  * @type {Object}
  */
 Utils.uint = {};
 
 /**
  * Converts an ArrayBuffer to an integer.
+ * @memberof Utils.uint
+ * @method decode
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
@@ -31,6 +36,8 @@ Utils.uint.decode = buf => {
 
 /**
  * Converts an integer to an ArrayBuffer.
+ * @memberof Utils.uint
+ * @method encode
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
@@ -54,12 +61,16 @@ Utils.uint.encode = num => {
 
 /**
  * Raw string conversion.
+ * @memberof Utils
+ * @namespace Utils.raw
  * @type {Object}
  */
 Utils.raw = {};
 
 /**
  * Converts an ArrayBuffer to a string.
+ * @memberof Utils.raw
+ * @method decode
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
@@ -76,6 +87,8 @@ Utils.raw.decode = buf => {
 
 /**
  * Converts a string to an ArrayBuffer.
+ * @memberof Utils.raw
+ * @method encode
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
@@ -92,12 +105,15 @@ Utils.raw.encode = str => {
 
 /**
  * Base32 string conversion.
+ * @memberof Utils
+ * @namespace Utils.b32
  * @type {Object}
  */
 Utils.b32 = {};
 
 /**
  * RFC 4648 base32 alphabet without pad.
+ * @memberof Utils.b32
  * @type {string}
  */
 Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -105,6 +121,8 @@ Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 /**
  * Converts an ArrayBuffer to a base32 string (RFC 4648).
  * @see https://github.com/LinusU/base32-decode
+ * @memberof Utils.b32
+ * @method decode
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
@@ -135,6 +153,8 @@ Utils.b32.decode = buf => {
 /**
  * Converts a base32 string to an ArrayBuffer (RFC 4648).
  * @see https://github.com/LinusU/base32-encode
+ * @memberof Utils.b32
+ * @method encode
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
@@ -168,12 +188,16 @@ Utils.b32.encode = str => {
 
 /**
  * Hexadecimal string conversion.
+ * @memberof Utils
+ * @namespace Utils.hex
  * @type {Object}
  */
 Utils.hex = {};
 
 /**
  * Converts an ArrayBuffer to a hexadecimal string.
+ * @memberof Utils.hex
+ * @method decode
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
@@ -194,6 +218,8 @@ Utils.hex.decode = buf => {
 
 /**
  * Converts a hexadecimal string to an ArrayBuffer.
+ * @memberof Utils.hex
+ * @method encode
  * @param {string} str Hexadecimal string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
@@ -210,6 +236,8 @@ Utils.hex.encode = str => {
 
 /**
  * Pads a number with leading zeros.
+ * @memberof Utils
+ * @method pad
  * @param {number|string} num Number.
  * @param {number} digits Digits.
  * @returns {string} Padded number.
@@ -224,6 +252,7 @@ Utils.pad = (num, digits) => {
 /**
  * An object containing some utilities (for internal use only).
  * @private
+ * @namespace InternalUtils
  * @type {Object}
  */
 export const InternalUtils = {};
@@ -231,6 +260,7 @@ export const InternalUtils = {};
 /**
  * "globalThis" ponyfill.
  * @see https://mathiasbynens.be/notes/globalthis
+ * @memberof InternalUtils
  * @type {Object}
  */
 InternalUtils.globalThis = (function getGlobalThis() {
@@ -244,6 +274,7 @@ InternalUtils.globalThis = (function getGlobalThis() {
 /**
  * "console" ponyfill.
  * (NOTICE: only some methods are implemented).
+ * @memberof InternalUtils
  * @type {Object}
  */
 InternalUtils.console = typeof InternalUtils.globalThis.console !== 'object'
@@ -252,12 +283,15 @@ InternalUtils.console = typeof InternalUtils.globalThis.console !== 'object'
 
 /**
  * Detect if running in "Node.js".
+ * @memberof InternalUtils
  * @type {boolean}
  */
 InternalUtils.isNode = Object.prototype.toString.call(InternalUtils.globalThis.process) === '[object process]';
 
 /**
  * Dynamically import "Node.js" modules.
+ * @memberof InternalUtils
+ * @method require
  * @param {string} name Name.
  * @returns {Object} Module.
  */
