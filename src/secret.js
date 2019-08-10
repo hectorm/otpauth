@@ -27,7 +27,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromRaw(str) {
-		return new this({ buffer: Utils.raw.encode(str) });
+		return new Secret({ buffer: Utils.raw.encode(str) });
 	}
 
 	/**
@@ -37,7 +37,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromB32(str) {
-		return new this({ buffer: Utils.b32.encode(str) });
+		return new Secret({ buffer: Utils.b32.encode(str) });
 	}
 
 	/**
@@ -47,7 +47,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromHex(str) {
-		return new this({ buffer: Utils.hex.encode(str) });
+		return new Secret({ buffer: Utils.hex.encode(str) });
 	}
 
 	/**
