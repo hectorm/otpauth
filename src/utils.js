@@ -140,7 +140,7 @@ Utils.b32.decode = buf => {
  */
 Utils.b32.encode = str => {
 	const strUpp = str.toUpperCase();
-	const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
+	const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
 	const arr = new Uint8Array(buf);
 
 	let bits = 0;

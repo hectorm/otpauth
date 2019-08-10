@@ -1,11 +1,10 @@
-
-
 const path = require('path');
 const fs = require('fs');
 const tmp = require('tmp');
 
 const webpack = require('webpack');
-const ClosurePlugin = require('closure-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+
 const pkg = require('./package.json');
 
 function generateConfig(filename) {
@@ -22,30 +21,31 @@ function generateConfig(filename) {
 			globalObject: 'this',
 			path: path.join(__dirname, 'dist')
 		},
+		devtool: 'source-map',
 		optimization: {
-			minimize: true,
+			minimize: isMinified,
 			minimizer: [
-				new ClosurePlugin({
-					mode: 'STANDARD',
-					platform: ['native', 'java']
-				}, {
-					/* eslint-disable camelcase */
-					warning_level: 'QUIET',
-					language_in: 'ECMASCRIPT_NEXT',
-					language_out: 'ECMASCRIPT5_STRICT',
-					compilation_level: 'SIMPLE',
-					create_source_map: true,
-					renaming: isMinified,
-					...(!isMinified && { formatting: 'PRETTY_PRINT' })
-					/* eslint-enable camelcase */
+				new TerserPlugin({
+					parallel: true,
+					sourceMap: true,
+					terserOptions: {
+						output: {
+							/* eslint-disable camelcase */
+							comments: /^!/,
+							max_line_len: 1024
+							/* eslint-enable */
+						}
+					}
 				})
 			]
 		},
-		devtool: 'source-map',
 		node: { Buffer: false },
 		plugins: [
 			new webpack.EnvironmentPlugin({
 				VERSION: pkg.version
+			}),
+			new webpack.BannerPlugin({
+				banner: `${pkg.name} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
 			}),
 			// Custom build of the Stanford Javascript Crypto Library (SJCL)
 			new webpack.NormalModuleReplacementPlugin(/^sjcl$/, (result => {
@@ -62,18 +62,19 @@ function generateConfig(filename) {
 					'core/hmac.js'
 				];
 
-				const code = `
-					${fragments.reduce((content, fragment) => content + fs.readFileSync(path.join(base, fragment)), '')}
-					;export default sjcl;
-				`;
+				const code = `${fragments.reduce((content, fragment) => {
+					return content + fs.readFileSync(path.join(base, fragment));
+				}, '')}; export default sjcl;`;
 
 				fs.writeFileSync(file.name, code);
 				result.request = file.name;
-			})),
-			new webpack.BannerPlugin({
-				banner: `${pkg.name} v${pkg.version} | (c) ${pkg.author} | ${pkg.homepage} | ${pkg.license}`
-			})
-		]
+			}))
+		],
+		module: {
+			rules: [
+				{ test: /\.js$/i, use: { loader: 'babel-loader' } }
+			]
+		}
 	};
 }
 

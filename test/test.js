@@ -514,14 +514,10 @@ describe('Test - OTPAuth.Secret', () => {
 		it(`constructor[${index}]`, () => {
 			const output = new OTPAuth.Secret({ buffer: input.buffer });
 
-			expect(output).to.eql({
-				raw: input.raw,
-				b32: input.b32,
-				hex: input.hex,
-				buffer: input.buffer
-			});
-
 			expect(output.buffer).to.bufferEql(input.buffer);
+			expect(output.raw).to.eql(input.raw);
+			expect(output.b32).to.eql(input.b32);
+			expect(output.hex).to.eql(input.hex);
 		});
 	});
 
@@ -554,14 +550,10 @@ describe('Test - OTPAuth.Secret', () => {
 		it(`fromRaw[${index}]`, () => {
 			const output = OTPAuth.Secret.fromRaw(input.raw);
 
-			expect(output).to.eql({
-				raw: input.raw,
-				b32: input.b32,
-				hex: input.hex,
-				buffer: input.buffer
-			});
-
 			expect(output.buffer).to.bufferEql(input.buffer);
+			expect(output.raw).to.eql(input.raw);
+			expect(output.b32).to.eql(input.b32);
+			expect(output.hex).to.eql(input.hex);
 		});
 	});
 
@@ -569,14 +561,10 @@ describe('Test - OTPAuth.Secret', () => {
 		it(`fromB32[${index}]`, () => {
 			const output = OTPAuth.Secret.fromB32(input.b32);
 
-			expect(output).to.eql({
-				raw: input.raw,
-				b32: input.b32,
-				hex: input.hex,
-				buffer: input.buffer
-			});
-
 			expect(output.buffer).to.bufferEql(input.buffer);
+			expect(output.raw).to.eql(input.raw);
+			expect(output.b32).to.eql(input.b32);
+			expect(output.hex).to.eql(input.hex);
 		});
 	});
 
@@ -584,14 +572,10 @@ describe('Test - OTPAuth.Secret', () => {
 		it(`fromHex[${index}]`, () => {
 			const output = OTPAuth.Secret.fromHex(input.hex);
 
-			expect(output).to.eql({
-				raw: input.raw,
-				b32: input.b32,
-				hex: input.hex,
-				buffer: input.buffer
-			});
-
 			expect(output.buffer).to.bufferEql(input.buffer);
+			expect(output.raw).to.eql(input.raw);
+			expect(output.b32).to.eql(input.b32);
+			expect(output.hex).to.eql(input.hex);
 		});
 	});
 });
