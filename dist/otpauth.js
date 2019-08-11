@@ -1,4 +1,4 @@
-/*! otpauth v4.1.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v4.1.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -438,7 +438,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/builtin-sjcl-3443ZEZTZ6gHnfI6
+// CONCATENATED MODULE: /tmp/builtin-sjcl-178018161oBYibJuS
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1718,7 +1718,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 
   return result;
 };
-; /* harmony default export */ var builtin_sjcl_3443ZEZTZ6gHnfI6 = (sjcl);
+; /* harmony default export */ var builtin_sjcl_178018161oBYibJuS = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1832,16 +1832,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   Crypto.hmacDigest = function (algorithm, key, message) {
-    var hash = builtin_sjcl_3443ZEZTZ6gHnfI6.hash[algorithm.toLowerCase()];
+    var hash = builtin_sjcl_178018161oBYibJuS.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new builtin_sjcl_3443ZEZTZ6gHnfI6.misc.hmac(builtin_sjcl_3443ZEZTZ6gHnfI6.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(builtin_sjcl_3443ZEZTZ6gHnfI6.codec.arrayBuffer.toBits(message));
-    return builtin_sjcl_3443ZEZTZ6gHnfI6.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new builtin_sjcl_178018161oBYibJuS.misc.hmac(builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.toBits(message));
+    return builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 // CONCATENATED MODULE: ./src/secret.js
@@ -2240,7 +2240,7 @@ function () {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
-   * @param {Secret} [config.secret=Secret] Secret key.
+   * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Initial counter value.
@@ -2278,7 +2278,7 @@ function () {
      * @type {Secret}
      */
 
-    this.secret = secret;
+    this.secret = typeof secret === 'string' ? secret_Secret.fromB32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -2432,7 +2432,7 @@ function () {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
-   * @param {Secret} [config.secret=Secret] Secret key.
+   * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
@@ -2467,13 +2467,13 @@ function () {
     this.label = label;
     /**
      * Secret key.
-     * @type {string}
+     * @type {Secret}
      */
 
-    this.secret = secret;
+    this.secret = typeof secret === 'string' ? secret_Secret.fromB32(secret) : secret;
     /**
      * HMAC hashing algorithm.
-     * @type {Secret}
+     * @type {string}
      */
 
     this.algorithm = algorithm;
@@ -2610,13 +2610,19 @@ function () {
 
   return TOTP;
 }();
+// CONCATENATED MODULE: ./src/version.js
+/**
+ * Library version.
+ * @type {string}
+ */
+var version = "4.1.1";
 // CONCATENATED MODULE: ./src/main.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "version", function() { return version; });
 /* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
 /* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
 /* concated harmony reexport URI */__webpack_require__.d(__webpack_exports__, "URI", function() { return uri_URI; });
 /* concated harmony reexport Secret */__webpack_require__.d(__webpack_exports__, "Secret", function() { return secret_Secret; });
 /* concated harmony reexport Utils */__webpack_require__.d(__webpack_exports__, "Utils", function() { return utils["b" /* Utils */]; });
+/* concated harmony reexport version */__webpack_require__.d(__webpack_exports__, "version", function() { return version; });
 /**
  * One Time Password (HOTP/TOTP) library for Node.js and browser.
  * @module OTPAuth
@@ -2626,12 +2632,16 @@ function () {
 
 
 
-/**
- * Library version.
- * @type {string}
- */
 
-var version = "4.1.0";
+/* harmony default export */ var main = __webpack_exports__["default"] = ({
+  HOTP: otp_HOTP,
+  TOTP: otp_TOTP,
+  URI: uri_URI,
+  Secret: secret_Secret,
+  Utils: utils["b" /* Utils */],
+  version: version
+});
+
 
 /***/ })
 /******/ ]);

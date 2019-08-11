@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: main.js</title>
+    <title>JSDoc: Source: version.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: main.js</h1>
+    <h1 class="page-title">Source: version.js</h1>
 
     
 
@@ -27,18 +27,10 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * One Time Password (HOTP/TOTP) library for Node.js and browser.
- * @module OTPAuth
- * @author Héctor Molinero Fernández &lt;hector@molinero.dev>
+ * Library version.
+ * @type {string}
  */
-import { HOTP, TOTP } from './otp';
-import { URI } from './uri';
-import { Secret } from './secret';
-import { Utils } from './utils';
-import { version } from './version';
-
-export default { HOTP, TOTP, URI, Secret, Utils, version };
-export { HOTP, TOTP, URI, Secret, Utils, version };
+export const version = process.env.VERSION;
 </code></pre>
         </article>
     </section>
