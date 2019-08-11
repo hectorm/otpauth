@@ -215,12 +215,12 @@ export class TOTP {
 		this.label = label;
 		/**
 		 * Secret key.
-		 * @type {string}
+		 * @type {Secret}
 		 */
 		this.secret = secret;
 		/**
 		 * HMAC hashing algorithm.
-		 * @type {Secret}
+		 * @type {string}
 		 */
 		this.algorithm = algorithm;
 		/**
