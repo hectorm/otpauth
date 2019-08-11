@@ -28,7 +28,7 @@ export class HOTP {
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.
 	 * @param {string} [config.label='OTPAuth'] Account label.
-	 * @param {Secret} [config.secret=Secret] Secret key.
+	 * @param {Secret|string} [config.secret=Secret] Secret key.
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.counter=0] Initial counter value.
@@ -55,7 +55,9 @@ export class HOTP {
 		 * Secret key.
 		 * @type {Secret}
 		 */
-		this.secret = secret;
+		this.secret = typeof secret === 'string'
+			? Secret.fromB32(secret)
+			: secret;
 		/**
 		 * HMAC hashing algorithm.
 		 * @type {string}
@@ -190,7 +192,7 @@ export class TOTP {
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.
 	 * @param {string} [config.label='OTPAuth'] Account label.
-	 * @param {Secret} [config.secret=Secret] Secret key.
+	 * @param {Secret|string} [config.secret=Secret] Secret key.
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.digits=6] Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
@@ -217,7 +219,9 @@ export class TOTP {
 		 * Secret key.
 		 * @type {Secret}
 		 */
-		this.secret = secret;
+		this.secret = typeof secret === 'string'
+			? Secret.fromB32(secret)
+			: secret;
 		/**
 		 * HMAC hashing algorithm.
 		 * @type {string}

@@ -608,38 +608,36 @@ describe('Test - OTPAuth.HOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
-			const constructorInput = { ...input.hotp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const hotp = new OTPAuth.HOTP(constructorInput);
+			const hotp = new OTPAuth.HOTP({
+				...input.hotp.constructor.input,
+				secret: input.b32
+			});
 
-			const generateInput = input.hotp.generate.input;
-			const output = hotp.generate(generateInput);
-
+			const output = hotp.generate(input.hotp.generate.input);
 			expect(output).to.equal(input.hotp.generate.output);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
-			const constructorInput = { ...input.hotp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const hotp = new OTPAuth.HOTP(constructorInput);
+			const hotp = new OTPAuth.HOTP({
+				...input.hotp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
-			const validateInput = input.hotp.validate.input;
-			const output = hotp.validate(validateInput);
-
+			const output = hotp.validate(input.hotp.validate.input);
 			expect(output).to.equal(input.hotp.validate.output);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
-			const constructorInput = { ...input.hotp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const hotp = new OTPAuth.HOTP(constructorInput);
+			const hotp = new OTPAuth.HOTP({
+				...input.hotp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = hotp.toString();
-
 			expect(output).to.equal(input.hotp.toString.output);
 		});
 	});
@@ -670,38 +668,36 @@ describe('Test - OTPAuth.TOTP', () => {
 
 	inputs.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
-			const constructorInput = { ...input.totp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const totp = new OTPAuth.TOTP(constructorInput);
+			const totp = new OTPAuth.TOTP({
+				...input.totp.constructor.input,
+				secret: input.b32
+			});
 
-			const generateInput = input.totp.generate.input;
-			const output = totp.generate(generateInput);
-
+			const output = totp.generate(input.totp.generate.input);
 			expect(output).to.equal(input.totp.generate.output);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
-			const constructorInput = { ...input.totp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const totp = new OTPAuth.TOTP(constructorInput);
+			const totp = new OTPAuth.TOTP({
+				...input.totp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
-			const validateInput = input.totp.validate.input;
-			const output = totp.validate(validateInput);
-
+			const output = totp.validate(input.totp.validate.input);
 			expect(output).to.equal(input.totp.validate.output);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
-			const constructorInput = { ...input.totp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const totp = new OTPAuth.TOTP(constructorInput);
+			const totp = new OTPAuth.TOTP({
+				...input.totp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = totp.toString();
-
 			expect(output).to.equal(input.totp.toString.output);
 		});
 	});
@@ -715,48 +711,48 @@ describe('Test - OTPAuth.TOTP', () => {
 describe('Test - OTPAuth.URI', () => {
 	inputs.forEach((input, index) => {
 		it(`parse[${index}] - HOTP`, () => {
-			const constructorInput = { ...input.hotp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const hotp = new OTPAuth.HOTP(constructorInput);
+			const hotp = new OTPAuth.HOTP({
+				...input.hotp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = OTPAuth.URI.parse(input.hotp.toString.output);
-
 			expect(output).to.eql(hotp);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`parse[${index}] - TOTP`, () => {
-			const constructorInput = { ...input.totp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const totp = new OTPAuth.TOTP(constructorInput);
+			const totp = new OTPAuth.TOTP({
+				...input.totp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = OTPAuth.URI.parse(input.totp.toString.output);
-
 			expect(output).to.eql(totp);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`stringify[${index}] - HOTP`, () => {
-			const constructorInput = { ...input.hotp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const hotp = new OTPAuth.HOTP(constructorInput);
+			const hotp = new OTPAuth.HOTP({
+				...input.hotp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = OTPAuth.URI.stringify(hotp);
-
 			expect(output).to.equal(input.hotp.toString.output);
 		});
 	});
 
 	inputs.forEach((input, index) => {
 		it(`stringify[${index}] - TOTP`, () => {
-			const constructorInput = { ...input.totp.constructor.input };
-			constructorInput.secret = new OTPAuth.Secret({ buffer: input.buffer });
-			const totp = new OTPAuth.TOTP(constructorInput);
+			const totp = new OTPAuth.TOTP({
+				...input.totp.constructor.input,
+				secret: new OTPAuth.Secret({ buffer: input.buffer })
+			});
 
 			const output = OTPAuth.URI.stringify(totp);
-
 			expect(output).to.equal(input.totp.toString.output);
 		});
 	});
@@ -765,14 +761,11 @@ describe('Test - OTPAuth.URI', () => {
 		const totp = new OTPAuth.TOTP({
 			issuer: 'ACME',
 			label: 'AzureDiamond',
-			secret: new OTPAuth.Secret({
-				buffer: OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
-			})
+			secret: 'NB2W45DFOIZA'
 		});
 
 		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: true });
 		const expected = 'otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
-
 		expect(output).to.equal(expected);
 	});
 
@@ -780,14 +773,11 @@ describe('Test - OTPAuth.URI', () => {
 		const totp = new OTPAuth.TOTP({
 			issuer: 'ACME',
 			label: 'AzureDiamond',
-			secret: new OTPAuth.Secret({
-				buffer: OTPAuth.Utils.b32.encode('NB2W45DFOIZA')
-			})
+			secret: 'NB2W45DFOIZA'
 		});
 
 		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: false });
 		const expected = 'otpauth://totp/AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
-
 		expect(output).to.equal(expected);
 	});
 });

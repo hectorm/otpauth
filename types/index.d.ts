@@ -5,7 +5,7 @@ declare namespace OTPAuth {
 		constructor(config?: {
 			issuer?: string,
 			label?: string,
-			secret?: Secret,
+			secret?: Secret | string,
 			algorithm?: string,
 			digits?: number,
 			counter?: number
@@ -50,7 +50,7 @@ declare namespace OTPAuth {
 		constructor(config?: {
 			issuer?: string,
 			label?: string,
-			secret?: Secret,
+			secret?: Secret | string,
 			algorithm?: string,
 			digits?: number,
 			period?: number

@@ -27,7 +27,7 @@ let totp = new OTPAuth.TOTP({
 	algorithm: 'SHA1',
 	digits: 6,
 	period: 30,
-	secret: OTPAuth.Secret.fromB32('NB2W45DFOIZA')
+	secret: 'NB2W45DFOIZA' // or "OTPAuth.Secret.fromB32('NB2W45DFOIZA')
 });
 
 // Generate TOTP token.
@@ -39,9 +39,12 @@ let delta = totp.validate({
 	window: 10
 });
 
-// Convert to Google Authenticator key URI:
+// Convert to Google Authenticator key URI.
 //   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
-let uri = totp.toString();
+let uri = totp.toString(); // or "OTPAuth.URI.stringify(totp)"
+
+// Convert from Google Authenticator key URI.
+let parsedTotp = OTPAuth.URI.parse(uri);
 ```
 
 ### Browser
