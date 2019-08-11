@@ -1,4 +1,4 @@
-/*! otpauth v4.1.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v4.1.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -438,7 +438,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/builtin-sjcl-178018161oBYibJuS
+// CONCATENATED MODULE: /tmp/builtin-sjcl-21304LKDzkOJUyN6h
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1718,7 +1718,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 
   return result;
 };
-; /* harmony default export */ var builtin_sjcl_178018161oBYibJuS = (sjcl);
+; /* harmony default export */ var builtin_sjcl_21304LKDzkOJUyN6h = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1832,16 +1832,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   Crypto.hmacDigest = function (algorithm, key, message) {
-    var hash = builtin_sjcl_178018161oBYibJuS.hash[algorithm.toLowerCase()];
+    var hash = builtin_sjcl_21304LKDzkOJUyN6h.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new builtin_sjcl_178018161oBYibJuS.misc.hmac(builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.toBits(message));
-    return builtin_sjcl_178018161oBYibJuS.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new builtin_sjcl_21304LKDzkOJUyN6h.misc.hmac(builtin_sjcl_21304LKDzkOJUyN6h.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(builtin_sjcl_21304LKDzkOJUyN6h.codec.arrayBuffer.toBits(message));
+    return builtin_sjcl_21304LKDzkOJUyN6h.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 // CONCATENATED MODULE: ./src/secret.js
@@ -2226,7 +2226,7 @@ var defaults = {
   digits: 6,
   counter: 0,
   period: 30,
-  window: 50
+  window: 1
 };
 /**
  * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
@@ -2337,7 +2337,7 @@ function () {
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.counter=0] Counter value.
-     * @param {number} [config.window=50] Window of counter values to test.
+     * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
 
@@ -2349,7 +2349,7 @@ function () {
      * @param {Object} config Configuration options.
      * @param {string} config.token Token value.
      * @param {number} [config.counter=this.counter] Counter value.
-     * @param {number} [config.window=50] Window of counter values to test.
+     * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
     value: function validate(_ref3) {
@@ -2532,7 +2532,7 @@ function () {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-     * @param {number} [config.window=50] Window of counter values to test.
+     * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
 
@@ -2544,7 +2544,7 @@ function () {
      * @param {Object} config Configuration options.
      * @param {string} config.token Token value.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-     * @param {number} [config.window=50] Window of counter values to test.
+     * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
     value: function validate(_ref8) {
@@ -2615,7 +2615,7 @@ function () {
  * Library version.
  * @type {string}
  */
-var version = "4.1.1";
+var version = "4.1.2";
 // CONCATENATED MODULE: ./src/main.js
 /* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
 /* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
