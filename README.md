@@ -36,7 +36,7 @@ let token = totp.generate();
 // Validate TOTP token.
 let delta = totp.validate({
 	token: token,
-	window: 10
+	window: 1
 });
 
 // Convert to Google Authenticator key URI.

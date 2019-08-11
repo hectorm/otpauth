@@ -16,7 +16,7 @@ const defaults = {
 	digits: 6,
 	counter: 0,
 	period: 30,
-	window: 50
+	window: 1
 };
 
 /**
@@ -126,7 +126,7 @@ export class HOTP {
 	 * @param {Secret} config.secret Secret key.
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.counter=0] Counter value.
-	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @param {number} [config.window=1] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
 	static validate({
@@ -157,7 +157,7 @@ export class HOTP {
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {number} [config.counter=this.counter] Counter value.
-	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @param {number} [config.window=1] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
 	validate({
@@ -290,7 +290,7 @@ export class TOTP {
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @param {number} [config.window=1] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
 	static validate({
@@ -315,7 +315,7 @@ export class TOTP {
 	 * @param {Object} config Configuration options.
 	 * @param {string} config.token Token value.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-	 * @param {number} [config.window=50] Window of counter values to test.
+	 * @param {number} [config.window=1] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
 	 */
 	validate({

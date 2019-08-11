@@ -54,8 +54,8 @@ const inputs = [{
 			output: '823248'
 		},
 		validate: {
-			input: { token: '823248', timestamp: 1451606450000 },
-			output: -10
+			input: { token: '823248', timestamp: 1451606395000 },
+			output: 1
 		},
 		toString: {
 			output: 'otpauth://totp/OTPAuth?secret=T2ULXKZHVJIXHXSKTVGDUFAIDAVJJ7AAXNP5F6RWOHCOB7P7JDJY7VG6A5VMJUCZ&algorithm=SHA1&digits=6&period=5'
@@ -92,8 +92,8 @@ const inputs = [{
 			output: '530988'
 		},
 		validate: {
-			input: { token: '530988', timestamp: 1451606500000 },
-			output: -10
+			input: { token: '530988', timestamp: 1451606410000 },
+			output: -1
 		},
 		toString: {
 			output: 'otpauth://totp/OTPAuth?secret=VJDGBPKXNVGXQ2F3SHEAIIVIXO5FDPSRMASJTQBYPB5RZY5EM34IMBHAF7X4LLE7&algorithm=SHA256&digits=6&period=10'
@@ -130,8 +130,8 @@ const inputs = [{
 			output: '069364'
 		},
 		validate: {
-			input: { token: '069364', timestamp: 1451606550000 },
-			output: -10
+			input: { token: '069364', timestamp: 1451606385000, window: 0 },
+			output: null
 		},
 		toString: {
 			output: 'otpauth://totp/OTPAuth?secret=BV73FZNQ2WPMMSQDGV5CC7Q27N7Y4ZWJB3DLARX574KDB7P7WKMT6F6Y2PPYLHKJ&algorithm=SHA512&digits=6&period=15'
@@ -266,8 +266,8 @@ const inputs = [{
 			output: '462236'
 		},
 		validate: {
-			input: { token: '462236', counter: 1e10 + 10 },
-			output: -10
+			input: { token: '462236', counter: 1e10 + 1 },
+			output: -1
 		},
 		toString: {
 			output: 'otpauth://hotp/OTPAuth?secret=FAN7NZ2LYDSLNQHTZWUA4BNGPGNAJTCVI6GRKZY743GSKLGI6Q5MUTJSS47A5TPE&algorithm=SHA1&digits=6&counter=0'
@@ -304,8 +304,8 @@ const inputs = [{
 			output: '203969'
 		},
 		validate: {
-			input: { token: '203969', counter: 1e10 + 10 },
-			output: -10
+			input: { token: '203969', counter: 1e10 - 1, window: 0 },
+			output: null
 		},
 		toString: {
 			output: 'otpauth://hotp/OTPAuth?secret=YGGJMB6K4HZTGMIYITVP37426Y6DYKMXD7YZ4RDFLZMXY7VNKG3FKWNMMLQ6ORUS&algorithm=SHA1&digits=6&counter=0'
@@ -342,8 +342,8 @@ const inputs = [{
 			output: '833717'
 		},
 		validate: {
-			input: { token: '833717', counter: 1e10 + 10 },
-			output: -10
+			input: { token: '833717', counter: 1e10 },
+			output: 0
 		},
 		toString: {
 			output: 'otpauth://hotp/OTPAuth?secret=XRHXRQVL75QWEY2KOUHW7PQUQXOCFZLKTED7RK32G7RNHS6U2SJ222IC4KYSMFMR&algorithm=SHA1&digits=6&counter=0'
@@ -380,8 +380,8 @@ const inputs = [{
 			output: '865988'
 		},
 		validate: {
-			input: { token: '865988', counter: 1e10 + 10 },
-			output: -10
+			input: { token: '865988', counter: 1e10 + 2 },
+			output: null
 		},
 		toString: {
 			output: 'otpauth://hotp/OTPAuth?secret=E4C7AD2ASCF2WSXW7GAP375VQMIWWLT66G5CGALDVV7KYSEAJ6A7HAPVHAYZF3Z3&algorithm=SHA1&digits=6&counter=0'
@@ -396,8 +396,8 @@ const inputs = [{
 			output: '893785'
 		},
 		validate: {
-			input: { token: '893785', timestamp: 1451603700000, window: 100 },
-			output: 90
+			input: { token: '893785', timestamp: 1451606400000 },
+			output: 0
 		},
 		toString: {
 			output: 'otpauth://totp/OTPAuth?secret=E4C7AD2ASCF2WSXW7GAP375VQMIWWLT66G5CGALDVV7KYSEAJ6A7HAPVHAYZF3Z3&algorithm=SHA1&digits=6&period=30'
