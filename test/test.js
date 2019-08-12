@@ -469,6 +469,12 @@ describe('OTPAuth.Utils', () => {
 		});
 	});
 
+	it(`b32.encode[${inputs.length}]`, () => {
+		const input = inputs[0];
+		const output = OTPAuth.Utils.b32.decode(OTPAuth.Utils.b32.encode(`${input.b32}=`));
+		expect(output).to.bufferEql(input.b32);
+	});
+
 	inputs.forEach((input, index) => {
 		it(`hex.decode[${index}]`, () => {
 			const output = OTPAuth.Utils.hex.decode(input.buffer);

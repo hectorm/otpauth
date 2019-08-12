@@ -19,11 +19,11 @@ const OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'pe
 const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');
 
 /**
- * RFC 4648 base32 alphabet without pad.
+ * RFC 4648 base32 alphabet with pad.
  * @private
  * @type {string}
  */
-const SECRET_REGEX = /^[2-7A-Z]+$/i;
+const SECRET_REGEX = /^[2-7A-Za-z]+=*$/i;
 
 /**
  * Regex for supported algorithms.

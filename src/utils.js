@@ -157,7 +157,8 @@ Utils.b32.decode = buf => {
  * @returns {ArrayBuffer} ArrayBuffer.
  */
 Utils.b32.encode = str => {
-	str = str.toUpperCase();
+	// Canonicalize to all upper case and remove padding if it exists.
+	str = str.toUpperCase().replace(/=+$/, '');
 
 	const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
 	const arr = new Uint8Array(buf);
