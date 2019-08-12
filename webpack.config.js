@@ -25,6 +25,7 @@ function generateConfig(filename) {
 			path: path.join(__dirname, 'dist')
 		},
 		devtool: 'source-map',
+		node: false,
 		optimization: {
 			minimize: isMinified,
 			minimizer: [
