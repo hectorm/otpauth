@@ -20,19 +20,17 @@ const defaults = {
 };
 
 /**
- * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
- * @see https://tools.ietf.org/html/rfc4226
+ * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226)
+ * (https://tools.ietf.org/html/rfc4226).
+ * @param {Object} [config] Configuration options.
+ * @param {string} [config.issuer=''] Account provider.
+ * @param {string} [config.label='OTPAuth'] Account label.
+ * @param {Secret|string} [config.secret=Secret] Secret key.
+ * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+ * @param {number} [config.digits=6] Token length.
+ * @param {number} [config.counter=0] Initial counter value.
  */
 export class HOTP {
-	/**
-	 * @param {Object} [config] Configuration options.
-	 * @param {string} [config.issuer=''] Account provider.
-	 * @param {string} [config.label='OTPAuth'] Account label.
-	 * @param {Secret|string} [config.secret=Secret] Secret key.
-	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-	 * @param {number} [config.digits=6] Token length.
-	 * @param {number} [config.counter=0] Initial counter value.
-	 */
 	constructor({
 		issuer = defaults.issuer,
 		label = defaults.label,
@@ -184,19 +182,17 @@ export class HOTP {
 }
 
 /**
- * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).
- * @see https://tools.ietf.org/html/rfc6238
+ * TOTP: Time-Based One-Time Password Algorithm (RFC 6238)
+ * (https://tools.ietf.org/html/rfc6238).
+ * @param {Object} [config] Configuration options.
+ * @param {string} [config.issuer=''] Account provider.
+ * @param {string} [config.label='OTPAuth'] Account label.
+ * @param {Secret|string} [config.secret=Secret] Secret key.
+ * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+ * @param {number} [config.digits=6] Token length.
+ * @param {number} [config.period=30] Token time-step duration.
  */
 export class TOTP {
-	/**
-	 * @param {Object} [config] Configuration options.
-	 * @param {string} [config.issuer=''] Account provider.
-	 * @param {string} [config.label='OTPAuth'] Account label.
-	 * @param {Secret|string} [config.secret=Secret] Secret key.
-	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-	 * @param {number} [config.digits=6] Token length.
-	 * @param {number} [config.period=30] Token time-step duration.
-	 */
 	constructor({
 		issuer = defaults.issuer,
 		label = defaults.label,

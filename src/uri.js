@@ -47,8 +47,8 @@ const INTEGER_REGEX = /^[+-]?\d+$/;
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
 /**
- * HOTP/TOTP object/string conversion.
- * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+ * HOTP/TOTP object/string conversion
+ * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
  */
 export class URI {
 	/**
@@ -80,7 +80,7 @@ export class URI {
 			return pairAcc;
 		}, {});
 
-		// 'OTP' will be instantiated with 'config' argument
+		// 'OTP' will be instantiated with 'config' argument.
 		let OTP;
 		const config = {};
 
@@ -170,36 +170,36 @@ export class URI {
 		}
 
 		// Key URI format:
-		// otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+		//   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
 		let uri = 'otpauth://';
 
-		// Type
+		// Type.
 		uri += `${isTOTP ? 'totp' : 'hotp'}/`;
 
-		// Label and optional issuer
+		// Label and optional issuer.
 		if (otp.issuer.length > 0) {
-			// Legacy label prefix
+			// Legacy label prefix.
 			if (legacyIssuer) uri += `${encodeURIComponent(otp.issuer)}:`;
-			// Label
+			// Label.
 			uri += `${encodeURIComponent(otp.label)}?`;
-			// Issuer
+			// Issuer.
 			uri += `issuer=${encodeURIComponent(otp.issuer)}&`;
 		} else {
-			// Label
+			// Label.
 			uri += `${encodeURIComponent(otp.label)}?`;
 		}
 
-		// Generic parameters
+		// Generic parameters.
 		uri += `secret=${encodeURIComponent(otp.secret.b32)}`
 			+ `&algorithm=${encodeURIComponent(otp.algorithm)}`
 			+ `&digits=${encodeURIComponent(otp.digits)}`;
 
-		// Extra parameters
+		// Extra parameters.
 		if (isTOTP) {
-			// TOTP parameters
+			// TOTP parameters.
 			uri += `&period=${encodeURIComponent(otp.period)}`;
 		} else {
-			// HOTP parameters
+			// HOTP parameters.
 			uri += `&counter=${encodeURIComponent(otp.counter)}`;
 		}
 
