@@ -23,7 +23,7 @@ const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OT
  * @private
  * @type {string}
  */
-const SECRET_REGEX = /^[2-7A-Za-z]+=*$/i;
+const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 
 /**
  * Regex for supported algorithms.
