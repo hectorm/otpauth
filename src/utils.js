@@ -47,9 +47,7 @@ Utils.uint.encode = num => {
 	let acc = num;
 
 	for (let i = 7; i >= 0; i--) {
-		if (acc === 0) {
-			break;
-		}
+		if (acc === 0) break;
 
 		arr[i] = acc & 255;
 		acc -= arr[i];
@@ -159,7 +157,8 @@ Utils.b32.decode = buf => {
  * @returns {ArrayBuffer} ArrayBuffer.
  */
 Utils.b32.encode = str => {
-	const strUpp = str.toUpperCase();
+	str = str.toUpperCase();
+
 	const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
 	const arr = new Uint8Array(buf);
 
@@ -167,12 +166,9 @@ Utils.b32.encode = str => {
 	let value = 0;
 	let index = 0;
 
-	for (let i = 0; i < strUpp.length; i++) {
-		const idx = Utils.b32.alphabet.indexOf(strUpp[i]);
-
-		if (idx === -1) {
-			throw new TypeError(`Invalid character found: ${strUpp[i]}`);
-		}
+	for (let i = 0; i < str.length; i++) {
+		const idx = Utils.b32.alphabet.indexOf(str[i]);
+		if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
 
 		value = (value << 5) | idx;
 		bits += 5;
@@ -206,11 +202,8 @@ Utils.hex.decode = buf => {
 	let str = '';
 
 	for (let i = 0; i < arr.length; i++) {
-		const hexByte = arr[i].toString(16);
-
-		str += hexByte.length === 1
-			? `0${hexByte}`
-			: hexByte;
+		const hex = arr[i].toString(16);
+		str += hex.length === 2 ? hex : `0${hex}`;
 	}
 
 	return str.toUpperCase();
@@ -227,8 +220,8 @@ Utils.hex.encode = str => {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
 
-	for (let i = 0; i < arr.length; i++) {
-		arr[i] = parseInt(str.substr(i * 2, 2), 16);
+	for (let i = 0, j = 0; i < arr.length; i += 1, j += 2) {
+		arr[i] = parseInt(str.substr(j, 2), 16);
 	}
 
 	return buf;
