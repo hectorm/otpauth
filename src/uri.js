@@ -128,7 +128,7 @@ export class URI {
 
 		// Secret: required
 		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
-			config.secret = new Secret({ buffer: Utils.b32.encode(uriParams.secret) });
+			config.secret = new Secret({ buffer: Utils.b32.toBuf(uriParams.secret) });
 		} else {
 			throw new TypeError('Missing or invalid \'secret\' parameter');
 		}

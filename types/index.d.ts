@@ -118,21 +118,21 @@ export declare class URI {
 
 export declare const Utils: {
 	uint: {
-		decode(buf: ArrayBuffer): number,
-		encode(num: number): ArrayBuffer
+		fromBuf(buf: ArrayBuffer): number,
+		toBuf(num: number): ArrayBuffer
 	},
 	raw: {
-		decode(buf: ArrayBuffer): string,
-		encode(str: string): ArrayBuffer
+		fromBuf(buf: ArrayBuffer): string,
+		toBuf(str: string): ArrayBuffer
 	},
 	b32: {
 		alphabet: string,
-		decode(buf: ArrayBuffer): string,
-		encode(str: string): ArrayBuffer
+		fromBuf(buf: ArrayBuffer): string,
+		toBuf(str: string): ArrayBuffer
 	},
 	hex: {
-		decode(buf: ArrayBuffer): string,
-		encode(str: string): ArrayBuffer
+		fromBuf(buf: ArrayBuffer): string,
+		toBuf(str: string): ArrayBuffer
 	},
 	pad(num: number | string, digits: number): string
 };

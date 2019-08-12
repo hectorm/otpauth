@@ -16,11 +16,11 @@ Utils.uint = {};
 /**
  * Converts an ArrayBuffer to an integer.
  * @memberof Utils.uint
- * @method decode
+ * @method fromBuf
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
-Utils.uint.decode = buf => {
+Utils.uint.fromBuf = buf => {
 	const arr = new Uint8Array(buf);
 	let num = 0;
 
@@ -37,11 +37,11 @@ Utils.uint.decode = buf => {
 /**
  * Converts an integer to an ArrayBuffer.
  * @memberof Utils.uint
- * @method encode
+ * @method toBuf
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.uint.encode = num => {
+Utils.uint.toBuf = num => {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
 	let acc = num;
@@ -68,11 +68,11 @@ Utils.raw = {};
 /**
  * Converts an ArrayBuffer to a string.
  * @memberof Utils.raw
- * @method decode
+ * @method fromBuf
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
-Utils.raw.decode = buf => {
+Utils.raw.fromBuf = buf => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -86,11 +86,11 @@ Utils.raw.decode = buf => {
 /**
  * Converts a string to an ArrayBuffer.
  * @memberof Utils.raw
- * @method encode
+ * @method toBuf
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.raw.encode = str => {
+Utils.raw.toBuf = str => {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
 
@@ -118,13 +118,13 @@ Utils.b32.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 /**
  * Converts an ArrayBuffer to a base32 string (RFC 4648).
- * @see https://github.com/LinusU/base32-decode
+ * @see https://github.com/LinusU/base32-encode
  * @memberof Utils.b32
- * @method decode
+ * @method fromBuf
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
-Utils.b32.decode = buf => {
+Utils.b32.fromBuf = buf => {
 	const arr = new Uint8Array(buf);
 
 	let bits = 0;
@@ -150,13 +150,13 @@ Utils.b32.decode = buf => {
 
 /**
  * Converts a base32 string to an ArrayBuffer (RFC 4648).
- * @see https://github.com/LinusU/base32-encode
+ * @see https://github.com/LinusU/base32-decode
  * @memberof Utils.b32
- * @method encode
+ * @method toBuf
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.b32.encode = str => {
+Utils.b32.toBuf = str => {
 	// Canonicalize to all upper case and remove padding if it exists.
 	str = str.toUpperCase().replace(/=+$/, '');
 
@@ -194,11 +194,11 @@ Utils.hex = {};
 /**
  * Converts an ArrayBuffer to a hexadecimal string.
  * @memberof Utils.hex
- * @method decode
+ * @method fromBuf
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
-Utils.hex.decode = buf => {
+Utils.hex.fromBuf = buf => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -213,11 +213,11 @@ Utils.hex.decode = buf => {
 /**
  * Converts a hexadecimal string to an ArrayBuffer.
  * @memberof Utils.hex
- * @method encode
+ * @method toBuf
  * @param {string} str Hexadecimal string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-Utils.hex.encode = str => {
+Utils.hex.toBuf = str => {
 	const buf = new ArrayBuffer(str.length / 2);
 	const arr = new Uint8Array(buf);
 

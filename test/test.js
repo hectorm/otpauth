@@ -411,100 +411,100 @@ const inputs = [{
  */
 
 describe('OTPAuth.Utils', () => {
-	it('uint.decode[0]', () => {
-		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
+	it('uint.fromBuf[0]', () => {
+		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
 		expect(output).to.equal(0);
 	});
 
-	it('uint.decode[1]', () => {
-		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
+	it('uint.fromBuf[1]', () => {
+		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
 		expect(output).to.equal(4294967295);
 	});
 
-	it('uint.decode[2]', () => { // MAX_SAFE_INTEGER
-		const output = OTPAuth.Utils.uint.decode(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
+	it('uint.fromBuf[2]', () => { // MAX_SAFE_INTEGER
+		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
 		expect(output).to.equal(9007199254740991);
 	});
 
-	it('uint.encode[0]', () => {
-		const output = OTPAuth.Utils.uint.encode(0);
+	it('uint.toBuf[0]', () => {
+		const output = OTPAuth.Utils.uint.toBuf(0);
 		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
 	});
 
-	it('uint.encode[1]', () => {
-		const output = OTPAuth.Utils.uint.encode(4294967295);
+	it('uint.toBuf[1]', () => {
+		const output = OTPAuth.Utils.uint.toBuf(4294967295);
 		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
 	});
 
-	it('uint.encode[2]', () => { // MAX_SAFE_INTEGER
-		const output = OTPAuth.Utils.uint.encode(9007199254740991);
+	it('uint.toBuf[2]', () => { // MAX_SAFE_INTEGER
+		const output = OTPAuth.Utils.uint.toBuf(9007199254740991);
 		expect(output).to.bufferEql(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
 	});
 
 	inputs.forEach((input, index) => {
-		it(`raw.decode[${index}]`, () => {
-			const output = OTPAuth.Utils.raw.decode(input.buffer);
+		it(`raw.fromBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.raw.fromBuf(input.buffer);
 			expect(output).to.equal(input.raw);
 		});
 	});
 
 	inputs.forEach((input, index) => {
-		it(`raw.encode[${index}]`, () => {
-			const output = OTPAuth.Utils.raw.encode(input.raw);
+		it(`raw.toBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.raw.toBuf(input.raw);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
 	inputs.forEach((input, index) => {
-		it(`b32.decode[${index}]`, () => {
-			const output = OTPAuth.Utils.b32.decode(input.buffer);
+		it(`b32.fromBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.b32.fromBuf(input.buffer);
 			expect(output).to.equal(input.b32);
 		});
 	});
 
 	inputs.forEach((input, index) => {
-		it(`b32.encode[${index}]`, () => {
-			const output = OTPAuth.Utils.b32.encode(input.b32);
+		it(`b32.toBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.b32.toBuf(input.b32);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	it(`b32.encode[${inputs.length}]`, () => {
+	it('b32.toBuf.from[0]', () => {
 		const input = inputs[0];
-		const output = OTPAuth.Utils.b32.decode(OTPAuth.Utils.b32.encode(`${input.b32}=`));
+		const output = OTPAuth.Utils.b32.fromBuf(OTPAuth.Utils.b32.toBuf(`${input.b32}=`));
 		expect(output).to.bufferEql(input.b32);
 	});
 
 	inputs.forEach((input, index) => {
-		it(`hex.decode[${index}]`, () => {
-			const output = OTPAuth.Utils.hex.decode(input.buffer);
+		it(`hex.fromBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.hex.fromBuf(input.buffer);
 			expect(output).to.equal(input.hex);
 		});
 	});
 
 	inputs.forEach((input, index) => {
-		it(`hex.encode[${index}]`, () => {
-			const output = OTPAuth.Utils.hex.encode(input.hex);
+		it(`hex.toBuf[${index}]`, () => {
+			const output = OTPAuth.Utils.hex.toBuf(input.hex);
 			expect(output).to.bufferEql(input.buffer);
 		});
 	});
 
-	it('uint.pad[0]', () => {
+	it('Utils.pad[0]', () => {
 		const output = OTPAuth.Utils.pad(123, 6);
 		expect(output).to.equal('000123');
 	});
 
-	it('uint.pad[1]', () => {
+	it('Utils.pad[1]', () => {
 		const output = OTPAuth.Utils.pad(123456, -4);
 		expect(output).to.equal('123456');
 	});
 
-	it('uint.pad[2]', () => {
+	it('Utils.pad[2]', () => {
 		const output = OTPAuth.Utils.pad(123456, 0);
 		expect(output).to.equal('123456');
 	});
 
-	it('uint.pad[3]', () => {
+	it('Utils.pad[3]', () => {
 		const output = OTPAuth.Utils.pad('0123', 6);
 		expect(output).to.equal('000123');
 	});

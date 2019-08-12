@@ -90,7 +90,7 @@ export class HOTP {
 		digits = defaults.digits,
 		counter = defaults.counter
 	}) {
-		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.encode(counter)));
+		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.toBuf(counter)));
 		const offset = digest[digest.byteLength - 1] & 15;
 		const otp = (
 			((digest[offset] & 127) << 24)

@@ -26,7 +26,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromRaw(str) {
-		return new Secret({ buffer: Utils.raw.encode(str) });
+		return new Secret({ buffer: Utils.raw.toBuf(str) });
 	}
 
 	/**
@@ -35,7 +35,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromB32(str) {
-		return new Secret({ buffer: Utils.b32.encode(str) });
+		return new Secret({ buffer: Utils.b32.toBuf(str) });
 	}
 
 	/**
@@ -44,7 +44,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromHex(str) {
-		return new Secret({ buffer: Utils.hex.encode(str) });
+		return new Secret({ buffer: Utils.hex.toBuf(str) });
 	}
 
 	/**
@@ -56,7 +56,7 @@ export class Secret {
 			enumerable: true,
 			configurable: true,
 			writable: true,
-			value: Utils.raw.decode(this.buffer)
+			value: Utils.raw.fromBuf(this.buffer)
 		});
 
 		return this.raw;
@@ -71,7 +71,7 @@ export class Secret {
 			enumerable: true,
 			configurable: true,
 			writable: true,
-			value: Utils.b32.decode(this.buffer)
+			value: Utils.b32.fromBuf(this.buffer)
 		});
 
 		return this.b32;
@@ -86,7 +86,7 @@ export class Secret {
 			enumerable: true,
 			configurable: true,
 			writable: true,
-			value: Utils.hex.decode(this.buffer)
+			value: Utils.hex.fromBuf(this.buffer)
 		});
 
 		return this.hex;
