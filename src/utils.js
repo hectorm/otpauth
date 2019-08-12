@@ -49,6 +49,7 @@ export const Utils = {
 
 			return buf;
 		}
+
 	},
 
 	/**
@@ -56,6 +57,7 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	raw: {
+
 		/**
 		 * Converts an ArrayBuffer to a string.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
@@ -87,6 +89,7 @@ export const Utils = {
 
 			return buf;
 		}
+
 	},
 
 	/**
@@ -94,6 +97,7 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	b32: {
+
 		/**
 		 * RFC 4648 base32 alphabet without pad.
 		 * @type {string}
@@ -162,6 +166,7 @@ export const Utils = {
 
 			return buf;
 		}
+
 	},
 
 	/**
@@ -202,6 +207,7 @@ export const Utils = {
 
 			return buf;
 		}
+
 	},
 
 	/**
@@ -216,6 +222,7 @@ export const Utils = {
 		while (repeat-- > 0) prefix += '0';
 		return `${prefix}${num}`;
 	}
+
 };
 
 /**
@@ -310,4 +317,5 @@ export const InternalUtils = {
 	 */
 	// eslint-disable-next-line no-eval
 	nodeRequire: name => eval('require')(name)
+
 };
