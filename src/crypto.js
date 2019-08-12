@@ -35,7 +35,7 @@ Crypto.hmacDigest = undefined;
 
 if (InternalUtils.isNode) {
 	const NodeBuffer = InternalUtils.globalThis.Buffer;
-	const NodeCrypto = InternalUtils.require('crypto');
+	const NodeCrypto = InternalUtils.nodeRequire('crypto');
 
 	let nodeBufferFromArrayBuffer;
 	if (typeof NodeBuffer.from === 'function') {
