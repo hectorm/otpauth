@@ -55,12 +55,12 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 </script>
 ```
 
+## Documentation
+See the [documentation][docs] page.
+
 ## Supported hashing algorithms
 In Node.js, the same algorithms as [`Crypto.createHmac`][createHmac] function are supported, since it is used internally.
 In browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using the [Stanford Javascript Crypto Library][sjcl].
-
-## Documentation
-See the [documentation][docs] page.
 
 ## License
 [MIT License][license] © [Héctor Molinero Fernández](https://hector.molinero.dev/).
