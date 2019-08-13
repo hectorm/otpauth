@@ -312,6 +312,8 @@ export const InternalUtils = {
 
 	/**
 	 * Dynamically import "Node.js" modules.
+	 * (`eval` is used to prevent bundlers from including the module,
+	 * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
 	 * @param {string} name Name.
 	 * @returns {Object} Module.
 	 */
