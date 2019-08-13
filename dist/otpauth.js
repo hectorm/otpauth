@@ -1,4 +1,4 @@
-/*! otpauth v5.0.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -411,6 +411,8 @@ var InternalUtils = {
 
   /**
    * Dynamically import "Node.js" modules.
+   * (`eval` is used to prevent bundlers from including the module,
+   * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
    * @param {string} name Name.
    * @returns {Object} Module.
    */
@@ -430,7 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-24832HpteHxumHCM9.js
+// CONCATENATED MODULE: /tmp/sjcl-127531jqZ7bV4H3b3.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1838,42 +1840,14 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_24832HpteHxumHCM9 = (sjcl);
+/* harmony default export */ var sjcl_127531jqZ7bV4H3b3 = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
 
 
-/**
- * An object containing some cryptography functions
- * with dirty workarounds for Node.js and browsers.
- * @private
- * @namespace Crypto
- * @type {Object}
- */
-
-var Crypto = {};
-/**
- * Returns random bytes.
- * @memberof Crypto
- * @method randomBytes
- * @param {number} size Size.
- * @returns {ArrayBuffer} Random bytes.
- */
-
-Crypto.randomBytes = undefined;
-/**
- * Calculates an HMAC digest.
- * In Node.js, the command `openssl list -digest-algorithms` displays the available digest algorithms.
- * @memberof Crypto
- * @method hmacDigest
- * @param {string} algorithm Algorithm.
- * @param {ArrayBuffer} key Key.
- * @param {ArrayBuffer} message Message.
- * @returns {ArrayBuffer} Digest.
- */
-
-Crypto.hmacDigest = undefined;
+var randomBytes;
+var crypto_hmacDigest;
 
 if (utils["a" /* InternalUtils */].isNode) {
   var NodeBuffer = utils["a" /* InternalUtils */].globalThis.Buffer;
@@ -1915,12 +1889,12 @@ if (utils["a" /* InternalUtils */].isNode) {
     };
   }
 
-  Crypto.randomBytes = function (size) {
-    var randomBytes = NodeCrypto.randomBytes(size);
-    return nodeBufferToArrayBuffer(randomBytes);
+  randomBytes = function randomBytes(size) {
+    var bytes = NodeCrypto.randomBytes(size);
+    return nodeBufferToArrayBuffer(bytes);
   };
 
-  Crypto.hmacDigest = function (algorithm, key, message) {
+  crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
     var hmac = NodeCrypto.createHmac(algorithm, nodeBufferFromArrayBuffer(key));
     hmac.update(nodeBufferFromArrayBuffer(message));
     return nodeBufferToArrayBuffer(hmac.digest());
@@ -1943,25 +1917,50 @@ if (utils["a" /* InternalUtils */].isNode) {
     };
   }
 
-  Crypto.randomBytes = function (size) {
-    var randomBytes = new Uint8Array(size);
-    getRandomValues(randomBytes);
-    return randomBytes.buffer;
+  randomBytes = function randomBytes(size) {
+    var bytes = new Uint8Array(size);
+    getRandomValues(bytes);
+    return bytes.buffer;
   };
 
-  Crypto.hmacDigest = function (algorithm, key, message) {
-    var hash = sjcl_24832HpteHxumHCM9.hash[algorithm.toLowerCase()];
+  crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
+    var hash = sjcl_127531jqZ7bV4H3b3.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_24832HpteHxumHCM9.misc.hmac(sjcl_24832HpteHxumHCM9.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_24832HpteHxumHCM9.codec.arrayBuffer.toBits(message));
-    return sjcl_24832HpteHxumHCM9.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_127531jqZ7bV4H3b3.misc.hmac(sjcl_127531jqZ7bV4H3b3.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_127531jqZ7bV4H3b3.codec.arrayBuffer.toBits(message));
+    return sjcl_127531jqZ7bV4H3b3.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
+/**
+ * An object containing some cryptography functions with dirty workarounds for Node.js and browsers.
+ * @private
+ * @type {Object}
+ */
+
+
+var Crypto = {
+  /**
+   * Returns random bytes.
+   * @param {number} size Size.
+   * @returns {ArrayBuffer} Random bytes.
+   */
+  randomBytes: randomBytes,
+
+  /**
+   * Calculates an HMAC digest.
+   * In Node.js, the command `openssl list -digest-algorithms` displays the available digest algorithms.
+   * @param {string} algorithm Algorithm.
+   * @param {ArrayBuffer} key Key.
+   * @param {ArrayBuffer} message Message.
+   * @returns {ArrayBuffer} Digest.
+   */
+  hmacDigest: crypto_hmacDigest
+};
 // CONCATENATED MODULE: ./src/secret.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2727,7 +2726,7 @@ function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.0";
+var version = "5.0.1";
 // CONCATENATED MODULE: ./src/main.js
 /* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
 /* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
