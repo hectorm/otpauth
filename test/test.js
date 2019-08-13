@@ -469,10 +469,12 @@ describe('OTPAuth.Utils', () => {
 		});
 	});
 
-	it('b32.toBuf.from[0]', () => {
+	it('b32.fromBuf(b32.toBuf)', () => {
 		const input = inputs[0];
-		const output = OTPAuth.Utils.b32.fromBuf(OTPAuth.Utils.b32.toBuf(`${input.b32}=`));
-		expect(output).to.bufferEql(input.b32);
+		const output = OTPAuth.Utils.b32.fromBuf(
+			OTPAuth.Utils.b32.toBuf(`${input.b32.toLowerCase()}=`)
+		);
+		expect(output).to.equal(input.b32);
 	});
 
 	inputs.forEach((input, index) => {
