@@ -3,35 +3,8 @@ import sjcl from 'sjcl'; // SJCL is included during compilation.
 
 import { InternalUtils } from './utils';
 
-/**
- * An object containing some cryptography functions
- * with dirty workarounds for Node.js and browsers.
- * @private
- * @namespace Crypto
- * @type {Object}
- */
-export const Crypto = {};
-
-/**
- * Returns random bytes.
- * @memberof Crypto
- * @method randomBytes
- * @param {number} size Size.
- * @returns {ArrayBuffer} Random bytes.
- */
-Crypto.randomBytes = undefined;
-
-/**
- * Calculates an HMAC digest.
- * In Node.js, the command `openssl list -digest-algorithms` displays the available digest algorithms.
- * @memberof Crypto
- * @method hmacDigest
- * @param {string} algorithm Algorithm.
- * @param {ArrayBuffer} key Key.
- * @param {ArrayBuffer} message Message.
- * @returns {ArrayBuffer} Digest.
- */
-Crypto.hmacDigest = undefined;
+let randomBytes;
+let hmacDigest;
 
 if (InternalUtils.isNode) {
 	const NodeBuffer = InternalUtils.globalThis.Buffer;
@@ -66,12 +39,12 @@ if (InternalUtils.isNode) {
 		};
 	}
 
-	Crypto.randomBytes = size => {
-		const randomBytes = NodeCrypto.randomBytes(size);
-		return nodeBufferToArrayBuffer(randomBytes);
+	randomBytes = size => {
+		const bytes = NodeCrypto.randomBytes(size);
+		return nodeBufferToArrayBuffer(bytes);
 	};
 
-	Crypto.hmacDigest = (algorithm, key, message) => {
+	hmacDigest = (algorithm, key, message) => {
 		const hmac = NodeCrypto.createHmac(algorithm, nodeBufferFromArrayBuffer(key));
 		hmac.update(nodeBufferFromArrayBuffer(message));
 		return nodeBufferToArrayBuffer(hmac.digest());
@@ -93,13 +66,13 @@ if (InternalUtils.isNode) {
 		};
 	}
 
-	Crypto.randomBytes = size => {
-		const randomBytes = new Uint8Array(size);
-		getRandomValues(randomBytes);
-		return randomBytes.buffer;
+	randomBytes = size => {
+		const bytes = new Uint8Array(size);
+		getRandomValues(bytes);
+		return bytes.buffer;
 	};
 
-	Crypto.hmacDigest = (algorithm, key, message) => {
+	hmacDigest = (algorithm, key, message) => {
 		const hash = sjcl.hash[algorithm.toLowerCase()];
 		if (typeof hash === 'undefined') {
 			throw new TypeError('Unknown hash function');
@@ -110,3 +83,29 @@ if (InternalUtils.isNode) {
 		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
 	};
 }
+
+/**
+ * An object containing some cryptography functions with dirty workarounds for Node.js and browsers.
+ * @private
+ * @type {Object}
+ */
+export const Crypto = {
+
+	/**
+	 * Returns random bytes.
+	 * @param {number} size Size.
+	 * @returns {ArrayBuffer} Random bytes.
+	 */
+	randomBytes,
+
+	/**
+	 * Calculates an HMAC digest.
+	 * In Node.js, the command `openssl list -digest-algorithms` displays the available digest algorithms.
+	 * @param {string} algorithm Algorithm.
+	 * @param {ArrayBuffer} key Key.
+	 * @param {ArrayBuffer} message Message.
+	 * @returns {ArrayBuffer} Digest.
+	 */
+	hmacDigest
+
+};
