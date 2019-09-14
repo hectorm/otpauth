@@ -5,24 +5,11 @@
     "otp",
     "hotp",
     "totp",
-    "one",
-    "time",
-    "password",
     "2fa",
-    "2",
-    "factor",
-    "two",
-    "factor",
     "two-factor",
     "2step",
-    "2",
-    "step",
-    "two",
-    "step",
     "two-step",
     "auth",
-    "authenticator",
-    "google",
     "authenticator"
   ],
   "authors": [
@@ -34,7 +21,7 @@
     "type": "git",
     "url": "https://github.com/hectorm/otpauth.git"
   },
-  "main": "./dist/otpauth.min.js",
+  "main": "./dist/otpauth.js",
   "moduleType": [
     "amd",
     "es6",
