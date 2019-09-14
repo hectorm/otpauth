@@ -1,4 +1,4 @@
-/*! otpauth v5.0.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -432,7 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-25725Gp0s377k1gFn.js
+// CONCATENATED MODULE: /tmp/sjcl-91145TTX2bF4YW4e.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1840,7 +1840,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_25725Gp0s377k1gFn = (sjcl);
+/* harmony default export */ var sjcl_91145TTX2bF4YW4e = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1924,16 +1924,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_25725Gp0s377k1gFn.hash[algorithm.toLowerCase()];
+    var hash = sjcl_91145TTX2bF4YW4e.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_25725Gp0s377k1gFn.misc.hmac(sjcl_25725Gp0s377k1gFn.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_25725Gp0s377k1gFn.codec.arrayBuffer.toBits(message));
-    return sjcl_25725Gp0s377k1gFn.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_91145TTX2bF4YW4e.misc.hmac(sjcl_91145TTX2bF4YW4e.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_91145TTX2bF4YW4e.codec.arrayBuffer.toBits(message));
+    return sjcl_91145TTX2bF4YW4e.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -2726,7 +2726,7 @@ function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.2";
+var version = "5.0.3";
 // CONCATENATED MODULE: ./src/main.js
 /* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
 /* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
