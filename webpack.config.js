@@ -32,6 +32,7 @@ function generateConfig(filename) {
 				new TerserPlugin({
 					parallel: true,
 					sourceMap: true,
+					extractComments: false,
 					terserOptions: {
 						output: {
 							/* eslint-disable camelcase */
