@@ -240,7 +240,7 @@ export const InternalUtils = {
 	get globalThis() {
 		let _globalThis;
 
-		/* eslint-disable no-extend-native, no-undef */
+		/* eslint-disable no-extend-native, no-restricted-globals, no-undef */
 		if (typeof globalThis === 'object') {
 			_globalThis = globalThis;
 		} else {
@@ -252,6 +252,17 @@ export const InternalUtils = {
 				_globalThis = __magicalGlobalThis__;
 			} finally {
 				delete Object.prototype.__magicalGlobalThis__;
+			}
+		}
+
+		if (typeof _globalThis === 'undefined') {
+			// Still unable to determine "globalThis", fall back to a naive method:
+			if (typeof self !== 'undefined') {
+				_globalThis = self;
+			} else if (typeof window !== 'undefined') {
+				_globalThis = window;
+			} else if (typeof global !== 'undefined') {
+				_globalThis = global;
 			}
 		}
 		/* eslint-enable */
