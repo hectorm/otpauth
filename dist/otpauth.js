@@ -1,4 +1,4 @@
-/*! otpauth v5.0.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -333,7 +333,7 @@ var InternalUtils = {
    */
   get globalThis() {
     var _globalThis;
-    /* eslint-disable no-extend-native, no-undef */
+    /* eslint-disable no-extend-native, no-restricted-globals, no-undef */
 
 
     if ((typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis)) === 'object') {
@@ -350,6 +350,17 @@ var InternalUtils = {
         _globalThis = __magicalGlobalThis__;
       } finally {
         delete Object.prototype.__magicalGlobalThis__;
+      }
+    }
+
+    if (typeof _globalThis === 'undefined') {
+      // Still unable to determine "globalThis", fall back to a naive method:
+      if (typeof self !== 'undefined') {
+        _globalThis = self;
+      } else if (typeof window !== 'undefined') {
+        _globalThis = window;
+      } else if (typeof global !== 'undefined') {
+        _globalThis = global;
       }
     }
     /* eslint-enable */
@@ -432,7 +443,7 @@ __webpack_require__.r(__webpack_exports__);
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-326707KCdffZPVBfr.js
+// CONCATENATED MODULE: /tmp/sjcl-188833aPgctTbaiB4.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1840,7 +1851,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_326707KCdffZPVBfr = (sjcl);
+/* harmony default export */ var sjcl_188833aPgctTbaiB4 = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1924,16 +1935,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_326707KCdffZPVBfr.hash[algorithm.toLowerCase()];
+    var hash = sjcl_188833aPgctTbaiB4.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_326707KCdffZPVBfr.misc.hmac(sjcl_326707KCdffZPVBfr.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_326707KCdffZPVBfr.codec.arrayBuffer.toBits(message));
-    return sjcl_326707KCdffZPVBfr.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_188833aPgctTbaiB4.misc.hmac(sjcl_188833aPgctTbaiB4.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_188833aPgctTbaiB4.codec.arrayBuffer.toBits(message));
+    return sjcl_188833aPgctTbaiB4.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -2726,7 +2737,7 @@ function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.4";
+var version = "5.0.5";
 // CONCATENATED MODULE: ./src/main.js
 /* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
 /* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
