@@ -240,7 +240,7 @@ export const InternalUtils = {
 	get globalThis() {
 		let _globalThis;
 
-		/* eslint-disable no-extend-native, no-undef */
+		/* eslint-disable no-extend-native, no-restricted-globals, no-undef */
 		if (typeof globalThis === 'object') {
 			_globalThis = globalThis;
 		} else {
@@ -254,10 +254,9 @@ export const InternalUtils = {
 				delete Object.prototype.__magicalGlobalThis__;
 			}
 		}
-		/* eslint-enable */
 
 		if (typeof _globalThis === 'undefined') {
-			// Still unable to determine the global-this, fall back to a naive method:
+			// Still unable to determine "globalThis", fall back to a naive method:
 			if (typeof self !== 'undefined') {
 				_globalThis = self;
 			} else if (typeof window !== 'undefined') {
@@ -266,6 +265,7 @@ export const InternalUtils = {
 				_globalThis = global;
 			}
 		}
+		/* eslint-enable */
 
 		Object.defineProperty(this, 'globalThis', {
 			enumerable: true,
