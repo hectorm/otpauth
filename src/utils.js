@@ -256,6 +256,17 @@ export const InternalUtils = {
 		}
 		/* eslint-enable */
 
+		if (typeof _globalThis === 'undefined') {
+			// Still unable to determine the global-this, fall back to a naive method:
+			if (typeof self !== 'undefined') {
+				_globalThis = self;
+			} else if (typeof window !== 'undefined') {
+				_globalThis = window;
+			} else if (typeof global !== 'undefined') {
+				_globalThis = global;
+			}
+		}
+
 		Object.defineProperty(this, 'globalThis', {
 			enumerable: true,
 			value: _globalThis
