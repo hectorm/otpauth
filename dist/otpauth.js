@@ -1,4 +1,4 @@
-/*! otpauth v5.0.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -102,7 +102,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Utils; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InternalUtils; });
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
  * An object containing some utilities.
@@ -438,12 +438,21 @@ var InternalUtils = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "HOTP", function() { return /* reexport */ otp_HOTP; });
+__webpack_require__.d(__webpack_exports__, "TOTP", function() { return /* reexport */ otp_TOTP; });
+__webpack_require__.d(__webpack_exports__, "URI", function() { return /* reexport */ uri_URI; });
+__webpack_require__.d(__webpack_exports__, "Secret", function() { return /* reexport */ secret_Secret; });
+__webpack_require__.d(__webpack_exports__, "Utils", function() { return /* reexport */ utils["b" /* Utils */]; });
+__webpack_require__.d(__webpack_exports__, "version", function() { return /* reexport */ version; });
 
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-188833aPgctTbaiB4.js
+// CONCATENATED MODULE: /tmp/sjcl-11934nF8hVUaswlaT.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1851,7 +1860,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_188833aPgctTbaiB4 = (sjcl);
+/* harmony default export */ var sjcl_11934nF8hVUaswlaT = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1935,16 +1944,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_188833aPgctTbaiB4.hash[algorithm.toLowerCase()];
+    var hash = sjcl_11934nF8hVUaswlaT.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_188833aPgctTbaiB4.misc.hmac(sjcl_188833aPgctTbaiB4.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_188833aPgctTbaiB4.codec.arrayBuffer.toBits(message));
-    return sjcl_188833aPgctTbaiB4.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_11934nF8hVUaswlaT.misc.hmac(sjcl_11934nF8hVUaswlaT.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_11934nF8hVUaswlaT.codec.arrayBuffer.toBits(message));
+    return sjcl_11934nF8hVUaswlaT.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -1988,9 +1997,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
  * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
  */
 
-var secret_Secret =
-/*#__PURE__*/
-function () {
+var secret_Secret = /*#__PURE__*/function () {
   function Secret() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         buffer = _ref.buffer,
@@ -2156,9 +2163,7 @@ var POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
  * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
  */
 
-var uri_URI =
-/*#__PURE__*/
-function () {
+var uri_URI = /*#__PURE__*/function () {
   function URI() {
     uri_classCallCheck(this, URI);
   }
@@ -2366,9 +2371,7 @@ var defaults = {
  * @param {number} [config.counter=0] Initial counter value.
  */
 
-var otp_HOTP =
-/*#__PURE__*/
-function () {
+var otp_HOTP = /*#__PURE__*/function () {
   function HOTP() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref$issuer = _ref.issuer,
@@ -2556,9 +2559,7 @@ function () {
  * @param {number} [config.period=30] Token time-step duration.
  */
 
-var otp_TOTP =
-/*#__PURE__*/
-function () {
+var otp_TOTP = /*#__PURE__*/function () {
   function TOTP() {
     var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref6$issuer = _ref6.issuer,
@@ -2737,14 +2738,8 @@ function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.5";
+var version = "5.0.6";
 // CONCATENATED MODULE: ./src/main.js
-/* concated harmony reexport HOTP */__webpack_require__.d(__webpack_exports__, "HOTP", function() { return otp_HOTP; });
-/* concated harmony reexport TOTP */__webpack_require__.d(__webpack_exports__, "TOTP", function() { return otp_TOTP; });
-/* concated harmony reexport URI */__webpack_require__.d(__webpack_exports__, "URI", function() { return uri_URI; });
-/* concated harmony reexport Secret */__webpack_require__.d(__webpack_exports__, "Secret", function() { return secret_Secret; });
-/* concated harmony reexport Utils */__webpack_require__.d(__webpack_exports__, "Utils", function() { return utils["b" /* Utils */]; });
-/* concated harmony reexport version */__webpack_require__.d(__webpack_exports__, "version", function() { return version; });
 /**
  * One Time Password (HOTP/TOTP) library for Node.js and browser.
  * @module OTPAuth
