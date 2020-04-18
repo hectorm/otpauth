@@ -1,4 +1,4 @@
-/*! otpauth v5.0.7 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -452,7 +452,7 @@ __webpack_require__.d(__webpack_exports__, "version", function() { return /* ree
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-106019P5CmFwn7bua.js
+// CONCATENATED MODULE: /tmp/sjcl-154139PoutyA5I3Sh.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1860,7 +1860,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_106019P5CmFwn7bua = (sjcl);
+/* harmony default export */ var sjcl_154139PoutyA5I3Sh = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1944,16 +1944,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_106019P5CmFwn7bua.hash[algorithm.toLowerCase()];
+    var hash = sjcl_154139PoutyA5I3Sh.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_106019P5CmFwn7bua.misc.hmac(sjcl_106019P5CmFwn7bua.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_106019P5CmFwn7bua.codec.arrayBuffer.toBits(message));
-    return sjcl_106019P5CmFwn7bua.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_154139PoutyA5I3Sh.misc.hmac(sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.toBits(message));
+    return sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -2738,7 +2738,7 @@ var otp_TOTP = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.7";
+var version = "5.0.8";
 // CONCATENATED MODULE: ./src/main.js
 /**
  * One Time Password (HOTP/TOTP) library for Node.js and browser.
