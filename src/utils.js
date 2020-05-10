@@ -327,10 +327,20 @@ export const InternalUtils = {
 	 * Dynamically import "Node.js" modules.
 	 * (`eval` is used to prevent bundlers from including the module,
 	 * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
-	 * @param {string} name Name.
-	 * @returns {Object} Module.
+	 * @type {Function}
 	 */
-	// eslint-disable-next-line no-eval
-	nodeRequire: name => eval('require')(name)
+	get nodeRequire() {
+		const _nodeRequire = InternalUtils.isNode
+			// eslint-disable-next-line no-eval
+			? eval('require')
+			: () => {};
+
+		Object.defineProperty(this, 'nodeRequire', {
+			enumerable: true,
+			value: _nodeRequire
+		});
+
+		return this.nodeRequire;
+	}
 
 };
