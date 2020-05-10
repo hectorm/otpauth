@@ -1,4 +1,4 @@
-/*! otpauth v5.0.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
+/*! otpauth v5.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -102,6 +102,12 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Utils; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InternalUtils; });
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -354,7 +360,7 @@ var InternalUtils = {
     }
 
     if (typeof _globalThis === 'undefined') {
-      // Still unable to determine "globalThis", fall back to a naive method:
+      // Still unable to determine "globalThis", fall back to a naive method.
       if (typeof self !== 'undefined') {
         _globalThis = self;
       } else if (typeof window !== 'undefined') {
@@ -378,24 +384,37 @@ var InternalUtils = {
    * @type {Object}
    */
   get console() {
-    var _console;
+    var _console = {};
+    var methods = ['assert', 'clear', 'context', 'count', 'countReset', 'debug', 'dir', 'dirxml', 'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn'];
 
     if (_typeof(InternalUtils.globalThis.console) === 'object') {
-      _console = InternalUtils.globalThis.console;
-    } else {
-      _console = {};
-      var properties = ['memory'];
-      var methods = ['assert', 'clear', 'count', 'countReset', 'debug', 'error', 'info', 'log', 'table', 'trace', 'warn', 'dir', 'dirxml', 'group', 'groupCollapsed', 'groupEnd', 'time', 'timeLog', 'timeEnd', 'exception', 'timeStamp', 'profile', 'profileEnd'];
+      var _iterator = _createForOfIteratorHelper(methods),
+          _step;
 
-      for (var _i = 0, _methods = methods; _i < _methods.length; _i++) {
-        var method = _methods[_i];
-
-        _console[method] = function () {};
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var method = _step.value;
+          _console[method] = typeof InternalUtils.globalThis.console[method] === 'function' ? InternalUtils.globalThis.console[method] : function () {};
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
+    } else {
+      var _iterator2 = _createForOfIteratorHelper(methods),
+          _step2;
 
-      for (var _i2 = 0, _properties = properties; _i2 < _properties.length; _i2++) {
-        var property = _properties[_i2];
-        _console[property] = {};
+      try {
+        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+          var _method = _step2.value;
+
+          _console[_method] = function () {};
+        }
+      } catch (err) {
+        _iterator2.e(err);
+      } finally {
+        _iterator2.f();
       }
     }
 
@@ -424,13 +443,19 @@ var InternalUtils = {
    * Dynamically import "Node.js" modules.
    * (`eval` is used to prevent bundlers from including the module,
    * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
-   * @param {string} name Name.
-   * @returns {Object} Module.
+   * @type {Function}
    */
-  // eslint-disable-next-line no-eval
-  nodeRequire: function nodeRequire(name) {
-    return eval('require')(name);
+  get nodeRequire() {
+    var _nodeRequire = InternalUtils.isNode // eslint-disable-next-line no-eval
+    ? eval('require') : function () {};
+
+    Object.defineProperty(this, 'nodeRequire', {
+      enumerable: true,
+      value: _nodeRequire
+    });
+    return this.nodeRequire;
   }
+
 };
 
 /***/ }),
@@ -452,7 +477,7 @@ __webpack_require__.d(__webpack_exports__, "version", function() { return /* ree
 // EXTERNAL MODULE: ./src/utils.js
 var utils = __webpack_require__(0);
 
-// CONCATENATED MODULE: /tmp/sjcl-154139PoutyA5I3Sh.js
+// CONCATENATED MODULE: /tmp/sjcl--48530-yr2fVRchk1ek-.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -1860,7 +1885,7 @@ sjcl.misc.hmac.prototype.digest = function () {
 };
 
 ;
-/* harmony default export */ var sjcl_154139PoutyA5I3Sh = (sjcl);
+/* harmony default export */ var sjcl_48530_yr2fVRchk1ek_ = (sjcl);
 // CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
  // SJCL is included during compilation.
@@ -1944,16 +1969,16 @@ if (utils["a" /* InternalUtils */].isNode) {
   };
 
   crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_154139PoutyA5I3Sh.hash[algorithm.toLowerCase()];
+    var hash = sjcl_48530_yr2fVRchk1ek_.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_154139PoutyA5I3Sh.misc.hmac(sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.toBits(message));
-    return sjcl_154139PoutyA5I3Sh.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl_48530_yr2fVRchk1ek_.misc.hmac(sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.toBits(message));
+    return sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -2738,7 +2763,7 @@ var otp_TOTP = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = "5.0.8";
+var version = "5.0.9";
 // CONCATENATED MODULE: ./src/main.js
 /**
  * One Time Password (HOTP/TOTP) library for Node.js and browser.
