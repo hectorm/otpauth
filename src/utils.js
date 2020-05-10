@@ -280,22 +280,24 @@ export const InternalUtils = {
 	 * @type {Object}
 	 */
 	get console() {
-		let _console;
+		const _console = {};
+
+		const methods = [
+			'assert', 'clear', 'context', 'count', 'countReset', 'debug', 'dir', 'dirxml',
+			'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'profile',
+			'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn'
+		];
 
 		if (typeof InternalUtils.globalThis.console === 'object') {
-			_console = InternalUtils.globalThis.console;
+			for (const method of methods) {
+				_console[method] = typeof InternalUtils.globalThis.console[method] === 'function'
+					? InternalUtils.globalThis.console[method]
+					: () => {};
+			}
 		} else {
-			_console = {};
-			const properties = [
-				'memory'
-			];
-			const methods = [
-				'assert', 'clear', 'count', 'countReset', 'debug', 'error', 'info', 'log',
-				'table', 'trace', 'warn', 'dir', 'dirxml', 'group', 'groupCollapsed', 'groupEnd',
-				'time', 'timeLog', 'timeEnd', 'exception', 'timeStamp', 'profile', 'profileEnd'
-			];
-			for (const method of methods) _console[method] = () => {};
-			for (const property of properties) _console[property] = {};
+			for (const method of methods) {
+				_console[method] = () => {};
+			}
 		}
 
 		Object.defineProperty(this, 'console', {
