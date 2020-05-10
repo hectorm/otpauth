@@ -256,7 +256,7 @@ export const InternalUtils = {
 		}
 
 		if (typeof _globalThis === 'undefined') {
-			// Still unable to determine "globalThis", fall back to a naive method:
+			// Still unable to determine "globalThis", fall back to a naive method.
 			if (typeof self !== 'undefined') {
 				_globalThis = self;
 			} else if (typeof window !== 'undefined') {
