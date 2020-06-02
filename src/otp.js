@@ -1,8 +1,6 @@
 import { Utils } from './utils';
 import { Crypto } from './crypto';
 import { Secret } from './secret';
-// eslint-disable-next-line import/no-cycle
-import { URI } from './uri';
 
 /**
  * Default configuration.
@@ -177,7 +175,15 @@ export class HOTP {
 	 * @returns {string} URI.
 	 */
 	toString() {
-		return URI.stringify(this);
+		const e = encodeURIComponent;
+		return 'otpauth://hotp/'
+			+ `${this.issuer.length > 0
+				? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+				: `${e(this.label)}?`}`
+			+ `secret=${e(this.secret.b32)}&`
+			+ `algorithm=${e(this.algorithm)}&`
+			+ `digits=${e(this.digits)}&`
+			+ `counter=${e(this.counter)}`;
 	}
 }
 
@@ -334,6 +340,14 @@ export class TOTP {
 	 * @returns {string} URI.
 	 */
 	toString() {
-		return URI.stringify(this);
+		const e = encodeURIComponent;
+		return 'otpauth://totp/'
+			+ `${this.issuer.length > 0
+				? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+				: `${e(this.label)}?`}`
+			+ `secret=${e(this.secret.b32)}&`
+			+ `algorithm=${e(this.algorithm)}&`
+			+ `digits=${e(this.digits)}&`
+			+ `period=${e(this.period)}`;
 	}
 }

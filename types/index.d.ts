@@ -111,9 +111,7 @@ export declare class Secret {
 export declare class URI {
 	static parse(uri: string): HOTP | TOTP;
 
-	static stringify(otp: HOTP | TOTP, config?: {
-		legacyIssuer?: boolean
-	}): string;
+	static stringify(otp: HOTP | TOTP): string;
 }
 
 export declare const Utils: {

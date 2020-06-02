@@ -764,30 +764,6 @@ describe('Test - OTPAuth.URI', () => {
 			expect(output).to.equal(input.totp.toString.output);
 		});
 	});
-
-	it(`stringify[${inputs.length}] - TOTP`, () => {
-		const totp = new OTPAuth.TOTP({
-			issuer: 'ACME',
-			label: 'AzureDiamond',
-			secret: 'NB2W45DFOIZA'
-		});
-
-		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: true });
-		const expected = 'otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
-		expect(output).to.equal(expected);
-	});
-
-	it(`stringify[${inputs.length + 1}] - TOTP`, () => {
-		const totp = new OTPAuth.TOTP({
-			issuer: 'ACME',
-			label: 'AzureDiamond',
-			secret: 'NB2W45DFOIZA'
-		});
-
-		const output = OTPAuth.URI.stringify(totp, { legacyIssuer: false });
-		const expected = 'otpauth://totp/AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30';
-		expect(output).to.equal(expected);
-	});
 });
 
 /* ================================================
