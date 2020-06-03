@@ -8,7 +8,7 @@ const expect = typeof this.expect === 'undefined'
 
 const OTPAuth = typeof this.OTPAuth === 'undefined'
 	/* eslint-disable-next-line import/no-dynamic-require */
-	? require(process.env.IS_MINIFIED ? '../dist/otpauth.min.js' : '../dist/otpauth.js')
+	? require(process.env.IS_MINIFIED ? '../dist/otpauth.cjs.min.js' : '../dist/otpauth.cjs.js')
 	: this.OTPAuth;
 
 chai.Assertion.addMethod('bufferEql', function bufferEql(x) {

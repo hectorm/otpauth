@@ -136,12 +136,3 @@ export declare const Utils: {
 };
 
 export declare const version: string;
-
-declare const _default: {
-	HOTP: typeof HOTP;
-	TOTP: typeof TOTP;
-	URI: typeof URI;
-	Secret: typeof Secret;
-	version: typeof version;
-};
-export default _default;

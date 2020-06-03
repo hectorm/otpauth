@@ -9,5 +9,4 @@ import { Secret } from './secret';
 import { Utils } from './utils';
 import { version } from './version';
 
-export default { HOTP, TOTP, URI, Secret, Utils, version };
 export { HOTP, TOTP, URI, Secret, Utils, version };

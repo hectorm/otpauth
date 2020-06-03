@@ -6,8 +6,8 @@ module.exports = config => {
 		frameworks: ['mocha', 'chai'],
 		files: [
 			path.join(__dirname, process.env.IS_MINIFIED
-				? 'dist/otpauth.min.js'
-				: 'dist/otpauth.js'),
+				? 'dist/otpauth.umd.min.js'
+				: 'dist/otpauth.umd.js'),
 			path.join(__dirname, 'test/test.js')
 		],
 		reporters: ['dots'],

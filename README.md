@@ -6,7 +6,7 @@
 ***
 
 # OTPAuth
-One Time Password (HOTP/TOTP) library for Node.js and browser.
+One Time Password (HOTP/TOTP) library for Node.js and browsers.
 
 ## Installation
 Install the module via `npm`.
@@ -19,7 +19,7 @@ npm install otpauth
 
 ### Node.js
 ```javascript
-const OTPAuth = require('otpauth');
+import * as OTPAuth from 'otpauth';
 
 let totp = new OTPAuth.TOTP({
 	issuer: 'ACME',
@@ -49,7 +49,7 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 
 ### Browser
 ```html
-<script src="otpauth.min.js"></script>
+<script src="otpauth.umd.js"></script>
 <script>
 	// Same as above...
 </script>

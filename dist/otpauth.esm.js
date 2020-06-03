@@ -1,114 +1,117 @@
-/*! otpauth v5.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | https://github.com/hectorm/otpauth | MIT */
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["OTPAuth"] = factory();
-	else
-		root["OTPAuth"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Utils; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InternalUtils; });
-function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+/*! otpauth v5.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
+function _typeof(obj) {
+  "@babel/helpers - typeof";
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+  return _typeof(obj);
+}
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _createForOfIteratorHelper(o, allowArrayLike) {
+  var it;
+
+  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+      if (it) o = it;
+      var i = 0;
+
+      var F = function () {};
+
+      return {
+        s: F,
+        n: function () {
+          if (i >= o.length) return {
+            done: true
+          };
+          return {
+            done: false,
+            value: o[i++]
+          };
+        },
+        e: function (e) {
+          throw e;
+        },
+        f: F
+      };
+    }
+
+    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+
+  var normalCompletion = true,
+      didErr = false,
+      err;
+  return {
+    s: function () {
+      it = o[Symbol.iterator]();
+    },
+    n: function () {
+      var step = it.next();
+      normalCompletion = step.done;
+      return step;
+    },
+    e: function (e) {
+      didErr = true;
+      err = e;
+    },
+    f: function () {
+      try {
+        if (!normalCompletion && it.return != null) it.return();
+      } finally {
+        if (didErr) throw err;
+      }
+    }
+  };
+}
 
 /**
  * An object containing some utilities.
@@ -458,26 +461,6 @@ var InternalUtils = {
 
 };
 
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "HOTP", function() { return /* reexport */ otp_HOTP; });
-__webpack_require__.d(__webpack_exports__, "TOTP", function() { return /* reexport */ otp_TOTP; });
-__webpack_require__.d(__webpack_exports__, "URI", function() { return /* reexport */ uri_URI; });
-__webpack_require__.d(__webpack_exports__, "Secret", function() { return /* reexport */ secret_Secret; });
-__webpack_require__.d(__webpack_exports__, "Utils", function() { return /* reexport */ utils["b" /* Utils */]; });
-__webpack_require__.d(__webpack_exports__, "version", function() { return /* reexport */ version; });
-
-// EXTERNAL MODULE: ./src/utils.js
-var utils = __webpack_require__(0);
-
-// CONCATENATED MODULE: /tmp/sjcl--48530-yr2fVRchk1ek-.js
 /** @fileOverview Javascript cryptography implementation.
  *
  * Crush to remove comments, shorten variable names and
@@ -487,7 +470,6 @@ var utils = __webpack_require__(0);
  * @author Mike Hamburg
  * @author Dan Boneh
  */
-
 /*jslint indent: 2, bitwise: false, nomen: false, plusplus: false, white: false, regexp: false */
 
 /*global document, window, escape, unescape, module, require, Uint32Array */
@@ -838,7 +820,6 @@ sjcl.bitArray = {
 
 if (typeof ArrayBuffer === 'undefined') {
   (function (globals) {
-    "use strict";
 
     globals.ArrayBuffer = function () {};
 
@@ -1884,19 +1865,13 @@ sjcl.misc.hmac.prototype.digest = function () {
   return result;
 };
 
-;
-/* harmony default export */ var sjcl_48530_yr2fVRchk1ek_ = (sjcl);
-// CONCATENATED MODULE: ./src/crypto.js
 // eslint-disable-next-line import/no-extraneous-dependencies
- // SJCL is included during compilation.
-
-
 var randomBytes;
-var crypto_hmacDigest;
+var hmacDigest;
 
-if (utils["a" /* InternalUtils */].isNode) {
-  var NodeBuffer = utils["a" /* InternalUtils */].globalThis.Buffer;
-  var NodeCrypto = utils["a" /* InternalUtils */].nodeRequire('crypto');
+if (InternalUtils.isNode) {
+  var NodeBuffer = InternalUtils.globalThis.Buffer;
+  var NodeCrypto = InternalUtils.nodeRequire('crypto');
   var nodeBufferFromArrayBuffer;
 
   if (typeof NodeBuffer.from === 'function') {
@@ -1939,13 +1914,13 @@ if (utils["a" /* InternalUtils */].isNode) {
     return nodeBufferToArrayBuffer(bytes);
   };
 
-  crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
+  hmacDigest = function hmacDigest(algorithm, key, message) {
     var hmac = NodeCrypto.createHmac(algorithm, nodeBufferFromArrayBuffer(key));
     hmac.update(nodeBufferFromArrayBuffer(message));
     return nodeBufferToArrayBuffer(hmac.digest());
   };
 } else {
-  var BrowserCrypto = utils["a" /* InternalUtils */].globalThis.crypto || utils["a" /* InternalUtils */].globalThis.msCrypto;
+  var BrowserCrypto = InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto;
   var getRandomValues;
 
   if (typeof BrowserCrypto !== 'undefined' && typeof BrowserCrypto.getRandomValues === 'function') {
@@ -1953,7 +1928,7 @@ if (utils["a" /* InternalUtils */].isNode) {
       BrowserCrypto.getRandomValues(array);
     };
   } else {
-    utils["a" /* InternalUtils */].console.warn('Cryptography API not available, falling back to \'Math.random\'...');
+    InternalUtils.console.warn('Cryptography API not available, falling back to \'Math.random\'...');
 
     getRandomValues = function getRandomValues(array) {
       for (var i = 0; i < array.length; i++) {
@@ -1968,17 +1943,17 @@ if (utils["a" /* InternalUtils */].isNode) {
     return bytes.buffer;
   };
 
-  crypto_hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hash = sjcl_48530_yr2fVRchk1ek_.hash[algorithm.toLowerCase()];
+  hmacDigest = function hmacDigest(algorithm, key, message) {
+    var hash = sjcl.hash[algorithm.toLowerCase()];
 
     if (typeof hash === 'undefined') {
       throw new TypeError('Unknown hash function');
     } // eslint-disable-next-line new-cap
 
 
-    var hmac = new sjcl_48530_yr2fVRchk1ek_.misc.hmac(sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.toBits(key), hash);
-    hmac.update(sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.toBits(message));
-    return sjcl_48530_yr2fVRchk1ek_.codec.arrayBuffer.fromBits(hmac.digest(), false);
+    var hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
+    hmac.update(sjcl.codec.arrayBuffer.toBits(message));
+    return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
 }
 /**
@@ -2004,16 +1979,8 @@ var Crypto = {
    * @param {ArrayBuffer} message Message.
    * @returns {ArrayBuffer} Digest.
    */
-  hmacDigest: crypto_hmacDigest
+  hmacDigest: hmacDigest
 };
-// CONCATENATED MODULE: ./src/secret.js
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-
 
 /**
  * Secret key object.
@@ -2022,7 +1989,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
  * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
  */
 
-var secret_Secret = /*#__PURE__*/function () {
+var Secret = /*#__PURE__*/function () {
   function Secret() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         buffer = _ref.buffer,
@@ -2056,7 +2023,7 @@ var secret_Secret = /*#__PURE__*/function () {
         enumerable: true,
         configurable: true,
         writable: true,
-        value: utils["b" /* Utils */].raw.fromBuf(this.buffer)
+        value: Utils.raw.fromBuf(this.buffer)
       });
       return this.raw;
     }
@@ -2072,7 +2039,7 @@ var secret_Secret = /*#__PURE__*/function () {
         enumerable: true,
         configurable: true,
         writable: true,
-        value: utils["b" /* Utils */].b32.fromBuf(this.buffer)
+        value: Utils.b32.fromBuf(this.buffer)
       });
       return this.b32;
     }
@@ -2088,7 +2055,7 @@ var secret_Secret = /*#__PURE__*/function () {
         enumerable: true,
         configurable: true,
         writable: true,
-        value: utils["b" /* Utils */].hex.fromBuf(this.buffer)
+        value: Utils.hex.fromBuf(this.buffer)
       });
       return this.hex;
     }
@@ -2096,7 +2063,7 @@ var secret_Secret = /*#__PURE__*/function () {
     key: "fromRaw",
     value: function fromRaw(str) {
       return new Secret({
-        buffer: utils["b" /* Utils */].raw.toBuf(str)
+        buffer: Utils.raw.toBuf(str)
       });
     }
     /**
@@ -2109,7 +2076,7 @@ var secret_Secret = /*#__PURE__*/function () {
     key: "fromB32",
     value: function fromB32(str) {
       return new Secret({
-        buffer: utils["b" /* Utils */].b32.toBuf(str)
+        buffer: Utils.b32.toBuf(str)
       });
     }
     /**
@@ -2122,252 +2089,13 @@ var secret_Secret = /*#__PURE__*/function () {
     key: "fromHex",
     value: function fromHex(str) {
       return new Secret({
-        buffer: utils["b" /* Utils */].hex.toBuf(str)
+        buffer: Utils.hex.toBuf(str)
       });
     }
   }]);
 
   return Secret;
 }();
-// CONCATENATED MODULE: ./src/uri.js
-function uri_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function uri_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function uri_createClass(Constructor, protoProps, staticProps) { if (protoProps) uri_defineProperties(Constructor.prototype, protoProps); if (staticProps) uri_defineProperties(Constructor, staticProps); return Constructor; }
-
-
- // eslint-disable-next-line import/no-cycle
-
-
-/**
- * Valid key URI parameters.
- * @private
- * @type {Array}
- */
-
-var OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
-/**
- * Key URI regex.
- *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
- * @private
- * @type {RegExp}
- */
-
-var OTPURI_REGEX = new RegExp("^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:".concat(OTPURI_PARAMS.join('|'), ")=[^&]+)+)$"), 'i');
-/**
- * RFC 4648 base32 alphabet with pad.
- * @private
- * @type {string}
- */
-
-var SECRET_REGEX = /^[2-7A-Z]+=*$/i;
-/**
- * Regex for supported algorithms.
- * @private
- * @type {RegExp}
- */
-
-var ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
-/**
- * Integer regex.
- * @private
- * @type {RegExp}
- */
-
-var INTEGER_REGEX = /^[+-]?\d+$/;
-/**
- * Positive integer regex.
- * @private
- * @type {RegExp}
- */
-
-var POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
-/**
- * HOTP/TOTP object/string conversion
- * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
- */
-
-var uri_URI = /*#__PURE__*/function () {
-  function URI() {
-    uri_classCallCheck(this, URI);
-  }
-
-  uri_createClass(URI, null, [{
-    key: "parse",
-
-    /**
-     * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
-     * @param {string} uri Google Authenticator Key URI.
-     * @returns {HOTP|TOTP} HOTP/TOTP object.
-     */
-    value: function parse(uri) {
-      var uriGroups;
-
-      try {
-        uriGroups = uri.match(OTPURI_REGEX);
-      } catch (error) {
-        /* Handled below */
-      }
-
-      if (!Array.isArray(uriGroups)) {
-        throw new URIError('Invalid URI format');
-      } // Extract URI groups.
-
-
-      var uriType = uriGroups[1].toLowerCase();
-      var uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
-      var uriParams = uriGroups[3].split('&').reduce(function (acc, cur) {
-        var pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
-        var pairKey = pairArr[0].toLowerCase();
-        var pairVal = pairArr[1];
-        var pairAcc = acc;
-        pairAcc[pairKey] = pairVal;
-        return pairAcc;
-      }, {}); // 'OTP' will be instantiated with 'config' argument.
-
-      var OTP;
-      var config = {};
-
-      if (uriType === 'hotp') {
-        OTP = otp_HOTP; // Counter: required
-
-        if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
-          config.counter = parseInt(uriParams.counter, 10);
-        } else {
-          throw new TypeError('Missing or invalid \'counter\' parameter');
-        }
-      } else if (uriType === 'totp') {
-        OTP = otp_TOTP; // Period: optional
-
-        if (typeof uriParams.period !== 'undefined') {
-          if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
-            config.period = parseInt(uriParams.period, 10);
-          } else {
-            throw new TypeError('Invalid \'period\' parameter');
-          }
-        }
-      } else {
-        throw new TypeError('Unknown OTP type');
-      } // Label: required
-      // Issuer: optional
-
-
-      if (uriLabel.length === 2) {
-        config.label = uriLabel[1];
-
-        if (typeof uriParams.issuer === 'undefined') {
-          config.issuer = uriLabel[0];
-        } else if (uriParams.issuer === uriLabel[0]) {
-          config.issuer = uriParams.issuer;
-        } else {
-          throw new TypeError('Invalid \'issuer\' parameter');
-        }
-      } else {
-        config.label = uriLabel[0];
-
-        if (typeof uriParams.issuer !== 'undefined') {
-          config.issuer = uriParams.issuer;
-        }
-      } // Secret: required
-
-
-      if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
-        config.secret = new secret_Secret({
-          buffer: utils["b" /* Utils */].b32.toBuf(uriParams.secret)
-        });
-      } else {
-        throw new TypeError('Missing or invalid \'secret\' parameter');
-      } // Algorithm: optional
-
-
-      if (typeof uriParams.algorithm !== 'undefined') {
-        if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
-          config.algorithm = uriParams.algorithm;
-        } else {
-          throw new TypeError('Invalid \'algorithm\' parameter');
-        }
-      } // Digits: optional
-
-
-      if (typeof uriParams.digits !== 'undefined') {
-        if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
-          config.digits = parseInt(uriParams.digits, 10);
-        } else {
-          throw new TypeError('Invalid \'digits\' parameter');
-        }
-      }
-
-      return new OTP(config);
-    }
-    /**
-     * Converts an HOTP/TOTP object to a Google Authenticator key URI.
-     * @param {HOTP|TOTP} otp HOTP/TOTP object.
-     * @param {Object} [config] Configuration options.
-     * @param {boolean} [config.legacyIssuer=true] Set issuer label prefix.
-     * @returns {string} Google Authenticator Key URI.
-     */
-
-  }, {
-    key: "stringify",
-    value: function stringify(otp) {
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref$legacyIssuer = _ref.legacyIssuer,
-          legacyIssuer = _ref$legacyIssuer === void 0 ? true : _ref$legacyIssuer;
-
-      var isHOTP = otp instanceof otp_HOTP;
-      var isTOTP = otp instanceof otp_TOTP;
-
-      if (!isHOTP && !isTOTP) {
-        throw new TypeError('Invalid \'HOTP/TOTP\' object');
-      } // Key URI format:
-      //   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
-
-
-      var uri = 'otpauth://'; // Type.
-
-      uri += "".concat(isTOTP ? 'totp' : 'hotp', "/"); // Label and optional issuer.
-
-      if (otp.issuer.length > 0) {
-        // Legacy label prefix.
-        if (legacyIssuer) uri += "".concat(encodeURIComponent(otp.issuer), ":"); // Label.
-
-        uri += "".concat(encodeURIComponent(otp.label), "?"); // Issuer.
-
-        uri += "issuer=".concat(encodeURIComponent(otp.issuer), "&");
-      } else {
-        // Label.
-        uri += "".concat(encodeURIComponent(otp.label), "?");
-      } // Generic parameters.
-
-
-      uri += "secret=".concat(encodeURIComponent(otp.secret.b32)) + "&algorithm=".concat(encodeURIComponent(otp.algorithm)) + "&digits=".concat(encodeURIComponent(otp.digits)); // Extra parameters.
-
-      if (isTOTP) {
-        // TOTP parameters.
-        uri += "&period=".concat(encodeURIComponent(otp.period));
-      } else {
-        // HOTP parameters.
-        uri += "&counter=".concat(encodeURIComponent(otp.counter));
-      }
-
-      return uri;
-    }
-  }]);
-
-  return URI;
-}();
-// CONCATENATED MODULE: ./src/otp.js
-function otp_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function otp_defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function otp_createClass(Constructor, protoProps, staticProps) { if (protoProps) otp_defineProperties(Constructor.prototype, protoProps); if (staticProps) otp_defineProperties(Constructor, staticProps); return Constructor; }
-
-
-
- // eslint-disable-next-line import/no-cycle
-
 
 /**
  * Default configuration.
@@ -2396,7 +2124,7 @@ var defaults = {
  * @param {number} [config.counter=0] Initial counter value.
  */
 
-var otp_HOTP = /*#__PURE__*/function () {
+var HOTP = /*#__PURE__*/function () {
   function HOTP() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref$issuer = _ref.issuer,
@@ -2404,7 +2132,7 @@ var otp_HOTP = /*#__PURE__*/function () {
         _ref$label = _ref.label,
         label = _ref$label === void 0 ? defaults.label : _ref$label,
         _ref$secret = _ref.secret,
-        secret = _ref$secret === void 0 ? new secret_Secret() : _ref$secret,
+        secret = _ref$secret === void 0 ? new Secret() : _ref$secret,
         _ref$algorithm = _ref.algorithm,
         algorithm = _ref$algorithm === void 0 ? defaults.algorithm : _ref$algorithm,
         _ref$digits = _ref.digits,
@@ -2412,7 +2140,7 @@ var otp_HOTP = /*#__PURE__*/function () {
         _ref$counter = _ref.counter,
         counter = _ref$counter === void 0 ? defaults.counter : _ref$counter;
 
-    otp_classCallCheck(this, HOTP);
+    _classCallCheck(this, HOTP);
 
     /**
      * Account provider.
@@ -2430,7 +2158,7 @@ var otp_HOTP = /*#__PURE__*/function () {
      * @type {Secret}
      */
 
-    this.secret = typeof secret === 'string' ? secret_Secret.fromB32(secret) : secret;
+    this.secret = typeof secret === 'string' ? Secret.fromB32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -2461,7 +2189,7 @@ var otp_HOTP = /*#__PURE__*/function () {
    */
 
 
-  otp_createClass(HOTP, [{
+  _createClass(HOTP, [{
     key: "generate",
 
     /**
@@ -2510,7 +2238,7 @@ var otp_HOTP = /*#__PURE__*/function () {
           counter = _ref3$counter === void 0 ? this.counter : _ref3$counter,
           window = _ref3.window;
       return HOTP.validate({
-        token: utils["b" /* Utils */].pad(token, this.digits),
+        token: Utils.pad(token, this.digits),
         secret: this.secret,
         algorithm: this.algorithm,
         counter: counter,
@@ -2525,7 +2253,8 @@ var otp_HOTP = /*#__PURE__*/function () {
   }, {
     key: "toString",
     value: function toString() {
-      return uri_URI.stringify(this);
+      var e = encodeURIComponent;
+      return 'otpauth://hotp/' + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.b32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "counter=".concat(e(this.counter));
     }
   }], [{
     key: "generate",
@@ -2537,10 +2266,10 @@ var otp_HOTP = /*#__PURE__*/function () {
           digits = _ref4$digits === void 0 ? defaults.digits : _ref4$digits,
           _ref4$counter = _ref4.counter,
           counter = _ref4$counter === void 0 ? defaults.counter : _ref4$counter;
-      var digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, utils["b" /* Utils */].uint.toBuf(counter)));
+      var digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.toBuf(counter)));
       var offset = digest[digest.byteLength - 1] & 15;
       var otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % Math.pow(10, digits);
-      return utils["b" /* Utils */].pad(otp, digits);
+      return Utils.pad(otp, digits);
     }
   }, {
     key: "validate",
@@ -2584,7 +2313,7 @@ var otp_HOTP = /*#__PURE__*/function () {
  * @param {number} [config.period=30] Token time-step duration.
  */
 
-var otp_TOTP = /*#__PURE__*/function () {
+var TOTP = /*#__PURE__*/function () {
   function TOTP() {
     var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref6$issuer = _ref6.issuer,
@@ -2592,7 +2321,7 @@ var otp_TOTP = /*#__PURE__*/function () {
         _ref6$label = _ref6.label,
         label = _ref6$label === void 0 ? defaults.label : _ref6$label,
         _ref6$secret = _ref6.secret,
-        secret = _ref6$secret === void 0 ? new secret_Secret() : _ref6$secret,
+        secret = _ref6$secret === void 0 ? new Secret() : _ref6$secret,
         _ref6$algorithm = _ref6.algorithm,
         algorithm = _ref6$algorithm === void 0 ? defaults.algorithm : _ref6$algorithm,
         _ref6$digits = _ref6.digits,
@@ -2600,7 +2329,7 @@ var otp_TOTP = /*#__PURE__*/function () {
         _ref6$period = _ref6.period,
         period = _ref6$period === void 0 ? defaults.period : _ref6$period;
 
-    otp_classCallCheck(this, TOTP);
+    _classCallCheck(this, TOTP);
 
     /**
      * Account provider.
@@ -2618,7 +2347,7 @@ var otp_TOTP = /*#__PURE__*/function () {
      * @type {Secret}
      */
 
-    this.secret = typeof secret === 'string' ? secret_Secret.fromB32(secret) : secret;
+    this.secret = typeof secret === 'string' ? Secret.fromB32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -2650,7 +2379,7 @@ var otp_TOTP = /*#__PURE__*/function () {
    */
 
 
-  otp_createClass(TOTP, [{
+  _createClass(TOTP, [{
     key: "generate",
 
     /**
@@ -2700,7 +2429,7 @@ var otp_TOTP = /*#__PURE__*/function () {
           timestamp = _ref8.timestamp,
           window = _ref8.window;
       return TOTP.validate({
-        token: utils["b" /* Utils */].pad(token, this.digits),
+        token: Utils.pad(token, this.digits),
         secret: this.secret,
         algorithm: this.algorithm,
         period: this.period,
@@ -2716,7 +2445,8 @@ var otp_TOTP = /*#__PURE__*/function () {
   }, {
     key: "toString",
     value: function toString() {
-      return uri_URI.stringify(this);
+      var e = encodeURIComponent;
+      return 'otpauth://totp/' + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.b32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "period=".concat(e(this.period));
     }
   }], [{
     key: "generate",
@@ -2728,7 +2458,7 @@ var otp_TOTP = /*#__PURE__*/function () {
           period = _ref9$period === void 0 ? defaults.period : _ref9$period,
           _ref9$timestamp = _ref9.timestamp,
           timestamp = _ref9$timestamp === void 0 ? Date.now() : _ref9$timestamp;
-      return otp_HOTP.generate({
+      return HOTP.generate({
         secret: secret,
         algorithm: algorithm,
         digits: digits,
@@ -2746,7 +2476,7 @@ var otp_TOTP = /*#__PURE__*/function () {
           _ref10$timestamp = _ref10.timestamp,
           timestamp = _ref10$timestamp === void 0 ? Date.now() : _ref10$timestamp,
           window = _ref10.window;
-      return otp_HOTP.validate({
+      return HOTP.validate({
         token: token,
         secret: secret,
         algorithm: algorithm,
@@ -2758,34 +2488,192 @@ var otp_TOTP = /*#__PURE__*/function () {
 
   return TOTP;
 }();
-// CONCATENATED MODULE: ./src/version.js
+
+/**
+ * Valid key URI parameters.
+ * @private
+ * @type {Array}
+ */
+
+var OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
+/**
+ * Key URI regex.
+ *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
+ * @private
+ * @type {RegExp}
+ */
+
+var OTPURI_REGEX = new RegExp("^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:".concat(OTPURI_PARAMS.join('|'), ")=[^&]+)+)$"), 'i');
+/**
+ * RFC 4648 base32 alphabet with pad.
+ * @private
+ * @type {string}
+ */
+
+var SECRET_REGEX = /^[2-7A-Z]+=*$/i;
+/**
+ * Regex for supported algorithms.
+ * @private
+ * @type {RegExp}
+ */
+
+var ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
+/**
+ * Integer regex.
+ * @private
+ * @type {RegExp}
+ */
+
+var INTEGER_REGEX = /^[+-]?\d+$/;
+/**
+ * Positive integer regex.
+ * @private
+ * @type {RegExp}
+ */
+
+var POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
+/**
+ * HOTP/TOTP object/string conversion
+ * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
+ */
+
+var URI = /*#__PURE__*/function () {
+  function URI() {
+    _classCallCheck(this, URI);
+  }
+
+  _createClass(URI, null, [{
+    key: "parse",
+
+    /**
+     * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
+     * @param {string} uri Google Authenticator Key URI.
+     * @returns {HOTP|TOTP} HOTP/TOTP object.
+     */
+    value: function parse(uri) {
+      var uriGroups;
+
+      try {
+        uriGroups = uri.match(OTPURI_REGEX);
+      } catch (error) {
+        /* Handled below */
+      }
+
+      if (!Array.isArray(uriGroups)) {
+        throw new URIError('Invalid URI format');
+      } // Extract URI groups.
+
+
+      var uriType = uriGroups[1].toLowerCase();
+      var uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
+      var uriParams = uriGroups[3].split('&').reduce(function (acc, cur) {
+        var pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
+        var pairKey = pairArr[0].toLowerCase();
+        var pairVal = pairArr[1];
+        var pairAcc = acc;
+        pairAcc[pairKey] = pairVal;
+        return pairAcc;
+      }, {}); // 'OTP' will be instantiated with 'config' argument.
+
+      var OTP;
+      var config = {};
+
+      if (uriType === 'hotp') {
+        OTP = HOTP; // Counter: required
+
+        if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
+          config.counter = parseInt(uriParams.counter, 10);
+        } else {
+          throw new TypeError('Missing or invalid \'counter\' parameter');
+        }
+      } else if (uriType === 'totp') {
+        OTP = TOTP; // Period: optional
+
+        if (typeof uriParams.period !== 'undefined') {
+          if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
+            config.period = parseInt(uriParams.period, 10);
+          } else {
+            throw new TypeError('Invalid \'period\' parameter');
+          }
+        }
+      } else {
+        throw new TypeError('Unknown OTP type');
+      } // Label: required
+      // Issuer: optional
+
+
+      if (uriLabel.length === 2) {
+        config.label = uriLabel[1];
+
+        if (typeof uriParams.issuer === 'undefined') {
+          config.issuer = uriLabel[0];
+        } else if (uriParams.issuer === uriLabel[0]) {
+          config.issuer = uriParams.issuer;
+        } else {
+          throw new TypeError('Invalid \'issuer\' parameter');
+        }
+      } else {
+        config.label = uriLabel[0];
+
+        if (typeof uriParams.issuer !== 'undefined') {
+          config.issuer = uriParams.issuer;
+        }
+      } // Secret: required
+
+
+      if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
+        config.secret = new Secret({
+          buffer: Utils.b32.toBuf(uriParams.secret)
+        });
+      } else {
+        throw new TypeError('Missing or invalid \'secret\' parameter');
+      } // Algorithm: optional
+
+
+      if (typeof uriParams.algorithm !== 'undefined') {
+        if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
+          config.algorithm = uriParams.algorithm;
+        } else {
+          throw new TypeError('Invalid \'algorithm\' parameter');
+        }
+      } // Digits: optional
+
+
+      if (typeof uriParams.digits !== 'undefined') {
+        if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
+          config.digits = parseInt(uriParams.digits, 10);
+        } else {
+          throw new TypeError('Invalid \'digits\' parameter');
+        }
+      }
+
+      return new OTP(config);
+    }
+    /**
+     * Converts an HOTP/TOTP object to a Google Authenticator key URI.
+     * @param {HOTP|TOTP} otp HOTP/TOTP object.
+     * @param {Object} [config] Configuration options.
+     * @returns {string} Google Authenticator Key URI.
+     */
+
+  }, {
+    key: "stringify",
+    value: function stringify(otp) {
+      if (otp instanceof HOTP || otp instanceof TOTP) {
+        return otp.toString();
+      }
+
+      throw new TypeError('Invalid \'HOTP/TOTP\' object');
+    }
+  }]);
+
+  return URI;
+}();
+
 /**
  * Library version.
  * @type {string}
  */
-var version = "5.0.9";
-// CONCATENATED MODULE: ./src/main.js
-/**
- * One Time Password (HOTP/TOTP) library for Node.js and browser.
- * @module OTPAuth
- * @author Héctor Molinero Fernández <hector@molinero.dev>
- */
+var version = '5.0.9';
 
-
-
-
-
-/* harmony default export */ var main = __webpack_exports__["default"] = ({
-  HOTP: otp_HOTP,
-  TOTP: otp_TOTP,
-  URI: uri_URI,
-  Secret: secret_Secret,
-  Utils: utils["b" /* Utils */],
-  version: version
-});
-
-
-/***/ })
-/******/ ]);
-});
-//# sourceMappingURL=otpauth.js.map
+export { HOTP, Secret, TOTP, URI, Utils, version };
