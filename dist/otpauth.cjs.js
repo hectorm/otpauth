@@ -1,5 +1,5 @@
 
-/*! otpauth v5.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.0.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 'use strict';
 
@@ -2678,7 +2678,7 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '5.0.9';
+var version = '6.0.0';
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
