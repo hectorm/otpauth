@@ -1,29 +1,63 @@
-const chai = typeof this.chai === 'undefined'
-	? require('chai')
-	: this.chai;
+/* global globalThis, window */
+/* global mocha, describe, it */
+/* global chai, assert, assertEquals, assertMatch */
+/* global OTPAuth */
 
-const expect = typeof this.expect === 'undefined'
-	? chai.expect
-	: this.expect;
+/* ================================================
+ * Initialize environment
+ * ================================================
+ */
 
-const OTPAuth = typeof this.OTPAuth === 'undefined'
-	/* eslint-disable-next-line import/no-dynamic-require */
-	? require(process.env.IS_MINIFIED ? '../dist/otpauth.cjs.min.js' : '../dist/otpauth.cjs.js')
-	: this.OTPAuth;
+const context = (() => {
+	if (typeof globalThis !== 'undefined') return globalThis;
+	if (typeof global !== 'undefined') return global;
+	if (typeof window !== 'undefined') return window;
+	return this;
+})();
 
-chai.Assertion.addMethod('bufferEql', function bufferEql(x) {
-	const expected = new Uint8Array(x);
-	const actual = new Uint8Array(this._obj);
+const isNode = Object.prototype.toString.call(context.process) === '[object process]';
 
-	this.assert(
-		chai.util.eql(actual, expected),
-		'expected #{act} to be equal to #{exp}',
-		'expected #{act} not to be equal to #{exp}',
-		expected, actual
-	);
-});
+if (!('location' in context)) {
+	context.location = {};
+}
 
-const inputs = [{
+if (!('describe' in context) || !('it' in context)) {
+	mocha.setup({ ui: 'bdd', reporter: 'spec' });
+	context.mochaSelfSetup = true;
+}
+
+if (isNode && !('chai' in context)) {
+	// eslint-disable-next-line global-require
+	context.chai = require('chai');
+}
+
+if ('chai' in context) {
+	if (!('assert' in context)) {
+		context.assert = chai.assert;
+	}
+
+	if (!('assertEquals' in context)) {
+		context.assertEquals = chai.assert.deepEqual;
+	}
+
+	if (!('assertMatch' in context)) {
+		context.assertMatch = chai.assert.match;
+	}
+}
+
+if (isNode && !('OTPAuth' in context)) {
+	// eslint-disable-next-line global-require, import/no-dynamic-require
+	context.OTPAuth = require(process.env.IS_MINIFIED
+		? '../dist/otpauth.cjs.min.js'
+		: '../dist/otpauth.cjs.js');
+}
+
+/* ================================================
+ * Test cases
+ * ================================================
+ */
+
+const cases = [{
 	// 00
 	buffer: new Uint16Array([43166, 43963, 43559, 29521, 19166, 19613, 5178, 6152, 37930, 252, 24507, 64210, 28982, 57540, 65533, 54088, 54415, 2014, 50282, 22992]).buffer,
 	raw: '\u009E\u00A8\u00BB\u00AB\u0027\u00AA\u0051\u0073\u00DE\u004A\u009D\u004C\u003A\u0014\u0008\u0018\u002A\u0094\u00FC\u0000\u00BB\u005F\u00D2\u00FA\u0036\u0071\u00C4\u00E0\u00FD\u00FF\u0048\u00D3\u008F\u00D4\u00DE\u0007\u006A\u00C4\u00D0\u0059',
@@ -410,105 +444,105 @@ const inputs = [{
  * ================================================
  */
 
-describe('OTPAuth.Utils', () => {
+describe('Utils', () => {
 	it('uint.fromBuf[0]', () => {
 		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
-		expect(output).to.equal(0);
+		assertEquals(output, 0);
 	});
 
 	it('uint.fromBuf[1]', () => {
 		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
-		expect(output).to.equal(4294967295);
+		assertEquals(output, 4294967295);
 	});
 
 	it('uint.fromBuf[2]', () => { // MAX_SAFE_INTEGER
 		const output = OTPAuth.Utils.uint.fromBuf(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
-		expect(output).to.equal(9007199254740991);
+		assertEquals(output, 9007199254740991);
 	});
 
 	it('uint.toBuf[0]', () => {
 		const output = OTPAuth.Utils.uint.toBuf(0);
-		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]).buffer);
+		assertEquals(new Uint8Array(output), new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0]));
 	});
 
 	it('uint.toBuf[1]', () => {
 		const output = OTPAuth.Utils.uint.toBuf(4294967295);
-		expect(output).to.bufferEql(new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]).buffer);
+		assertEquals(new Uint8Array(output), new Uint8Array([0, 0, 0, 0, 255, 255, 255, 255]));
 	});
 
 	it('uint.toBuf[2]', () => { // MAX_SAFE_INTEGER
 		const output = OTPAuth.Utils.uint.toBuf(9007199254740991);
-		expect(output).to.bufferEql(new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]).buffer);
+		assertEquals(new Uint8Array(output), new Uint8Array([0, 31, 255, 255, 255, 255, 255, 255]));
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`raw.fromBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.raw.fromBuf(input.buffer);
-			expect(output).to.equal(input.raw);
+			assertEquals(output, input.raw);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`raw.toBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.raw.toBuf(input.raw);
-			expect(output).to.bufferEql(input.buffer);
+			assertEquals(new Uint16Array(output), new Uint16Array(input.buffer));
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`b32.fromBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.b32.fromBuf(input.buffer);
-			expect(output).to.equal(input.b32);
+			assertEquals(output, input.b32);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`b32.toBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.b32.toBuf(input.b32);
-			expect(output).to.bufferEql(input.buffer);
+			assertEquals(new Uint16Array(output), new Uint16Array(input.buffer));
 		});
 	});
 
 	it('b32.fromBuf(b32.toBuf)', () => {
-		const input = inputs[0];
+		const input = cases[0];
 		const output = OTPAuth.Utils.b32.fromBuf(
 			OTPAuth.Utils.b32.toBuf(`${input.b32.toLowerCase()}=`)
 		);
-		expect(output).to.equal(input.b32);
+		assertEquals(output, input.b32);
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`hex.fromBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.hex.fromBuf(input.buffer);
-			expect(output).to.equal(input.hex);
+			assertEquals(output, input.hex);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`hex.toBuf[${index}]`, () => {
 			const output = OTPAuth.Utils.hex.toBuf(input.hex);
-			expect(output).to.bufferEql(input.buffer);
+			assertEquals(new Uint16Array(output), new Uint16Array(input.buffer));
 		});
 	});
 
 	it('Utils.pad[0]', () => {
 		const output = OTPAuth.Utils.pad(123, 6);
-		expect(output).to.equal('000123');
+		assertEquals(output, '000123');
 	});
 
 	it('Utils.pad[1]', () => {
 		const output = OTPAuth.Utils.pad(123456, -4);
-		expect(output).to.equal('123456');
+		assertEquals(output, '123456');
 	});
 
 	it('Utils.pad[2]', () => {
 		const output = OTPAuth.Utils.pad(123456, 0);
-		expect(output).to.equal('123456');
+		assertEquals(output, '123456');
 	});
 
 	it('Utils.pad[3]', () => {
 		const output = OTPAuth.Utils.pad('0123', 6);
-		expect(output).to.equal('000123');
+		assertEquals(output, '000123');
 	});
 });
 
@@ -517,73 +551,74 @@ describe('OTPAuth.Utils', () => {
  * ================================================
  */
 
-describe('Test - OTPAuth.Secret', () => {
-	inputs.forEach((input, index) => {
+describe('Secret', () => {
+	cases.forEach((input, index) => {
 		it(`constructor[${index}]`, () => {
 			const output = new OTPAuth.Secret({ buffer: input.buffer });
 
-			expect(output.buffer).to.bufferEql(input.buffer);
-			expect(output.raw).to.eql(input.raw);
-			expect(output.b32).to.eql(input.b32);
-			expect(output.hex).to.eql(input.hex);
+			assertEquals(new Uint16Array(output.buffer), new Uint16Array(input.buffer));
+			assertEquals(output.raw, input.raw);
+			assertEquals(output.b32, input.b32);
+			assertEquals(output.hex, input.hex);
 		});
 	});
 
-	it(`constructor[${inputs.length}]`, () => {
+	it(`constructor[${cases.length}]`, () => {
 		const output = new OTPAuth.Secret({ size: 256 });
 
-		expect(output).to.be.an('object');
-		expect(output.buffer).to.be.an('arrayBuffer');
-		expect(output.buffer.byteLength).to.equal(256);
-		expect(output.raw).to.be.a('string');
-		expect(output.b32).to.be.a('string');
-		expect(output.b32).to.match(/^[2-7A-Z]{410}$/);
-		expect(output.hex).to.be.a('string');
-		expect(output.hex).to.match(/^[0-9A-F]{512}$/);
+		assert(output.buffer instanceof ArrayBuffer);
+		assertEquals(output.buffer.byteLength, 256);
+		assert(typeof output.raw === 'string');
+		assert(typeof output.b32 === 'string');
+		assertMatch(output.b32, /^[2-7A-Z]{410}$/);
+		assert(typeof output.hex === 'string');
+		assertMatch(output.hex, /^[0-9A-F]{512}$/);
 	});
 
-	it(`constructor[${inputs.length + 1}]`, () => {
+	it(`constructor[${cases.length + 1}]`, () => {
 		const output = new OTPAuth.Secret();
 
-		expect(output).to.be.an('object');
-		expect(output.buffer).to.be.an('arrayBuffer');
-		expect(output.buffer.byteLength).to.equal(20);
-		expect(output.b32).to.be.a('string');
-		expect(output.b32).to.match(/^[2-7A-Z]{32}$/);
-		expect(output.hex).to.be.a('string');
-		expect(output.hex).to.match(/^[0-9A-F]{40}$/);
+		assert(output.buffer instanceof ArrayBuffer);
+		assertEquals(output.buffer.byteLength, 20);
+		assert(typeof output.b32 === 'string');
+		assertMatch(output.b32, /^[2-7A-Z]{32}$/);
+		assert(typeof output.hex === 'string');
+		assertMatch(output.hex, /^[0-9A-F]{40}$/);
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`fromRaw[${index}]`, () => {
 			const output = OTPAuth.Secret.fromRaw(input.raw);
 
-			expect(output.buffer).to.bufferEql(input.buffer);
-			expect(output.raw).to.eql(input.raw);
-			expect(output.b32).to.eql(input.b32);
-			expect(output.hex).to.eql(input.hex);
+			assert(output instanceof OTPAuth.Secret);
+			assertEquals(new Uint16Array(output.buffer), new Uint16Array(input.buffer));
+			assertEquals(output.raw, input.raw);
+			assertEquals(output.b32, input.b32);
+			assertEquals(output.hex, input.hex);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`fromB32[${index}]`, () => {
 			const output = OTPAuth.Secret.fromB32(input.b32);
 
-			expect(output.buffer).to.bufferEql(input.buffer);
-			expect(output.raw).to.eql(input.raw);
-			expect(output.b32).to.eql(input.b32);
-			expect(output.hex).to.eql(input.hex);
+			assert(output instanceof OTPAuth.Secret);
+			assertEquals(new Uint16Array(output.buffer), new Uint16Array(input.buffer));
+			assertEquals(output.raw, input.raw);
+			assertEquals(output.b32, input.b32);
+			assertEquals(output.hex, input.hex);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`fromHex[${index}]`, () => {
 			const output = OTPAuth.Secret.fromHex(input.hex);
 
-			expect(output.buffer).to.bufferEql(input.buffer);
-			expect(output.raw).to.eql(input.raw);
-			expect(output.b32).to.eql(input.b32);
-			expect(output.hex).to.eql(input.hex);
+			assert(output instanceof OTPAuth.Secret);
+			assertEquals(new Uint16Array(output.buffer), new Uint16Array(input.buffer));
+			assertEquals(output.raw, input.raw);
+			assertEquals(output.b32, input.b32);
+			assertEquals(output.hex, input.hex);
 		});
 	});
 });
@@ -593,28 +628,27 @@ describe('Test - OTPAuth.Secret', () => {
  * ================================================
  */
 
-describe('Test - OTPAuth.HOTP', () => {
+describe('HOTP', () => {
 	it('defaults', () => {
 		const hotp = new OTPAuth.HOTP();
 
-		expect(hotp).to.be.an('object');
-		expect(hotp.issuer).to.equal('');
-		expect(hotp.label).to.equal('OTPAuth');
-		expect(hotp.secret).to.be.instanceof(OTPAuth.Secret);
-		expect(hotp.algorithm).to.equal('SHA1');
-		expect(hotp.digits).to.equal(6);
-		expect(hotp.counter).to.equal(0);
+		assertEquals(hotp.issuer, '');
+		assertEquals(hotp.label, 'OTPAuth');
+		assert(hotp.secret instanceof OTPAuth.Secret);
+		assertEquals(hotp.algorithm, 'SHA1');
+		assertEquals(hotp.digits, 6);
+		assertEquals(hotp.counter, 0);
 
-		expect(hotp.generate()).to.be.a('string');
-		expect(hotp.generate()).to.have.lengthOf(6);
+		assert(typeof hotp.generate() === 'string');
+		assert(hotp.generate().length === 6);
 
-		expect(hotp.validate({ token: hotp.generate() })).to.equal(-1);
+		assertEquals(hotp.validate({ token: hotp.generate() }), -1);
 
 		// Counter is incremented on each 'generate' call.
-		expect(hotp.counter).to.equal(3);
+		assertEquals(hotp.counter, 3);
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
 			const hotp = new OTPAuth.HOTP({
 				...input.hotp.constructor.input,
@@ -622,11 +656,11 @@ describe('Test - OTPAuth.HOTP', () => {
 			});
 
 			const output = hotp.generate(input.hotp.generate.input);
-			expect(output).to.equal(input.hotp.generate.output);
+			assertEquals(output, input.hotp.generate.output);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
 			const hotp = new OTPAuth.HOTP({
 				...input.hotp.constructor.input,
@@ -634,11 +668,11 @@ describe('Test - OTPAuth.HOTP', () => {
 			});
 
 			const output = hotp.validate(input.hotp.validate.input);
-			expect(output).to.equal(input.hotp.validate.output);
+			assertEquals(output, input.hotp.validate.output);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
 			const hotp = new OTPAuth.HOTP({
 				...input.hotp.constructor.input,
@@ -646,7 +680,7 @@ describe('Test - OTPAuth.HOTP', () => {
 			});
 
 			const output = hotp.toString();
-			expect(output).to.equal(input.hotp.toString.output);
+			assertEquals(output, input.hotp.toString.output);
 		});
 	});
 });
@@ -656,25 +690,24 @@ describe('Test - OTPAuth.HOTP', () => {
  * ================================================
  */
 
-describe('Test - OTPAuth.TOTP', () => {
+describe('TOTP', () => {
 	it('defaults', () => {
 		const totp = new OTPAuth.TOTP();
 
-		expect(totp).to.be.an('object');
-		expect(totp.issuer).to.equal('');
-		expect(totp.label).to.equal('OTPAuth');
-		expect(totp.secret).to.be.instanceof(OTPAuth.Secret);
-		expect(totp.algorithm).to.equal('SHA1');
-		expect(totp.digits).to.equal(6);
-		expect(totp.period).to.equal(30);
+		assertEquals(totp.issuer, '');
+		assertEquals(totp.label, 'OTPAuth');
+		assert(totp.secret instanceof OTPAuth.Secret);
+		assertEquals(totp.algorithm, 'SHA1');
+		assertEquals(totp.digits, 6);
+		assertEquals(totp.period, 30);
 
-		expect(totp.generate()).to.be.a('string');
-		expect(totp.generate()).to.have.lengthOf(6);
+		assert(typeof totp.generate() === 'string');
+		assert(totp.generate().length === 6);
 
-		expect(totp.validate({ token: totp.generate() })).to.equal(0);
+		assertEquals(totp.validate({ token: totp.generate() }), 0);
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`generate[${index}]`, () => {
 			const totp = new OTPAuth.TOTP({
 				...input.totp.constructor.input,
@@ -682,11 +715,11 @@ describe('Test - OTPAuth.TOTP', () => {
 			});
 
 			const output = totp.generate(input.totp.generate.input);
-			expect(output).to.equal(input.totp.generate.output);
+			assertEquals(output, input.totp.generate.output);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`validate[${index}]`, () => {
 			const totp = new OTPAuth.TOTP({
 				...input.totp.constructor.input,
@@ -694,11 +727,11 @@ describe('Test - OTPAuth.TOTP', () => {
 			});
 
 			const output = totp.validate(input.totp.validate.input);
-			expect(output).to.equal(input.totp.validate.output);
+			assertEquals(output, input.totp.validate.output);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`toString[${index}]`, () => {
 			const totp = new OTPAuth.TOTP({
 				...input.totp.constructor.input,
@@ -706,7 +739,7 @@ describe('Test - OTPAuth.TOTP', () => {
 			});
 
 			const output = totp.toString();
-			expect(output).to.equal(input.totp.toString.output);
+			assertEquals(output, input.totp.toString.output);
 		});
 	});
 });
@@ -716,8 +749,8 @@ describe('Test - OTPAuth.TOTP', () => {
  * ================================================
  */
 
-describe('Test - OTPAuth.URI', () => {
-	inputs.forEach((input, index) => {
+describe('URI', () => {
+	cases.forEach((input, index) => {
 		it(`parse[${index}] - HOTP`, () => {
 			const hotp = new OTPAuth.HOTP({
 				...input.hotp.constructor.input,
@@ -725,11 +758,11 @@ describe('Test - OTPAuth.URI', () => {
 			});
 
 			const output = OTPAuth.URI.parse(input.hotp.toString.output);
-			expect(output).to.eql(hotp);
+			assertEquals(output, hotp);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`parse[${index}] - TOTP`, () => {
 			const totp = new OTPAuth.TOTP({
 				...input.totp.constructor.input,
@@ -737,11 +770,11 @@ describe('Test - OTPAuth.URI', () => {
 			});
 
 			const output = OTPAuth.URI.parse(input.totp.toString.output);
-			expect(output).to.eql(totp);
+			assertEquals(output, totp);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`stringify[${index}] - HOTP`, () => {
 			const hotp = new OTPAuth.HOTP({
 				...input.hotp.constructor.input,
@@ -749,11 +782,11 @@ describe('Test - OTPAuth.URI', () => {
 			});
 
 			const output = OTPAuth.URI.stringify(hotp);
-			expect(output).to.equal(input.hotp.toString.output);
+			assertEquals(output, input.hotp.toString.output);
 		});
 	});
 
-	inputs.forEach((input, index) => {
+	cases.forEach((input, index) => {
 		it(`stringify[${index}] - TOTP`, () => {
 			const totp = new OTPAuth.TOTP({
 				...input.totp.constructor.input,
@@ -761,7 +794,7 @@ describe('Test - OTPAuth.URI', () => {
 			});
 
 			const output = OTPAuth.URI.stringify(totp);
-			expect(output).to.equal(input.totp.toString.output);
+			assertEquals(output, input.totp.toString.output);
 		});
 	});
 });
@@ -771,8 +804,13 @@ describe('Test - OTPAuth.URI', () => {
  * ================================================
  */
 
-describe('Test - OTPAuth.version', () => {
+describe('version', () => {
 	it('version', () => {
-		expect(OTPAuth.version).to.be.a('string');
+		assert(typeof OTPAuth.version === 'string');
 	});
 });
+
+// Start tests if we were the ones who initialized Mocha.
+if (context.mochaSelfSetup) {
+	mocha.run();
+}
