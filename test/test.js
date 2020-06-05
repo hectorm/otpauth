@@ -799,6 +799,8 @@ describe('URI', () => {
 describe('version', () => {
 	it('version', () => {
 		assert(typeof OTPAuth.version === 'string');
+		// Semantic Versioning 2.0.0 regex (taken from: https://github.com/npm/node-semver/).
+		assertMatch(OTPAuth.version, /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][a-zA-Z0-9-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][a-zA-Z0-9-]*))*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/);
 	});
 });
 
