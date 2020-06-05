@@ -32,17 +32,9 @@ if (isNode && !('chai' in context)) {
 }
 
 if ('chai' in context) {
-	if (!('assert' in context)) {
-		context.assert = chai.assert;
-	}
-
-	if (!('assertEquals' in context)) {
-		context.assertEquals = chai.assert.deepEqual;
-	}
-
-	if (!('assertMatch' in context)) {
-		context.assertMatch = chai.assert.match;
-	}
+	context.assert = chai.assert;
+	context.assertEquals = chai.assert.deepEqual;
+	context.assertMatch = chai.assert.match;
 }
 
 if (isNode && !('OTPAuth' in context)) {
