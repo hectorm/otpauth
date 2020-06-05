@@ -13,9 +13,8 @@ import sjclPkg from 'sjcl/package.json';
 import otpauthPkg from './package.json';
 
 const customSjclFile = (() => {
-	const file = tmp.fileSync({ prefix: 'sjcl-', postfix: '.js' });
+	const tmpFile = tmp.fileSync({ prefix: 'sjcl-', postfix: '.js' });
 
-	const base = path.join(__dirname, 'node_modules/sjcl');
 	const fragments = [
 		'core/sjcl.js',
 		'core/bitArray.js',
@@ -27,12 +26,13 @@ const customSjclFile = (() => {
 	];
 
 	const code = `${fragments.reduce((content, fragment) => {
-		return content + fs.readFileSync(path.join(base, fragment));
+		const fragmentPath = require.resolve(`sjcl/${fragment}`);
+		return content + fs.readFileSync(fragmentPath);
 	}, '')}; export default sjcl;`;
 
-	fs.writeFileSync(file.name, code);
+	fs.writeFileSync(tmpFile.name, code);
 
-	return file.name;
+	return tmpFile.name;
 })();
 
 const minBuildOptions = {
