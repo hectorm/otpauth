@@ -1,3 +1,5 @@
+process.env.CHROME_BIN = require('playwright-chromium').chromium.executablePath();
+process.env.FIREFOX_BIN = require('playwright-firefox').firefox.executablePath();
 
 module.exports = config => {
 	config.set({
