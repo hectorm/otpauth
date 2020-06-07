@@ -6,21 +6,17 @@
 ***
 
 # OTPAuth
-One Time Password (HOTP/TOTP) library for Node.js and browsers.
 
-## Installation
-Install the module via `npm`.
-
-```sh
-npm install otpauth
-```
+One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.
 
 ## Usage
 
 ### Node.js
+
 ```javascript
 import * as OTPAuth from 'otpauth';
 
+// Create a new TOTP object.
 let totp = new OTPAuth.TOTP({
 	issuer: 'ACME',
 	label: 'AzureDiamond',
@@ -30,10 +26,10 @@ let totp = new OTPAuth.TOTP({
 	secret: 'NB2W45DFOIZA' // or "OTPAuth.Secret.fromB32('NB2W45DFOIZA')"
 });
 
-// Generate TOTP token.
+// Generate a token.
 let token = totp.generate();
 
-// Validate TOTP token.
+// Validate a token.
 let delta = totp.validate({
 	token: token,
 	window: 1
@@ -47,7 +43,17 @@ let uri = totp.toString(); // or "OTPAuth.URI.stringify(totp)"
 let parsedTotp = OTPAuth.URI.parse(uri);
 ```
 
-### Browser
+### Deno
+
+```javascript
+// @deno-types="https://cdn.jsdelivr.net/npm/otpauth@latest/types/index.d.ts"
+import * as OTPAuth from 'https://cdn.jsdelivr.net/npm/otpauth@latest/dist/otpauth.esm.js'
+
+// Same as above...
+```
+
+### Browsers
+
 ```html
 <script src="otpauth.umd.js"></script>
 <script>
@@ -56,13 +62,16 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 ```
 
 ## Documentation
+
 See the [documentation][docs] page.
 
 ## Supported hashing algorithms
+
 In Node.js, the same algorithms as [`Crypto.createHmac`][createHmac] function are supported, since it is used internally.
-In browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using the [Stanford Javascript Crypto Library][sjcl].
+In Deno and browsers, the `SHA1`, `SHA256` and `SHA512` algorithms are supported by using the [Stanford Javascript Crypto Library][sjcl].
 
 ## License
+
 [MIT License][license] © [Héctor Molinero Fernández](https://hector.molinero.dev/).
 
 [docs]: https://hectorm.github.io/otpauth/index.html

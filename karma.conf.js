@@ -6,7 +6,7 @@ module.exports = config => {
 		frameworks: ['mocha'],
 		files: [
 			require.resolve('chai/chai.js'),
-			process.env.IS_MINIFIED
+			process.env.IS_MINIFIED === 'true'
 				? './dist/otpauth.umd.min.js'
 				: './dist/otpauth.umd.js',
 			'./test/test.js'

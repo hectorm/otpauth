@@ -1,3 +1,6 @@
 module.exports = {
-	extends: ['hectorm']
+	extends: ['hectorm'],
+	parserOptions: {
+		ecmaVersion: 11
+	}
 };

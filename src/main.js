@@ -1,5 +1,5 @@
 /**
- * One Time Password (HOTP/TOTP) library for Node.js and browser.
+ * One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.
  * @module OTPAuth
  * @author Héctor Molinero Fernández <hector@molinero.dev>
  */

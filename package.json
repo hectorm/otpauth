@@ -1,7 +1,7 @@
 {
   "name": "otpauth",
   "version": "6.0.0",
-  "description": "One Time Password (HOTP/TOTP) library for Node.js and browsers",
+  "description": "One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers",
   "keywords": [
     "otp",
     "hotp",
@@ -47,6 +47,9 @@
     "test:node:unminified": "mocha --ui bdd --reporter spec",
     "test:node:minified": "IS_MINIFIED=true mocha -ui bdd --reporter spec",
     "test:node": "run-s test:node:*",
+    "test:deno:unminified": "deno run --allow-read --allow-net --allow-env ./test/test.js",
+    "test:deno:minified": "IS_MINIFIED=true deno run --allow-read --allow-net --allow-env ./test/test.js",
+    "test:deno": "run-s test:deno:*",
     "test": "run-s test:*",
     "docs": "rm -rf ./docs/ && documentation build ./src/** -f html -o ./docs/",
     "dist": "run-s lint build test docs",
