@@ -1,5 +1,5 @@
 
-/*! otpauth v6.0.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.0.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -2680,7 +2680,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '6.0.1';
+  var version = '6.0.2';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
