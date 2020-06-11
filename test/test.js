@@ -24,7 +24,7 @@
 	const isDeno = 'Deno' in context && Deno.version && Deno.version.deno;
 
 	if (isDeno) {
-		await import('https://cdn.jsdelivr.net/npm/mocha@7/mocha.js');
+		await import('https://cdn.jsdelivr.net/npm/mocha@8/mocha.js');
 		if (!('location' in context)) context.location = {};
 	}
 
