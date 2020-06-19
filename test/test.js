@@ -44,7 +44,7 @@
 		context.assertEquals = nodeAssert.deepStrictEqual;
 		context.assertMatch = nodeAssert.match;
 	} else if (isDeno) {
-		const denoAssert = await import('https://deno.land/std@0.56.0/testing/asserts.ts');
+		const denoAssert = await import('https://deno.land/std@0.58.0/testing/asserts.ts');
 		context.assert = denoAssert.assert;
 		context.assertEquals = denoAssert.assertEquals;
 		context.assertMatch = denoAssert.assertMatch;
