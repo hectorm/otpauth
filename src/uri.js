@@ -1,6 +1,5 @@
 import { Utils } from './utils';
 import { Secret } from './secret';
-// eslint-disable-next-line import/no-cycle
 import { HOTP, TOTP } from './otp';
 
 /**
