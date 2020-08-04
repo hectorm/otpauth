@@ -1,10 +1,10 @@
 
-/*! otpauth v6.0.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.0.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.OTPAuth = {}));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.OTPAuth = {}));
 }(this, (function (exports) { 'use strict';
 
   function _typeof(obj) {
@@ -2680,7 +2680,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '6.0.5';
+  var version = '6.0.6';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
