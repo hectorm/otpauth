@@ -29,7 +29,9 @@ jobs:
       - name: 'Test (browser)'
         run: 'npm run test:browser'
       - name: 'Test (node)'
-        run: 'npm run test:node'
+        run: |
+          node --version
+          npm run test:node
       - name: 'Test (deno)'
         run: |
           export DENO_INSTALL="$HOME/.deno"; export PATH="$DENO_INSTALL/bin:$PATH"
