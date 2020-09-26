@@ -23,13 +23,15 @@ jobs:
           key: "${{runner.os}}-node-${{hashFiles('**/package-lock.json')}}"
           restore-keys: '${{runner.os}}-node-'
       - name: 'Install dependencies'
-        run: 'npm install'
+        run: |
+          export PLAYWRIGHT_BROWSERS_PATH=0
+          npm install
       - name: 'Lint'
-        run: 'npm run lint'
+        run: |
+          npm run lint
       - name: 'Build'
-        run: 'npm run build'
-      - name: 'Test (browser)'
-        run: 'npm run test:browser'
+        run: |
+          npm run build
       - name: 'Test (node)'
         run: |
           node --version
@@ -40,5 +42,11 @@ jobs:
           curl -fsSL --proto '=https' --tlsv1.3 'https://deno.land/x/install/install.sh' | sh
           deno --version
           npm run test:deno
+      - name: 'Test (browser)'
+        run: |
+          "$(node -e 'process.stdout.write(require("playwright-chromium").chromium.executablePath());')" --version
+          "$(node -e 'process.stdout.write(require("playwright-firefox").firefox.executablePath());')" --version
+          npm run test:browser
       - name: 'Docs'
-        run: 'npm run docs'
+        run: |
+          npm run docs
