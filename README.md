@@ -56,7 +56,7 @@ import * as OTPAuth from 'https://deno.land/x/otpauth/dist/otpauth.esm.js'
 ### Browsers
 
 ```html
-<script src="otpauth.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js"></script>
 <script>
 	// Same as above...
 </script>
