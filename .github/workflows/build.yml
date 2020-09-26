@@ -13,6 +13,8 @@ jobs:
   build:
     name: 'Build'
     runs-on: 'ubuntu-20.04'
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: '0'
     steps:
       - name: 'Checkout project'
         uses: 'actions/checkout@v2'
@@ -24,7 +26,6 @@ jobs:
           restore-keys: '${{runner.os}}-node-'
       - name: 'Install dependencies'
         run: |
-          export PLAYWRIGHT_BROWSERS_PATH=0
           npm install
       - name: 'Lint'
         run: |
