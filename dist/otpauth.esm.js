@@ -1,5 +1,5 @@
 
-/*! otpauth v6.0.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -2674,6 +2674,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '6.0.8';
+var version = '6.0.9';
 
 export { HOTP, Secret, TOTP, URI, Utils, version };
