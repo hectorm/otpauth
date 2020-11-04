@@ -10,44 +10,15 @@ if (InternalUtils.isNode) {
 	const NodeBuffer = InternalUtils.globalThis.Buffer;
 	const NodeCrypto = InternalUtils.nodeRequire('crypto');
 
-	let nodeBufferFromArrayBuffer;
-	if (typeof NodeBuffer.from === 'function') {
-		nodeBufferFromArrayBuffer = NodeBuffer.from;
-	} else {
-		// Node.js < 5.10.0
-		nodeBufferFromArrayBuffer = arrayBuffer => {
-			const nodeBuffer = new NodeBuffer(arrayBuffer.byteLength);
-			const uint8Array = new Uint8Array(arrayBuffer);
-			for (let i = 0; i < uint8Array.length; i++) {
-				nodeBuffer[i] = uint8Array[i];
-			}
-			return nodeBuffer;
-		};
-	}
-
-	let nodeBufferToArrayBuffer;
-	if (NodeBuffer.prototype instanceof Uint8Array) {
-		nodeBufferToArrayBuffer = nodeBuffer => nodeBuffer.buffer;
-	} else {
-		// Node.js < 4.0.0
-		nodeBufferToArrayBuffer = nodeBuffer => {
-			const uint8Array = new Uint8Array(nodeBuffer.length);
-			for (let i = 0; i < uint8Array.length; i++) {
-				uint8Array[i] = nodeBuffer[i];
-			}
-			return uint8Array.buffer;
-		};
-	}
-
 	randomBytes = size => {
 		const bytes = NodeCrypto.randomBytes(size);
-		return nodeBufferToArrayBuffer(bytes);
+		return bytes.buffer;
 	};
 
 	hmacDigest = (algorithm, key, message) => {
-		const hmac = NodeCrypto.createHmac(algorithm, nodeBufferFromArrayBuffer(key));
-		hmac.update(nodeBufferFromArrayBuffer(message));
-		return nodeBufferToArrayBuffer(hmac.digest());
+		const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
+		hmac.update(NodeBuffer.from(message));
+		return hmac.digest().buffer;
 	};
 } else {
 	const BrowserCrypto = InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto;
