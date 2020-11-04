@@ -1,5 +1,5 @@
 
-/*! otpauth v6.0.9 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.1.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -1868,56 +1868,25 @@ sjcl.misc.hmac.prototype.digest = function () {
 // eslint-disable-next-line import/no-extraneous-dependencies
 var randomBytes;
 var hmacDigest;
+var timingSafeEqual;
 
 if (InternalUtils.isNode) {
   var NodeBuffer = InternalUtils.globalThis.Buffer;
   var NodeCrypto = InternalUtils.nodeRequire('crypto');
-  var nodeBufferFromArrayBuffer;
-
-  if (typeof NodeBuffer.from === 'function') {
-    nodeBufferFromArrayBuffer = NodeBuffer.from;
-  } else {
-    // Node.js < 5.10.0
-    nodeBufferFromArrayBuffer = function nodeBufferFromArrayBuffer(arrayBuffer) {
-      var nodeBuffer = new NodeBuffer(arrayBuffer.byteLength);
-      var uint8Array = new Uint8Array(arrayBuffer);
-
-      for (var i = 0; i < uint8Array.length; i++) {
-        nodeBuffer[i] = uint8Array[i];
-      }
-
-      return nodeBuffer;
-    };
-  }
-
-  var nodeBufferToArrayBuffer;
-
-  if (NodeBuffer.prototype instanceof Uint8Array) {
-    nodeBufferToArrayBuffer = function nodeBufferToArrayBuffer(nodeBuffer) {
-      return nodeBuffer.buffer;
-    };
-  } else {
-    // Node.js < 4.0.0
-    nodeBufferToArrayBuffer = function nodeBufferToArrayBuffer(nodeBuffer) {
-      var uint8Array = new Uint8Array(nodeBuffer.length);
-
-      for (var i = 0; i < uint8Array.length; i++) {
-        uint8Array[i] = nodeBuffer[i];
-      }
-
-      return uint8Array.buffer;
-    };
-  }
 
   randomBytes = function randomBytes(size) {
     var bytes = NodeCrypto.randomBytes(size);
-    return nodeBufferToArrayBuffer(bytes);
+    return bytes.buffer;
   };
 
   hmacDigest = function hmacDigest(algorithm, key, message) {
-    var hmac = NodeCrypto.createHmac(algorithm, nodeBufferFromArrayBuffer(key));
-    hmac.update(nodeBufferFromArrayBuffer(message));
-    return nodeBufferToArrayBuffer(hmac.digest());
+    var hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
+    hmac.update(NodeBuffer.from(message));
+    return hmac.digest().buffer;
+  };
+
+  timingSafeEqual = function timingSafeEqual(a, b) {
+    return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
   };
 } else {
   var BrowserCrypto = InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto;
@@ -1955,6 +1924,21 @@ if (InternalUtils.isNode) {
     hmac.update(sjcl.codec.arrayBuffer.toBits(message));
     return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
   };
+
+  timingSafeEqual = function timingSafeEqual(a, b) {
+    if (a.length !== b.length) {
+      throw new TypeError('Input strings must have the same length');
+    }
+
+    var i = -1;
+    var out = 0;
+
+    while (++i < a.length) {
+      out |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+
+    return out === 0;
+  };
 }
 /**
  * An object containing some cryptography functions with dirty workarounds for Node.js and browsers.
@@ -1979,7 +1963,15 @@ var Crypto = {
    * @param {ArrayBuffer} message Message.
    * @returns {ArrayBuffer} Digest.
    */
-  hmacDigest: hmacDigest
+  hmacDigest: hmacDigest,
+
+  /**
+   * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
+   * @param {string} a String a.
+   * @param {string} b String b.
+   * @returns {boolean} Equality result.
+   */
+  timingSafeEqual: timingSafeEqual
 };
 
 /**
@@ -2290,7 +2282,7 @@ var HOTP = /*#__PURE__*/function () {
           counter: i
         });
 
-        if (token === generatedToken) {
+        if (token.length === generatedToken.length && Crypto.timingSafeEqual(token, generatedToken)) {
           return i - counter;
         }
       }
@@ -2674,6 +2666,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '6.0.9';
+var version = '6.1.0';
 
 export { HOTP, Secret, TOTP, URI, Utils, version };
