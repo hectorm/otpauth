@@ -5,6 +5,7 @@ import { InternalUtils } from './utils';
 
 let randomBytes;
 let hmacDigest;
+let timingSafeEqual;
 
 if (InternalUtils.isNode) {
 	const NodeBuffer = InternalUtils.globalThis.Buffer;
@@ -19,6 +20,10 @@ if (InternalUtils.isNode) {
 		const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
 		hmac.update(NodeBuffer.from(message));
 		return hmac.digest().buffer;
+	};
+
+	timingSafeEqual = (a, b) => {
+		return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
 	};
 } else {
 	const BrowserCrypto = InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto;
@@ -53,6 +58,18 @@ if (InternalUtils.isNode) {
 		hmac.update(sjcl.codec.arrayBuffer.toBits(message));
 		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
 	};
+
+	timingSafeEqual = (a, b) => {
+		if (a.length !== b.length) {
+			throw new TypeError('Input strings must have the same length');
+		}
+		let i = -1;
+		let out = 0;
+		while (++i < a.length) {
+			out |= a.charCodeAt(i) ^ b.charCodeAt(i);
+		}
+		return out === 0;
+	};
 }
 
 /**
@@ -77,6 +94,14 @@ export const Crypto = {
 	 * @param {ArrayBuffer} message Message.
 	 * @returns {ArrayBuffer} Digest.
 	 */
-	hmacDigest
+	hmacDigest,
+
+	/**
+	 * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
+	 * @param {string} a String a.
+	 * @param {string} b String b.
+	 * @returns {boolean} Equality result.
+	 */
+	timingSafeEqual
 
 };
