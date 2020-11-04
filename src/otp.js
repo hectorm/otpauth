@@ -140,7 +140,7 @@ export class HOTP {
 				counter: i
 			});
 
-			if (token === generatedToken) {
+			if (Crypto.timingSafeEqual(token, generatedToken)) {
 				return i - counter;
 			}
 		}
