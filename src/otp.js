@@ -142,10 +142,7 @@ export class HOTP {
 				counter: i
 			});
 
-			if (
-				token.length === generatedToken.length
-				&& Crypto.timingSafeEqual(token, generatedToken)
-			) {
+			if (Crypto.timingSafeEqual(token, generatedToken)) {
 				delta = i - counter;
 			}
 		}
