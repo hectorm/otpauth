@@ -132,6 +132,8 @@ export class HOTP {
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
+		let delta = null;
+
 		for (let i = counter - window; i <= counter + window; ++i) {
 			const generatedToken = HOTP.generate({
 				secret,
@@ -140,15 +142,12 @@ export class HOTP {
 				counter: i
 			});
 
-			if (
-				token.length === generatedToken.length
-				&& Crypto.timingSafeEqual(token, generatedToken)
-			) {
-				return i - counter;
+			if (Crypto.timingSafeEqual(token, generatedToken)) {
+				delta = i - counter;
 			}
 		}
 
-		return null;
+		return delta;
 	}
 
 	/**
