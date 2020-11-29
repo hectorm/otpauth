@@ -121,6 +121,7 @@ export class HOTP {
 	 * @param {string} config.token Token value.
 	 * @param {Secret} config.secret Secret key.
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+	 * @param {number} config.digits Token length.
 	 * @param {number} [config.counter=0] Counter value.
 	 * @param {number} [config.window=1] Window of counter values to test.
 	 * @returns {number|null} Token delta, or null if the token is not found.
@@ -129,16 +130,20 @@ export class HOTP {
 		token,
 		secret,
 		algorithm,
+		digits,
 		counter = defaults.counter,
 		window = defaults.window
 	}) {
+		// Return early if the token length does not match the digit number.
+		if (token.length !== digits) return null;
+
 		let delta = null;
 
 		for (let i = counter - window; i <= counter + window; ++i) {
 			const generatedToken = HOTP.generate({
 				secret,
 				algorithm,
-				digits: token.length,
+				digits,
 				counter: i
 			});
 
@@ -164,9 +169,10 @@ export class HOTP {
 		window
 	}) {
 		return HOTP.validate({
-			token: Utils.pad(token, this.digits),
+			token,
 			secret: this.secret,
 			algorithm: this.algorithm,
+			digits: this.digits,
 			counter,
 			window
 		});
@@ -292,6 +298,7 @@ export class TOTP {
 	 * @param {string} config.token Token value.
 	 * @param {Secret} config.secret Secret key.
 	 * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+	 * @param {number} config.digits Token length.
 	 * @param {number} [config.period=30] Token time-step duration.
 	 * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
 	 * @param {number} [config.window=1] Window of counter values to test.
@@ -301,6 +308,7 @@ export class TOTP {
 		token,
 		secret,
 		algorithm,
+		digits,
 		period = defaults.period,
 		timestamp = Date.now(),
 		window
@@ -309,6 +317,7 @@ export class TOTP {
 			token,
 			secret,
 			algorithm,
+			digits,
 			counter: Math.floor(timestamp / 1000 / period),
 			window
 		});
@@ -328,9 +337,10 @@ export class TOTP {
 		window
 	}) {
 		return TOTP.validate({
-			token: Utils.pad(token, this.digits),
+			token,
 			secret: this.secret,
 			algorithm: this.algorithm,
+			digits: this.digits,
 			period: this.period,
 			timestamp,
 			window

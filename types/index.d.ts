@@ -30,6 +30,7 @@ export declare class HOTP {
 		token: string,
 		secret: Secret,
 		algorithm?: string,
+		digits: number,
 		counter?: number,
 		window?: number
 	}): number | null;
@@ -76,6 +77,7 @@ export declare class TOTP {
 		token: string,
 		secret: Secret,
 		algorithm?: string,
+		digits: number,
 		period?: number,
 		timestamp?: number,
 		window?: number
