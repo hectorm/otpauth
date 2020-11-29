@@ -1,5 +1,5 @@
 
-/*! otpauth v6.1.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.2.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 'use strict';
 
@@ -2212,6 +2212,7 @@ var HOTP = /*#__PURE__*/function () {
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+     * @param {number} config.digits Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
@@ -2234,9 +2235,10 @@ var HOTP = /*#__PURE__*/function () {
           counter = _ref3$counter === void 0 ? this.counter : _ref3$counter,
           window = _ref3.window;
       return HOTP.validate({
-        token: Utils.pad(token, this.digits),
+        token: token,
         secret: this.secret,
         algorithm: this.algorithm,
+        digits: this.digits,
         counter: counter,
         window: window
       });
@@ -2273,25 +2275,29 @@ var HOTP = /*#__PURE__*/function () {
       var token = _ref5.token,
           secret = _ref5.secret,
           algorithm = _ref5.algorithm,
+          digits = _ref5.digits,
           _ref5$counter = _ref5.counter,
           counter = _ref5$counter === void 0 ? defaults.counter : _ref5$counter,
           _ref5$window = _ref5.window,
           window = _ref5$window === void 0 ? defaults.window : _ref5$window;
+      // Return early if the token length does not match the digit number.
+      if (token.length !== digits) return null;
+      var delta = null;
 
       for (var i = counter - window; i <= counter + window; ++i) {
         var generatedToken = HOTP.generate({
           secret: secret,
           algorithm: algorithm,
-          digits: token.length,
+          digits: digits,
           counter: i
         });
 
-        if (token.length === generatedToken.length && Crypto.timingSafeEqual(token, generatedToken)) {
-          return i - counter;
+        if (Crypto.timingSafeEqual(token, generatedToken)) {
+          delta = i - counter;
         }
       }
 
-      return null;
+      return delta;
     }
   }]);
 
@@ -2403,6 +2409,7 @@ var TOTP = /*#__PURE__*/function () {
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
+     * @param {number} config.digits Token length.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
@@ -2425,9 +2432,10 @@ var TOTP = /*#__PURE__*/function () {
           timestamp = _ref8.timestamp,
           window = _ref8.window;
       return TOTP.validate({
-        token: Utils.pad(token, this.digits),
+        token: token,
         secret: this.secret,
         algorithm: this.algorithm,
+        digits: this.digits,
         period: this.period,
         timestamp: timestamp,
         window: window
@@ -2467,6 +2475,7 @@ var TOTP = /*#__PURE__*/function () {
       var token = _ref10.token,
           secret = _ref10.secret,
           algorithm = _ref10.algorithm,
+          digits = _ref10.digits,
           _ref10$period = _ref10.period,
           period = _ref10$period === void 0 ? defaults.period : _ref10$period,
           _ref10$timestamp = _ref10.timestamp,
@@ -2476,6 +2485,7 @@ var TOTP = /*#__PURE__*/function () {
         token: token,
         secret: secret,
         algorithm: algorithm,
+        digits: digits,
         counter: Math.floor(timestamp / 1000 / period),
         window: window
       });
@@ -2670,7 +2680,7 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '6.1.0';
+var version = '6.2.0';
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
