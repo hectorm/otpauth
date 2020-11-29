@@ -78,7 +78,7 @@
     "playwright-chromium": "~1.6.2",
     "playwright-firefox": "~1.6.2",
     "rollup-plugin-terser": "~7.0.2",
-    "rollup": "~2.33.3",
+    "rollup": "~2.34.0",
     "sjcl": "1.0.8",
     "tmp": "~0.2.1"
   },
