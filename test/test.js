@@ -25,7 +25,6 @@
 
 	if (isDeno) {
 		await import('https://cdn.jsdelivr.net/npm/mocha@8/mocha.js');
-		if (!('location' in context)) context.location = {};
 	}
 
 	if (!('describe' in context) || !('it' in context)) {
