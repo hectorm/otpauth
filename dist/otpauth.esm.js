@@ -1,5 +1,5 @@
 
-/*! otpauth v6.2.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.2.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -2005,12 +2005,12 @@ var Secret = /*#__PURE__*/function () {
 
   _createClass(Secret, [{
     key: "raw",
-
+    get:
     /**
      * String representation of secret key.
      * @type {string}
      */
-    get: function get() {
+    function get() {
       Object.defineProperty(this, 'raw', {
         enumerable: true,
         configurable: true,
@@ -2183,14 +2183,14 @@ var HOTP = /*#__PURE__*/function () {
 
   _createClass(HOTP, [{
     key: "generate",
-
+    value:
     /**
      * Generates an HOTP token.
      * @param {Object} [config] Configuration options.
      * @param {number} [config.counter=this.counter++] Counter value.
      * @returns {string} Token.
      */
-    value: function generate() {
+    function generate() {
       var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           _ref2$counter = _ref2.counter,
           counter = _ref2$counter === void 0 ? this.counter++ : _ref2$counter;
@@ -2216,7 +2216,7 @@ var HOTP = /*#__PURE__*/function () {
 
   }, {
     key: "validate",
-
+    value:
     /**
      * Validates an HOTP token.
      * @param {Object} config Configuration options.
@@ -2225,7 +2225,7 @@ var HOTP = /*#__PURE__*/function () {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    value: function validate(_ref3) {
+    function validate(_ref3) {
       var token = _ref3.token,
           _ref3$counter = _ref3.counter,
           counter = _ref3$counter === void 0 ? this.counter : _ref3$counter,
@@ -2379,14 +2379,14 @@ var TOTP = /*#__PURE__*/function () {
 
   _createClass(TOTP, [{
     key: "generate",
-
+    value:
     /**
      * Generates a TOTP token.
      * @param {Object} [config] Configuration options.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    value: function generate() {
+    function generate() {
       var _ref7 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           _ref7$timestamp = _ref7.timestamp,
           timestamp = _ref7$timestamp === void 0 ? Date.now() : _ref7$timestamp;
@@ -2414,7 +2414,7 @@ var TOTP = /*#__PURE__*/function () {
 
   }, {
     key: "validate",
-
+    value:
     /**
      * Validates a TOTP token.
      * @param {Object} config Configuration options.
@@ -2423,7 +2423,7 @@ var TOTP = /*#__PURE__*/function () {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    value: function validate(_ref8) {
+    function validate(_ref8) {
       var token = _ref8.token,
           timestamp = _ref8.timestamp,
           window = _ref8.window;
@@ -2546,13 +2546,13 @@ var URI = /*#__PURE__*/function () {
 
   _createClass(URI, null, [{
     key: "parse",
-
+    value:
     /**
      * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
      * @param {string} uri Google Authenticator Key URI.
      * @returns {HOTP|TOTP} HOTP/TOTP object.
      */
-    value: function parse(uri) {
+    function parse(uri) {
       var uriGroups;
 
       try {
@@ -2676,6 +2676,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '6.2.2';
+var version = '6.2.3';
 
 export { HOTP, Secret, TOTP, URI, Utils, version };
