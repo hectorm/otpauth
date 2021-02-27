@@ -68,7 +68,7 @@ export default {
 	],
 	plugins: [
 		alias({ entries: [{ find: 'sjcl', replacement: customSjclFile }] }),
-		replace({ __OTPAUTH_VERSION__: otpauthPkg.version }),
+		replace({ preventAssignment: true, __OTPAUTH_VERSION__: otpauthPkg.version }),
 		resolve(),
 		babel({ babelHelpers: 'bundled' }),
 		{ banner: [getBanner(otpauthPkg), getBanner(sjclPkg)].join('\n') }
