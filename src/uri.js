@@ -3,19 +3,12 @@ import { Secret } from './secret';
 import { HOTP, TOTP } from './otp';
 
 /**
- * Valid key URI parameters.
- * @private
- * @type {Array}
- */
-const OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
-
-/**
  * Key URI regex.
  *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
  * @private
  * @type {RegExp}
  */
-const OTPURI_REGEX = new RegExp(`^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:${OTPURI_PARAMS.join('|')})=[^&]+)+)$`, 'i');
+const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?[A-Z0-9.~_-]+=[^&]*)+)$/i;
 
 /**
  * RFC 4648 base32 alphabet with pad.
@@ -70,7 +63,7 @@ export class URI {
 		const uriType = uriGroups[1].toLowerCase();
 		const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
 		const uriParams = uriGroups[3].split('&').reduce((acc, cur) => {
-			const pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
+			const pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
 			const pairKey = pairArr[0].toLowerCase();
 			const pairVal = pairArr[1];
 			const pairAcc = acc;
