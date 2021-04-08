@@ -1,5 +1,5 @@
 
-/*! otpauth v6.2.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v6.2.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -2492,20 +2492,13 @@ var TOTP = /*#__PURE__*/function () {
 }();
 
 /**
- * Valid key URI parameters.
- * @private
- * @type {Array}
- */
-
-var OTPURI_PARAMS = ['issuer', 'secret', 'algorithm', 'digits', 'counter', 'period'];
-/**
  * Key URI regex.
  *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
  * @private
  * @type {RegExp}
  */
 
-var OTPURI_REGEX = new RegExp("^otpauth:\\/\\/([ht]otp)\\/(.+)\\?((?:&?(?:".concat(OTPURI_PARAMS.join('|'), ")=[^&]+)+)$"), 'i');
+var OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?[A-Z0-9.~_-]+=[^&]*)+)$/i;
 /**
  * RFC 4648 base32 alphabet with pad.
  * @private
@@ -2569,7 +2562,7 @@ var URI = /*#__PURE__*/function () {
       var uriType = uriGroups[1].toLowerCase();
       var uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
       var uriParams = uriGroups[3].split('&').reduce(function (acc, cur) {
-        var pairArr = cur.split(/=(.+)/, 2).map(decodeURIComponent);
+        var pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
         var pairKey = pairArr[0].toLowerCase();
         var pairVal = pairArr[1];
         var pairAcc = acc;
@@ -2676,6 +2669,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '6.2.3';
+var version = '6.2.4';
 
 export { HOTP, Secret, TOTP, URI, Utils, version };
