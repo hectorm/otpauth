@@ -447,6 +447,348 @@
 				output: 'otpauth://totp/OTPAuth?secret=E4C7AD2ASCF2WSXW7GAP375VQMIWWLT66G5CGALDVV7KYSEAJ6A7HAPVHAYZF3Z3&algorithm=SHA1&digits=6&period=30'
 			}
 		}
+	}, {
+		// 10
+		buffer: new Uint16Array([30962, 21697, 33627, 20478, 1528, 33224, 26631, 29032, 49527, 27537, 10606, 33477, 42138, 35439, 20536, 3785, 3658, 16089, 21145, 61065]).buffer,
+		raw: '\u00F2\u0078\u00C1\u0054\u005B\u0083\u00FE\u004F\u00F8\u0005\u00C8\u0081\u0007\u0068\u0068\u0071\u0077\u00C1\u0091\u006B\u006E\u0029\u00C5\u0082\u009A\u00A4\u006F\u008A\u0038\u0050\u00C9\u000E\u004A\u000E\u00D9\u003E\u0099\u0052\u0089\u00EE',
+		b32: '6J4MCVC3QP7E76AFZCAQO2DIOF34DELLNYU4LAU2URXYUOCQZEHEUDWZH2MVFCPO',
+		hex: 'F278C1545B83FE4FF805C8810768687177C1916B6E29C5829AA46F8A3850C90E4A0ED93E995289EE',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha1' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '188821'
+			},
+			validate: {
+				input: { token: '188821', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=6J4MCVC3QP7E76AFZCAQO2DIOF34DELLNYU4LAU2URXYUOCQZEHEUDWZH2MVFCPO&algorithm=SHA1&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha1', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '805138'
+			},
+			validate: {
+				input: { token: '805138', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=6J4MCVC3QP7E76AFZCAQO2DIOF34DELLNYU4LAU2URXYUOCQZEHEUDWZH2MVFCPO&algorithm=SHA1&digits=6&period=5'
+			}
+		}
+	}, {
+		// 11
+		buffer: new Uint16Array([59872, 6069, 56070, 48753, 63025, 39523, 58831, 64361, 2334, 26780, 42356, 50540, 56554, 12152, 16863, 571, 16603, 3269, 44292, 34800]).buffer,
+		raw: '\u00E0\u00E9\u00B5\u0017\u0006\u00DB\u0071\u00BE\u0031\u00F6\u0063\u009A\u00CF\u00E5\u0069\u00FB\u001E\u0009\u009C\u0068\u0074\u00A5\u006C\u00C5\u00EA\u00DC\u0078\u002F\u00DF\u0041\u003B\u0002\u00DB\u0040\u00C5\u000C\u0004\u00AD\u00F0\u0087',
+		b32: '4DU3KFYG3NY34MPWMONM7ZLJ7MPATHDIOSSWZRPK3R4C7X2BHMBNWQGFBQCK34EH',
+		hex: 'E0E9B51706DB71BE31F6639ACFE569FB1E099C6874A56CC5EADC782FDF413B02DB40C50C04ADF087',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha224' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '315879'
+			},
+			validate: {
+				input: { token: '315879', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=4DU3KFYG3NY34MPWMONM7ZLJ7MPATHDIOSSWZRPK3R4C7X2BHMBNWQGFBQCK34EH&algorithm=SHA224&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha224', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '896072'
+			},
+			validate: {
+				input: { token: '896072', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=4DU3KFYG3NY34MPWMONM7ZLJ7MPATHDIOSSWZRPK3R4C7X2BHMBNWQGFBQCK34EH&algorithm=SHA224&digits=6&period=5'
+			}
+		}
+	}, {
+		// 12
+		buffer: new Uint16Array([46317, 43292, 62725, 60546, 46677, 44765, 38165, 18530, 31341, 35422, 19506, 7540, 23097, 61697, 35124, 36125, 58291, 22052, 23823, 46255]).buffer,
+		raw: '\u00ED\u00B4\u001C\u00A9\u0005\u00F5\u0082\u00EC\u0055\u00B6\u00DD\u00AE\u0015\u0095\u0062\u0048\u006D\u007A\u005E\u008A\u0032\u004C\u0074\u001D\u0039\u005A\u0001\u00F1\u0034\u0089\u001D\u008D\u00B3\u00E3\u0024\u0056\u000F\u005D\u00AF\u00B4',
+		b32: '5W2BZKIF6WBOYVNW3WXBLFLCJBWXUXUKGJGHIHJZLIA7CNEJDWG3HYZEKYHV3L5U',
+		hex: 'EDB41CA905F582EC55B6DDAE159562486D7A5E8A324C741D395A01F134891D8DB3E324560F5DAFB4',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha256' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '639940'
+			},
+			validate: {
+				input: { token: '639940', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=5W2BZKIF6WBOYVNW3WXBLFLCJBWXUXUKGJGHIHJZLIA7CNEJDWG3HYZEKYHV3L5U&algorithm=SHA256&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha256', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '908354'
+			},
+			validate: {
+				input: { token: '908354', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=5W2BZKIF6WBOYVNW3WXBLFLCJBWXUXUKGJGHIHJZLIA7CNEJDWG3HYZEKYHV3L5U&algorithm=SHA256&digits=6&period=5'
+			}
+		}
+	}, {
+		// 13
+		buffer: new Uint16Array([35200, 62990, 7581, 58630, 38929, 44639, 187, 2966, 52417, 5318, 1773, 12420, 8629, 39433, 33260, 4890, 16322, 773, 6243, 31930]).buffer,
+		raw: '\u0080\u0089\u000E\u00F6\u009D\u001D\u0006\u00E5\u0011\u0098\u005F\u00AE\u00BB\u0000\u0096\u000B\u00C1\u00CC\u00C6\u0014\u00ED\u0006\u0084\u0030\u00B5\u0021\u0009\u009A\u00EC\u0081\u001A\u0013\u00C2\u003F\u0005\u0003\u0063\u0018\u00BA\u007C',
+		b32: 'QCEQ55U5DUDOKEMYL6XLWAEWBPA4ZRQU5UDIIMFVEEEZV3EBDIJ4EPYFANRRROT4',
+		hex: '80890EF69D1D06E511985FAEBB00960BC1CCC614ED068430B521099AEC811A13C23F05036318BA7C',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha384' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '380107'
+			},
+			validate: {
+				input: { token: '380107', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=QCEQ55U5DUDOKEMYL6XLWAEWBPA4ZRQU5UDIIMFVEEEZV3EBDIJ4EPYFANRRROT4&algorithm=SHA384&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha384', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '803042'
+			},
+			validate: {
+				input: { token: '803042', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=QCEQ55U5DUDOKEMYL6XLWAEWBPA4ZRQU5UDIIMFVEEEZV3EBDIJ4EPYFANRRROT4&algorithm=SHA384&digits=6&period=5'
+			}
+		}
+	}, {
+		// 14
+		buffer: new Uint16Array([62708, 476, 35751, 42199, 26053, 9636, 7798, 16008, 54524, 40401, 30304, 5801, 16891, 52836, 24993, 51823, 4929, 55721, 64238, 53445]).buffer,
+		raw: '\u00F4\u00F4\u00DC\u0001\u00A7\u008B\u00D7\u00A4\u00C5\u0065\u00A4\u0025\u0076\u001E\u0088\u003E\u00FC\u00D4\u00D1\u009D\u0060\u0076\u00A9\u0016\u00FB\u0041\u0064\u00CE\u00A1\u0061\u006F\u00CA\u0041\u0013\u00A9\u00D9\u00EE\u00FA\u00C5\u00D0',
+		b32: '6T2NYANHRPL2JRLFUQSXMHUIH36NJUM5MB3KSFX3IFSM5ILBN7FECE5J3HXPVROQ',
+		hex: 'F4F4DC01A78BD7A4C565A425761E883EFCD4D19D6076A916FB4164CEA1616FCA4113A9D9EEFAC5D0',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha512' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '498152'
+			},
+			validate: {
+				input: { token: '498152', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=6T2NYANHRPL2JRLFUQSXMHUIH36NJUM5MB3KSFX3IFSM5ILBN7FECE5J3HXPVROQ&algorithm=SHA512&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha512', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '142394'
+			},
+			validate: {
+				input: { token: '142394', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=6T2NYANHRPL2JRLFUQSXMHUIH36NJUM5MB3KSFX3IFSM5ILBN7FECE5J3HXPVROQ&algorithm=SHA512&digits=6&period=5'
+			}
+		}
+	}, {
+		// 15
+		buffer: new Uint16Array([18898, 19236, 32930, 1508, 8382, 36005, 39479, 24160, 57062, 10043, 52507, 26259, 28002, 52332, 31553, 65310, 11440, 28960, 47512, 36733]).buffer,
+		raw: '\u00D2\u0049\u0024\u004B\u00A2\u0080\u00E4\u0005\u00BE\u0020\u00A5\u008C\u0037\u009A\u0060\u005E\u00E6\u00DE\u003B\u0027\u001B\u00CD\u0093\u0066\u0062\u006D\u006C\u00CC\u0041\u007B\u001E\u00FF\u00B0\u002C\u0020\u0071\u0098\u00B9\u007D\u008F',
+		b32: '2JESIS5CQDSALPRAUWGDPGTAL3TN4OZHDPGZGZTCNVWMYQL3D373ALBAOGMLS7MP',
+		hex: 'D249244BA280E405BE20A58C379A605EE6DE3B271BCD9366626D6CCC417B1EFFB02C207198B97D8F',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha3-224' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '315320'
+			},
+			validate: {
+				input: { token: '315320', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=2JESIS5CQDSALPRAUWGDPGTAL3TN4OZHDPGZGZTCNVWMYQL3D373ALBAOGMLS7MP&algorithm=SHA3-224&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha3-224', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '428883'
+			},
+			validate: {
+				input: { token: '428883', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=2JESIS5CQDSALPRAUWGDPGTAL3TN4OZHDPGZGZTCNVWMYQL3D373ALBAOGMLS7MP&algorithm=SHA3-224&digits=6&period=5'
+			}
+		}
+	}, {
+		// 16
+		buffer: new Uint16Array([206, 55307, 42195, 2063, 11460, 63004, 25397, 42731, 3738, 49669, 48340, 32191, 15925, 697, 46246, 37598, 52735, 61462, 13904, 53412]).buffer,
+		raw: '\u00CE\u0000\u000B\u00D8\u00D3\u00A4\u000F\u0008\u00C4\u002C\u001C\u00F6\u0035\u0063\u00EB\u00A6\u009A\u000E\u0005\u00C2\u00D4\u00BC\u00BF\u007D\u0035\u003E\u00B9\u0002\u00A6\u00B4\u00DE\u0092\u00FF\u00CD\u0016\u00F0\u0050\u0036\u00A4\u00D0',
+		b32: 'ZYAAXWGTUQHQRRBMDT3DKY7LU2NA4BOC2S6L67JVH24QFJVU32JP7TIW6BIDNJGQ',
+		hex: 'CE000BD8D3A40F08C42C1CF63563EBA69A0E05C2D4BCBF7D353EB902A6B4DE92FFCD16F05036A4D0',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha3-256' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '197377'
+			},
+			validate: {
+				input: { token: '197377', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=ZYAAXWGTUQHQRRBMDT3DKY7LU2NA4BOC2S6L67JVH24QFJVU32JP7TIW6BIDNJGQ&algorithm=SHA3-256&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha3-256', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '250041'
+			},
+			validate: {
+				input: { token: '250041', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=ZYAAXWGTUQHQRRBMDT3DKY7LU2NA4BOC2S6L67JVH24QFJVU32JP7TIW6BIDNJGQ&algorithm=SHA3-256&digits=6&period=5'
+			}
+		}
+	}, {
+		// 17
+		buffer: new Uint16Array([30959, 10450, 52070, 122, 26633, 20195, 44317, 35309, 8602, 17395, 30065, 7037, 18931, 39512, 47870, 57239, 42917, 54683, 10016, 9958]).buffer,
+		raw: '\u00EF\u0078\u00D2\u0028\u0066\u00CB\u007A\u0000\u0009\u0068\u00E3\u004E\u001D\u00AD\u00ED\u0089\u009A\u0021\u00F3\u0043\u0071\u0075\u007D\u001B\u00F3\u0049\u0058\u009A\u00FE\u00BA\u0097\u00DF\u00A5\u00A7\u009B\u00D5\u0020\u0027\u00E6\u0026',
+		b32: '554NEKDGZN5AACLI4NHB3LPNRGNCD42DOF2X2G7TJFMJV7V2S7P2LJ432UQCPZRG',
+		hex: 'EF78D22866CB7A000968E34E1DADED899A21F34371757D1BF349589AFEBA97DFA5A79BD52027E626',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha3-384' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '282670'
+			},
+			validate: {
+				input: { token: '282670', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=554NEKDGZN5AACLI4NHB3LPNRGNCD42DOF2X2G7TJFMJV7V2S7P2LJ432UQCPZRG&algorithm=SHA3-384&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha3-384', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '167415'
+			},
+			validate: {
+				input: { token: '167415', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=554NEKDGZN5AACLI4NHB3LPNRGNCD42DOF2X2G7TJFMJV7V2S7P2LJ432UQCPZRG&algorithm=SHA3-384&digits=6&period=5'
+			}
+		}
+	}, {
+		// 18
+		buffer: new Uint16Array([35583, 39822, 46901, 30918, 55399, 37103, 32535, 55417, 32950, 9801, 47763, 31688, 6827, 42877, 50822, 40618, 34914, 40194, 63073, 40081]).buffer,
+		raw: '\u00FF\u008A\u008E\u009B\u0035\u00B7\u00C6\u0078\u0067\u00D8\u00EF\u0090\u0017\u007F\u0079\u00D8\u00B6\u0080\u0049\u0026\u0093\u00BA\u00C8\u007B\u00AB\u001A\u007D\u00A7\u0086\u00C6\u00AA\u009E\u0062\u0088\u0002\u009D\u0061\u00F6\u0091\u009C',
+		b32: '76FI5GZVW7DHQZ6Y56IBO73Z3C3IASJGSO5MQ65LDJ62PBWGVKPGFCACTVQ7NEM4',
+		hex: 'FF8A8E9B35B7C67867D8EF90177F79D8B680492693BAC87BAB1A7DA786C6AA9E6288029D61F6919C',
+		hotp: {
+			constructor: {
+				input: { algorithm: 'sha3-512' }
+			},
+			generate: {
+				input: { counter: 1e10 },
+				output: '690216'
+			},
+			validate: {
+				input: { token: '690216', counter: 1e10 - 90, window: 100 },
+				output: 90
+			},
+			toString: {
+				output: 'otpauth://hotp/OTPAuth?secret=76FI5GZVW7DHQZ6Y56IBO73Z3C3IASJGSO5MQ65LDJ62PBWGVKPGFCACTVQ7NEM4&algorithm=SHA3-512&digits=6&counter=0'
+			}
+		},
+		totp: {
+			constructor: {
+				input: { algorithm: 'sha3-512', period: 5 }
+			},
+			generate: {
+				input: { timestamp: 1451606400000 },
+				output: '993525'
+			},
+			validate: {
+				input: { token: '993525', timestamp: 1451606395000 },
+				output: 1
+			},
+			toString: {
+				output: 'otpauth://totp/OTPAuth?secret=76FI5GZVW7DHQZ6Y56IBO73Z3C3IASJGSO5MQ65LDJ62PBWGVKPGFCACTVQ7NEM4&algorithm=SHA3-512&digits=6&period=5'
+			}
+		}
 	}];
 
 	/* ================================================

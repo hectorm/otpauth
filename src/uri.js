@@ -22,7 +22,7 @@ const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
  * @private
  * @type {RegExp}
  */
-const ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
+const ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
 
 /**
  * Integer regex.

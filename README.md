@@ -72,9 +72,9 @@ See the documentation page.
 
 In Node.js, the same algorithms as
 [`Crypto.createHmac`](https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key_options)
-function are supported, since it is used internally. In Deno and browsers, the `SHA1`, `SHA256`
-and `SHA512` algorithms are supported by using the
-[Stanford Javascript Crypto Library](https://github.com/bitwiseshiftleft/sjcl).
+function are supported, since it is used internally. In Deno and browsers, the `SHA1`, `SHA224`, `SHA256`, `SHA384`,
+`SHA512`, `SHA3-224`, `SHA3-256`, `SHA3-384` and `SHA3-512` algorithms are supported by using the
+[jsSHA](https://github.com/Caligatio/jsSHA) library.
 
 ## License
 

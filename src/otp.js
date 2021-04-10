@@ -58,7 +58,7 @@ export class HOTP {
 		 * HMAC hashing algorithm.
 		 * @type {string}
 		 */
-		this.algorithm = algorithm;
+		this.algorithm = algorithm.toUpperCase();
 		/**
 		 * Token length.
 		 * @type {number}
@@ -236,7 +236,7 @@ export class TOTP {
 		 * HMAC hashing algorithm.
 		 * @type {string}
 		 */
-		this.algorithm = algorithm;
+		this.algorithm = algorithm.toUpperCase();
 		/**
 		 * Token length.
 		 * @type {number}

@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import sjcl from 'sjcl'; // SJCL is included during compilation.
+import jsSHA from 'jssha';
 
 import { InternalUtils } from './utils';
 
@@ -49,14 +48,25 @@ if (InternalUtils.isNode) {
 	};
 
 	hmacDigest = (algorithm, key, message) => {
-		const hash = sjcl.hash[algorithm.toLowerCase()];
-		if (typeof hash === 'undefined') {
+		const variant = ({
+			SHA1: 'SHA-1',
+			SHA224: 'SHA-224',
+			SHA256: 'SHA-256',
+			SHA384: 'SHA-384',
+			SHA512: 'SHA-512',
+			'SHA3-224': 'SHA3-224',
+			'SHA3-256': 'SHA3-256',
+			'SHA3-384': 'SHA3-384',
+			'SHA3-512': 'SHA3-512'
+		})[algorithm.toUpperCase()];
+		if (typeof variant === 'undefined') {
 			throw new TypeError('Unknown hash function');
 		}
 		// eslint-disable-next-line new-cap
-		const hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
-		hmac.update(sjcl.codec.arrayBuffer.toBits(message));
-		return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
+		const hmac = new jsSHA(variant, 'ARRAYBUFFER');
+		hmac.setHMACKey(key, 'ARRAYBUFFER');
+		hmac.update(message);
+		return hmac.getHMAC('ARRAYBUFFER');
 	};
 
 	timingSafeEqual = (a, b) => {
