@@ -1,6 +1,6 @@
+/*! otpauth v6.3.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
-/*! otpauth v6.2.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
-/*! sjcl v1.0.8 | (c) bitwiseshiftleft | (BSD-2-Clause OR GPL-2.0-only) | https://github.com/bitwiseshiftleft/sjcl */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -467,1411 +467,913 @@
 
   };
 
-  /** @fileOverview Javascript cryptography implementation.
-   *
-   * Crush to remove comments, shorten variable names and
-   * generally reduce transmission size.
-   *
-   * @author Emily Stark
-   * @author Mike Hamburg
-   * @author Dan Boneh
-   */
-  /*jslint indent: 2, bitwise: false, nomen: false, plusplus: false, white: false, regexp: false */
-
-  /*global document, window, escape, unescape, module, require, Uint32Array */
-
   /**
-   * The Stanford Javascript Crypto Library, top-level namespace.
-   * @namespace
-   */
-
-  var sjcl = {
-    /**
-     * Symmetric ciphers.
-     * @namespace
-     */
-    cipher: {},
-
-    /**
-     * Hash functions.  Right now only SHA256 is implemented.
-     * @namespace
-     */
-    hash: {},
-
-    /**
-     * Key exchange functions.  Right now only SRP is implemented.
-     * @namespace
-     */
-    keyexchange: {},
-
-    /**
-     * Cipher modes of operation.
-     * @namespace
-     */
-    mode: {},
-
-    /**
-     * Miscellaneous.  HMAC and PBKDF2.
-     * @namespace
-     */
-    misc: {},
-
-    /**
-     * Bit array encoders and decoders.
-     * @namespace
-     *
-     * @description
-     * The members of this namespace are functions which translate between
-     * SJCL's bitArrays and other objects (usually strings).  Because it
-     * isn't always clear which direction is encoding and which is decoding,
-     * the method names are "fromBits" and "toBits".
-     */
-    codec: {},
-
-    /**
-     * Exceptions.
-     * @namespace
-     */
-    exception: {
-      /**
-       * Ciphertext is corrupt.
-       * @constructor
-       */
-      corrupt: function (message) {
-        this.toString = function () {
-          return "CORRUPT: " + this.message;
-        };
-
-        this.message = message;
-      },
-
-      /**
-       * Invalid parameter.
-       * @constructor
-       */
-      invalid: function (message) {
-        this.toString = function () {
-          return "INVALID: " + this.message;
-        };
-
-        this.message = message;
-      },
-
-      /**
-       * Bug or missing feature in SJCL.
-       * @constructor
-       */
-      bug: function (message) {
-        this.toString = function () {
-          return "BUG: " + this.message;
-        };
-
-        this.message = message;
-      },
-
-      /**
-       * Something isn't ready.
-       * @constructor
-       */
-      notReady: function (message) {
-        this.toString = function () {
-          return "NOT READY: " + this.message;
-        };
-
-        this.message = message;
-      }
-    }
-  };
-  /** @fileOverview Arrays of bits, encoded as arrays of Numbers.
+   * A JavaScript implementation of the SHA family of hashes - defined in FIPS PUB 180-4, FIPS PUB 202,
+   * and SP 800-185 - as well as the corresponding HMAC implementation as defined in FIPS PUB 198-1.
    *
-   * @author Emily Stark
-   * @author Mike Hamburg
-   * @author Dan Boneh
+   * Copyright 2008-2020 Brian Turek, 1998-2009 Paul Johnston & Contributors
+   * Distributed under the BSD License
+   * See http://caligatio.github.com/jsSHA/ for more information
    */
+  const t = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-  /**
-   * Arrays of bits, encoded as arrays of Numbers.
-   * @namespace
-   * @description
-   * <p>
-   * These objects are the currency accepted by SJCL's crypto functions.
-   * </p>
-   *
-   * <p>
-   * Most of our crypto primitives operate on arrays of 4-byte words internally,
-   * but many of them can take arguments that are not a multiple of 4 bytes.
-   * This library encodes arrays of bits (whose size need not be a multiple of 8
-   * bits) as arrays of 32-bit words.  The bits are packed, big-endian, into an
-   * array of words, 32 bits at a time.  Since the words are double-precision
-   * floating point numbers, they fit some extra data.  We use this (in a private,
-   * possibly-changing manner) to encode the number of bits actually  present
-   * in the last word of the array.
-   * </p>
-   *
-   * <p>
-   * Because bitwise ops clear this out-of-band data, these arrays can be passed
-   * to ciphers like AES which want arrays of words.
-   * </p>
-   */
+  function n(t, n, e, r) {
+    let i, s, o;
+    const h = n || [0],
+          u = (e = e || 0) >>> 3,
+          w = -1 === r ? 3 : 0;
 
-  sjcl.bitArray = {
-    /**
-     * Array slices in units of bits.
-     * @param {bitArray} a The array to slice.
-     * @param {Number} bstart The offset to the start of the slice, in bits.
-     * @param {Number} bend The offset to the end of the slice, in bits.  If this is undefined,
-     * slice until the end of the array.
-     * @return {bitArray} The requested slice.
-     */
-    bitSlice: function (a, bstart, bend) {
-      a = sjcl.bitArray._shiftRight(a.slice(bstart / 32), 32 - (bstart & 31)).slice(1);
-      return bend === undefined ? a : sjcl.bitArray.clamp(a, bend - bstart);
-    },
+    for (i = 0; i < t.length; i += 1) o = i + u, s = o >>> 2, h.length <= s && h.push(0), h[s] |= t[i] << 8 * (w + r * (o % 4));
 
-    /**
-     * Extract a number packed into a bit array.
-     * @param {bitArray} a The array to slice.
-     * @param {Number} bstart The offset to the start of the slice, in bits.
-     * @param {Number} blength The length of the number to extract.
-     * @return {Number} The requested slice.
-     */
-    extract: function (a, bstart, blength) {
-      // FIXME: this Math.floor is not necessary at all, but for some reason
-      // seems to suppress a bug in the Chromium JIT.
-      var x,
-          sh = Math.floor(-bstart - blength & 31);
-
-      if ((bstart + blength - 1 ^ bstart) & -32) {
-        // it crosses a boundary
-        x = a[bstart / 32 | 0] << 32 - sh ^ a[bstart / 32 + 1 | 0] >>> sh;
-      } else {
-        // within a single word
-        x = a[bstart / 32 | 0] >>> sh;
-      }
-
-      return x & (1 << blength) - 1;
-    },
-
-    /**
-     * Concatenate two bit arrays.
-     * @param {bitArray} a1 The first array.
-     * @param {bitArray} a2 The second array.
-     * @return {bitArray} The concatenation of a1 and a2.
-     */
-    concat: function (a1, a2) {
-      if (a1.length === 0 || a2.length === 0) {
-        return a1.concat(a2);
-      }
-
-      var last = a1[a1.length - 1],
-          shift = sjcl.bitArray.getPartial(last);
-
-      if (shift === 32) {
-        return a1.concat(a2);
-      } else {
-        return sjcl.bitArray._shiftRight(a2, shift, last | 0, a1.slice(0, a1.length - 1));
-      }
-    },
-
-    /**
-     * Find the length of an array of bits.
-     * @param {bitArray} a The array.
-     * @return {Number} The length of a, in bits.
-     */
-    bitLength: function (a) {
-      var l = a.length,
-          x;
-
-      if (l === 0) {
-        return 0;
-      }
-
-      x = a[l - 1];
-      return (l - 1) * 32 + sjcl.bitArray.getPartial(x);
-    },
-
-    /**
-     * Truncate an array.
-     * @param {bitArray} a The array.
-     * @param {Number} len The length to truncate to, in bits.
-     * @return {bitArray} A new array, truncated to len bits.
-     */
-    clamp: function (a, len) {
-      if (a.length * 32 < len) {
-        return a;
-      }
-
-      a = a.slice(0, Math.ceil(len / 32));
-      var l = a.length;
-      len = len & 31;
-
-      if (l > 0 && len) {
-        a[l - 1] = sjcl.bitArray.partial(len, a[l - 1] & 0x80000000 >> len - 1, 1);
-      }
-
-      return a;
-    },
-
-    /**
-     * Make a partial word for a bit array.
-     * @param {Number} len The number of bits in the word.
-     * @param {Number} x The bits.
-     * @param {Number} [_end=0] Pass 1 if x has already been shifted to the high side.
-     * @return {Number} The partial word.
-     */
-    partial: function (len, x, _end) {
-      if (len === 32) {
-        return x;
-      }
-
-      return (_end ? x | 0 : x << 32 - len) + len * 0x10000000000;
-    },
-
-    /**
-     * Get the number of bits used by a partial word.
-     * @param {Number} x The partial word.
-     * @return {Number} The number of bits used by the partial word.
-     */
-    getPartial: function (x) {
-      return Math.round(x / 0x10000000000) || 32;
-    },
-
-    /**
-     * Compare two arrays for equality in a predictable amount of time.
-     * @param {bitArray} a The first array.
-     * @param {bitArray} b The second array.
-     * @return {boolean} true if a == b; false otherwise.
-     */
-    equal: function (a, b) {
-      if (sjcl.bitArray.bitLength(a) !== sjcl.bitArray.bitLength(b)) {
-        return false;
-      }
-
-      var x = 0,
-          i;
-
-      for (i = 0; i < a.length; i++) {
-        x |= a[i] ^ b[i];
-      }
-
-      return x === 0;
-    },
-
-    /** Shift an array right.
-     * @param {bitArray} a The array to shift.
-     * @param {Number} shift The number of bits to shift.
-     * @param {Number} [carry=0] A byte to carry in
-     * @param {bitArray} [out=[]] An array to prepend to the output.
-     * @private
-     */
-    _shiftRight: function (a, shift, carry, out) {
-      var i,
-          last2 = 0,
-          shift2;
-
-      if (out === undefined) {
-        out = [];
-      }
-
-      for (; shift >= 32; shift -= 32) {
-        out.push(carry);
-        carry = 0;
-      }
-
-      if (shift === 0) {
-        return out.concat(a);
-      }
-
-      for (i = 0; i < a.length; i++) {
-        out.push(carry | a[i] >>> shift);
-        carry = a[i] << 32 - shift;
-      }
-
-      last2 = a.length ? a[a.length - 1] : 0;
-      shift2 = sjcl.bitArray.getPartial(last2);
-      out.push(sjcl.bitArray.partial(shift + shift2 & 31, shift + shift2 > 32 ? carry : out.pop(), 1));
-      return out;
-    },
-
-    /** xor a block of 4 words together.
-     * @private
-     */
-    _xor4: function (x, y) {
-      return [x[0] ^ y[0], x[1] ^ y[1], x[2] ^ y[2], x[3] ^ y[3]];
-    },
-
-    /** byteswap a word array inplace.
-     * (does not handle partial words)
-     * @param {sjcl.bitArray} a word array
-     * @return {sjcl.bitArray} byteswapped array
-     */
-    byteswapM: function (a) {
-      var i,
-          v,
-          m = 0xff00;
-
-      for (i = 0; i < a.length; ++i) {
-        v = a[i];
-        a[i] = v >>> 24 | v >>> 8 & m | (v & m) << 8 | v << 24;
-      }
-
-      return a;
-    }
-  };
-  /** @fileOverview Bit array codec implementations.
-   *
-   * @author Marco Munizaga
-   */
-  //patch arraybuffers if they don't exist
-
-  if (typeof ArrayBuffer === 'undefined') {
-    (function (globals) {
-
-      globals.ArrayBuffer = function () {};
-
-      globals.DataView = function () {};
-    })(undefined);
+    return {
+      value: h,
+      binLen: 8 * t.length + e
+    };
   }
-  /**
-   * ArrayBuffer
-   * @namespace
-   */
 
+  function e(e, r, i) {
+    switch (r) {
+      case "UTF8":
+      case "UTF16BE":
+      case "UTF16LE":
+        break;
 
-  sjcl.codec.arrayBuffer = {
-    /** Convert from a bitArray to an ArrayBuffer. 
-     * Will default to 8byte padding if padding is undefined*/
-    fromBits: function (arr, padding, padding_count) {
-      var out, i, ol, tmp, smallest;
-      padding = padding == undefined ? true : padding;
-      padding_count = padding_count || 8;
+      default:
+        throw new Error("encoding must be UTF8, UTF16BE, or UTF16LE");
+    }
 
-      if (arr.length === 0) {
-        return new ArrayBuffer(0);
-      }
+    switch (e) {
+      case "HEX":
+        return function (t, n, e) {
+          return function (t, n, e, r) {
+            let i, s, o, h;
+            if (0 != t.length % 2) throw new Error("String of HEX type must be in byte increments");
+            const u = n || [0],
+                  w = (e = e || 0) >>> 3,
+                  c = -1 === r ? 3 : 0;
 
-      ol = sjcl.bitArray.bitLength(arr) / 8; //check to make sure the bitLength is divisible by 8, if it isn't 
-      //we can't do anything since arraybuffers work with bytes, not bits
+            for (i = 0; i < t.length; i += 2) {
+              if (s = parseInt(t.substr(i, 2), 16), isNaN(s)) throw new Error("String of HEX type contains invalid characters");
 
-      if (sjcl.bitArray.bitLength(arr) % 8 !== 0) {
-        throw new sjcl.exception.invalid("Invalid bit size, must be divisble by 8 to fit in an arraybuffer correctly");
-      }
+              for (h = (i >>> 1) + w, o = h >>> 2; u.length <= o;) u.push(0);
 
-      if (padding && ol % padding_count !== 0) {
-        ol += padding_count - ol % padding_count;
-      } //padded temp for easy copying
+              u[o] |= s << 8 * (c + r * (h % 4));
+            }
 
+            return {
+              value: u,
+              binLen: 4 * t.length + e
+            };
+          }(t, n, e, i);
+        };
 
-      tmp = new DataView(new ArrayBuffer(arr.length * 4));
+      case "TEXT":
+        return function (t, n, e) {
+          return function (t, n, e, r, i) {
+            let s,
+                o,
+                h,
+                u,
+                w,
+                c,
+                f,
+                a,
+                l = 0;
+            const A = e || [0],
+                  E = (r = r || 0) >>> 3;
+            if ("UTF8" === n) for (f = -1 === i ? 3 : 0, h = 0; h < t.length; h += 1) for (s = t.charCodeAt(h), o = [], 128 > s ? o.push(s) : 2048 > s ? (o.push(192 | s >>> 6), o.push(128 | 63 & s)) : 55296 > s || 57344 <= s ? o.push(224 | s >>> 12, 128 | s >>> 6 & 63, 128 | 63 & s) : (h += 1, s = 65536 + ((1023 & s) << 10 | 1023 & t.charCodeAt(h)), o.push(240 | s >>> 18, 128 | s >>> 12 & 63, 128 | s >>> 6 & 63, 128 | 63 & s)), u = 0; u < o.length; u += 1) {
+              for (c = l + E, w = c >>> 2; A.length <= w;) A.push(0);
 
-      for (i = 0; i < arr.length; i++) {
-        tmp.setUint32(i * 4, arr[i] << 32); //get rid of the higher bits
-      } //now copy the final message if we are not going to 0 pad
+              A[w] |= o[u] << 8 * (f + i * (c % 4)), l += 1;
+            } else for (f = -1 === i ? 2 : 0, a = "UTF16LE" === n && 1 !== i || "UTF16LE" !== n && 1 === i, h = 0; h < t.length; h += 1) {
+              for (s = t.charCodeAt(h), !0 === a && (u = 255 & s, s = u << 8 | s >>> 8), c = l + E, w = c >>> 2; A.length <= w;) A.push(0);
 
+              A[w] |= s << 8 * (f + i * (c % 4)), l += 2;
+            }
+            return {
+              value: A,
+              binLen: 8 * l + r
+            };
+          }(t, r, n, e, i);
+        };
 
-      out = new DataView(new ArrayBuffer(ol)); //save a step when the tmp and out bytelength are ===
+      case "B64":
+        return function (n, e, r) {
+          return function (n, e, r, i) {
+            let s,
+                o,
+                h,
+                u,
+                w,
+                c,
+                f,
+                a = 0;
+            const l = e || [0],
+                  A = (r = r || 0) >>> 3,
+                  E = -1 === i ? 3 : 0,
+                  H = n.indexOf("=");
+            if (-1 === n.search(/^[a-zA-Z0-9=+/]+$/)) throw new Error("Invalid character in base-64 string");
+            if (n = n.replace(/=/g, ""), -1 !== H && H < n.length) throw new Error("Invalid '=' found in base-64 string");
 
-      if (out.byteLength === tmp.byteLength) {
-        return tmp.buffer;
-      }
+            for (o = 0; o < n.length; o += 4) {
+              for (w = n.substr(o, 4), u = 0, h = 0; h < w.length; h += 1) s = t.indexOf(w.charAt(h)), u |= s << 18 - 6 * h;
 
-      smallest = tmp.byteLength < out.byteLength ? tmp.byteLength : out.byteLength;
+              for (h = 0; h < w.length - 1; h += 1) {
+                for (f = a + A, c = f >>> 2; l.length <= c;) l.push(0);
 
-      for (i = 0; i < smallest; i++) {
-        out.setUint8(i, tmp.getUint8(i));
-      }
+                l[c] |= (u >>> 16 - 8 * h & 255) << 8 * (E + i * (f % 4)), a += 1;
+              }
+            }
 
-      return out.buffer;
-    },
+            return {
+              value: l,
+              binLen: 8 * a + r
+            };
+          }(n, e, r, i);
+        };
 
-    /** Convert from an ArrayBuffer to a bitArray. */
-    toBits: function (buffer) {
-      var i,
-          out = [],
-          len,
-          inView,
-          tmp;
+      case "BYTES":
+        return function (t, n, e) {
+          return function (t, n, e, r) {
+            let i, s, o, h;
+            const u = n || [0],
+                  w = (e = e || 0) >>> 3,
+                  c = -1 === r ? 3 : 0;
 
-      if (buffer.byteLength === 0) {
-        return [];
-      }
+            for (s = 0; s < t.length; s += 1) i = t.charCodeAt(s), h = s + w, o = h >>> 2, u.length <= o && u.push(0), u[o] |= i << 8 * (c + r * (h % 4));
 
-      inView = new DataView(buffer);
-      len = inView.byteLength - inView.byteLength % 4;
+            return {
+              value: u,
+              binLen: 8 * t.length + e
+            };
+          }(t, n, e, i);
+        };
 
-      for (var i = 0; i < len; i += 4) {
-        out.push(inView.getUint32(i));
-      }
-
-      if (inView.byteLength % 4 != 0) {
-        tmp = new DataView(new ArrayBuffer(4));
-
-        for (var i = 0, l = inView.byteLength % 4; i < l; i++) {
-          //we want the data to the right, because partial slices off the starting bits
-          tmp.setUint8(i + 4 - l, inView.getUint8(len + i)); // big-endian, 
+      case "ARRAYBUFFER":
+        try {
+          new ArrayBuffer(0);
+        } catch (t) {
+          throw new Error("ARRAYBUFFER not supported by this environment");
         }
 
-        out.push(sjcl.bitArray.partial(inView.byteLength % 4 * 8, tmp.getUint32(0)));
-      }
+        return function (t, e, r) {
+          return function (t, e, r, i) {
+            return n(new Uint8Array(t), e, r, i);
+          }(t, e, r, i);
+        };
 
-      return out;
-    },
+      case "UINT8ARRAY":
+        try {
+          new Uint8Array(0);
+        } catch (t) {
+          throw new Error("UINT8ARRAY not supported by this environment");
+        }
 
-    /** Prints a hex output of the buffer contents, akin to hexdump **/
-    hexDumpBuffer: function (buffer) {
-      var stringBufferView = new DataView(buffer);
-      var string = '';
+        return function (t, e, r) {
+          return n(t, e, r, i);
+        };
 
-      var pad = function (n, width) {
-        n = n + '';
-        return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+      default:
+        throw new Error("format must be HEX, TEXT, B64, BYTES, ARRAYBUFFER, or UINT8ARRAY");
+    }
+  }
+
+  function r(n, e, r, i) {
+    switch (n) {
+      case "HEX":
+        return function (t) {
+          return function (t, n, e, r) {
+            let i,
+                s,
+                o = "";
+            const h = n / 8,
+                  u = -1 === e ? 3 : 0;
+
+            for (i = 0; i < h; i += 1) s = t[i >>> 2] >>> 8 * (u + e * (i % 4)), o += "0123456789abcdef".charAt(s >>> 4 & 15) + "0123456789abcdef".charAt(15 & s);
+
+            return r.outputUpper ? o.toUpperCase() : o;
+          }(t, e, r, i);
+        };
+
+      case "B64":
+        return function (n) {
+          return function (n, e, r, i) {
+            let s,
+                o,
+                h,
+                u,
+                w,
+                c = "";
+            const f = e / 8,
+                  a = -1 === r ? 3 : 0;
+
+            for (s = 0; s < f; s += 3) for (u = s + 1 < f ? n[s + 1 >>> 2] : 0, w = s + 2 < f ? n[s + 2 >>> 2] : 0, h = (n[s >>> 2] >>> 8 * (a + r * (s % 4)) & 255) << 16 | (u >>> 8 * (a + r * ((s + 1) % 4)) & 255) << 8 | w >>> 8 * (a + r * ((s + 2) % 4)) & 255, o = 0; o < 4; o += 1) c += 8 * s + 6 * o <= e ? t.charAt(h >>> 6 * (3 - o) & 63) : i.b64Pad;
+
+            return c;
+          }(n, e, r, i);
+        };
+
+      case "BYTES":
+        return function (t) {
+          return function (t, n, e) {
+            let r,
+                i,
+                s = "";
+            const o = n / 8,
+                  h = -1 === e ? 3 : 0;
+
+            for (r = 0; r < o; r += 1) i = t[r >>> 2] >>> 8 * (h + e * (r % 4)) & 255, s += String.fromCharCode(i);
+
+            return s;
+          }(t, e, r);
+        };
+
+      case "ARRAYBUFFER":
+        try {
+          new ArrayBuffer(0);
+        } catch (t) {
+          throw new Error("ARRAYBUFFER not supported by this environment");
+        }
+
+        return function (t) {
+          return function (t, n, e) {
+            let r;
+            const i = n / 8,
+                  s = new ArrayBuffer(i),
+                  o = new Uint8Array(s),
+                  h = -1 === e ? 3 : 0;
+
+            for (r = 0; r < i; r += 1) o[r] = t[r >>> 2] >>> 8 * (h + e * (r % 4)) & 255;
+
+            return s;
+          }(t, e, r);
+        };
+
+      case "UINT8ARRAY":
+        try {
+          new Uint8Array(0);
+        } catch (t) {
+          throw new Error("UINT8ARRAY not supported by this environment");
+        }
+
+        return function (t) {
+          return function (t, n, e) {
+            let r;
+            const i = n / 8,
+                  s = -1 === e ? 3 : 0,
+                  o = new Uint8Array(i);
+
+            for (r = 0; r < i; r += 1) o[r] = t[r >>> 2] >>> 8 * (s + e * (r % 4)) & 255;
+
+            return o;
+          }(t, e, r);
+        };
+
+      default:
+        throw new Error("format must be HEX, B64, BYTES, ARRAYBUFFER, or UINT8ARRAY");
+    }
+  }
+
+  const i = [1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298],
+        s = [3238371032, 914150663, 812702999, 4144912697, 4290775857, 1750603025, 1694076839, 3204075428],
+        o = [1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225],
+        h = "Chosen SHA variant is not supported";
+
+  function u(t, n) {
+    let e, r;
+    const i = t.binLen >>> 3,
+          s = n.binLen >>> 3,
+          o = i << 3,
+          h = 4 - i << 3;
+
+    if (i % 4 != 0) {
+      for (e = 0; e < s; e += 4) r = i + e >>> 2, t.value[r] |= n.value[e >>> 2] << o, t.value.push(0), t.value[r + 1] |= n.value[e >>> 2] >>> h;
+
+      return (t.value.length << 2) - 4 >= s + i && t.value.pop(), {
+        value: t.value,
+        binLen: t.binLen + n.binLen
       };
-
-      for (var i = 0; i < stringBufferView.byteLength; i += 2) {
-        if (i % 16 == 0) string += '\n' + i.toString(16) + '\t';
-        string += pad(stringBufferView.getUint16(i).toString(16), 4) + ' ';
-      }
-
-      if (typeof console === undefined) {
-        console = console || {
-          log: function () {}
-        }; //fix for IE
-      }
-
-      console.log(string.toUpperCase());
-    }
-  };
-  /** @fileOverview Javascript SHA-1 implementation.
-   *
-   * Based on the implementation in RFC 3174, method 1, and on the SJCL
-   * SHA-256 implementation.
-   *
-   * @author Quinn Slack
-   */
-
-  /**
-   * Context for a SHA-1 operation in progress.
-   * @constructor
-   */
-
-  sjcl.hash.sha1 = function (hash) {
-    if (hash) {
-      this._h = hash._h.slice(0);
-      this._buffer = hash._buffer.slice(0);
-      this._length = hash._length;
-    } else {
-      this.reset();
-    }
-  };
-  /**
-   * Hash a string or an array of words.
-   * @static
-   * @param {bitArray|String} data the data to hash.
-   * @return {bitArray} The hash value, an array of 5 big-endian words.
-   */
-
-
-  sjcl.hash.sha1.hash = function (data) {
-    return new sjcl.hash.sha1().update(data).finalize();
-  };
-
-  sjcl.hash.sha1.prototype = {
-    /**
-     * The hash's block size, in bits.
-     * @constant
-     */
-    blockSize: 512,
-
-    /**
-     * Reset the hash state.
-     * @return this
-     */
-    reset: function () {
-      this._h = this._init.slice(0);
-      this._buffer = [];
-      this._length = 0;
-      return this;
-    },
-
-    /**
-     * Input several words to the hash.
-     * @param {bitArray|String} data the data to hash.
-     * @return this
-     */
-    update: function (data) {
-      if (typeof data === "string") {
-        data = sjcl.codec.utf8String.toBits(data);
-      }
-
-      var i,
-          b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
-          ol = this._length,
-          nl = this._length = ol + sjcl.bitArray.bitLength(data);
-
-      if (nl > 9007199254740991) {
-        throw new sjcl.exception.invalid("Cannot hash more than 2^53 - 1 bits");
-      }
-
-      if (typeof Uint32Array !== 'undefined') {
-        var c = new Uint32Array(b);
-        var j = 0;
-
-        for (i = this.blockSize + ol - (this.blockSize + ol & this.blockSize - 1); i <= nl; i += this.blockSize) {
-          this._block(c.subarray(16 * j, 16 * (j + 1)));
-
-          j += 1;
-        }
-
-        b.splice(0, 16 * j);
-      } else {
-        for (i = this.blockSize + ol - (this.blockSize + ol & this.blockSize - 1); i <= nl; i += this.blockSize) {
-          this._block(b.splice(0, 16));
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Complete hashing and output the hash value.
-     * @return {bitArray} The hash value, an array of 5 big-endian words. TODO
-     */
-    finalize: function () {
-      var i,
-          b = this._buffer,
-          h = this._h; // Round out and push the buffer
-
-      b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1, 1)]); // Round out the buffer to a multiple of 16 words, less the 2 length words.
-
-      for (i = b.length + 2; i & 15; i++) {
-        b.push(0);
-      } // append the length
-
-
-      b.push(Math.floor(this._length / 0x100000000));
-      b.push(this._length | 0);
-
-      while (b.length) {
-        this._block(b.splice(0, 16));
-      }
-
-      this.reset();
-      return h;
-    },
-
-    /**
-     * The SHA-1 initialization vector.
-     * @private
-     */
-    _init: [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0],
-
-    /**
-     * The SHA-1 hash key.
-     * @private
-     */
-    _key: [0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6],
-
-    /**
-     * The SHA-1 logical functions f(0), f(1), ..., f(79).
-     * @private
-     */
-    _f: function (t, b, c, d) {
-      if (t <= 19) {
-        return b & c | ~b & d;
-      } else if (t <= 39) {
-        return b ^ c ^ d;
-      } else if (t <= 59) {
-        return b & c | b & d | c & d;
-      } else if (t <= 79) {
-        return b ^ c ^ d;
-      }
-    },
-
-    /**
-     * Circular left-shift operator.
-     * @private
-     */
-    _S: function (n, x) {
-      return x << n | x >>> 32 - n;
-    },
-
-    /**
-     * Perform one cycle of SHA-1.
-     * @param {Uint32Array|bitArray} words one block of words.
-     * @private
-     */
-    _block: function (words) {
-      var t,
-          tmp,
-          a,
-          b,
-          c,
-          d,
-          e,
-          h = this._h;
-      var w;
-
-      if (typeof Uint32Array !== 'undefined') {
-        // When words is passed to _block, it has 16 elements. SHA1 _block
-        // function extends words with new elements (at the end there are 80 elements). 
-        // The problem is that if we use Uint32Array instead of Array, 
-        // the length of Uint32Array cannot be changed. Thus, we replace words with a 
-        // normal Array here.
-        w = Array(80); // do not use Uint32Array here as the instantiation is slower
-
-        for (var j = 0; j < 16; j++) {
-          w[j] = words[j];
-        }
-      } else {
-        w = words;
-      }
-
-      a = h[0];
-      b = h[1];
-      c = h[2];
-      d = h[3];
-      e = h[4];
-
-      for (t = 0; t <= 79; t++) {
-        if (t >= 16) {
-          w[t] = this._S(1, w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]);
-        }
-
-        tmp = this._S(5, a) + this._f(t, b, c, d) + e + w[t] + this._key[Math.floor(t / 20)] | 0;
-        e = d;
-        d = c;
-        c = this._S(30, b);
-        b = a;
-        a = tmp;
-      }
-
-      h[0] = h[0] + a | 0;
-      h[1] = h[1] + b | 0;
-      h[2] = h[2] + c | 0;
-      h[3] = h[3] + d | 0;
-      h[4] = h[4] + e | 0;
-    }
-  };
-  /** @fileOverview Javascript SHA-256 implementation.
-   *
-   * An older version of this implementation is available in the public
-   * domain, but this one is (c) Emily Stark, Mike Hamburg, Dan Boneh,
-   * Stanford University 2008-2010 and BSD-licensed for liability
-   * reasons.
-   *
-   * Special thanks to Aldo Cortesi for pointing out several bugs in
-   * this code.
-   *
-   * @author Emily Stark
-   * @author Mike Hamburg
-   * @author Dan Boneh
-   */
-
-  /**
-   * Context for a SHA-256 operation in progress.
-   * @constructor
-   */
-
-  sjcl.hash.sha256 = function (hash) {
-    if (!this._key[0]) {
-      this._precompute();
     }
 
-    if (hash) {
-      this._h = hash._h.slice(0);
-      this._buffer = hash._buffer.slice(0);
-      this._length = hash._length;
-    } else {
-      this.reset();
-    }
-  };
-  /**
-   * Hash a string or an array of words.
-   * @static
-   * @param {bitArray|String} data the data to hash.
-   * @return {bitArray} The hash value, an array of 16 big-endian words.
-   */
+    return {
+      value: t.value.concat(n.value),
+      binLen: t.binLen + n.binLen
+    };
+  }
 
-
-  sjcl.hash.sha256.hash = function (data) {
-    return new sjcl.hash.sha256().update(data).finalize();
-  };
-
-  sjcl.hash.sha256.prototype = {
-    /**
-     * The hash's block size, in bits.
-     * @constant
-     */
-    blockSize: 512,
-
-    /**
-     * Reset the hash state.
-     * @return this
-     */
-    reset: function () {
-      this._h = this._init.slice(0);
-      this._buffer = [];
-      this._length = 0;
-      return this;
+  function w(t) {
+    const n = {
+      outputUpper: !1,
+      b64Pad: "=",
+      outputLen: -1
     },
+          e = t || {},
+          r = "Output length must be a multiple of 8";
 
-    /**
-     * Input several words to the hash.
-     * @param {bitArray|String} data the data to hash.
-     * @return this
-     */
-    update: function (data) {
-      if (typeof data === "string") {
-        data = sjcl.codec.utf8String.toBits(data);
-      }
-
-      var i,
-          b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
-          ol = this._length,
-          nl = this._length = ol + sjcl.bitArray.bitLength(data);
-
-      if (nl > 9007199254740991) {
-        throw new sjcl.exception.invalid("Cannot hash more than 2^53 - 1 bits");
-      }
-
-      if (typeof Uint32Array !== 'undefined') {
-        var c = new Uint32Array(b);
-        var j = 0;
-
-        for (i = 512 + ol - (512 + ol & 511); i <= nl; i += 512) {
-          this._block(c.subarray(16 * j, 16 * (j + 1)));
-
-          j += 1;
-        }
-
-        b.splice(0, 16 * j);
-      } else {
-        for (i = 512 + ol - (512 + ol & 511); i <= nl; i += 512) {
-          this._block(b.splice(0, 16));
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Complete hashing and output the hash value.
-     * @return {bitArray} The hash value, an array of 8 big-endian words.
-     */
-    finalize: function () {
-      var i,
-          b = this._buffer,
-          h = this._h; // Round out and push the buffer
-
-      b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1, 1)]); // Round out the buffer to a multiple of 16 words, less the 2 length words.
-
-      for (i = b.length + 2; i & 15; i++) {
-        b.push(0);
-      } // append the length
-
-
-      b.push(Math.floor(this._length / 0x100000000));
-      b.push(this._length | 0);
-
-      while (b.length) {
-        this._block(b.splice(0, 16));
-      }
-
-      this.reset();
-      return h;
-    },
-
-    /**
-     * The SHA-256 initialization vector, to be precomputed.
-     * @private
-     */
-    _init: [],
-
-    /*
-    _init:[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19],
-    */
-
-    /**
-     * The SHA-256 hash key, to be precomputed.
-     * @private
-     */
-    _key: [],
-
-    /*
-    _key:
-      [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-       0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-       0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-       0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-       0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-       0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-       0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-       0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2],
-    */
-
-    /**
-     * Function to precompute _init and _key.
-     * @private
-     */
-    _precompute: function () {
-      var i = 0,
-          prime = 2,
-          factor,
-          isPrime;
-
-      function frac(x) {
-        return (x - Math.floor(x)) * 0x100000000 | 0;
-      }
-
-      for (; i < 64; prime++) {
-        isPrime = true;
-
-        for (factor = 2; factor * factor <= prime; factor++) {
-          if (prime % factor === 0) {
-            isPrime = false;
-            break;
-          }
-        }
-
-        if (isPrime) {
-          if (i < 8) {
-            this._init[i] = frac(Math.pow(prime, 1 / 2));
-          }
-
-          this._key[i] = frac(Math.pow(prime, 1 / 3));
-          i++;
-        }
-      }
-    },
-
-    /**
-     * Perform one cycle of SHA-256.
-     * @param {Uint32Array|bitArray} w one block of words.
-     * @private
-     */
-    _block: function (w) {
-      var i,
-          tmp,
-          a,
-          b,
-          h = this._h,
-          k = this._key,
-          h0 = h[0],
-          h1 = h[1],
-          h2 = h[2],
-          h3 = h[3],
-          h4 = h[4],
-          h5 = h[5],
-          h6 = h[6],
-          h7 = h[7];
-      /* Rationale for placement of |0 :
-       * If a value can overflow is original 32 bits by a factor of more than a few
-       * million (2^23 ish), there is a possibility that it might overflow the
-       * 53-bit mantissa and lose precision.
-       *
-       * To avoid this, we clamp back to 32 bits by |'ing with 0 on any value that
-       * propagates around the loop, and on the hash state h[].  I don't believe
-       * that the clamps on h4 and on h0 are strictly necessary, but it's close
-       * (for h4 anyway), and better safe than sorry.
-       *
-       * The clamps on h[] are necessary for the output to be correct even in the
-       * common case and for short inputs.
-       */
-
-      for (i = 0; i < 64; i++) {
-        // load up the input word for this round
-        if (i < 16) {
-          tmp = w[i];
-        } else {
-          a = w[i + 1 & 15];
-          b = w[i + 14 & 15];
-          tmp = w[i & 15] = (a >>> 7 ^ a >>> 18 ^ a >>> 3 ^ a << 25 ^ a << 14) + (b >>> 17 ^ b >>> 19 ^ b >>> 10 ^ b << 15 ^ b << 13) + w[i & 15] + w[i + 9 & 15] | 0;
-        }
-
-        tmp = tmp + h7 + (h4 >>> 6 ^ h4 >>> 11 ^ h4 >>> 25 ^ h4 << 26 ^ h4 << 21 ^ h4 << 7) + (h6 ^ h4 & (h5 ^ h6)) + k[i]; // | 0;
-        // shift register
-
-        h7 = h6;
-        h6 = h5;
-        h5 = h4;
-        h4 = h3 + tmp | 0;
-        h3 = h2;
-        h2 = h1;
-        h1 = h0;
-        h0 = tmp + (h1 & h2 ^ h3 & (h1 ^ h2)) + (h1 >>> 2 ^ h1 >>> 13 ^ h1 >>> 22 ^ h1 << 30 ^ h1 << 19 ^ h1 << 10) | 0;
-      }
-
-      h[0] = h[0] + h0 | 0;
-      h[1] = h[1] + h1 | 0;
-      h[2] = h[2] + h2 | 0;
-      h[3] = h[3] + h3 | 0;
-      h[4] = h[4] + h4 | 0;
-      h[5] = h[5] + h5 | 0;
-      h[6] = h[6] + h6 | 0;
-      h[7] = h[7] + h7 | 0;
-    }
-  };
-  /** @fileOverview Javascript SHA-512 implementation.
-   *
-   * This implementation was written for CryptoJS by Jeff Mott and adapted for
-   * SJCL by Stefan Thomas.
-   *
-   * CryptoJS (c) 2009–2012 by Jeff Mott. All rights reserved.
-   * Released with New BSD License
-   *
-   * @author Emily Stark
-   * @author Mike Hamburg
-   * @author Dan Boneh
-   * @author Jeff Mott
-   * @author Stefan Thomas
-   */
-
-  /**
-   * Context for a SHA-512 operation in progress.
-   * @constructor
-   */
-
-  sjcl.hash.sha512 = function (hash) {
-    if (!this._key[0]) {
-      this._precompute();
+    if (n.outputUpper = e.outputUpper || !1, e.b64Pad && (n.b64Pad = e.b64Pad), e.outputLen) {
+      if (e.outputLen % 8 != 0) throw new Error(r);
+      n.outputLen = e.outputLen;
+    } else if (e.shakeLen) {
+      if (e.shakeLen % 8 != 0) throw new Error(r);
+      n.outputLen = e.shakeLen;
     }
 
-    if (hash) {
-      this._h = hash._h.slice(0);
-      this._buffer = hash._buffer.slice(0);
-      this._length = hash._length;
-    } else {
-      this.reset();
-    }
-  };
-  /**
-   * Hash a string or an array of words.
-   * @static
-   * @param {bitArray|String} data the data to hash.
-   * @return {bitArray} The hash value, an array of 16 big-endian words.
-   */
+    if ("boolean" != typeof n.outputUpper) throw new Error("Invalid outputUpper formatting option");
+    if ("string" != typeof n.b64Pad) throw new Error("Invalid b64Pad formatting option");
+    return n;
+  }
 
+  function c(t, n, r, i) {
+    const s = t + " must include a value and format";
 
-  sjcl.hash.sha512.hash = function (data) {
-    return new sjcl.hash.sha512().update(data).finalize();
-  };
-
-  sjcl.hash.sha512.prototype = {
-    /**
-     * The hash's block size, in bits.
-     * @constant
-     */
-    blockSize: 1024,
-
-    /**
-     * Reset the hash state.
-     * @return this
-     */
-    reset: function () {
-      this._h = this._init.slice(0);
-      this._buffer = [];
-      this._length = 0;
-      return this;
-    },
-
-    /**
-     * Input several words to the hash.
-     * @param {bitArray|String} data the data to hash.
-     * @return this
-     */
-    update: function (data) {
-      if (typeof data === "string") {
-        data = sjcl.codec.utf8String.toBits(data);
-      }
-
-      var i,
-          b = this._buffer = sjcl.bitArray.concat(this._buffer, data),
-          ol = this._length,
-          nl = this._length = ol + sjcl.bitArray.bitLength(data);
-
-      if (nl > 9007199254740991) {
-        throw new sjcl.exception.invalid("Cannot hash more than 2^53 - 1 bits");
-      }
-
-      if (typeof Uint32Array !== 'undefined') {
-        var c = new Uint32Array(b);
-        var j = 0;
-
-        for (i = 1024 + ol - (1024 + ol & 1023); i <= nl; i += 1024) {
-          this._block(c.subarray(32 * j, 32 * (j + 1)));
-
-          j += 1;
-        }
-
-        b.splice(0, 32 * j);
-      } else {
-        for (i = 1024 + ol - (1024 + ol & 1023); i <= nl; i += 1024) {
-          this._block(b.splice(0, 32));
-        }
-      }
-
-      return this;
-    },
-
-    /**
-     * Complete hashing and output the hash value.
-     * @return {bitArray} The hash value, an array of 16 big-endian words.
-     */
-    finalize: function () {
-      var i,
-          b = this._buffer,
-          h = this._h; // Round out and push the buffer
-
-      b = sjcl.bitArray.concat(b, [sjcl.bitArray.partial(1, 1)]); // Round out the buffer to a multiple of 32 words, less the 4 length words.
-
-      for (i = b.length + 4; i & 31; i++) {
-        b.push(0);
-      } // append the length
-
-
-      b.push(0);
-      b.push(0);
-      b.push(Math.floor(this._length / 0x100000000));
-      b.push(this._length | 0);
-
-      while (b.length) {
-        this._block(b.splice(0, 32));
-      }
-
-      this.reset();
-      return h;
-    },
-
-    /**
-     * The SHA-512 initialization vector, to be precomputed.
-     * @private
-     */
-    _init: [],
-
-    /**
-     * Least significant 24 bits of SHA512 initialization values.
-     *
-     * Javascript only has 53 bits of precision, so we compute the 40 most
-     * significant bits and add the remaining 24 bits as constants.
-     *
-     * @private
-     */
-    _initr: [0xbcc908, 0xcaa73b, 0x94f82b, 0x1d36f1, 0xe682d1, 0x3e6c1f, 0x41bd6b, 0x7e2179],
-
-    /*
-    _init:
-    [0x6a09e667, 0xf3bcc908, 0xbb67ae85, 0x84caa73b, 0x3c6ef372, 0xfe94f82b, 0xa54ff53a, 0x5f1d36f1,
-     0x510e527f, 0xade682d1, 0x9b05688c, 0x2b3e6c1f, 0x1f83d9ab, 0xfb41bd6b, 0x5be0cd19, 0x137e2179],
-    */
-
-    /**
-     * The SHA-512 hash key, to be precomputed.
-     * @private
-     */
-    _key: [],
-
-    /**
-     * Least significant 24 bits of SHA512 key values.
-     * @private
-     */
-    _keyr: [0x28ae22, 0xef65cd, 0x4d3b2f, 0x89dbbc, 0x48b538, 0x05d019, 0x194f9b, 0x6d8118, 0x030242, 0x706fbe, 0xe4b28c, 0xffb4e2, 0x7b896f, 0x1696b1, 0xc71235, 0x692694, 0xf14ad2, 0x4f25e3, 0x8cd5b5, 0xac9c65, 0x2b0275, 0xa6e483, 0x41fbd4, 0x1153b5, 0x66dfab, 0xb43210, 0xfb213f, 0xef0ee4, 0xa88fc2, 0x0aa725, 0x03826f, 0x0e6e70, 0xd22ffc, 0x26c926, 0xc42aed, 0x95b3df, 0xaf63de, 0x77b2a8, 0xedaee6, 0x82353b, 0xf10364, 0x423001, 0xf89791, 0x54be30, 0xef5218, 0x65a910, 0x71202a, 0xbbd1b8, 0xd2d0c8, 0x41ab53, 0x8eeb99, 0x9b48a8, 0xc95a63, 0x418acb, 0x63e373, 0xb2b8a3, 0xefb2fc, 0x172f60, 0xf0ab72, 0x6439ec, 0x631e28, 0x82bde9, 0xc67915, 0x72532b, 0x26619c, 0xc0c207, 0xe0eb1e, 0x6ed178, 0x176fba, 0xc898a6, 0xf90dae, 0x1c471b, 0x047d84, 0xc72493, 0xc9bebc, 0x100d4c, 0x3e42b6, 0x657e2a, 0xd6faec, 0x475817],
-
-    /*
-    _key:
-    [0x428a2f98, 0xd728ae22, 0x71374491, 0x23ef65cd, 0xb5c0fbcf, 0xec4d3b2f, 0xe9b5dba5, 0x8189dbbc,
-     0x3956c25b, 0xf348b538, 0x59f111f1, 0xb605d019, 0x923f82a4, 0xaf194f9b, 0xab1c5ed5, 0xda6d8118,
-     0xd807aa98, 0xa3030242, 0x12835b01, 0x45706fbe, 0x243185be, 0x4ee4b28c, 0x550c7dc3, 0xd5ffb4e2,
-     0x72be5d74, 0xf27b896f, 0x80deb1fe, 0x3b1696b1, 0x9bdc06a7, 0x25c71235, 0xc19bf174, 0xcf692694,
-     0xe49b69c1, 0x9ef14ad2, 0xefbe4786, 0x384f25e3, 0x0fc19dc6, 0x8b8cd5b5, 0x240ca1cc, 0x77ac9c65,
-     0x2de92c6f, 0x592b0275, 0x4a7484aa, 0x6ea6e483, 0x5cb0a9dc, 0xbd41fbd4, 0x76f988da, 0x831153b5,
-     0x983e5152, 0xee66dfab, 0xa831c66d, 0x2db43210, 0xb00327c8, 0x98fb213f, 0xbf597fc7, 0xbeef0ee4,
-     0xc6e00bf3, 0x3da88fc2, 0xd5a79147, 0x930aa725, 0x06ca6351, 0xe003826f, 0x14292967, 0x0a0e6e70,
-     0x27b70a85, 0x46d22ffc, 0x2e1b2138, 0x5c26c926, 0x4d2c6dfc, 0x5ac42aed, 0x53380d13, 0x9d95b3df,
-     0x650a7354, 0x8baf63de, 0x766a0abb, 0x3c77b2a8, 0x81c2c92e, 0x47edaee6, 0x92722c85, 0x1482353b,
-     0xa2bfe8a1, 0x4cf10364, 0xa81a664b, 0xbc423001, 0xc24b8b70, 0xd0f89791, 0xc76c51a3, 0x0654be30,
-     0xd192e819, 0xd6ef5218, 0xd6990624, 0x5565a910, 0xf40e3585, 0x5771202a, 0x106aa070, 0x32bbd1b8,
-     0x19a4c116, 0xb8d2d0c8, 0x1e376c08, 0x5141ab53, 0x2748774c, 0xdf8eeb99, 0x34b0bcb5, 0xe19b48a8,
-     0x391c0cb3, 0xc5c95a63, 0x4ed8aa4a, 0xe3418acb, 0x5b9cca4f, 0x7763e373, 0x682e6ff3, 0xd6b2b8a3,
-     0x748f82ee, 0x5defb2fc, 0x78a5636f, 0x43172f60, 0x84c87814, 0xa1f0ab72, 0x8cc70208, 0x1a6439ec,
-     0x90befffa, 0x23631e28, 0xa4506ceb, 0xde82bde9, 0xbef9a3f7, 0xb2c67915, 0xc67178f2, 0xe372532b,
-     0xca273ece, 0xea26619c, 0xd186b8c7, 0x21c0c207, 0xeada7dd6, 0xcde0eb1e, 0xf57d4f7f, 0xee6ed178,
-     0x06f067aa, 0x72176fba, 0x0a637dc5, 0xa2c898a6, 0x113f9804, 0xbef90dae, 0x1b710b35, 0x131c471b,
-     0x28db77f5, 0x23047d84, 0x32caab7b, 0x40c72493, 0x3c9ebe0a, 0x15c9bebc, 0x431d67c4, 0x9c100d4c,
-     0x4cc5d4be, 0xcb3e42b6, 0x597f299c, 0xfc657e2a, 0x5fcb6fab, 0x3ad6faec, 0x6c44198c, 0x4a475817],
-    */
-
-    /**
-     * Function to precompute _init and _key.
-     * @private
-     */
-    _precompute: function () {
-      // XXX: This code is for precomputing the SHA256 constants, change for
-      //      SHA512 and re-enable.
-      var i = 0,
-          prime = 2,
-          factor,
-          isPrime;
-
-      function frac(x) {
-        return (x - Math.floor(x)) * 0x100000000 | 0;
-      }
-
-      function frac2(x) {
-        return (x - Math.floor(x)) * 0x10000000000 & 0xff;
-      }
-
-      for (; i < 80; prime++) {
-        isPrime = true;
-
-        for (factor = 2; factor * factor <= prime; factor++) {
-          if (prime % factor === 0) {
-            isPrime = false;
-            break;
-          }
-        }
-
-        if (isPrime) {
-          if (i < 8) {
-            this._init[i * 2] = frac(Math.pow(prime, 1 / 2));
-            this._init[i * 2 + 1] = frac2(Math.pow(prime, 1 / 2)) << 24 | this._initr[i];
-          }
-
-          this._key[i * 2] = frac(Math.pow(prime, 1 / 3));
-          this._key[i * 2 + 1] = frac2(Math.pow(prime, 1 / 3)) << 24 | this._keyr[i];
-          i++;
-        }
-      }
-    },
-
-    /**
-     * Perform one cycle of SHA-512.
-     * @param {Uint32Array|bitArray} words one block of words.
-     * @private
-     */
-    _block: function (words) {
-      var i,
-          wrh,
-          wrl,
-          h = this._h,
-          k = this._key,
-          h0h = h[0],
-          h0l = h[1],
-          h1h = h[2],
-          h1l = h[3],
-          h2h = h[4],
-          h2l = h[5],
-          h3h = h[6],
-          h3l = h[7],
-          h4h = h[8],
-          h4l = h[9],
-          h5h = h[10],
-          h5l = h[11],
-          h6h = h[12],
-          h6l = h[13],
-          h7h = h[14],
-          h7l = h[15];
-      var w;
-
-      if (typeof Uint32Array !== 'undefined') {
-        // When words is passed to _block, it has 32 elements. SHA512 _block
-        // function extends words with new elements (at the end there are 160 elements). 
-        // The problem is that if we use Uint32Array instead of Array, 
-        // the length of Uint32Array cannot be changed. Thus, we replace words with a 
-        // normal Array here.
-        w = Array(160); // do not use Uint32Array here as the instantiation is slower
-
-        for (var j = 0; j < 32; j++) {
-          w[j] = words[j];
-        }
-      } else {
-        w = words;
-      } // Working variables
-
-
-      var ah = h0h,
-          al = h0l,
-          bh = h1h,
-          bl = h1l,
-          ch = h2h,
-          cl = h2l,
-          dh = h3h,
-          dl = h3l,
-          eh = h4h,
-          el = h4l,
-          fh = h5h,
-          fl = h5l,
-          gh = h6h,
-          gl = h6l,
-          hh = h7h,
-          hl = h7l;
-
-      for (i = 0; i < 80; i++) {
-        // load up the input word for this round
-        if (i < 16) {
-          wrh = w[i * 2];
-          wrl = w[i * 2 + 1];
-        } else {
-          // Gamma0
-          var gamma0xh = w[(i - 15) * 2];
-          var gamma0xl = w[(i - 15) * 2 + 1];
-          var gamma0h = (gamma0xl << 31 | gamma0xh >>> 1) ^ (gamma0xl << 24 | gamma0xh >>> 8) ^ gamma0xh >>> 7;
-          var gamma0l = (gamma0xh << 31 | gamma0xl >>> 1) ^ (gamma0xh << 24 | gamma0xl >>> 8) ^ (gamma0xh << 25 | gamma0xl >>> 7); // Gamma1
-
-          var gamma1xh = w[(i - 2) * 2];
-          var gamma1xl = w[(i - 2) * 2 + 1];
-          var gamma1h = (gamma1xl << 13 | gamma1xh >>> 19) ^ (gamma1xh << 3 | gamma1xl >>> 29) ^ gamma1xh >>> 6;
-          var gamma1l = (gamma1xh << 13 | gamma1xl >>> 19) ^ (gamma1xl << 3 | gamma1xh >>> 29) ^ (gamma1xh << 26 | gamma1xl >>> 6); // Shortcuts
-
-          var wr7h = w[(i - 7) * 2];
-          var wr7l = w[(i - 7) * 2 + 1];
-          var wr16h = w[(i - 16) * 2];
-          var wr16l = w[(i - 16) * 2 + 1]; // W(round) = gamma0 + W(round - 7) + gamma1 + W(round - 16)
-
-          wrl = gamma0l + wr7l;
-          wrh = gamma0h + wr7h + (wrl >>> 0 < gamma0l >>> 0 ? 1 : 0);
-          wrl += gamma1l;
-          wrh += gamma1h + (wrl >>> 0 < gamma1l >>> 0 ? 1 : 0);
-          wrl += wr16l;
-          wrh += wr16h + (wrl >>> 0 < wr16l >>> 0 ? 1 : 0);
-        }
-
-        w[i * 2] = wrh |= 0;
-        w[i * 2 + 1] = wrl |= 0; // Ch
-
-        var chh = eh & fh ^ ~eh & gh;
-        var chl = el & fl ^ ~el & gl; // Maj
-
-        var majh = ah & bh ^ ah & ch ^ bh & ch;
-        var majl = al & bl ^ al & cl ^ bl & cl; // Sigma0
-
-        var sigma0h = (al << 4 | ah >>> 28) ^ (ah << 30 | al >>> 2) ^ (ah << 25 | al >>> 7);
-        var sigma0l = (ah << 4 | al >>> 28) ^ (al << 30 | ah >>> 2) ^ (al << 25 | ah >>> 7); // Sigma1
-
-        var sigma1h = (el << 18 | eh >>> 14) ^ (el << 14 | eh >>> 18) ^ (eh << 23 | el >>> 9);
-        var sigma1l = (eh << 18 | el >>> 14) ^ (eh << 14 | el >>> 18) ^ (el << 23 | eh >>> 9); // K(round)
-
-        var krh = k[i * 2];
-        var krl = k[i * 2 + 1]; // t1 = h + sigma1 + ch + K(round) + W(round)
-
-        var t1l = hl + sigma1l;
-        var t1h = hh + sigma1h + (t1l >>> 0 < hl >>> 0 ? 1 : 0);
-        t1l += chl;
-        t1h += chh + (t1l >>> 0 < chl >>> 0 ? 1 : 0);
-        t1l += krl;
-        t1h += krh + (t1l >>> 0 < krl >>> 0 ? 1 : 0);
-        t1l = t1l + wrl | 0; // FF32..FF34 perf issue https://bugzilla.mozilla.org/show_bug.cgi?id=1054972
-
-        t1h += wrh + (t1l >>> 0 < wrl >>> 0 ? 1 : 0); // t2 = sigma0 + maj
-
-        var t2l = sigma0l + majl;
-        var t2h = sigma0h + majh + (t2l >>> 0 < sigma0l >>> 0 ? 1 : 0); // Update working variables
-
-        hh = gh;
-        hl = gl;
-        gh = fh;
-        gl = fl;
-        fh = eh;
-        fl = el;
-        el = dl + t1l | 0;
-        eh = dh + t1h + (el >>> 0 < dl >>> 0 ? 1 : 0) | 0;
-        dh = ch;
-        dl = cl;
-        ch = bh;
-        cl = bl;
-        bh = ah;
-        bl = al;
-        al = t1l + t2l | 0;
-        ah = t1h + t2h + (al >>> 0 < t1l >>> 0 ? 1 : 0) | 0;
-      } // Intermediate hash
-
-
-      h0l = h[1] = h0l + al | 0;
-      h[0] = h0h + ah + (h0l >>> 0 < al >>> 0 ? 1 : 0) | 0;
-      h1l = h[3] = h1l + bl | 0;
-      h[2] = h1h + bh + (h1l >>> 0 < bl >>> 0 ? 1 : 0) | 0;
-      h2l = h[5] = h2l + cl | 0;
-      h[4] = h2h + ch + (h2l >>> 0 < cl >>> 0 ? 1 : 0) | 0;
-      h3l = h[7] = h3l + dl | 0;
-      h[6] = h3h + dh + (h3l >>> 0 < dl >>> 0 ? 1 : 0) | 0;
-      h4l = h[9] = h4l + el | 0;
-      h[8] = h4h + eh + (h4l >>> 0 < el >>> 0 ? 1 : 0) | 0;
-      h5l = h[11] = h5l + fl | 0;
-      h[10] = h5h + fh + (h5l >>> 0 < fl >>> 0 ? 1 : 0) | 0;
-      h6l = h[13] = h6l + gl | 0;
-      h[12] = h6h + gh + (h6l >>> 0 < gl >>> 0 ? 1 : 0) | 0;
-      h7l = h[15] = h7l + hl | 0;
-      h[14] = h7h + hh + (h7l >>> 0 < hl >>> 0 ? 1 : 0) | 0;
-    }
-  };
-  /** @fileOverview HMAC implementation.
-   *
-   * @author Emily Stark
-   * @author Mike Hamburg
-   * @author Dan Boneh
-   */
-
-  /** HMAC with the specified hash function.
-   * @constructor
-   * @param {bitArray} key the key for HMAC.
-   * @param {Object} [Hash=sjcl.hash.sha256] The hash function to use.
-   */
-
-  sjcl.misc.hmac = function (key, Hash) {
-    this._hash = Hash = Hash || sjcl.hash.sha256;
-    var exKey = [[], []],
-        i,
-        bs = Hash.prototype.blockSize / 32;
-    this._baseHash = [new Hash(), new Hash()];
-
-    if (key.length > bs) {
-      key = Hash.hash(key);
+    if (!n) {
+      if (!i) throw new Error(s);
+      return i;
     }
 
-    for (i = 0; i < bs; i++) {
-      exKey[0][i] = key[i] ^ 0x36363636;
-      exKey[1][i] = key[i] ^ 0x5C5C5C5C;
+    if (void 0 === n.value || !n.format) throw new Error(s);
+    return e(n.format, n.encoding || "UTF8", r)(n.value);
+  }
+
+  class f {
+    constructor(t, n, e) {
+      const r = e || {};
+      if (this.t = n, this.i = r.encoding || "UTF8", this.numRounds = r.numRounds || 1, isNaN(this.numRounds) || this.numRounds !== parseInt(this.numRounds, 10) || 1 > this.numRounds) throw new Error("numRounds must a integer >= 1");
+      this.s = t, this.o = [], this.h = 0, this.u = !1, this.l = 0, this.A = !1, this.H = [], this.S = [];
     }
 
-    this._baseHash[0].update(exKey[0]);
+    update(t) {
+      let n,
+          e = 0;
+      const r = this.p >>> 5,
+            i = this.m(t, this.o, this.h),
+            s = i.binLen,
+            o = i.value,
+            h = s >>> 5;
 
-    this._baseHash[1].update(exKey[1]);
+      for (n = 0; n < h; n += r) e + this.p <= s && (this.C = this.R(o.slice(n, n + r), this.C), e += this.p);
 
-    this._resultHash = new Hash(this._baseHash[0]);
-  };
-  /** HMAC with the specified hash function.  Also called encrypt since it's a prf.
-   * @param {bitArray|String} data The data to mac.
-   */
-
-
-  sjcl.misc.hmac.prototype.encrypt = sjcl.misc.hmac.prototype.mac = function (data) {
-    if (!this._updated) {
-      this.update(data);
-      return this.digest(data);
-    } else {
-      throw new sjcl.exception.invalid("encrypt on already updated hmac called!");
+      this.l += e, this.o = o.slice(e >>> 5), this.h = s % this.p, this.u = !0;
     }
-  };
 
-  sjcl.misc.hmac.prototype.reset = function () {
-    this._resultHash = new this._hash(this._baseHash[0]);
-    this._updated = false;
-  };
+    getHash(t, n) {
+      let e,
+          i,
+          s = this.U;
+      const o = w(n);
 
-  sjcl.misc.hmac.prototype.update = function (data) {
-    this._updated = true;
+      if (this.v) {
+        if (-1 === o.outputLen) throw new Error("Output length must be specified in options");
+        s = o.outputLen;
+      }
 
-    this._resultHash.update(data);
-  };
+      const h = r(t, s, this.K, o);
+      if (this.A && this.T) return h(this.T(o));
 
-  sjcl.misc.hmac.prototype.digest = function () {
-    var w = this._resultHash.finalize(),
-        result = new this._hash(this._baseHash[1]).update(w).finalize();
+      for (i = this.F(this.o.slice(), this.h, this.l, this.g(this.C), s), e = 1; e < this.numRounds; e += 1) this.v && s % 32 != 0 && (i[i.length - 1] &= 16777215 >>> 24 - s % 32), i = this.F(i, s, 0, this.B(this.s), s);
 
-    this.reset();
-    return result;
-  };
+      return h(i);
+    }
 
-  // eslint-disable-next-line import/no-extraneous-dependencies
+    setHMACKey(t, n, r) {
+      if (!this.L) throw new Error("Variant does not support HMAC");
+      if (this.u) throw new Error("Cannot set MAC key after calling update");
+      const i = e(n, (r || {}).encoding || "UTF8", this.K);
+      this.M(i(t));
+    }
+
+    M(t) {
+      const n = this.p >>> 3,
+            e = n / 4 - 1;
+      let r;
+      if (1 !== this.numRounds) throw new Error("Cannot set numRounds with MAC");
+      if (this.A) throw new Error("MAC key already set");
+
+      for (n < t.binLen / 8 && (t.value = this.F(t.value, t.binLen, 0, this.B(this.s), this.U)); t.value.length <= e;) t.value.push(0);
+
+      for (r = 0; r <= e; r += 1) this.H[r] = 909522486 ^ t.value[r], this.S[r] = 1549556828 ^ t.value[r];
+
+      this.C = this.R(this.H, this.C), this.l = this.p, this.A = !0;
+    }
+
+    getHMAC(t, n) {
+      const e = w(n);
+      return r(t, this.U, this.K, e)(this.k());
+    }
+
+    k() {
+      let t;
+      if (!this.A) throw new Error("Cannot call getHMAC without first setting MAC key");
+      const n = this.F(this.o.slice(), this.h, this.l, this.g(this.C), this.U);
+      return t = this.R(this.S, this.B(this.s)), t = this.F(n, this.U, this.p, t, this.U), t;
+    }
+
+  }
+
+  function a(t, n) {
+    return t << n | t >>> 32 - n;
+  }
+
+  function l(t, n) {
+    return t >>> n | t << 32 - n;
+  }
+
+  function A(t, n) {
+    return t >>> n;
+  }
+
+  function E(t, n, e) {
+    return t ^ n ^ e;
+  }
+
+  function H(t, n, e) {
+    return t & n ^ ~t & e;
+  }
+
+  function S(t, n, e) {
+    return t & n ^ t & e ^ n & e;
+  }
+
+  function b(t) {
+    return l(t, 2) ^ l(t, 13) ^ l(t, 22);
+  }
+
+  function p(t, n) {
+    const e = (65535 & t) + (65535 & n);
+    return (65535 & (t >>> 16) + (n >>> 16) + (e >>> 16)) << 16 | 65535 & e;
+  }
+
+  function d(t, n, e, r) {
+    const i = (65535 & t) + (65535 & n) + (65535 & e) + (65535 & r);
+    return (65535 & (t >>> 16) + (n >>> 16) + (e >>> 16) + (r >>> 16) + (i >>> 16)) << 16 | 65535 & i;
+  }
+
+  function m(t, n, e, r, i) {
+    const s = (65535 & t) + (65535 & n) + (65535 & e) + (65535 & r) + (65535 & i);
+    return (65535 & (t >>> 16) + (n >>> 16) + (e >>> 16) + (r >>> 16) + (i >>> 16) + (s >>> 16)) << 16 | 65535 & s;
+  }
+
+  function C(t) {
+    return l(t, 7) ^ l(t, 18) ^ A(t, 3);
+  }
+
+  function y(t) {
+    return l(t, 6) ^ l(t, 11) ^ l(t, 25);
+  }
+
+  function R(t) {
+    return [1732584193, 4023233417, 2562383102, 271733878, 3285377520];
+  }
+
+  function U(t, n) {
+    let e, r, i, s, o, h, u;
+    const w = [];
+
+    for (e = n[0], r = n[1], i = n[2], s = n[3], o = n[4], u = 0; u < 80; u += 1) w[u] = u < 16 ? t[u] : a(w[u - 3] ^ w[u - 8] ^ w[u - 14] ^ w[u - 16], 1), h = u < 20 ? m(a(e, 5), H(r, i, s), o, 1518500249, w[u]) : u < 40 ? m(a(e, 5), E(r, i, s), o, 1859775393, w[u]) : u < 60 ? m(a(e, 5), S(r, i, s), o, 2400959708, w[u]) : m(a(e, 5), E(r, i, s), o, 3395469782, w[u]), o = s, s = i, i = a(r, 30), r = e, e = h;
+
+    return n[0] = p(e, n[0]), n[1] = p(r, n[1]), n[2] = p(i, n[2]), n[3] = p(s, n[3]), n[4] = p(o, n[4]), n;
+  }
+
+  function v(t, n, e, r) {
+    let i;
+    const s = 15 + (n + 65 >>> 9 << 4),
+          o = n + e;
+
+    for (; t.length <= s;) t.push(0);
+
+    for (t[n >>> 5] |= 128 << 24 - n % 32, t[s] = 4294967295 & o, t[s - 1] = o / 4294967296 | 0, i = 0; i < t.length; i += 16) r = U(t.slice(i, i + 16), r);
+
+    return r;
+  }
+
+  class K extends f {
+    constructor(t, n, r) {
+      if ("SHA-1" !== t) throw new Error(h);
+      super(t, n, r);
+      const i = r || {};
+      this.L = !0, this.T = this.k, this.K = -1, this.m = e(this.t, this.i, this.K), this.R = U, this.g = function (t) {
+        return t.slice();
+      }, this.B = R, this.F = v, this.C = [1732584193, 4023233417, 2562383102, 271733878, 3285377520], this.p = 512, this.U = 160, this.v = !1, i.hmacKey && this.M(c("hmacKey", i.hmacKey, this.K));
+    }
+
+  }
+
+  function T(t) {
+    let n;
+    return n = "SHA-224" == t ? s.slice() : o.slice(), n;
+  }
+
+  function F(t, n) {
+    let e, r, s, o, h, u, w, c, f, a, E;
+    const R = [];
+
+    for (e = n[0], r = n[1], s = n[2], o = n[3], h = n[4], u = n[5], w = n[6], c = n[7], E = 0; E < 64; E += 1) R[E] = E < 16 ? t[E] : d(l(U = R[E - 2], 17) ^ l(U, 19) ^ A(U, 10), R[E - 7], C(R[E - 15]), R[E - 16]), f = m(c, y(h), H(h, u, w), i[E], R[E]), a = p(b(e), S(e, r, s)), c = w, w = u, u = h, h = p(o, f), o = s, s = r, r = e, e = p(f, a);
+
+    var U;
+    return n[0] = p(e, n[0]), n[1] = p(r, n[1]), n[2] = p(s, n[2]), n[3] = p(o, n[3]), n[4] = p(h, n[4]), n[5] = p(u, n[5]), n[6] = p(w, n[6]), n[7] = p(c, n[7]), n;
+  }
+
+  class g extends f {
+    constructor(t, n, r) {
+      if ("SHA-224" !== t && "SHA-256" !== t) throw new Error(h);
+      super(t, n, r);
+      const i = r || {};
+      this.T = this.k, this.L = !0, this.K = -1, this.m = e(this.t, this.i, this.K), this.R = F, this.g = function (t) {
+        return t.slice();
+      }, this.B = T, this.F = function (n, e, r, i) {
+        return function (t, n, e, r, i) {
+          let s, o;
+          const h = 15 + (n + 65 >>> 9 << 4),
+                u = n + e;
+
+          for (; t.length <= h;) t.push(0);
+
+          for (t[n >>> 5] |= 128 << 24 - n % 32, t[h] = 4294967295 & u, t[h - 1] = u / 4294967296 | 0, s = 0; s < t.length; s += 16) r = F(t.slice(s, s + 16), r);
+
+          return o = "SHA-224" === i ? [r[0], r[1], r[2], r[3], r[4], r[5], r[6]] : r, o;
+        }(n, e, r, i, t);
+      }, this.C = T(t), this.p = 512, this.U = "SHA-224" === t ? 224 : 256, this.v = !1, i.hmacKey && this.M(c("hmacKey", i.hmacKey, this.K));
+    }
+
+  }
+
+  class B {
+    constructor(t, n) {
+      this.Y = t, this.N = n;
+    }
+
+  }
+
+  function L(t, n) {
+    let e;
+    return n > 32 ? (e = 64 - n, new B(t.N << n | t.Y >>> e, t.Y << n | t.N >>> e)) : 0 !== n ? (e = 32 - n, new B(t.Y << n | t.N >>> e, t.N << n | t.Y >>> e)) : t;
+  }
+
+  function M(t, n) {
+    let e;
+    return n < 32 ? (e = 32 - n, new B(t.Y >>> n | t.N << e, t.N >>> n | t.Y << e)) : (e = 64 - n, new B(t.N >>> n | t.Y << e, t.Y >>> n | t.N << e));
+  }
+
+  function k(t, n) {
+    return new B(t.Y >>> n, t.N >>> n | t.Y << 32 - n);
+  }
+
+  function Y(t, n, e) {
+    return new B(t.Y & n.Y ^ t.Y & e.Y ^ n.Y & e.Y, t.N & n.N ^ t.N & e.N ^ n.N & e.N);
+  }
+
+  function N(t) {
+    const n = M(t, 28),
+          e = M(t, 34),
+          r = M(t, 39);
+    return new B(n.Y ^ e.Y ^ r.Y, n.N ^ e.N ^ r.N);
+  }
+
+  function I(t, n) {
+    let e, r;
+    e = (65535 & t.N) + (65535 & n.N), r = (t.N >>> 16) + (n.N >>> 16) + (e >>> 16);
+    const i = (65535 & r) << 16 | 65535 & e;
+    e = (65535 & t.Y) + (65535 & n.Y) + (r >>> 16), r = (t.Y >>> 16) + (n.Y >>> 16) + (e >>> 16);
+    return new B((65535 & r) << 16 | 65535 & e, i);
+  }
+
+  function X(t, n, e, r) {
+    let i, s;
+    i = (65535 & t.N) + (65535 & n.N) + (65535 & e.N) + (65535 & r.N), s = (t.N >>> 16) + (n.N >>> 16) + (e.N >>> 16) + (r.N >>> 16) + (i >>> 16);
+    const o = (65535 & s) << 16 | 65535 & i;
+    i = (65535 & t.Y) + (65535 & n.Y) + (65535 & e.Y) + (65535 & r.Y) + (s >>> 16), s = (t.Y >>> 16) + (n.Y >>> 16) + (e.Y >>> 16) + (r.Y >>> 16) + (i >>> 16);
+    return new B((65535 & s) << 16 | 65535 & i, o);
+  }
+
+  function z(t, n, e, r, i) {
+    let s, o;
+    s = (65535 & t.N) + (65535 & n.N) + (65535 & e.N) + (65535 & r.N) + (65535 & i.N), o = (t.N >>> 16) + (n.N >>> 16) + (e.N >>> 16) + (r.N >>> 16) + (i.N >>> 16) + (s >>> 16);
+    const h = (65535 & o) << 16 | 65535 & s;
+    s = (65535 & t.Y) + (65535 & n.Y) + (65535 & e.Y) + (65535 & r.Y) + (65535 & i.Y) + (o >>> 16), o = (t.Y >>> 16) + (n.Y >>> 16) + (e.Y >>> 16) + (r.Y >>> 16) + (i.Y >>> 16) + (s >>> 16);
+    return new B((65535 & o) << 16 | 65535 & s, h);
+  }
+
+  function x(t, n) {
+    return new B(t.Y ^ n.Y, t.N ^ n.N);
+  }
+
+  function _(t) {
+    const n = M(t, 19),
+          e = M(t, 61),
+          r = k(t, 6);
+    return new B(n.Y ^ e.Y ^ r.Y, n.N ^ e.N ^ r.N);
+  }
+
+  function O(t) {
+    const n = M(t, 1),
+          e = M(t, 8),
+          r = k(t, 7);
+    return new B(n.Y ^ e.Y ^ r.Y, n.N ^ e.N ^ r.N);
+  }
+
+  function P(t) {
+    const n = M(t, 14),
+          e = M(t, 18),
+          r = M(t, 41);
+    return new B(n.Y ^ e.Y ^ r.Y, n.N ^ e.N ^ r.N);
+  }
+
+  const V = [new B(i[0], 3609767458), new B(i[1], 602891725), new B(i[2], 3964484399), new B(i[3], 2173295548), new B(i[4], 4081628472), new B(i[5], 3053834265), new B(i[6], 2937671579), new B(i[7], 3664609560), new B(i[8], 2734883394), new B(i[9], 1164996542), new B(i[10], 1323610764), new B(i[11], 3590304994), new B(i[12], 4068182383), new B(i[13], 991336113), new B(i[14], 633803317), new B(i[15], 3479774868), new B(i[16], 2666613458), new B(i[17], 944711139), new B(i[18], 2341262773), new B(i[19], 2007800933), new B(i[20], 1495990901), new B(i[21], 1856431235), new B(i[22], 3175218132), new B(i[23], 2198950837), new B(i[24], 3999719339), new B(i[25], 766784016), new B(i[26], 2566594879), new B(i[27], 3203337956), new B(i[28], 1034457026), new B(i[29], 2466948901), new B(i[30], 3758326383), new B(i[31], 168717936), new B(i[32], 1188179964), new B(i[33], 1546045734), new B(i[34], 1522805485), new B(i[35], 2643833823), new B(i[36], 2343527390), new B(i[37], 1014477480), new B(i[38], 1206759142), new B(i[39], 344077627), new B(i[40], 1290863460), new B(i[41], 3158454273), new B(i[42], 3505952657), new B(i[43], 106217008), new B(i[44], 3606008344), new B(i[45], 1432725776), new B(i[46], 1467031594), new B(i[47], 851169720), new B(i[48], 3100823752), new B(i[49], 1363258195), new B(i[50], 3750685593), new B(i[51], 3785050280), new B(i[52], 3318307427), new B(i[53], 3812723403), new B(i[54], 2003034995), new B(i[55], 3602036899), new B(i[56], 1575990012), new B(i[57], 1125592928), new B(i[58], 2716904306), new B(i[59], 442776044), new B(i[60], 593698344), new B(i[61], 3733110249), new B(i[62], 2999351573), new B(i[63], 3815920427), new B(3391569614, 3928383900), new B(3515267271, 566280711), new B(3940187606, 3454069534), new B(4118630271, 4000239992), new B(116418474, 1914138554), new B(174292421, 2731055270), new B(289380356, 3203993006), new B(460393269, 320620315), new B(685471733, 587496836), new B(852142971, 1086792851), new B(1017036298, 365543100), new B(1126000580, 2618297676), new B(1288033470, 3409855158), new B(1501505948, 4234509866), new B(1607167915, 987167468), new B(1816402316, 1246189591)];
+
+  function Z(t) {
+    return "SHA-384" === t ? [new B(3418070365, s[0]), new B(1654270250, s[1]), new B(2438529370, s[2]), new B(355462360, s[3]), new B(1731405415, s[4]), new B(41048885895, s[5]), new B(3675008525, s[6]), new B(1203062813, s[7])] : [new B(o[0], 4089235720), new B(o[1], 2227873595), new B(o[2], 4271175723), new B(o[3], 1595750129), new B(o[4], 2917565137), new B(o[5], 725511199), new B(o[6], 4215389547), new B(o[7], 327033209)];
+  }
+
+  function j(t, n) {
+    let e, r, i, s, o, h, u, w, c, f, a, l;
+    const A = [];
+
+    for (e = n[0], r = n[1], i = n[2], s = n[3], o = n[4], h = n[5], u = n[6], w = n[7], a = 0; a < 80; a += 1) a < 16 ? (l = 2 * a, A[a] = new B(t[l], t[l + 1])) : A[a] = X(_(A[a - 2]), A[a - 7], O(A[a - 15]), A[a - 16]), c = z(w, P(o), (H = h, S = u, new B((E = o).Y & H.Y ^ ~E.Y & S.Y, E.N & H.N ^ ~E.N & S.N)), V[a], A[a]), f = I(N(e), Y(e, r, i)), w = u, u = h, h = o, o = I(s, c), s = i, i = r, r = e, e = I(c, f);
+
+    var E, H, S;
+    return n[0] = I(e, n[0]), n[1] = I(r, n[1]), n[2] = I(i, n[2]), n[3] = I(s, n[3]), n[4] = I(o, n[4]), n[5] = I(h, n[5]), n[6] = I(u, n[6]), n[7] = I(w, n[7]), n;
+  }
+
+  class q extends f {
+    constructor(t, n, r) {
+      if ("SHA-384" !== t && "SHA-512" !== t) throw new Error(h);
+      super(t, n, r);
+      const i = r || {};
+      this.T = this.k, this.L = !0, this.K = -1, this.m = e(this.t, this.i, this.K), this.R = j, this.g = function (t) {
+        return t.slice();
+      }, this.B = Z, this.F = function (n, e, r, i) {
+        return function (t, n, e, r, i) {
+          let s, o;
+          const h = 31 + (n + 129 >>> 10 << 5),
+                u = n + e;
+
+          for (; t.length <= h;) t.push(0);
+
+          for (t[n >>> 5] |= 128 << 24 - n % 32, t[h] = 4294967295 & u, t[h - 1] = u / 4294967296 | 0, s = 0; s < t.length; s += 32) r = j(t.slice(s, s + 32), r);
+
+          return o = "SHA-384" === i ? [(r = r)[0].Y, r[0].N, r[1].Y, r[1].N, r[2].Y, r[2].N, r[3].Y, r[3].N, r[4].Y, r[4].N, r[5].Y, r[5].N] : [r[0].Y, r[0].N, r[1].Y, r[1].N, r[2].Y, r[2].N, r[3].Y, r[3].N, r[4].Y, r[4].N, r[5].Y, r[5].N, r[6].Y, r[6].N, r[7].Y, r[7].N], o;
+        }(n, e, r, i, t);
+      }, this.C = Z(t), this.p = 1024, this.U = "SHA-384" === t ? 384 : 512, this.v = !1, i.hmacKey && this.M(c("hmacKey", i.hmacKey, this.K));
+    }
+
+  }
+
+  const D = [new B(0, 1), new B(0, 32898), new B(2147483648, 32906), new B(2147483648, 2147516416), new B(0, 32907), new B(0, 2147483649), new B(2147483648, 2147516545), new B(2147483648, 32777), new B(0, 138), new B(0, 136), new B(0, 2147516425), new B(0, 2147483658), new B(0, 2147516555), new B(2147483648, 139), new B(2147483648, 32905), new B(2147483648, 32771), new B(2147483648, 32770), new B(2147483648, 128), new B(0, 32778), new B(2147483648, 2147483658), new B(2147483648, 2147516545), new B(2147483648, 32896), new B(0, 2147483649), new B(2147483648, 2147516424)],
+        G = [[0, 36, 3, 41, 18], [1, 44, 10, 45, 2], [62, 6, 43, 15, 61], [28, 55, 25, 21, 56], [27, 20, 39, 8, 14]];
+
+  function J(t) {
+    let n;
+    const e = [];
+
+    for (n = 0; n < 5; n += 1) e[n] = [new B(0, 0), new B(0, 0), new B(0, 0), new B(0, 0), new B(0, 0)];
+
+    return e;
+  }
+
+  function Q(t) {
+    let n;
+    const e = [];
+
+    for (n = 0; n < 5; n += 1) e[n] = t[n].slice();
+
+    return e;
+  }
+
+  function W(t, n) {
+    let e, r, i, s;
+    const o = [],
+          h = [];
+    if (null !== t) for (r = 0; r < t.length; r += 2) n[(r >>> 1) % 5][(r >>> 1) / 5 | 0] = x(n[(r >>> 1) % 5][(r >>> 1) / 5 | 0], new B(t[r + 1], t[r]));
+
+    for (e = 0; e < 24; e += 1) {
+      for (s = J(), r = 0; r < 5; r += 1) o[r] = (u = n[r][0], w = n[r][1], c = n[r][2], f = n[r][3], a = n[r][4], new B(u.Y ^ w.Y ^ c.Y ^ f.Y ^ a.Y, u.N ^ w.N ^ c.N ^ f.N ^ a.N));
+
+      for (r = 0; r < 5; r += 1) h[r] = x(o[(r + 4) % 5], L(o[(r + 1) % 5], 1));
+
+      for (r = 0; r < 5; r += 1) for (i = 0; i < 5; i += 1) n[r][i] = x(n[r][i], h[r]);
+
+      for (r = 0; r < 5; r += 1) for (i = 0; i < 5; i += 1) s[i][(2 * r + 3 * i) % 5] = L(n[r][i], G[r][i]);
+
+      for (r = 0; r < 5; r += 1) for (i = 0; i < 5; i += 1) n[r][i] = x(s[r][i], new B(~s[(r + 1) % 5][i].Y & s[(r + 2) % 5][i].Y, ~s[(r + 1) % 5][i].N & s[(r + 2) % 5][i].N));
+
+      n[0][0] = x(n[0][0], D[e]);
+    }
+
+    var u, w, c, f, a;
+    return n;
+  }
+
+  function $(t) {
+    let n,
+        e,
+        r = 0;
+    const i = [0, 0],
+          s = [4294967295 & t, t / 4294967296 & 2097151];
+
+    for (n = 6; n >= 0; n--) e = s[n >> 2] >>> 8 * n & 255, 0 === e && 0 === r || (i[r + 1 >> 2] |= e << 8 * (r + 1), r += 1);
+
+    return r = 0 !== r ? r : 1, i[0] |= r, {
+      value: r + 1 > 4 ? i : [i[0]],
+      binLen: 8 + 8 * r
+    };
+  }
+
+  function tt(t) {
+    return u($(t.binLen), t);
+  }
+
+  function nt(t, n) {
+    let e,
+        r = $(n);
+    r = u(r, t);
+    const i = n >>> 2,
+          s = (i - r.value.length % i) % i;
+
+    for (e = 0; e < s; e++) r.value.push(0);
+
+    return r.value;
+  }
+
+  class et extends f {
+    constructor(t, n, r) {
+      let i = 6,
+          s = 0;
+      super(t, n, r);
+      const o = r || {};
+
+      if (1 !== this.numRounds) {
+        if (o.kmacKey || o.hmacKey) throw new Error("Cannot set numRounds with MAC");
+        if ("CSHAKE128" === this.s || "CSHAKE256" === this.s) throw new Error("Cannot set numRounds for CSHAKE variants");
+      }
+
+      switch (this.K = 1, this.m = e(this.t, this.i, this.K), this.R = W, this.g = Q, this.B = J, this.C = J(), this.v = !1, t) {
+        case "SHA3-224":
+          this.p = s = 1152, this.U = 224, this.L = !0, this.T = this.k;
+          break;
+
+        case "SHA3-256":
+          this.p = s = 1088, this.U = 256, this.L = !0, this.T = this.k;
+          break;
+
+        case "SHA3-384":
+          this.p = s = 832, this.U = 384, this.L = !0, this.T = this.k;
+          break;
+
+        case "SHA3-512":
+          this.p = s = 576, this.U = 512, this.L = !0, this.T = this.k;
+          break;
+
+        case "SHAKE128":
+          i = 31, this.p = s = 1344, this.U = -1, this.v = !0, this.L = !1, this.T = null;
+          break;
+
+        case "SHAKE256":
+          i = 31, this.p = s = 1088, this.U = -1, this.v = !0, this.L = !1, this.T = null;
+          break;
+
+        case "KMAC128":
+          i = 4, this.p = s = 1344, this.I(r), this.U = -1, this.v = !0, this.L = !1, this.T = this.X;
+          break;
+
+        case "KMAC256":
+          i = 4, this.p = s = 1088, this.I(r), this.U = -1, this.v = !0, this.L = !1, this.T = this.X;
+          break;
+
+        case "CSHAKE128":
+          this.p = s = 1344, i = this._(r), this.U = -1, this.v = !0, this.L = !1, this.T = null;
+          break;
+
+        case "CSHAKE256":
+          this.p = s = 1088, i = this._(r), this.U = -1, this.v = !0, this.L = !1, this.T = null;
+          break;
+
+        default:
+          throw new Error(h);
+      }
+
+      this.F = function (t, n, e, r, o) {
+        return function (t, n, e, r, i, s, o) {
+          let h,
+              u,
+              w = 0;
+          const c = [],
+                f = i >>> 5,
+                a = n >>> 5;
+
+          for (h = 0; h < a && n >= i; h += f) r = W(t.slice(h, h + f), r), n -= i;
+
+          for (t = t.slice(h), n %= i; t.length < f;) t.push(0);
+
+          for (h = n >>> 3, t[h >> 2] ^= s << h % 4 * 8, t[f - 1] ^= 2147483648, r = W(t, r); 32 * c.length < o && (u = r[w % 5][w / 5 | 0], c.push(u.N), !(32 * c.length >= o));) c.push(u.Y), w += 1, 0 == 64 * w % i && (W(null, r), w = 0);
+
+          return c;
+        }(t, n, 0, r, s, i, o);
+      }, o.hmacKey && this.M(c("hmacKey", o.hmacKey, this.K));
+    }
+
+    _(t, n) {
+      const e = function (t) {
+        const n = t || {};
+        return {
+          funcName: c("funcName", n.funcName, 1, {
+            value: [],
+            binLen: 0
+          }),
+          customization: c("Customization", n.customization, 1, {
+            value: [],
+            binLen: 0
+          })
+        };
+      }(t || {});
+
+      n && (e.funcName = n);
+      const r = u(tt(e.funcName), tt(e.customization));
+
+      if (0 !== e.customization.binLen || 0 !== e.funcName.binLen) {
+        const t = nt(r, this.p >>> 3);
+
+        for (let n = 0; n < t.length; n += this.p >>> 5) this.C = this.R(t.slice(n, n + (this.p >>> 5)), this.C), this.l += this.p;
+
+        return 4;
+      }
+
+      return 31;
+    }
+
+    I(t) {
+      const n = function (t) {
+        const n = t || {};
+        return {
+          kmacKey: c("kmacKey", n.kmacKey, 1),
+          funcName: {
+            value: [1128353099],
+            binLen: 32
+          },
+          customization: c("Customization", n.customization, 1, {
+            value: [],
+            binLen: 0
+          })
+        };
+      }(t || {});
+
+      this._(t, n.funcName);
+
+      const e = nt(tt(n.kmacKey), this.p >>> 3);
+
+      for (let t = 0; t < e.length; t += this.p >>> 5) this.C = this.R(e.slice(t, t + (this.p >>> 5)), this.C), this.l += this.p;
+
+      this.A = !0;
+    }
+
+    X(t) {
+      const n = u({
+        value: this.o.slice(),
+        binLen: this.h
+      }, function (t) {
+        let n,
+            e,
+            r = 0;
+        const i = [0, 0],
+              s = [4294967295 & t, t / 4294967296 & 2097151];
+
+        for (n = 6; n >= 0; n--) e = s[n >> 2] >>> 8 * n & 255, 0 === e && 0 === r || (i[r >> 2] |= e << 8 * r, r += 1);
+
+        return r = 0 !== r ? r : 1, i[r >> 2] |= r << 8 * r, {
+          value: r + 1 > 4 ? i : [i[0]],
+          binLen: 8 + 8 * r
+        };
+      }(t.outputLen));
+      return this.F(n.value, n.binLen, this.l, this.g(this.C), t.outputLen);
+    }
+
+  }
+
+  class jsSHA {
+    constructor(t, n, e) {
+      if ("SHA-1" == t) this.O = new K(t, n, e);else if ("SHA-224" == t || "SHA-256" == t) this.O = new g(t, n, e);else if ("SHA-384" == t || "SHA-512" == t) this.O = new q(t, n, e);else {
+        if ("SHA3-224" != t && "SHA3-256" != t && "SHA3-384" != t && "SHA3-512" != t && "SHAKE128" != t && "SHAKE256" != t && "CSHAKE128" != t && "CSHAKE256" != t && "KMAC128" != t && "KMAC256" != t) throw new Error(h);
+        this.O = new et(t, n, e);
+      }
+    }
+
+    update(t) {
+      this.O.update(t);
+    }
+
+    getHash(t, n) {
+      return this.O.getHash(t, n);
+    }
+
+    setHMACKey(t, n, e) {
+      this.O.setHMACKey(t, n, e);
+    }
+
+    getHMAC(t, n) {
+      return this.O.getHMAC(t, n);
+    }
+
+  }
+
   var randomBytes;
   var hmacDigest;
   var timingSafeEqual;
@@ -1919,16 +1421,27 @@
     };
 
     hmacDigest = function hmacDigest(algorithm, key, message) {
-      var hash = sjcl.hash[algorithm.toLowerCase()];
+      var variant = {
+        SHA1: 'SHA-1',
+        SHA224: 'SHA-224',
+        SHA256: 'SHA-256',
+        SHA384: 'SHA-384',
+        SHA512: 'SHA-512',
+        'SHA3-224': 'SHA3-224',
+        'SHA3-256': 'SHA3-256',
+        'SHA3-384': 'SHA3-384',
+        'SHA3-512': 'SHA3-512'
+      }[algorithm.toUpperCase()];
 
-      if (typeof hash === 'undefined') {
+      if (typeof variant === 'undefined') {
         throw new TypeError('Unknown hash function');
       } // eslint-disable-next-line new-cap
 
 
-      var hmac = new sjcl.misc.hmac(sjcl.codec.arrayBuffer.toBits(key), hash);
-      hmac.update(sjcl.codec.arrayBuffer.toBits(message));
-      return sjcl.codec.arrayBuffer.fromBits(hmac.digest(), false);
+      var hmac = new jsSHA(variant, 'ARRAYBUFFER');
+      hmac.setHMACKey(key, 'ARRAYBUFFER');
+      hmac.update(message);
+      return hmac.getHMAC('ARRAYBUFFER');
     };
 
     timingSafeEqual = function timingSafeEqual(a, b) {
@@ -2162,7 +1675,7 @@
        * @type {string}
        */
 
-      this.algorithm = algorithm;
+      this.algorithm = algorithm.toUpperCase();
       /**
        * Token length.
        * @type {number}
@@ -2357,7 +1870,7 @@
        * @type {string}
        */
 
-      this.algorithm = algorithm;
+      this.algorithm = algorithm.toUpperCase();
       /**
        * Token length.
        * @type {number}
@@ -2518,7 +2031,7 @@
    * @type {RegExp}
    */
 
-  var ALGORITHM_REGEX = /^SHA(?:1|256|512)$/i;
+  var ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
   /**
    * Integer regex.
    * @private
@@ -2675,7 +2188,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '6.2.4';
+  var version = '6.3.0';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
