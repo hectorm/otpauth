@@ -66,7 +66,7 @@
     "@rollup/plugin-replace": "~2.4.2",
     "chai": "~4.3.4",
     "documentation": "~13.2.1",
-    "eslint": "~7.23.0",
+    "eslint": "~7.24.0",
     "eslint-config-airbnb-base": "~14.2.1",
     "eslint-config-hectorm": "~1.0.9",
     "eslint-plugin-import": "~2.22.1",
@@ -78,7 +78,7 @@
     "npm-run-all": "~4.1.5",
     "playwright-chromium": "~1.10.0",
     "playwright-firefox": "~1.10.0",
-    "rollup": "~2.44.0",
+    "rollup": "~2.45.1",
     "rollup-plugin-terser": "~7.0.2"
   },
   "babel": {
