@@ -52,7 +52,7 @@ export class HOTP {
 		 * @type {Secret}
 		 */
 		this.secret = typeof secret === 'string'
-			? Secret.fromB32(secret)
+			? Secret.fromBase32(secret)
 			: secret;
 		/**
 		 * HMAC hashing algorithm.
@@ -188,7 +188,7 @@ export class HOTP {
 			+ `${this.issuer.length > 0
 				? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
 				: `${e(this.label)}?`}`
-			+ `secret=${e(this.secret.b32)}&`
+			+ `secret=${e(this.secret.base32)}&`
 			+ `algorithm=${e(this.algorithm)}&`
 			+ `digits=${e(this.digits)}&`
 			+ `counter=${e(this.counter)}`;
@@ -230,7 +230,7 @@ export class TOTP {
 		 * @type {Secret}
 		 */
 		this.secret = typeof secret === 'string'
-			? Secret.fromB32(secret)
+			? Secret.fromBase32(secret)
 			: secret;
 		/**
 		 * HMAC hashing algorithm.
@@ -357,7 +357,7 @@ export class TOTP {
 			+ `${this.issuer.length > 0
 				? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
 				: `${e(this.label)}?`}`
-			+ `secret=${e(this.secret.b32)}&`
+			+ `secret=${e(this.secret.base32)}&`
 			+ `algorithm=${e(this.algorithm)}&`
 			+ `digits=${e(this.digits)}&`
 			+ `period=${e(this.period)}`;

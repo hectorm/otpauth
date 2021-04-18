@@ -51,8 +51,8 @@ export default async () => {
 			babel({ babelHelpers: 'bundled' })
 		],
 		onwarn: warning => {
-			// Ignore "eval" in "utils.js".
-			if (warning.code === 'EVAL' && /\/utils\.js$/.test(warning.loc.file)) {
+			// Ignore "eval" in "internal-utils.js".
+			if (warning.code === 'EVAL' && /\/internal-utils\.js$/.test(warning.loc.file)) {
 				return;
 			}
 

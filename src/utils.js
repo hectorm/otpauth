@@ -1,3 +1,5 @@
+import { InternalUtils } from './internal-utils';
+
 /**
  * An object containing some utilities.
  * @type {Object}
@@ -53,15 +55,15 @@ export const Utils = {
 	},
 
 	/**
-	 * Raw string conversion.
+	 * Latin-1 string conversion.
 	 * @type {Object}
 	 */
-	raw: {
+	latin1: {
 
 		/**
-		 * Converts an ArrayBuffer to a string.
+		 * Converts an ArrayBuffer to a Latin-1 string.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
-		 * @returns {string} String.
+		 * @returns {string} Latin-1 string.
 		 */
 		fromBuf: buf => {
 			const arr = new Uint8Array(buf);
@@ -75,8 +77,8 @@ export const Utils = {
 		},
 
 		/**
-		 * Converts a string to an ArrayBuffer.
-		 * @param {string} str String.
+		 * Converts a Latin-1 string to an ArrayBuffer.
+		 * @param {string} str Latin-1 string.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
 		toBuf: str => {
@@ -84,7 +86,7 @@ export const Utils = {
 			const arr = new Uint8Array(buf);
 
 			for (let i = 0; i < str.length; i++) {
-				arr[i] = str.charCodeAt(i);
+				arr[i] = str.charCodeAt(i) & 0xFF;
 			}
 
 			return buf;
@@ -93,10 +95,36 @@ export const Utils = {
 	},
 
 	/**
+	 * UTF-8 string conversion.
+	 * @type {Object}
+	 */
+	utf8: {
+
+		/**
+		 * Converts an ArrayBuffer to an UTF-8 string.
+		 * @param {ArrayBuffer} buf ArrayBuffer.
+		 * @returns {string} String.
+		 */
+		fromBuf: buf => {
+			return InternalUtils.utf8TextDecode(buf);
+		},
+
+		/**
+		 * Converts an UTF-8 string to an ArrayBuffer.
+		 * @param {string} str String.
+		 * @returns {ArrayBuffer} ArrayBuffer.
+		 */
+		toBuf: str => {
+			return InternalUtils.utf8TextEncode(str).buffer;
+		}
+
+	},
+
+	/**
 	 * Base32 string conversion.
 	 * @type {Object}
 	 */
-	b32: {
+	base32: {
 
 		/**
 		 * RFC 4648 base32 alphabet without pad.
@@ -112,7 +140,6 @@ export const Utils = {
 		 */
 		fromBuf: buf => {
 			const arr = new Uint8Array(buf);
-
 			let bits = 0;
 			let value = 0;
 			let str = '';
@@ -122,13 +149,13 @@ export const Utils = {
 				bits += 8;
 
 				while (bits >= 5) {
-					str += Utils.b32.alphabet[(value >>> bits - 5) & 31];
+					str += Utils.base32.alphabet[(value >>> bits - 5) & 31];
 					bits -= 5;
 				}
 			}
 
 			if (bits > 0) {
-				str += Utils.b32.alphabet[(value << 5 - bits) & 31];
+				str += Utils.base32.alphabet[(value << 5 - bits) & 31];
 			}
 
 			return str;
@@ -146,13 +173,12 @@ export const Utils = {
 
 			const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
 			const arr = new Uint8Array(buf);
-
 			let bits = 0;
 			let value = 0;
 			let index = 0;
 
 			for (let i = 0; i < str.length; i++) {
-				const idx = Utils.b32.alphabet.indexOf(str[i]);
+				const idx = Utils.base32.alphabet.indexOf(str[i]);
 				if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
 
 				value = (value << 5) | idx;
@@ -221,126 +247,6 @@ export const Utils = {
 		let repeat = digits - String(num).length;
 		while (repeat-- > 0) prefix += '0';
 		return `${prefix}${num}`;
-	}
-
-};
-
-/**
- * An object containing some utilities (for internal use only).
- * @private
- * @type {Object}
- */
-export const InternalUtils = {
-
-	/**
-	 * "globalThis" ponyfill
-	 * (https://mathiasbynens.be/notes/globalthis).
-	 * @type {Object}
-	 */
-	get globalThis() {
-		let _globalThis;
-
-		/* eslint-disable no-extend-native, no-restricted-globals, no-undef */
-		if (typeof globalThis === 'object') {
-			_globalThis = globalThis;
-		} else {
-			Object.defineProperty(Object.prototype, '__magicalGlobalThis__', {
-				get() { return this; },
-				configurable: true
-			});
-			try {
-				_globalThis = __magicalGlobalThis__;
-			} finally {
-				delete Object.prototype.__magicalGlobalThis__;
-			}
-		}
-
-		if (typeof _globalThis === 'undefined') {
-			// Still unable to determine "globalThis", fall back to a naive method.
-			if (typeof self !== 'undefined') {
-				_globalThis = self;
-			} else if (typeof window !== 'undefined') {
-				_globalThis = window;
-			} else if (typeof global !== 'undefined') {
-				_globalThis = global;
-			}
-		}
-		/* eslint-enable */
-
-		Object.defineProperty(this, 'globalThis', {
-			enumerable: true,
-			value: _globalThis
-		});
-
-		return this.globalThis;
-	},
-
-	/**
-	 * "console" ponyfill.
-	 * @type {Object}
-	 */
-	get console() {
-		const _console = {};
-
-		const methods = [
-			'assert', 'clear', 'context', 'count', 'countReset', 'debug', 'dir', 'dirxml',
-			'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'profile',
-			'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn'
-		];
-
-		if (typeof InternalUtils.globalThis.console === 'object') {
-			for (const method of methods) {
-				_console[method] = typeof InternalUtils.globalThis.console[method] === 'function'
-					? InternalUtils.globalThis.console[method]
-					: () => {};
-			}
-		} else {
-			for (const method of methods) {
-				_console[method] = () => {};
-			}
-		}
-
-		Object.defineProperty(this, 'console', {
-			enumerable: true,
-			value: _console
-		});
-
-		return this.console;
-	},
-
-	/**
-	 * Detect if running in "Node.js".
-	 * @type {boolean}
-	 */
-	get isNode() {
-		const _isNode = Object.prototype.toString.call(InternalUtils.globalThis.process) === '[object process]';
-
-		Object.defineProperty(this, 'isNode', {
-			enumerable: true,
-			value: _isNode
-		});
-
-		return this.isNode;
-	},
-
-	/**
-	 * Dynamically import "Node.js" modules.
-	 * (`eval` is used to prevent bundlers from including the module,
-	 * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
-	 * @type {Function}
-	 */
-	get nodeRequire() {
-		const _nodeRequire = InternalUtils.isNode
-			// eslint-disable-next-line no-eval
-			? eval('require')
-			: () => {};
-
-		Object.defineProperty(this, 'nodeRequire', {
-			enumerable: true,
-			value: _nodeRequire
-		});
-
-		return this.nodeRequire;
 	}
 
 };

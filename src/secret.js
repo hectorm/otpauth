@@ -19,12 +19,21 @@ export class Secret {
 	}
 
 	/**
-	 * Converts a raw string to a Secret object.
-	 * @param {string} str Raw string.
+	 * Converts a Latin-1 string to a Secret object.
+	 * @param {string} str Latin-1 string.
 	 * @returns {Secret} Secret object.
 	 */
-	static fromRaw(str) {
-		return new Secret({ buffer: Utils.raw.toBuf(str) });
+	static fromLatin1(str) {
+		return new Secret({ buffer: Utils.latin1.toBuf(str) });
+	}
+
+	/**
+	 * Converts an UTF-8 string to a Secret object.
+	 * @param {string} str UTF-8 string.
+	 * @returns {Secret} Secret object.
+	 */
+	static fromUTF8(str) {
+		return new Secret({ buffer: Utils.utf8.toBuf(str) });
 	}
 
 	/**
@@ -32,8 +41,8 @@ export class Secret {
 	 * @param {string} str Base32 string.
 	 * @returns {Secret} Secret object.
 	 */
-	static fromB32(str) {
-		return new Secret({ buffer: Utils.b32.toBuf(str) });
+	static fromBase32(str) {
+		return new Secret({ buffer: Utils.base32.toBuf(str) });
 	}
 
 	/**
@@ -46,33 +55,48 @@ export class Secret {
 	}
 
 	/**
-	 * String representation of secret key.
+	 * Latin-1 string representation of secret key.
 	 * @type {string}
 	 */
-	get raw() {
-		Object.defineProperty(this, 'raw', {
+	get latin1() {
+		Object.defineProperty(this, 'latin1', {
 			enumerable: true,
 			configurable: true,
 			writable: true,
-			value: Utils.raw.fromBuf(this.buffer)
+			value: Utils.latin1.fromBuf(this.buffer)
 		});
 
-		return this.raw;
+		return this.latin1;
+	}
+
+	/**
+	 * UTF-8 string representation of secret key.
+	 * @type {string}
+	 */
+	get utf8() {
+		Object.defineProperty(this, 'utf8', {
+			enumerable: true,
+			configurable: true,
+			writable: true,
+			value: Utils.utf8.fromBuf(this.buffer)
+		});
+
+		return this.utf8;
 	}
 
 	/**
 	 * Base32 representation of secret key.
 	 * @type {string}
 	 */
-	get b32() {
-		Object.defineProperty(this, 'b32', {
+	get base32() {
+		Object.defineProperty(this, 'base32', {
 			enumerable: true,
 			configurable: true,
 			writable: true,
-			value: Utils.b32.fromBuf(this.buffer)
+			value: Utils.base32.fromBuf(this.buffer)
 		});
 
-		return this.b32;
+		return this.base32;
 	}
 
 	/**

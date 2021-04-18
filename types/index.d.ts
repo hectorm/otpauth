@@ -99,13 +99,16 @@ export declare class Secret {
 	});
 
 	buffer: ArrayBuffer;
-	raw: string;
-	b32: string;
+	latin1: string;
+	utf8: string;
+	base32: string;
 	hex: string;
 
-	static fromRaw(str: string): Secret;
+	static fromLatin1(str: string): Secret;
 
-	static fromB32(str: string): Secret;
+	static fromUTF8(str: string): Secret;
+
+	static fromBase32(str: string): Secret;
 
 	static fromHex(str: string): Secret;
 }
@@ -121,11 +124,15 @@ export declare const Utils: {
 		fromBuf(buf: ArrayBuffer): number,
 		toBuf(num: number): ArrayBuffer
 	},
-	raw: {
+	latin1: {
 		fromBuf(buf: ArrayBuffer): string,
 		toBuf(str: string): ArrayBuffer
 	},
-	b32: {
+	utf8: {
+		fromBuf(buf: ArrayBuffer): string,
+		toBuf(str: string): ArrayBuffer
+	},
+	base32: {
 		alphabet: string,
 		fromBuf(buf: ArrayBuffer): string,
 		toBuf(str: string): ArrayBuffer

@@ -1,6 +1,6 @@
 import jsSHA from 'jssha';
 
-import { InternalUtils } from './utils';
+import { InternalUtils } from './internal-utils';
 
 let randomBytes;
 let hmacDigest;

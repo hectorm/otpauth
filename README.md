@@ -24,7 +24,7 @@ let totp = new OTPAuth.TOTP({
 	algorithm: 'SHA1',
 	digits: 6,
 	period: 30,
-	secret: 'NB2W45DFOIZA' // or "OTPAuth.Secret.fromB32('NB2W45DFOIZA')"
+	secret: 'NB2W45DFOIZA' // or "OTPAuth.Secret.fromBase32('NB2W45DFOIZA')"
 });
 
 // Generate a token.
