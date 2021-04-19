@@ -13,7 +13,7 @@ const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?[A-Z0-9.~_-]+=[^&]*)+)
 /**
  * RFC 4648 base32 alphabet with pad.
  * @private
- * @type {string}
+ * @type {RegExp}
  */
 const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 
@@ -38,11 +38,12 @@ const INTEGER_REGEX = /^[+-]?\d+$/;
  */
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
-/**
- * HOTP/TOTP object/string conversion
- * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
- */
 export class URI {
+	/**
+	 * HOTP/TOTP object/string conversion
+	 * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
+	 */
+
 	/**
 	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
 	 * @param {string} uri Google Authenticator Key URI.
@@ -149,7 +150,6 @@ export class URI {
 	/**
 	 * Converts an HOTP/TOTP object to a Google Authenticator key URI.
 	 * @param {HOTP|TOTP} otp HOTP/TOTP object.
-	 * @param {Object} [config] Configuration options.
 	 * @returns {string} Google Authenticator Key URI.
 	 */
 	static stringify(otp) {

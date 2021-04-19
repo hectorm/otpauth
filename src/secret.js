@@ -1,13 +1,14 @@
 import { Utils } from './utils';
 import { Crypto } from './crypto';
 
-/**
- * Secret key object.
- * @param {Object} [config] Configuration options.
- * @param {ArrayBuffer} [config.buffer=Crypto.randomBytes] Secret key.
- * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
- */
 export class Secret {
+	/**
+	 * Secret key object.
+	 * @constructor
+	 * @param {Object} [config] Configuration options.
+	 * @param {ArrayBuffer} [config.buffer=Crypto.randomBytes] Secret key.
+	 * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
+	 */
 	constructor({ buffer, size = 20 } = {}) {
 		/**
 		 * Secret key.

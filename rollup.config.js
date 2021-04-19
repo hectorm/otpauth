@@ -36,7 +36,7 @@ export default async () => {
 	};
 
 	return {
-		input: './src/main.js',
+		input: './src/index.js',
 		output: [
 			{ file: './dist/otpauth.cjs.js', format: 'cjs', ...commonBuildOptions },
 			{ file: './dist/otpauth.umd.js', format: 'umd', ...commonBuildOptions },

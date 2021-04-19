@@ -41,6 +41,7 @@
   "scripts": {
     "lint": "eslint ./",
     "build": "rollup -c",
+    "types": "rm -rf ./types/ && find ./src/ -type f -exec tsc --allowJs --declaration --emitDeclarationOnly --outDir ./types/ '{}' '+'",
     "test:node:unminified": "mocha --ui bdd --reporter spec",
     "test:node:minified": "IS_MINIFIED=true mocha --ui bdd --reporter spec",
     "test:node": "run-s test:node:*",
@@ -52,7 +53,7 @@
     "test:browser": "run-s test:browser:*",
     "test": "run-s test:*",
     "docs": "rm -rf ./docs/ && documentation build ./src/** -f html -o ./docs/",
-    "dist": "run-s lint build test docs",
+    "dist": "run-s lint build types test docs",
     "version": "run-s dist && git add -A ./dist/ ./docs/"
   },
   "dependencies": {
