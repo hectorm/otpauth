@@ -79,7 +79,8 @@
     "playwright-chromium": "~1.10.0",
     "playwright-firefox": "~1.10.0",
     "rollup": "~2.45.2",
-    "rollup-plugin-terser": "~7.0.2"
+    "rollup-plugin-terser": "~7.0.2",
+    "typescript": "~4.2.4"
   },
   "babel": {
     "presets": [
