@@ -39,7 +39,6 @@ export const Utils = {
 
 			for (let i = 7; i >= 0; i--) {
 				if (acc === 0) break;
-
 				arr[i] = acc & 255;
 				acc -= arr[i];
 				acc /= 256;
@@ -232,7 +231,8 @@ export const Utils = {
 
 			for (let i = 0; i < arr.length; i++) {
 				const hex = arr[i].toString(16);
-				str += hex.length === 2 ? hex : `0${hex}`;
+				if (hex.length === 1) str += '0';
+				str += hex;
 			}
 
 			return str.toUpperCase();
@@ -247,8 +247,8 @@ export const Utils = {
 			const buf = new ArrayBuffer(str.length / 2);
 			const arr = new Uint8Array(buf);
 
-			for (let i = 0, j = 0; i < arr.length; i += 1, j += 2) {
-				arr[i] = parseInt(str.substr(j, 2), 16);
+			for (let i = 0; i < str.length; i += 2) {
+				arr[i / 2] = parseInt(str.substr(i, 2), 16);
 			}
 
 			return buf;
