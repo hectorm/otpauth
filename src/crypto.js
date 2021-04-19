@@ -7,7 +7,7 @@ const NodeCrypto = Utils.private.isNode ? Utils.private.nodeRequire('crypto') : 
 const BrowserCrypto = !Utils.private.isNode ? Utils.private.globalThis.crypto || Utils.private.globalThis.msCrypto : undefined;
 
 /**
- * An object containing some cryptography functions with dirty workarounds for Node.js and browsers.
+ * An object containing some cryptographic functions with dirty workarounds for Node.js and browsers.
  * @private
  * @type {Object}
  */
