@@ -1,10 +1,10 @@
 import jsSHA from 'jssha';
 
-import { InternalUtils } from './internal-utils';
+import { Utils } from './utils';
 
-const NodeBuffer = InternalUtils.isNode ? InternalUtils.globalThis.Buffer : undefined;
-const NodeCrypto = InternalUtils.isNode ? InternalUtils.nodeRequire('crypto') : undefined;
-const BrowserCrypto = !InternalUtils.isNode ? InternalUtils.globalThis.crypto || InternalUtils.globalThis.msCrypto : undefined;
+const NodeBuffer = Utils.private.isNode ? Utils.private.globalThis.Buffer : undefined;
+const NodeCrypto = Utils.private.isNode ? Utils.private.nodeRequire('crypto') : undefined;
+const BrowserCrypto = !Utils.private.isNode ? Utils.private.globalThis.crypto || Utils.private.globalThis.msCrypto : undefined;
 
 /**
  * An object containing some cryptography functions with dirty workarounds for Node.js and browsers.
@@ -12,7 +12,6 @@ const BrowserCrypto = !InternalUtils.isNode ? InternalUtils.globalThis.crypto ||
  * @type {Object}
  */
 export const Crypto = {
-
 	/**
 	 * Returns random bytes.
 	 * @param {number} size Size.
@@ -21,7 +20,7 @@ export const Crypto = {
 	get randomBytes() {
 		let _randomBytes;
 
-		if (InternalUtils.isNode) {
+		if (Utils.private.isNode) {
 			_randomBytes = size => NodeCrypto.randomBytes(size).buffer;
 		} else if (BrowserCrypto && BrowserCrypto.getRandomValues) {
 			_randomBytes = size => BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -50,7 +49,7 @@ export const Crypto = {
 	get hmacDigest() {
 		let _hmacDigest;
 
-		if (InternalUtils.isNode) {
+		if (Utils.private.isNode) {
 			_hmacDigest = (algorithm, key, message) => {
 				const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
 				hmac.update(NodeBuffer.from(message));
@@ -99,7 +98,7 @@ export const Crypto = {
 	get timingSafeEqual() {
 		let _timingSafeEqual;
 
-		if (InternalUtils.isNode) {
+		if (Utils.private.isNode) {
 			_timingSafeEqual = (a, b) => NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
 		} else {
 			_timingSafeEqual = (a, b) => {
@@ -124,5 +123,4 @@ export const Crypto = {
 
 		return this.timingSafeEqual;
 	}
-
 };

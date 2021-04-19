@@ -1,17 +1,13 @@
-import { InternalUtils } from './internal-utils';
-
 /**
  * An object containing some utilities.
  * @type {Object}
  */
 export const Utils = {
-
 	/**
 	 * UInt conversion.
 	 * @type {Object}
 	 */
 	uint: {
-
 		/**
 		 * Converts an ArrayBuffer to an integer.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
@@ -51,7 +47,6 @@ export const Utils = {
 
 			return buf;
 		}
-
 	},
 
 	/**
@@ -59,7 +54,6 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	latin1: {
-
 		/**
 		 * Converts an ArrayBuffer to a Latin-1 string.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
@@ -91,7 +85,6 @@ export const Utils = {
 
 			return buf;
 		}
-
 	},
 
 	/**
@@ -99,14 +92,29 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	utf8: {
-
 		/**
 		 * Converts an ArrayBuffer to an UTF-8 string.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
 		 * @returns {string} String.
 		 */
-		fromBuf: buf => {
-			return InternalUtils.utf8TextDecode(buf);
+		get fromBuf() {
+			let _fromBuf;
+
+			if (Utils.private.globalThis.TextDecoder) {
+				const decoder = new Utils.private.globalThis.TextDecoder('utf-8');
+				_fromBuf = buf => decoder.decode(buf);
+			} else {
+				throw new Error('Encoding API not available');
+			}
+
+			Object.defineProperty(this, 'fromBuf', {
+				enumerable: true,
+				configurable: true,
+				writable: true,
+				value: _fromBuf
+			});
+
+			return this.fromBuf;
 		},
 
 		/**
@@ -114,10 +122,25 @@ export const Utils = {
 		 * @param {string} str String.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
-		toBuf: str => {
-			return InternalUtils.utf8TextEncode(str).buffer;
-		}
+		get toBuf() {
+			let _toBuf;
 
+			if (Utils.private.globalThis.TextEncoder) {
+				const encoder = new Utils.private.globalThis.TextEncoder('utf-8');
+				_toBuf = str => encoder.encode(str).buffer;
+			} else {
+				throw new Error('Encoding API not available');
+			}
+
+			Object.defineProperty(this, 'toBuf', {
+				enumerable: true,
+				configurable: true,
+				writable: true,
+				value: _toBuf
+			});
+
+			return this.toBuf;
+		}
 	},
 
 	/**
@@ -125,7 +148,6 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	base32: {
-
 		/**
 		 * RFC 4648 base32 alphabet without pad.
 		 * @type {string}
@@ -192,7 +214,6 @@ export const Utils = {
 
 			return buf;
 		}
-
 	},
 
 	/**
@@ -200,7 +221,6 @@ export const Utils = {
 	 * @type {Object}
 	 */
 	hex: {
-
 		/**
 		 * Converts an ArrayBuffer to a hexadecimal string.
 		 * @param {ArrayBuffer} buf ArrayBuffer.
@@ -233,7 +253,6 @@ export const Utils = {
 
 			return buf;
 		}
-
 	},
 
 	/**
@@ -247,6 +266,123 @@ export const Utils = {
 		let repeat = digits - String(num).length;
 		while (repeat-- > 0) prefix += '0';
 		return `${prefix}${num}`;
-	}
+	},
 
+	/**
+	 * An object containing some utilities not exposed in the public API.
+	 * @private
+	 * @type {Object}
+	 */
+	private: {
+		/**
+		 * "globalThis" ponyfill
+		 * (https://mathiasbynens.be/notes/globalthis).
+		 * @type {Object}
+		 */
+		get globalThis() {
+			let _globalThis;
+
+			/* eslint-disable no-extend-native, no-restricted-globals, no-undef */
+			if (typeof globalThis === 'object') {
+				_globalThis = globalThis;
+			} else {
+				Object.defineProperty(Object.prototype, '__magicalGlobalThis__', {
+					get() { return this; },
+					configurable: true
+				});
+				try {
+					_globalThis = __magicalGlobalThis__;
+				} finally {
+					delete Object.prototype.__magicalGlobalThis__;
+				}
+			}
+
+			if (typeof _globalThis === 'undefined') {
+				// Still unable to determine "globalThis", fall back to a naive method.
+				if (typeof self !== 'undefined') {
+					_globalThis = self;
+				} else if (typeof window !== 'undefined') {
+					_globalThis = window;
+				} else if (typeof global !== 'undefined') {
+					_globalThis = global;
+				}
+			}
+			/* eslint-enable */
+
+			Object.defineProperty(this, 'globalThis', {
+				enumerable: true,
+				value: _globalThis
+			});
+
+			return this.globalThis;
+		},
+
+		/**
+		 * "console" ponyfill.
+		 * @type {Object}
+		 */
+		get console() {
+			const _console = {};
+
+			const methods = [
+				'assert', 'clear', 'context', 'count', 'countReset', 'debug', 'dir', 'dirxml',
+				'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'profile',
+				'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn'
+			];
+
+			if (typeof Utils.private.globalThis.console === 'object') {
+				for (const method of methods) {
+					_console[method] = typeof Utils.private.globalThis.console[method] === 'function'
+						? Utils.private.globalThis.console[method]
+						: () => {};
+				}
+			} else {
+				for (const method of methods) {
+					_console[method] = () => {};
+				}
+			}
+
+			Object.defineProperty(this, 'console', {
+				enumerable: true,
+				value: _console
+			});
+
+			return this.console;
+		},
+
+		/**
+		 * Detect if running in "Node.js".
+		 * @type {boolean}
+		 */
+		get isNode() {
+			const _isNode = Object.prototype.toString.call(Utils.private.globalThis.process) === '[object process]';
+
+			Object.defineProperty(this, 'isNode', {
+				enumerable: true,
+				value: _isNode
+			});
+
+			return this.isNode;
+		},
+
+		/**
+		 * Dynamically import "Node.js" modules.
+		 * (`eval` is used to prevent bundlers from including the module,
+		 * e.g., [webpack/webpack#8826](https://github.com/webpack/webpack/issues/8826))
+		 * @type {Function}
+		 */
+		get nodeRequire() {
+			const _nodeRequire = Utils.private.isNode
+				// eslint-disable-next-line no-eval
+				? eval('require')
+				: () => {};
+
+			Object.defineProperty(this, 'nodeRequire', {
+				enumerable: true,
+				value: _nodeRequire
+			});
+
+			return this.nodeRequire;
+		}
+	}
 };
