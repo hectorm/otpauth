@@ -108,8 +108,6 @@ export const Utils = {
 
 			Object.defineProperty(this, 'fromBuf', {
 				enumerable: true,
-				configurable: true,
-				writable: true,
 				value: _fromBuf
 			});
 
@@ -133,8 +131,6 @@ export const Utils = {
 
 			Object.defineProperty(this, 'toBuf', {
 				enumerable: true,
-				configurable: true,
-				writable: true,
 				value: _toBuf
 			});
 

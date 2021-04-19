@@ -30,8 +30,6 @@ export const Crypto = {
 
 		Object.defineProperty(this, 'randomBytes', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: _randomBytes
 		});
 
@@ -81,8 +79,6 @@ export const Crypto = {
 
 		Object.defineProperty(this, 'hmacDigest', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: _hmacDigest
 		});
 
@@ -116,8 +112,6 @@ export const Crypto = {
 
 		Object.defineProperty(this, 'timingSafeEqual', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: _timingSafeEqual
 		});
 

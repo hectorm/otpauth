@@ -61,8 +61,6 @@ export class Secret {
 	get latin1() {
 		Object.defineProperty(this, 'latin1', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: Utils.latin1.fromBuf(this.buffer)
 		});
 
@@ -76,8 +74,6 @@ export class Secret {
 	get utf8() {
 		Object.defineProperty(this, 'utf8', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: Utils.utf8.fromBuf(this.buffer)
 		});
 
@@ -91,8 +87,6 @@ export class Secret {
 	get base32() {
 		Object.defineProperty(this, 'base32', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: Utils.base32.fromBuf(this.buffer)
 		});
 
@@ -106,8 +100,6 @@ export class Secret {
 	get hex() {
 		Object.defineProperty(this, 'hex', {
 			enumerable: true,
-			configurable: true,
-			writable: true,
 			value: Utils.hex.fromBuf(this.buffer)
 		});
 
