@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>otpauth | otpauth</title>
+	<title>HOTP | otpauth</title>
 	<meta name="description" content="Documentation for otpauth">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style type="text/css">:root {
@@ -2674,7 +2674,7 @@ img {
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="index.html">otpauth</a></strong>
+					<strong><a href="../index.html">otpauth</a></strong>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -2704,148 +2704,426 @@ img {
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
-		<li class=" tsd-kind-class">
-			<a href="classes/hotp.html" class="tsd-kind-icon">HOTP</a>
+		<li class="current tsd-kind-class">
+			<a href="hotp.html" class="tsd-kind-icon">HOTP</a>
+			<ul>
+				<li class=" tsd-kind-constructor tsd-parent-kind-class">
+					<a href="hotp.html#constructor" class="tsd-kind-icon">constructor</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#algorithm" class="tsd-kind-icon">algorithm</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#counter" class="tsd-kind-icon">counter</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#digits" class="tsd-kind-icon">digits</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#issuer" class="tsd-kind-icon">issuer</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#label" class="tsd-kind-icon">label</a>
+				</li>
+				<li class=" tsd-kind-property tsd-parent-kind-class">
+					<a href="hotp.html#secret" class="tsd-kind-icon">secret</a>
+				</li>
+				<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a href="hotp.html#defaults" class="tsd-kind-icon">defaults</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="hotp.html#generate" class="tsd-kind-icon">generate</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="hotp.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="hotp.html#validate" class="tsd-kind-icon">validate</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a href="hotp.html#generate-1" class="tsd-kind-icon">generate</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a href="hotp.html#validate-1" class="tsd-kind-icon">validate</a>
+				</li>
+			</ul>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/secret.html" class="tsd-kind-icon">Secret</a>
+			<a href="secret.html" class="tsd-kind-icon">Secret</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/totp.html" class="tsd-kind-icon">TOTP</a>
+			<a href="totp.html" class="tsd-kind-icon">TOTP</a>
 		</li>
 		<li class=" tsd-kind-class">
-			<a href="classes/uri.html" class="tsd-kind-icon">URI</a>
+			<a href="uri.html" class="tsd-kind-icon">URI</a>
 		</li>
 		<li class=" tsd-kind-property">
-			<a href="modules.html#version" class="tsd-kind-icon">version</a>
+			<a href="../modules.html#version" class="tsd-kind-icon">version</a>
 		</li>
 	</ul>
 </nav>
 <div class="container container-main">
 	<div class="content-wrap">
-		<div class="tsd-panel tsd-typography">
-			<p><a href="https://github.com/hectorm/otpauth/tags"><img src="https://img.shields.io/github/v/tag/hectorm/otpauth?label=version" alt="Last version"></a>
-				<a href="https://github.com/hectorm/otpauth/actions"><img src="https://img.shields.io/github/workflow/status/hectorm/otpauth/Build?label=build" alt="Build Status"></a>
-				<a href="https://david-dm.org/hectorm/otpauth"><img src="https://img.shields.io/david/hectorm/otpauth?label=dependencies" alt="Dependencies status"></a>
-				<a href="https://david-dm.org/hectorm/otpauth?type=dev"><img src="https://img.shields.io/david/dev/hectorm/otpauth?label=dev%20dependencies" alt="Dev dependencies status"></a>
-			<a href="https://www.npmjs.com/package/otpauth"><img src="https://img.shields.io/npm/dm/otpauth?label=npm%20downloads" alt="NPM downloads"></a></p>
-			<hr>
-			<a href="#otpauth" id="otpauth" style="color: inherit; text-decoration: none;">
-				<h1>OTPAuth</h1>
-			</a>
-			<p>One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.</p>
-			<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
-				<h2>Usage</h2>
-			</a>
-			<a href="#nodejs" id="nodejs" style="color: inherit; text-decoration: none;">
-				<h3>Node.js</h3>
-			</a>
-			<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">OTPAuth</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;otpauth&#039;</span><span style="color: #000000">;</span>
-
-<span style="color: #008000">// Create a new TOTP object.</span>
-<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">totp</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">OTPAuth</span><span style="color: #000000">.</span><span style="color: #795E26">TOTP</span><span style="color: #000000">({</span>
-<span style="color: #000000">    </span><span style="color: #001080">issuer:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;ACME&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">label:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;AzureDiamond&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">algorithm:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;SHA1&#039;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">digits:</span><span style="color: #000000"> </span><span style="color: #098658">6</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">period:</span><span style="color: #000000"> </span><span style="color: #098658">30</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">secret:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;NB2W45DFOIZA&#039;</span><span style="color: #000000"> </span><span style="color: #008000">// or &quot;OTPAuth.Secret.fromBase32(&#039;NB2W45DFOIZA&#039;)&quot;</span>
-<span style="color: #000000">});</span>
-
-<span style="color: #008000">// Generate a token.</span>
-<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">token</span><span style="color: #000000"> = </span><span style="color: #001080">totp</span><span style="color: #000000">.</span><span style="color: #795E26">generate</span><span style="color: #000000">();</span>
-
-<span style="color: #008000">// Validate a token.</span>
-<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">delta</span><span style="color: #000000"> = </span><span style="color: #001080">totp</span><span style="color: #000000">.</span><span style="color: #795E26">validate</span><span style="color: #000000">({</span>
-<span style="color: #000000">    </span><span style="color: #001080">token:</span><span style="color: #000000"> </span><span style="color: #001080">token</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #001080">window:</span><span style="color: #000000"> </span><span style="color: #098658">1</span>
-<span style="color: #000000">});</span>
-
-<span style="color: #008000">// Convert to Google Authenticator key URI.</span>
-<span style="color: #008000">//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&amp;secret=NB2W45DFOIZA&amp;algorithm=SHA1&amp;digits=6&amp;period=30</span>
-<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">uri</span><span style="color: #000000"> = </span><span style="color: #001080">totp</span><span style="color: #000000">.</span><span style="color: #795E26">toString</span><span style="color: #000000">(); </span><span style="color: #008000">// or &quot;OTPAuth.URI.stringify(totp)&quot;</span>
-
-<span style="color: #008000">// Convert from Google Authenticator key URI.</span>
-<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">parsedTotp</span><span style="color: #000000"> = </span><span style="color: #001080">OTPAuth</span><span style="color: #000000">.</span><span style="color: #0070C1">URI</span><span style="color: #000000">.</span><span style="color: #795E26">parse</span><span style="color: #000000">(</span><span style="color: #001080">uri</span><span style="color: #000000">);</span>
-</code></pre>
-			<a href="#deno" id="deno" style="color: inherit; text-decoration: none;">
-				<h3>Deno</h3>
-			</a>
-			<pre><code class="language-javascript"><span style="color: #008000">// @deno-types=&quot;https://deno.land/x/otpauth/types/index.d.ts&quot;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">OTPAuth</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;https://deno.land/x/otpauth/dist/otpauth.esm.js&#039;</span>
-
-<span style="color: #008000">// Same as above...</span>
-</code></pre>
-			<a href="#browsers" id="browsers" style="color: inherit; text-decoration: none;">
-				<h3>Browsers</h3>
-			</a>
-			<pre><code class="language-html"><span style="color: #800000">&lt;script</span><span style="color: #000000FF"> </span><span style="color: #FF0000">src</span><span style="color: #000000FF">=</span><span style="color: #0000FF">&quot;https://cdn.jsdelivr.net/npm/otpauth/dist/otpauth.umd.min.js&quot;</span><span style="color: #800000">&gt;&lt;/script&gt;</span>
-<span style="color: #800000">&lt;script&gt;</span>
-<span style="color: #000000FF">    </span><span style="color: #008000">// Same as above...</span>
-<span style="color: #800000">&lt;/script&gt;</span>
-</code></pre>
-			<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-				<h2>Documentation</h2>
-			</a>
-			<p>See the documentation page.</p>
-			<blockquote>
-				<p><a href="https://hectorm.github.io/otpauth/">https://hectorm.github.io/otpauth/</a></p>
-			</blockquote>
-			<a href="#supported-hashing-algorithms" id="supported-hashing-algorithms" style="color: inherit; text-decoration: none;">
-				<h2>Supported hashing algorithms</h2>
-			</a>
-			<p>In Node.js, the same algorithms as
-				<a href="https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key_options"><code>Crypto.createHmac</code></a>
-				function are supported, since it is used internally. In Deno and browsers, the <code>SHA1</code>, <code>SHA224</code>, <code>SHA256</code>, <code>SHA384</code>,
-				<code>SHA512</code>, <code>SHA3-224</code>, <code>SHA3-256</code>, <code>SHA3-384</code> and <code>SHA3-512</code> algorithms are supported by using the
-			<a href="https://github.com/Caligatio/jsSHA">jsSHA</a> library.</p>
-			<a href="#license" id="license" style="color: inherit; text-decoration: none;">
-				<h2>License</h2>
-			</a>
-			<p><a href="https://github.com/hectorm/otpauth/blob/master/LICENSE.md">MIT License</a>
-			© <a href="https://hector.molinero.dev/">Héctor Molinero Fernández</a>.</p>
-		</div>
-		<div class="tsd-comment tsd-typography">
-			<div class="lead">
-				<p>One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.</p>
-			</div>
-			<dl class="tsd-comment-tags">
-				<dt>author</dt>
-				<dd><p>Héctor Molinero Fernández <a href="mailto:hector@molinero.dev">hector@molinero.dev</a></p>
-				</dd>
-			</dl>
-		</div>
-		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
+		<section class="tsd-panel tsd-hierarchy">
+			<h3>Hierarchy</h3>
+			<ul class="tsd-hierarchy">
+				<li>
+					<span class="target">HOTP</span>
+				</li>
+			</ul>
+		</section>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
 			<section class="tsd-panel tsd-index-panel">
 				<div class="tsd-index-content">
 					<section class="tsd-index-section ">
-						<h3>Classes</h3>
+						<h3>Constructors</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-class"><a href="classes/hotp.html" class="tsd-kind-icon">HOTP</a></li>
-							<li class="tsd-kind-class"><a href="classes/secret.html" class="tsd-kind-icon">Secret</a></li>
-							<li class="tsd-kind-class"><a href="classes/totp.html" class="tsd-kind-icon">TOTP</a></li>
-							<li class="tsd-kind-class"><a href="classes/uri.html" class="tsd-kind-icon">URI</a></li>
+							<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="hotp.html#constructor" class="tsd-kind-icon">constructor</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
 						<h3>Properties</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property"><a href="modules.html#version" class="tsd-kind-icon">version</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#algorithm" class="tsd-kind-icon">algorithm</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#counter" class="tsd-kind-icon">counter</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#digits" class="tsd-kind-icon">digits</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#issuer" class="tsd-kind-icon">issuer</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#label" class="tsd-kind-icon">label</a></li>
+							<li class="tsd-kind-property tsd-parent-kind-class"><a href="hotp.html#secret" class="tsd-kind-icon">secret</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section ">
+						<h3>Accessors</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="hotp.html#defaults" class="tsd-kind-icon">defaults</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section ">
+						<h3>Methods</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="hotp.html#generate" class="tsd-kind-icon">generate</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="hotp.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="hotp.html#validate" class="tsd-kind-icon">validate</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="hotp.html#generate-1" class="tsd-kind-icon">generate</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="hotp.html#validate-1" class="tsd-kind-icon">validate</a></li>
 						</ul>
 					</section>
 				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Constructors</h2>
+			<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<a name="constructor" class="tsd-anchor"></a>
+				<h3>constructor</h3>
+				<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">new HOTP<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>issuer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="hotp.html" class="tsd-signature-type" data-tsd-kind="Class">HOTP</a></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L21">hotp.js:21</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
+								<a href="https://tools.ietf.org/html/rfc4226" class="external">RFC 4226</a></p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>issuer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>issuer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>secret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <a href="hotp.html" class="tsd-signature-type" data-tsd-kind="Class">HOTP</a></h4>
+					</li>
+				</ul>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
 			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property">
-				<a name="version" class="tsd-anchor"></a>
-				<h3>version</h3>
-				<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;__OTPAUTH_VERSION__&quot;</span></div>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="algorithm" class="tsd-anchor"></a>
+				<h3>algorithm</h3>
+				<div class="tsd-signature tsd-kind-icon">algorithm<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 				<aside class="tsd-sources">
 				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="counter" class="tsd-anchor"></a>
+				<h3>counter</h3>
+				<div class="tsd-signature tsd-kind-icon">counter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<aside class="tsd-sources">
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="digits" class="tsd-anchor"></a>
+				<h3>digits</h3>
+				<div class="tsd-signature tsd-kind-icon">digits<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<aside class="tsd-sources">
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="issuer" class="tsd-anchor"></a>
+				<h3>issuer</h3>
+				<div class="tsd-signature tsd-kind-icon">issuer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="label" class="tsd-anchor"></a>
+				<h3>label</h3>
+				<div class="tsd-signature tsd-kind-icon">label<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<aside class="tsd-sources">
+				</aside>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<a name="secret" class="tsd-anchor"></a>
+				<h3>secret</h3>
+				<div class="tsd-signature tsd-kind-icon">secret<span class="tsd-signature-symbol">:</span> <a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a></div>
+				<aside class="tsd-sources">
+				</aside>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Accessors</h2>
+			<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+				<a name="defaults" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagStatic">Static</span> defaults</h3>
+				<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> defaults<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L12">hotp.js:12</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Default configuration.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+					</li>
+				</ul>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group ">
+			<h2>Methods</h2>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="generate" class="tsd-anchor"></a>
+				<h3>generate</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">generate<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L110">hotp.js:110</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Generates an HOTP token.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						<p>Token.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="tostring" class="tsd-anchor"></a>
+				<h3>to<wbr>String</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L188">hotp.js:188</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Returns a Google Authenticator key URI.</p>
+							</div>
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						<p>URI.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="validate" class="tsd-anchor"></a>
+				<h3>validate</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L169">hotp.js:169</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Validates an HOTP token.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						<p>Token delta, or null if the token is not found.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+				<a name="generate-1" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagStatic">Static</span> generate</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<li class="tsd-signature tsd-kind-icon">generate<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L86">hotp.js:86</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Generates an HOTP token.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol"> }</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						<p>Token.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+				<a name="validate-1" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagStatic">Static</span> validate</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol">; </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/715f2a6/src/hotp.js#L132">hotp.js:132</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Validates an HOTP token.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a><span class="tsd-signature-symbol">; </span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter">
+										<h5>algorithm<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>counter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>digits<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>secret<span class="tsd-signature-symbol">: </span><a href="secret.html" class="tsd-signature-type" data-tsd-kind="Class">Secret</a></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li class="tsd-parameter">
+										<h5>window<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						<p>Token delta, or null if the token is not found.</p>
+					</li>
+				</ul>
 			</section>
 		</section>
 		<footer class="with-border-bottom">
