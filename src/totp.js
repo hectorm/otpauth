@@ -1,7 +1,7 @@
-import { HOTP } from './hotp';
-import { Secret } from './secret';
+import HOTP from './hotp';
+import Secret from './secret';
 
-export class TOTP {
+export default class TOTP {
 	/**
 	 * Default configuration.
 	 * @type {Object}
@@ -18,8 +18,8 @@ export class TOTP {
 	}
 
 	/**
-	 * TOTP: Time-Based One-Time Password Algorithm (RFC 6238)
-	 * (https://tools.ietf.org/html/rfc6238).
+	 * TOTP: Time-Based One-Time Password Algorithm (RFC 6238).
+	 * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
 	 * @constructor
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.

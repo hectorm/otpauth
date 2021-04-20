@@ -1,8 +1,10 @@
-import { Utils } from './utils';
-import { Crypto } from './crypto';
-import { Secret } from './secret';
+import { uintToBuf } from './utils/encoding/uint';
+import hmacDigest from './utils/crypto/hmac-digest';
+import pad from './utils/pad';
+import Secret from './secret';
+import timingSafeEqual from './utils/crypto/timing-safe-equal';
 
-export class HOTP {
+export default class HOTP {
 	/**
 	 * Default configuration.
 	 * @type {Object}
@@ -19,8 +21,8 @@ export class HOTP {
 	}
 
 	/**
-	 * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226)
-	 * (https://tools.ietf.org/html/rfc4226).
+	 * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
+	 * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
 	 * @constructor
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.
@@ -87,7 +89,7 @@ export class HOTP {
 		digits = HOTP.defaults.digits,
 		counter = HOTP.defaults.counter,
 	}) {
-		const digest = new Uint8Array(Crypto.hmacDigest(algorithm, secret.buffer, Utils.uint.toBuf(counter)));
+		const digest = new Uint8Array(hmacDigest(algorithm, secret.buffer, uintToBuf(counter)));
 		const offset = digest[digest.byteLength - 1] & 15;
 		const otp = (
 			((digest[offset] & 127) << 24)
@@ -96,7 +98,7 @@ export class HOTP {
 			| (digest[offset + 3] & 255)
 		) % (10 ** digits);
 
-		return Utils.pad(otp, digits);
+		return pad(otp, digits);
 	}
 
 	/**
@@ -148,7 +150,7 @@ export class HOTP {
 				counter: i,
 			});
 
-			if (Crypto.timingSafeEqual(token, generatedToken)) {
+			if (timingSafeEqual(token, generatedToken)) {
 				delta = i - counter;
 			}
 		}

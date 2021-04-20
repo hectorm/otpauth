@@ -1,12 +1,15 @@
-import { Utils } from './utils';
-import { Crypto } from './crypto';
+import { base32ToBuf, base32FromBuf } from './utils/encoding/base32';
+import { hexToBuf, hexFromBuf } from './utils/encoding/hex';
+import { latin1ToBuf, latin1FromBuf } from './utils/encoding/latin1';
+import { utf8ToBuf, utf8FromBuf } from './utils/encoding/utf8';
+import randomBytes from './utils/crypto/random-bytes';
 
-export class Secret {
+export default class Secret {
 	/**
 	 * Secret key object.
 	 * @constructor
 	 * @param {Object} [config] Configuration options.
-	 * @param {ArrayBuffer} [config.buffer=Crypto.randomBytes] Secret key.
+	 * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
 	 * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
 	 */
 	constructor({ buffer, size = 20 } = {}) {
@@ -15,7 +18,7 @@ export class Secret {
 		 * @type {ArrayBuffer}
 		 */
 		this.buffer = typeof buffer === 'undefined'
-			? Crypto.randomBytes(size)
+			? randomBytes(size)
 			: buffer;
 	}
 
@@ -25,7 +28,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromLatin1(str) {
-		return new Secret({ buffer: Utils.latin1.toBuf(str) });
+		return new Secret({ buffer: latin1ToBuf(str) });
 	}
 
 	/**
@@ -34,7 +37,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromUTF8(str) {
-		return new Secret({ buffer: Utils.utf8.toBuf(str) });
+		return new Secret({ buffer: utf8ToBuf(str) });
 	}
 
 	/**
@@ -43,7 +46,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromBase32(str) {
-		return new Secret({ buffer: Utils.base32.toBuf(str) });
+		return new Secret({ buffer: base32ToBuf(str) });
 	}
 
 	/**
@@ -52,7 +55,7 @@ export class Secret {
 	 * @returns {Secret} Secret object.
 	 */
 	static fromHex(str) {
-		return new Secret({ buffer: Utils.hex.toBuf(str) });
+		return new Secret({ buffer: hexToBuf(str) });
 	}
 
 	/**
@@ -62,7 +65,7 @@ export class Secret {
 	get latin1() {
 		Object.defineProperty(this, 'latin1', {
 			enumerable: true,
-			value: Utils.latin1.fromBuf(this.buffer),
+			value: latin1FromBuf(this.buffer),
 		});
 
 		return this.latin1;
@@ -75,7 +78,7 @@ export class Secret {
 	get utf8() {
 		Object.defineProperty(this, 'utf8', {
 			enumerable: true,
-			value: Utils.utf8.fromBuf(this.buffer),
+			value: utf8FromBuf(this.buffer),
 		});
 
 		return this.utf8;
@@ -88,7 +91,7 @@ export class Secret {
 	get base32() {
 		Object.defineProperty(this, 'base32', {
 			enumerable: true,
-			value: Utils.base32.fromBuf(this.buffer),
+			value: base32FromBuf(this.buffer),
 		});
 
 		return this.base32;
@@ -101,7 +104,7 @@ export class Secret {
 	get hex() {
 		Object.defineProperty(this, 'hex', {
 			enumerable: true,
-			value: Utils.hex.fromBuf(this.buffer),
+			value: hexFromBuf(this.buffer),
 		});
 
 		return this.hex;

@@ -1,7 +1,5 @@
-import { Utils } from './utils';
-import { Secret } from './secret';
-import { HOTP } from './hotp';
-import { TOTP } from './totp';
+import HOTP from './hotp';
+import TOTP from './totp';
 
 /**
  * Key URI regex.
@@ -39,12 +37,11 @@ const INTEGER_REGEX = /^[+-]?\d+$/;
  */
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
-export class URI {
-	/**
-	 * HOTP/TOTP object/string conversion
-	 * (https://github.com/google/google-authenticator/wiki/Key-Uri-Format).
-	 */
-
+/**
+ * HOTP/TOTP object/string conversion.
+ * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
+ */
+export default class URI {
 	/**
 	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
 	 * @param {string} uri Google Authenticator Key URI.
@@ -64,6 +61,7 @@ export class URI {
 		// Extract URI groups.
 		const uriType = uriGroups[1].toLowerCase();
 		const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
+		/** @type {Object} */
 		const uriParams = uriGroups[3].split('&').reduce((acc, cur) => {
 			const pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
 			const pairKey = pairArr[0].toLowerCase();
@@ -122,7 +120,7 @@ export class URI {
 
 		// Secret: required
 		if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
-			config.secret = new Secret({ buffer: Utils.base32.toBuf(uriParams.secret) });
+			config.secret = uriParams.secret;
 		} else {
 			throw new TypeError('Missing or invalid \'secret\' parameter');
 		}

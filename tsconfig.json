@@ -1,9 +1,11 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
+    "target": "ES5",
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
+    "removeComments": true,
     "outDir": "types"
   }
 }
