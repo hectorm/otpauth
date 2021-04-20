@@ -21,16 +21,16 @@ export const Crypto = {
 		let _randomBytes;
 
 		if (Utils.private.isNode) {
-			_randomBytes = size => NodeCrypto.randomBytes(size).buffer;
+			_randomBytes = (size) => NodeCrypto.randomBytes(size).buffer;
 		} else if (BrowserCrypto && BrowserCrypto.getRandomValues) {
-			_randomBytes = size => BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
+			_randomBytes = (size) => BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
 		} else {
 			throw new Error('Cryptography API not available');
 		}
 
 		Object.defineProperty(this, 'randomBytes', {
 			enumerable: true,
-			value: _randomBytes
+			value: _randomBytes,
 		});
 
 		return this.randomBytes;
@@ -56,20 +56,20 @@ export const Crypto = {
 		} else {
 			_hmacDigest = (algorithm, key, message) => {
 				const variant = ({
-					SHA1: 'SHA-1',
-					SHA224: 'SHA-224',
-					SHA256: 'SHA-256',
-					SHA384: 'SHA-384',
-					SHA512: 'SHA-512',
+					'SHA1': 'SHA-1',
+					'SHA224': 'SHA-224',
+					'SHA256': 'SHA-256',
+					'SHA384': 'SHA-384',
+					'SHA512': 'SHA-512',
 					'SHA3-224': 'SHA3-224',
 					'SHA3-256': 'SHA3-256',
 					'SHA3-384': 'SHA3-384',
-					'SHA3-512': 'SHA3-512'
+					'SHA3-512': 'SHA3-512',
 				})[algorithm.toUpperCase()];
 				if (typeof variant === 'undefined') {
 					throw new TypeError('Unknown hash function');
 				}
-				// eslint-disable-next-line new-cap
+				// eslint-disable-next-line @babel/new-cap
 				const hmac = new jsSHA(variant, 'ARRAYBUFFER');
 				hmac.setHMACKey(key, 'ARRAYBUFFER');
 				hmac.update(message);
@@ -79,7 +79,7 @@ export const Crypto = {
 
 		Object.defineProperty(this, 'hmacDigest', {
 			enumerable: true,
-			value: _hmacDigest
+			value: _hmacDigest,
 		});
 
 		return this.hmacDigest;
@@ -112,9 +112,9 @@ export const Crypto = {
 
 		Object.defineProperty(this, 'timingSafeEqual', {
 			enumerable: true,
-			value: _timingSafeEqual
+			value: _timingSafeEqual,
 		});
 
 		return this.timingSafeEqual;
-	}
+	},
 };

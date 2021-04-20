@@ -1,7 +1,7 @@
 process.env.CHROME_BIN = require('playwright-chromium').chromium.executablePath();
 process.env.FIREFOX_BIN = require('playwright-firefox').firefox.executablePath();
 
-module.exports = config => {
+module.exports = (config) => {
 	config.set({
 		frameworks: ['mocha'],
 		files: [
@@ -9,7 +9,7 @@ module.exports = config => {
 			process.env.IS_MINIFIED === 'true'
 				? './dist/otpauth.umd.min.js'
 				: './dist/otpauth.umd.js',
-			'./test/test.js'
+			'./test/test.js',
 		],
 		reporters: ['dots'],
 		singleRun: true,
@@ -18,7 +18,7 @@ module.exports = config => {
 		plugins: [
 			'karma-chrome-launcher',
 			'karma-firefox-launcher',
-			'karma-mocha'
-		]
+			'karma-mocha',
+		],
 	});
 };

@@ -1,6 +1,7 @@
 import { Utils } from './utils';
 import { Secret } from './secret';
-import { HOTP, TOTP } from './otp';
+import { HOTP } from './hotp';
+import { TOTP } from './totp';
 
 /**
  * Key URI regex.

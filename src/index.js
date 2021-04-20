@@ -3,7 +3,8 @@
  * @module OTPAuth
  * @author Héctor Molinero Fernández <hector@molinero.dev>
  */
-export { HOTP, TOTP } from './otp';
+export { HOTP } from './hotp';
+export { TOTP } from './totp';
 export { URI } from './uri';
 export { Secret } from './secret';
 export { Utils } from './utils';

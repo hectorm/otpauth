@@ -13,7 +13,7 @@ export const Utils = {
 		 * @param {ArrayBuffer} buf ArrayBuffer.
 		 * @returns {number} Integer.
 		 */
-		fromBuf: buf => {
+		fromBuf: (buf) => {
 			const arr = new Uint8Array(buf);
 			let num = 0;
 
@@ -32,7 +32,7 @@ export const Utils = {
 		 * @param {number} num Integer.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
-		toBuf: num => {
+		toBuf: (num) => {
 			const buf = new ArrayBuffer(8);
 			const arr = new Uint8Array(buf);
 			let acc = num;
@@ -45,7 +45,7 @@ export const Utils = {
 			}
 
 			return buf;
-		}
+		},
 	},
 
 	/**
@@ -58,7 +58,7 @@ export const Utils = {
 		 * @param {ArrayBuffer} buf ArrayBuffer.
 		 * @returns {string} Latin-1 string.
 		 */
-		fromBuf: buf => {
+		fromBuf: (buf) => {
 			const arr = new Uint8Array(buf);
 			let str = '';
 
@@ -74,7 +74,7 @@ export const Utils = {
 		 * @param {string} str Latin-1 string.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
-		toBuf: str => {
+		toBuf: (str) => {
 			const buf = new ArrayBuffer(str.length);
 			const arr = new Uint8Array(buf);
 
@@ -83,7 +83,7 @@ export const Utils = {
 			}
 
 			return buf;
-		}
+		},
 	},
 
 	/**
@@ -101,14 +101,14 @@ export const Utils = {
 
 			if (Utils.private.globalThis.TextDecoder) {
 				const decoder = new Utils.private.globalThis.TextDecoder('utf-8');
-				_fromBuf = buf => decoder.decode(buf);
+				_fromBuf = (buf) => decoder.decode(buf);
 			} else {
 				throw new Error('Encoding API not available');
 			}
 
 			Object.defineProperty(this, 'fromBuf', {
 				enumerable: true,
-				value: _fromBuf
+				value: _fromBuf,
 			});
 
 			return this.fromBuf;
@@ -124,18 +124,18 @@ export const Utils = {
 
 			if (Utils.private.globalThis.TextEncoder) {
 				const encoder = new Utils.private.globalThis.TextEncoder('utf-8');
-				_toBuf = str => encoder.encode(str).buffer;
+				_toBuf = (str) => encoder.encode(str).buffer;
 			} else {
 				throw new Error('Encoding API not available');
 			}
 
 			Object.defineProperty(this, 'toBuf', {
 				enumerable: true,
-				value: _toBuf
+				value: _toBuf,
 			});
 
 			return this.toBuf;
-		}
+		},
 	},
 
 	/**
@@ -155,7 +155,7 @@ export const Utils = {
 		 * @param {ArrayBuffer} buf ArrayBuffer.
 		 * @returns {string} Base32 string.
 		 */
-		fromBuf: buf => {
+		fromBuf: (buf) => {
 			const arr = new Uint8Array(buf);
 			let bits = 0;
 			let value = 0;
@@ -184,19 +184,19 @@ export const Utils = {
 		 * @param {string} str Base32 string.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
-		toBuf: str => {
+		toBuf: (str) => {
 			// Canonicalize to all upper case and remove padding if it exists.
-			str = str.toUpperCase().replace(/=+$/, '');
+			const cstr = str.toUpperCase().replace(/=+$/, '');
 
-			const buf = new ArrayBuffer((str.length * 5) / 8 | 0);
+			const buf = new ArrayBuffer((cstr.length * 5) / 8 | 0);
 			const arr = new Uint8Array(buf);
 			let bits = 0;
 			let value = 0;
 			let index = 0;
 
-			for (let i = 0; i < str.length; i++) {
-				const idx = Utils.base32.alphabet.indexOf(str[i]);
-				if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
+			for (let i = 0; i < cstr.length; i++) {
+				const idx = Utils.base32.alphabet.indexOf(cstr[i]);
+				if (idx === -1) throw new TypeError(`Invalid character found: ${cstr[i]}`);
 
 				value = (value << 5) | idx;
 				bits += 5;
@@ -208,7 +208,7 @@ export const Utils = {
 			}
 
 			return buf;
-		}
+		},
 	},
 
 	/**
@@ -221,7 +221,7 @@ export const Utils = {
 		 * @param {ArrayBuffer} buf ArrayBuffer.
 		 * @returns {string} Hexadecimal string.
 		 */
-		fromBuf: buf => {
+		fromBuf: (buf) => {
 			const arr = new Uint8Array(buf);
 			let str = '';
 
@@ -239,7 +239,7 @@ export const Utils = {
 		 * @param {string} str Hexadecimal string.
 		 * @returns {ArrayBuffer} ArrayBuffer.
 		 */
-		toBuf: str => {
+		toBuf: (str) => {
 			const buf = new ArrayBuffer(str.length / 2);
 			const arr = new Uint8Array(buf);
 
@@ -248,7 +248,7 @@ export const Utils = {
 			}
 
 			return buf;
-		}
+		},
 	},
 
 	/**
@@ -284,7 +284,7 @@ export const Utils = {
 			} else {
 				Object.defineProperty(Object.prototype, '__magicalGlobalThis__', {
 					get() { return this; },
-					configurable: true
+					configurable: true,
 				});
 				try {
 					_globalThis = __magicalGlobalThis__;
@@ -307,7 +307,7 @@ export const Utils = {
 
 			Object.defineProperty(this, 'globalThis', {
 				enumerable: true,
-				value: _globalThis
+				value: _globalThis,
 			});
 
 			return this.globalThis;
@@ -323,7 +323,7 @@ export const Utils = {
 			const methods = [
 				'assert', 'clear', 'context', 'count', 'countReset', 'debug', 'dir', 'dirxml',
 				'error', 'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log', 'profile',
-				'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn'
+				'profileEnd', 'table', 'time', 'timeEnd', 'timeLog', 'timeStamp', 'trace', 'warn',
 			];
 
 			if (typeof Utils.private.globalThis.console === 'object') {
@@ -340,7 +340,7 @@ export const Utils = {
 
 			Object.defineProperty(this, 'console', {
 				enumerable: true,
-				value: _console
+				value: _console,
 			});
 
 			return this.console;
@@ -355,7 +355,7 @@ export const Utils = {
 
 			Object.defineProperty(this, 'isNode', {
 				enumerable: true,
-				value: _isNode
+				value: _isNode,
 			});
 
 			return this.isNode;
@@ -375,10 +375,10 @@ export const Utils = {
 
 			Object.defineProperty(this, 'nodeRequire', {
 				enumerable: true,
-				value: _nodeRequire
+				value: _nodeRequire,
 			});
 
 			return this.nodeRequire;
-		}
-	}
+		},
+	},
 };

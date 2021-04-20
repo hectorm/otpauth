@@ -62,7 +62,7 @@ export class Secret {
 	get latin1() {
 		Object.defineProperty(this, 'latin1', {
 			enumerable: true,
-			value: Utils.latin1.fromBuf(this.buffer)
+			value: Utils.latin1.fromBuf(this.buffer),
 		});
 
 		return this.latin1;
@@ -75,7 +75,7 @@ export class Secret {
 	get utf8() {
 		Object.defineProperty(this, 'utf8', {
 			enumerable: true,
-			value: Utils.utf8.fromBuf(this.buffer)
+			value: Utils.utf8.fromBuf(this.buffer),
 		});
 
 		return this.utf8;
@@ -88,7 +88,7 @@ export class Secret {
 	get base32() {
 		Object.defineProperty(this, 'base32', {
 			enumerable: true,
-			value: Utils.base32.fromBuf(this.buffer)
+			value: Utils.base32.fromBuf(this.buffer),
 		});
 
 		return this.base32;
@@ -101,7 +101,7 @@ export class Secret {
 	get hex() {
 		Object.defineProperty(this, 'hex', {
 			enumerable: true,
-			value: Utils.hex.fromBuf(this.buffer)
+			value: Utils.hex.fromBuf(this.buffer),
 		});
 
 		return this.hex;
