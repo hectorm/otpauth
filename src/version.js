@@ -2,4 +2,6 @@
  * Library version.
  * @type {string}
  */
-export default '__OTPAUTH_VERSION__';
+const version = '__OTPAUTH_VERSION__';
+
+export default version;
