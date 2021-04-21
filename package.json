@@ -54,7 +54,7 @@
     "types": "rm -rf ./types/ && tsc",
     "docs": "rm -rf ./docs/ && typedoc ./src/index.js --theme minimal --out ./docs/",
     "dist": "run-s lint build types test docs",
-    "version": "run-s dist && git add -A ./dist/ ./docs/"
+    "version": "run-s dist && git add -A ./dist/ ./types/ ./docs/"
   },
   "dependencies": {
     "jssha": "~3.2.0"
