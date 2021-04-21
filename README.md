@@ -47,7 +47,7 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 ### Deno
 
 ```javascript
-// @deno-types="https://deno.land/x/otpauth/types/index.d.ts"
+// @deno-types="https://deno.land/x/otpauth/dist/otpauth.d.ts"
 import * as OTPAuth from 'https://deno.land/x/otpauth/dist/otpauth.esm.js'
 
 // Same as above...

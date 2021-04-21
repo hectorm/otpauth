@@ -1,6 +1,7 @@
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
+import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 
 import packageJson from './package.json';
@@ -35,7 +36,7 @@ export default async () => {
 		sourcemap: true,
 	};
 
-	return {
+	return [{
 		input: './src/index.js',
 		output: [
 			{ file: './dist/otpauth.cjs.js', format: 'cjs', ...commonBuildOptions },
@@ -58,5 +59,13 @@ export default async () => {
 
 			throw new Error(warning.message);
 		},
-	};
+	}, {
+		input: './types/index.d.ts',
+		output: [
+			{ file: './dist/otpauth.d.ts', format: 'es' },
+		],
+		plugins: [
+			dts(),
+		],
+	}];
 };

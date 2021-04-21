@@ -2,10 +2,11 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "target": "ES5",
+    "strict": true,
     "allowJs": true,
+    "checkJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "removeComments": true,
     "outDir": "types"
   }
 }
