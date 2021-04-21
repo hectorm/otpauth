@@ -85,7 +85,7 @@ export default class Secret {
 	}
 
 	/**
-	 * Base32 representation of secret key.
+	 * Base32 string representation of secret key.
 	 * @type {string}
 	 */
 	get base32() {
@@ -98,7 +98,7 @@ export default class Secret {
 	}
 
 	/**
-	 * Hexadecimal representation of secret key.
+	 * Hexadecimal string representation of secret key.
 	 * @type {string}
 	 */
 	get hex() {

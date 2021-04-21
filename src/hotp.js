@@ -21,7 +21,7 @@ export default class HOTP {
 	}
 
 	/**
-	 * HOTP: An HMAC-based One-time Password Algorithm (RFC 4226).
+	 * HOTP: An HMAC-based One-time Password Algorithm.
 	 * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
 	 * @constructor
 	 * @param {Object} [config] Configuration options.
