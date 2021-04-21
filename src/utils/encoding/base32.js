@@ -1,6 +1,5 @@
 /**
  * RFC 4648 base32 alphabet without pad.
- * @private
  * @type {string}
  */
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';

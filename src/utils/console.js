@@ -2,10 +2,10 @@ import globalThis from './global-this';
 
 /**
  * "console" ponyfill.
- * @private
- * @type {Object}
+ * @type {Object.<string, *>}
  */
 const console = (() => {
+	/** @type {Object.<string, *>} */
 	const container = {};
 
 	const methods = [

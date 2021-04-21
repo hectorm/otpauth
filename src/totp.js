@@ -4,7 +4,14 @@ import Secret from './secret';
 export default class TOTP {
 	/**
 	 * Default configuration.
-	 * @type {Object}
+	 * @type {{
+	 *   issuer: string,
+	 *   label: string,
+	 *   algorithm: string,
+	 *   digits: number,
+	 *   period: number
+	 *   window: number
+	 * }}
 	 */
 	static get defaults() {
 		return {

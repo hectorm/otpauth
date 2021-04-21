@@ -2,37 +2,31 @@ import HOTP from './hotp';
 import TOTP from './totp';
 
 /**
- * Key URI regex.
- *   otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS
- * @private
+ * Key URI regex (otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS).
  * @type {RegExp}
  */
 const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?[A-Z0-9.~_-]+=[^&]*)+)$/i;
 
 /**
  * RFC 4648 base32 alphabet with pad.
- * @private
  * @type {RegExp}
  */
 const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 
 /**
  * Regex for supported algorithms.
- * @private
  * @type {RegExp}
  */
 const ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
 
 /**
  * Integer regex.
- * @private
  * @type {RegExp}
  */
 const INTEGER_REGEX = /^[+-]?\d+$/;
 
 /**
  * Positive integer regex.
- * @private
  * @type {RegExp}
  */
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
@@ -61,11 +55,12 @@ export default class URI {
 		// Extract URI groups.
 		const uriType = uriGroups[1].toLowerCase();
 		const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
-		/** @type {Object} */
+		/** @type {Object.<string, string>} */
 		const uriParams = uriGroups[3].split('&').reduce((acc, cur) => {
 			const pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
 			const pairKey = pairArr[0].toLowerCase();
 			const pairVal = pairArr[1];
+			/** @type {Object.<string, string>} */
 			const pairAcc = acc;
 
 			pairAcc[pairKey] = pairVal;

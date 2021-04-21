@@ -2,7 +2,6 @@ import globalThis from '../global-this';
 
 /**
  * TextEncoder instance.
- * @private
  * @type {TextEncoder|null}
  */
 const ENCODER = globalThis.TextEncoder
@@ -11,7 +10,6 @@ const ENCODER = globalThis.TextEncoder
 
 /**
  * TextDecoder instance.
- * @private
  * @type {TextDecoder|null}
  */
 const DECODER = globalThis.TextDecoder

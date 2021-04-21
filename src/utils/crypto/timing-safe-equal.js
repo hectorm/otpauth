@@ -7,16 +7,14 @@ const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
 
 /**
  * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
- * @private
  * @param {string} a String a.
  * @param {string} b String b.
  * @returns {boolean} Equality result.
  */
-const timingSafeEqual = isNode
-	? (a, b) => {
+const timingSafeEqual = (a, b) => {
+	if (isNode) {
 		return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
-	}
-	: (a, b) => {
+	} else {
 		if (a.length !== b.length) {
 			throw new TypeError('Input strings must have the same length');
 		}
@@ -26,6 +24,7 @@ const timingSafeEqual = isNode
 			out |= a.charCodeAt(i) ^ b.charCodeAt(i);
 		}
 		return out === 0;
-	};
+	}
+};
 
 export default timingSafeEqual;

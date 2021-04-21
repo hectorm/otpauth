@@ -1,8 +1,7 @@
 /**
  * "globalThis" ponyfill.
  * {@link https://mathiasbynens.be/notes/globalthis|A horrifying globalThis polyfill in universal JavaScript}
- * @private
- * @type {Object}
+ * @type {Object.<string, *>}
 */
 const magicalGlobalThis = (() => {
 	/* eslint-disable no-extend-native, no-undef, no-restricted-globals */
@@ -16,8 +15,10 @@ const magicalGlobalThis = (() => {
 			configurable: true,
 		});
 		try {
+			// @ts-ignore
 			magic = __OTPAUTH_GLOBALTHIS__;
 		} finally {
+			// @ts-ignore
 			delete Object.prototype.__OTPAUTH_GLOBALTHIS__;
 		}
 	}

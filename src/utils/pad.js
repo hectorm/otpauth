@@ -1,6 +1,5 @@
 /**
  * Pads a number with leading zeros.
- * @private
  * @param {number|string} num Number.
  * @param {number} digits Digits.
  * @returns {string} Padded number.

@@ -7,7 +7,14 @@ import timingSafeEqual from './utils/crypto/timing-safe-equal';
 export default class HOTP {
 	/**
 	 * Default configuration.
-	 * @type {Object}
+	 * @type {{
+	 *   issuer: string,
+	 *   label: string,
+	 *   algorithm: string,
+	 *   digits: number,
+	 *   counter: number
+	 *   window: number
+	 * }}
 	 */
 	static get defaults() {
 		return {
