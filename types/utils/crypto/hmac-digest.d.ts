@@ -1,2 +1,10 @@
 export default hmacDigest;
-declare function hmacDigest(algorithm: any, key: any, message: any): any;
+/**
+ * Calculates an HMAC digest.
+ * In Node.js, the command "openssl list -digest-algorithms" displays the available digest algorithms.
+ * @param {string} algorithm Algorithm.
+ * @param {ArrayBuffer} key Key.
+ * @param {ArrayBuffer} message Message.
+ * @returns {ArrayBuffer} Digest.
+ */
+declare function hmacDigest(algorithm: string, key: ArrayBuffer, message: ArrayBuffer): ArrayBuffer;

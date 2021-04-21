@@ -1,5 +1,6 @@
-export { default as HOTP } from "./hotp";
-export { default as TOTP } from "./totp";
-export { default as URI } from "./uri";
-export { default as Secret } from "./secret";
-export { default as version } from "./version";
+import HOTP from "./hotp";
+import TOTP from "./totp";
+import URI from "./uri";
+import Secret from "./secret";
+import version from "./version";
+export { HOTP, TOTP, URI, Secret, version };

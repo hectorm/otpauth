@@ -2716,7 +2716,7 @@ img {
 		<li class=" tsd-kind-class">
 			<a href="classes/uri.html" class="tsd-kind-icon">URI</a>
 		</li>
-		<li class=" tsd-kind-property">
+		<li class=" tsd-kind-variable">
 			<a href="modules.html#version" class="tsd-kind-icon">version</a>
 		</li>
 	</ul>
@@ -2762,7 +2762,7 @@ img {
 <span style="color: #000000">});</span>
 
 <span style="color: #008000">// Convert to Google Authenticator key URI.</span>
-<span style="color: #008000">//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&amp;secret=NB2W45DFOIZA&amp;algorithm=SHA1&amp;digits=6&amp;period=30</span>
+<span style="color: #008000">// otpauth://totp/ACME:AzureDiamond?issuer=ACME&amp;secret=NB2W45DFOIZA&amp;algorithm=SHA1&amp;digits=6&amp;period=30</span>
 <span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">uri</span><span style="color: #000000"> = </span><span style="color: #001080">totp</span><span style="color: #000000">.</span><span style="color: #795E26">toString</span><span style="color: #000000">(); </span><span style="color: #008000">// or &quot;OTPAuth.URI.stringify(totp)&quot;</span>
 
 <span style="color: #008000">// Convert from Google Authenticator key URI.</span>
@@ -2771,7 +2771,7 @@ img {
 			<a href="#deno" id="deno" style="color: inherit; text-decoration: none;">
 				<h3>Deno</h3>
 			</a>
-			<pre><code class="language-javascript"><span style="color: #008000">// @deno-types=&quot;https://deno.land/x/otpauth/types/index.d.ts&quot;</span>
+			<pre><code class="language-javascript"><span style="color: #008000">// @deno-types=&quot;https://deno.land/x/otpauth/dist/otpauth.d.ts&quot;</span>
 <span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">OTPAuth</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;https://deno.land/x/otpauth/dist/otpauth.esm.js&#039;</span>
 
 <span style="color: #008000">// Same as above...</span>
@@ -2805,16 +2805,6 @@ img {
 			<p><a href="https://github.com/hectorm/otpauth/blob/master/LICENSE.md">MIT License</a>
 			© <a href="https://hector.molinero.dev/">Héctor Molinero Fernández</a>.</p>
 		</div>
-		<div class="tsd-comment tsd-typography">
-			<div class="lead">
-				<p>One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.</p>
-			</div>
-			<dl class="tsd-comment-tags">
-				<dt>author</dt>
-				<dd><p>Héctor Molinero Fernández <a href="mailto:hector@molinero.dev">hector@molinero.dev</a></p>
-				</dd>
-			</dl>
-		</div>
 		<div style="position:relative;"><a name="typedoc-main-index" class="tsd-anchor"></a></div>
 		<section class="tsd-panel-group tsd-index-group">
 			<h2>Index</h2>
@@ -2830,22 +2820,30 @@ img {
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
-						<h3>Properties</h3>
+						<h3>Variables</h3>
 						<ul class="tsd-index-list">
-							<li class="tsd-kind-property"><a href="modules.html#version" class="tsd-kind-icon">version</a></li>
+							<li class="tsd-kind-variable"><a href="modules.html#version" class="tsd-kind-icon">version</a></li>
 						</ul>
 					</section>
 				</div>
 			</section>
 		</section>
 		<section class="tsd-panel-group tsd-member-group ">
-			<h2>Properties</h2>
-			<section class="tsd-panel tsd-member tsd-kind-property">
+			<h2>Variables</h2>
+			<section class="tsd-panel tsd-member tsd-kind-variable">
 				<a name="version" class="tsd-anchor"></a>
-				<h3>version</h3>
-				<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;__OTPAUTH_VERSION__&quot;</span></div>
+				<h3><span class="tsd-flag ts-flagConst">Const</span> version</h3>
+				<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;__OTPAUTH_VERSION__&#x27;</span></div>
 				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/hectorm/otpauth/blob/7e3d182/src/version.js#L5">version.js:5</a></li>
+					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Library version.</p>
+					</div>
+				</div>
 			</section>
 		</section>
 		<footer class="with-border-bottom">

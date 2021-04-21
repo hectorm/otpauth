@@ -1,2 +1,7 @@
 export default randomBytes;
-declare function randomBytes(size: any): any;
+/**
+ * Returns random bytes.
+ * @param {number} size Size.
+ * @returns {ArrayBuffer} Random bytes.
+ */
+declare function randomBytes(size: number): ArrayBuffer;

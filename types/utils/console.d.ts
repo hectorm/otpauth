@@ -1,2 +1,8 @@
 export default console;
-declare const console: any;
+/**
+ * "console" ponyfill.
+ * @type {Object.<string, *>}
+ */
+declare const console: {
+    [x: string]: any;
+};
