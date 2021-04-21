@@ -37,7 +37,7 @@ let delta = totp.validate({
 });
 
 // Convert to Google Authenticator key URI.
-//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
 let uri = totp.toString(); // or "OTPAuth.URI.stringify(totp)"
 
 // Convert from Google Authenticator key URI.
