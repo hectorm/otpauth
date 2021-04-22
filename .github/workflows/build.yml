@@ -45,8 +45,8 @@ jobs:
           npm run test:deno
       - name: 'Test (browser)'
         run: |
-          "$(node -e 'process.stdout.write(require("playwright-chromium").chromium.executablePath());')" --version
-          "$(node -e 'process.stdout.write(require("playwright-firefox").firefox.executablePath());')" --version
+          "$(node -e 'process.stdout.write(require("playwright").chromium.executablePath());')" --version
+          "$(node -e 'process.stdout.write(require("playwright").firefox.executablePath());')" --version
           npm run test:browser
       - name: 'Docs'
         run: |

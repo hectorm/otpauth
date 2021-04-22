@@ -6,9 +6,9 @@
 
 (async () => {
 	/* ================================================
-	 * Initialize environment
-	 * ================================================
-	 */
+	* Initialize environment
+	* ================================================
+	*/
 
 	const context = (() => {
 		/* eslint-disable @babel/no-invalid-this, no-restricted-globals */
@@ -23,43 +23,47 @@
 	const isNode = Object.prototype.toString.call(context.process) === '[object process]';
 	const isDeno = 'Deno' in context && Deno.version && Deno.version.deno;
 
-	if (isDeno) {
-		await import('https://cdn.jsdelivr.net/npm/mocha@8/mocha.js');
-	}
+	try {
+		if (!('mocha' in context)) {
+			if (isDeno) {
+				await import('../node_modules/mocha/mocha.js');
+			}
+		}
 
-	if (!('describe' in context) || !('it' in context)) {
-		mocha.setup({ ui: 'bdd', reporter: 'spec' });
-		context.mochaSelfSetup = true;
-	}
+		if (!('chai' in context)) {
+			if (isNode) {
+				// eslint-disable-next-line global-require
+				context.chai = require('chai');
+			} else if (isDeno) {
+				await import('../node_modules/chai/chai.js');
+			}
+		}
 
-	if ('chai' in context) {
+		if (!('describe' in context) || !('it' in context)) {
+			mocha.setup({ ui: 'bdd', reporter: 'spec' });
+			context.mochaSelfSetup = true;
+		}
+
+		if (!('OTPAuth' in context)) {
+			if (isNode) {
+				// eslint-disable-next-line global-require, import/no-dynamic-require
+				context.OTPAuth = require(process.env.MINIFIED === 'true'
+					? '../dist/otpauth.cjs.min.js'
+					: '../dist/otpauth.cjs.js');
+			} else if (isDeno) {
+				context.OTPAuth = await import(Deno.env.get('MINIFIED') === 'true'
+					? '../dist/otpauth.esm.min.js'
+					: '../dist/otpauth.esm.js');
+			}
+		}
+
 		context.assert = chai.assert;
 		context.assertEquals = chai.assert.deepEqual;
 		context.assertMatch = chai.assert.match;
-	} else if (isNode) {
-		// eslint-disable-next-line global-require
-		const nodeAssert = require('assert').strict;
-		context.assert = nodeAssert;
-		context.assertEquals = nodeAssert.deepStrictEqual;
-		context.assertMatch = nodeAssert.match;
-	} else if (isDeno) {
-		const denoAssert = await import('https://deno.land/std/testing/asserts.ts');
-		context.assert = denoAssert.assert;
-		context.assertEquals = denoAssert.assertEquals;
-		context.assertMatch = denoAssert.assertMatch;
-	}
-
-	if ('OTPAuth' in context) {
-		// OTPAuth is already defined.
-	} else if (isNode) {
-		// eslint-disable-next-line global-require, import/no-dynamic-require
-		context.OTPAuth = require(process.env.IS_MINIFIED === 'true'
-			? '../dist/otpauth.cjs.min.js'
-			: '../dist/otpauth.cjs.js');
-	} else if (isDeno) {
-		context.OTPAuth = await import(Deno.env.get('IS_MINIFIED') === 'true'
-			? '../dist/otpauth.esm.min.js'
-			: '../dist/otpauth.esm.js');
+	} catch (err) {
+		console.error(err);
+		if (isNode) process.exit(1);
+		else if (isDeno) Deno.exit(1);
 	}
 
 	/* ================================================
