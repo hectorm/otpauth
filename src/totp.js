@@ -1,6 +1,10 @@
 import { HOTP } from './hotp';
 import { Secret } from './secret';
 
+/**
+ * TOTP: Time-Based One-Time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ */
 class TOTP {
 	/**
 	 * Default configuration.
@@ -25,9 +29,7 @@ class TOTP {
 	}
 
 	/**
-	 * TOTP: Time-Based One-Time Password Algorithm.
-	 * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
-	 * @constructor
+	 * Creates a TOTP object.
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.
 	 * @param {string} [config.label='OTPAuth'] Account label.

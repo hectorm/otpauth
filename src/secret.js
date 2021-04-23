@@ -4,10 +4,12 @@ import { latin1ToBuf, latin1FromBuf } from './utils/encoding/latin1';
 import { utf8ToBuf, utf8FromBuf } from './utils/encoding/utf8';
 import { randomBytes } from './utils/crypto/random-bytes';
 
+/**
+ * OTP secret key.
+ */
 class Secret {
 	/**
-	 * Secret key object.
-	 * @constructor
+	 * Creates a secret key object.
 	 * @param {Object} [config] Configuration options.
 	 * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
 	 * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.

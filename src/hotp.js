@@ -4,6 +4,10 @@ import { pad } from './utils/pad';
 import { Secret } from './secret';
 import { timingSafeEqual } from './utils/crypto/timing-safe-equal';
 
+/**
+ * HOTP: An HMAC-based One-time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ */
 class HOTP {
 	/**
 	 * Default configuration.
@@ -28,9 +32,7 @@ class HOTP {
 	}
 
 	/**
-	 * HOTP: An HMAC-based One-time Password Algorithm.
-	 * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
-	 * @constructor
+	 * Creates an HOTP object.
 	 * @param {Object} [config] Configuration options.
 	 * @param {string} [config.issuer=''] Account provider.
 	 * @param {string} [config.label='OTPAuth'] Account label.
