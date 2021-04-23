@@ -29,14 +29,14 @@
   "bugs": {
     "url": "https://github.com/hectorm/otpauth/issues"
   },
-  "main": "dist/otpauth.cjs.js",
-  "browser": "dist/otpauth.umd.js",
-  "module": "dist/otpauth.esm.js",
-  "types": "dist/otpauth.d.ts",
+  "main": "./dist/otpauth.cjs.js",
+  "module": "./dist/otpauth.esm.js",
+  "browser": "./dist/otpauth.umd.js",
+  "types": "./dist/otpauth.d.ts",
   "files": [
-    "dist/",
-    "src/",
-    "types/"
+    "./dist/",
+    "./src/",
+    "./types/"
   ],
   "scripts": {
     "lint": "eslint ./",
@@ -89,7 +89,7 @@
     "rollup": "~2.45.2",
     "rollup-plugin-dts": "~3.0.1",
     "rollup-plugin-terser": "~7.0.2",
-    "typedoc": "~0.20.35",
+    "typedoc": "~0.20.36",
     "typescript": "~4.2.4"
   }
 }
