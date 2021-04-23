@@ -10,7 +10,7 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
  * @param {string} str Base32 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-export const base32ToBuf = (str) => {
+const base32ToBuf = (str) => {
 	// Canonicalize to all upper case and remove padding if it exists.
 	const cstr = str.toUpperCase().replace(/=+$/, '');
 
@@ -42,7 +42,7 @@ export const base32ToBuf = (str) => {
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Base32 string.
  */
-export const base32FromBuf = (buf) => {
+const base32FromBuf = (buf) => {
 	const arr = new Uint8Array(buf);
 	let bits = 0;
 	let value = 0;
@@ -64,3 +64,5 @@ export const base32FromBuf = (buf) => {
 
 	return str;
 };
+
+export { base32ToBuf, base32FromBuf };

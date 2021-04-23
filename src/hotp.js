@@ -1,10 +1,10 @@
 import { uintToBuf } from './utils/encoding/uint';
-import hmacDigest from './utils/crypto/hmac-digest';
-import pad from './utils/pad';
-import Secret from './secret';
-import timingSafeEqual from './utils/crypto/timing-safe-equal';
+import { hmacDigest } from './utils/crypto/hmac-digest';
+import { pad } from './utils/pad';
+import { Secret } from './secret';
+import { timingSafeEqual } from './utils/crypto/timing-safe-equal';
 
-export default class HOTP {
+class HOTP {
 	/**
 	 * Default configuration.
 	 * @type {{
@@ -204,3 +204,5 @@ export default class HOTP {
 			+ `counter=${e(this.counter)}`;
 	}
 }
+
+export { HOTP };

@@ -3,7 +3,7 @@
  * {@link https://mathiasbynens.be/notes/globalthis|A horrifying globalThis polyfill in universal JavaScript}
  * @type {Object.<string, *>}
 */
-export const globalThis = (() => {
+const globalThis = (() => {
 	// @ts-ignore
 	if (typeof globalThis === 'object') return globalThis;
 	else {
@@ -31,3 +31,5 @@ export const globalThis = (() => {
 
 	return undefined;
 })();
+
+export { globalThis };

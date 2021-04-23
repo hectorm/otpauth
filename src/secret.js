@@ -2,9 +2,9 @@ import { base32ToBuf, base32FromBuf } from './utils/encoding/base32';
 import { hexToBuf, hexFromBuf } from './utils/encoding/hex';
 import { latin1ToBuf, latin1FromBuf } from './utils/encoding/latin1';
 import { utf8ToBuf, utf8FromBuf } from './utils/encoding/utf8';
-import randomBytes from './utils/crypto/random-bytes';
+import { randomBytes } from './utils/crypto/random-bytes';
 
-export default class Secret {
+class Secret {
 	/**
 	 * Secret key object.
 	 * @constructor
@@ -110,3 +110,5 @@ export default class Secret {
 		return this.hex;
 	}
 }
+
+export { Secret };

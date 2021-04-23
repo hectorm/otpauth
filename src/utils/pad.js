@@ -11,4 +11,4 @@ const pad = (num, digits) => {
 	return `${prefix}${num}`;
 };
 
-export default pad;
+export { pad };

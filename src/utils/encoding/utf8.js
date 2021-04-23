@@ -1,4 +1,4 @@
-import globalThis from '../global-this';
+import { globalThis } from '../global-this';
 
 /**
  * TextEncoder instance.
@@ -21,7 +21,7 @@ const DECODER = globalThis.TextDecoder
  * @param {string} str String.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-export const utf8ToBuf = (str) => {
+const utf8ToBuf = (str) => {
 	if (!ENCODER) {
 		throw new Error('Encoding API not available');
 	}
@@ -34,10 +34,12 @@ export const utf8ToBuf = (str) => {
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} String.
  */
-export const utf8FromBuf = (buf) => {
+const utf8FromBuf = (buf) => {
 	if (!DECODER) {
 		throw new Error('Encoding API not available');
 	}
 
 	return DECODER.decode(buf);
 };
+
+export { utf8ToBuf, utf8FromBuf };

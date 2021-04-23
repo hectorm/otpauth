@@ -3,7 +3,7 @@
  * @param {number} num Integer.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-export const uintToBuf = (num) => {
+const uintToBuf = (num) => {
 	const buf = new ArrayBuffer(8);
 	const arr = new Uint8Array(buf);
 	let acc = num;
@@ -23,7 +23,7 @@ export const uintToBuf = (num) => {
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {number} Integer.
  */
-export const uintFromBuf = (buf) => {
+const uintFromBuf = (buf) => {
 	const arr = new Uint8Array(buf);
 	let num = 0;
 
@@ -36,3 +36,5 @@ export const uintFromBuf = (buf) => {
 
 	return num;
 };
+
+export { uintToBuf, uintFromBuf };

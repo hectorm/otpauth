@@ -1,4 +1,4 @@
-import globalThis from './global-this';
+import { globalThis } from './global-this';
 
 /**
  * "console" ponyfill.
@@ -29,4 +29,4 @@ const console = (() => {
 	return container;
 })();
 
-export default console;
+export { console };

@@ -1,5 +1,5 @@
-import HOTP from './hotp';
-import TOTP from './totp';
+import { HOTP } from './hotp';
+import { TOTP } from './totp';
 
 /**
  * Key URI regex (otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS).
@@ -35,7 +35,7 @@ const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
  * HOTP/TOTP object/string conversion.
  * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
  */
-export default class URI {
+class URI {
 	/**
 	 * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
 	 * @param {string} uri Google Authenticator Key URI.
@@ -154,3 +154,5 @@ export default class URI {
 		throw new TypeError('Invalid \'HOTP/TOTP\' object');
 	}
 }
+
+export { URI };

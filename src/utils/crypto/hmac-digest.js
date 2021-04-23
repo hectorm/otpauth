@@ -1,8 +1,8 @@
 import jsSHA from 'jssha';
 
-import globalThis from '../global-this';
-import isNode from '../is-node';
-import nodeRequire from '../node-require';
+import { globalThis } from '../global-this';
+import { isNode } from '../is-node';
+import { nodeRequire } from '../node-require';
 
 const NodeBuffer = isNode ? globalThis.Buffer : undefined;
 const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
@@ -50,4 +50,4 @@ const hmacDigest = (algorithm, key, message) => {
 	}
 };
 
-export default hmacDigest;
+export { hmacDigest };

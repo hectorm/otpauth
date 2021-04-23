@@ -9,6 +9,7 @@ import packageJson from './package.json';
 export default async () => {
 	const commonBuildOptions = {
 		name: 'OTPAuth',
+		exports: 'named',
 		banner: async () => {
 			const getLicenseComment = (pkg) => (`/*! ${[
 				`${pkg.name} v${pkg.version}`,

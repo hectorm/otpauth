@@ -1,7 +1,7 @@
-import HOTP from './hotp';
-import Secret from './secret';
+import { HOTP } from './hotp';
+import { Secret } from './secret';
 
-export default class TOTP {
+class TOTP {
 	/**
 	 * Default configuration.
 	 * @type {{
@@ -192,3 +192,5 @@ export default class TOTP {
 			+ `period=${e(this.period)}`;
 	}
 }
+
+export { TOTP };

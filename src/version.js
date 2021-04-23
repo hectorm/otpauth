@@ -4,4 +4,4 @@
  */
 const version = '__OTPAUTH_VERSION__';
 
-export default version;
+export { version };

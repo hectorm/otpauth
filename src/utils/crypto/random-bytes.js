@@ -1,6 +1,6 @@
-import globalThis from '../global-this';
-import isNode from '../is-node';
-import nodeRequire from '../node-require';
+import { globalThis } from '../global-this';
+import { isNode } from '../is-node';
+import { nodeRequire } from '../node-require';
 
 const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
 const BrowserCrypto = !isNode ? globalThis.crypto || globalThis.msCrypto : undefined;
@@ -21,4 +21,4 @@ const randomBytes = (size) => {
 	}
 };
 
-export default randomBytes;
+export { randomBytes };

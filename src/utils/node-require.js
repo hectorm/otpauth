@@ -1,4 +1,4 @@
-import isNode from './is-node';
+import { isNode } from './is-node';
 
 /**
  * Dynamically import Node.js modules ("eval" is used to prevent bundlers from including the module).
@@ -11,4 +11,4 @@ const nodeRequire = isNode
 	? eval('require')
 	: () => {};
 
-export default nodeRequire;
+export { nodeRequire };

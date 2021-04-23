@@ -3,7 +3,7 @@
  * @param {string} str Latin-1 string.
  * @returns {ArrayBuffer} ArrayBuffer.
  */
-export const latin1ToBuf = (str) => {
+const latin1ToBuf = (str) => {
 	const buf = new ArrayBuffer(str.length);
 	const arr = new Uint8Array(buf);
 
@@ -19,7 +19,7 @@ export const latin1ToBuf = (str) => {
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Latin-1 string.
  */
-export const latin1FromBuf = (buf) => {
+const latin1FromBuf = (buf) => {
 	const arr = new Uint8Array(buf);
 	let str = '';
 
@@ -29,3 +29,5 @@ export const latin1FromBuf = (buf) => {
 
 	return str;
 };
+
+export { latin1ToBuf, latin1FromBuf };
