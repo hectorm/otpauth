@@ -3,39 +3,31 @@
  * {@link https://mathiasbynens.be/notes/globalthis|A horrifying globalThis polyfill in universal JavaScript}
  * @type {Object.<string, *>}
 */
-const magicalGlobalThis = (() => {
-	/* eslint-disable no-extend-native, no-undef, no-restricted-globals */
-	let magic;
-
-	if (typeof globalThis === 'object') {
-		magic = globalThis;
-	} else {
-		Object.defineProperty(Object.prototype, '__OTPAUTH_GLOBALTHIS__', {
+export const globalThis = (() => {
+	// @ts-ignore
+	if (typeof globalThis === 'object') return globalThis;
+	else {
+		// eslint-disable-next-line no-extend-native
+		Object.defineProperty(Object.prototype, '__GLOBALTHIS__', {
 			get() { return this; },
 			configurable: true,
 		});
 		try {
 			// @ts-ignore
-			magic = __OTPAUTH_GLOBALTHIS__;
+			// eslint-disable-next-line no-undef
+			if (typeof __GLOBALTHIS__ !== 'undefined') return __GLOBALTHIS__;
 		} finally {
 			// @ts-ignore
-			delete Object.prototype.__OTPAUTH_GLOBALTHIS__;
+			delete Object.prototype.__GLOBALTHIS__;
 		}
 	}
 
-	if (typeof magic === 'undefined') {
-		// Still unable to determine "globalThis", fall back to a naive method.
-		if (typeof self !== 'undefined') {
-			magic = self;
-		} else if (typeof window !== 'undefined') {
-			magic = window;
-		} else if (typeof global !== 'undefined') {
-			magic = global;
-		}
-	}
-
-	return magic;
+	// Still unable to determine "globalThis", fall back to a naive method.
+	/* eslint-disable no-undef, no-restricted-globals */
+	if (typeof self !== 'undefined') return self;
+	else if (typeof window !== 'undefined') return window;
+	else if (typeof global !== 'undefined') return global;
 	/* eslint-enable */
-})();
 
-export default magicalGlobalThis;
+	return undefined;
+})();
