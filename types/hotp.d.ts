@@ -1,4 +1,8 @@
-export default class HOTP {
+/**
+ * HOTP: An HMAC-based One-time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ */
+export class HOTP {
     /**
      * Default configuration.
      * @type {{
@@ -53,9 +57,7 @@ export default class HOTP {
         window?: number | undefined;
     }): number | null;
     /**
-     * HOTP: An HMAC-based One-time Password Algorithm.
-     * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
-     * @constructor
+     * Creates an HOTP object.
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
@@ -130,4 +132,4 @@ export default class HOTP {
      */
     toString(): string;
 }
-import Secret from "./secret";
+import { Secret } from "./secret";

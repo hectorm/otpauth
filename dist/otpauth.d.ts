@@ -1,3 +1,6 @@
+/**
+ * OTP secret key.
+ */
 declare class Secret {
     /**
      * Converts a Latin-1 string to a Secret object.
@@ -24,8 +27,7 @@ declare class Secret {
      */
     static fromHex(str: string): Secret;
     /**
-     * Secret key object.
-     * @constructor
+     * Creates a secret key object.
      * @param {Object} [config] Configuration options.
      * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
      * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
@@ -61,6 +63,10 @@ declare class Secret {
     get hex(): string;
 }
 
+/**
+ * HOTP: An HMAC-based One-time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ */
 declare class HOTP {
     /**
      * Default configuration.
@@ -116,9 +122,7 @@ declare class HOTP {
         window?: number | undefined;
     }): number | null;
     /**
-     * HOTP: An HMAC-based One-time Password Algorithm.
-     * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
-     * @constructor
+     * Creates an HOTP object.
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
@@ -194,6 +198,10 @@ declare class HOTP {
     toString(): string;
 }
 
+/**
+ * TOTP: Time-Based One-Time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ */
 declare class TOTP {
     /**
      * Default configuration.
@@ -253,9 +261,7 @@ declare class TOTP {
         window?: number | undefined;
     }): number | null;
     /**
-     * TOTP: Time-Based One-Time Password Algorithm.
-     * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
-     * @constructor
+     * Creates a TOTP object.
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.

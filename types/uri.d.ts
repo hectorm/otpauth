@@ -2,7 +2,7 @@
  * HOTP/TOTP object/string conversion.
  * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
  */
-export default class URI {
+export class URI {
     /**
      * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
      * @param {string} uri Google Authenticator Key URI.
@@ -16,5 +16,5 @@ export default class URI {
      */
     static stringify(otp: HOTP | TOTP): string;
 }
-import HOTP from "./hotp";
-import TOTP from "./totp";
+import { HOTP } from "./hotp";
+import { TOTP } from "./totp";

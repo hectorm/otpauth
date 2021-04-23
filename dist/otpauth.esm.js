@@ -1,4 +1,4 @@
-/*! otpauth v7.0.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.0.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 function _typeof(obj) {
@@ -1208,14 +1208,11 @@ var _default = /*#__PURE__*/function () {
  * {@link https://mathiasbynens.be/notes/globalthis|A horrifying globalThis polyfill in universal JavaScript}
  * @type {Object.<string, *>}
 */
-var magicalGlobalThis = function () {
-  /* eslint-disable no-extend-native, no-undef, no-restricted-globals */
-  var magic;
-
-  if ((typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis)) === 'object') {
-    magic = globalThis;
-  } else {
-    Object.defineProperty(Object.prototype, '__OTPAUTH_GLOBALTHIS__', {
+var globalThis = function () {
+  // @ts-ignore
+  if (_typeof(globalThis) === 'object') return globalThis;else {
+    // eslint-disable-next-line no-extend-native
+    Object.defineProperty(Object.prototype, '__GLOBALTHIS__', {
       get: function get() {
         return this;
       },
@@ -1224,26 +1221,20 @@ var magicalGlobalThis = function () {
 
     try {
       // @ts-ignore
-      magic = __OTPAUTH_GLOBALTHIS__;
+      // eslint-disable-next-line no-undef
+      if (typeof __GLOBALTHIS__ !== 'undefined') return __GLOBALTHIS__;
     } finally {
       // @ts-ignore
-      delete Object.prototype.__OTPAUTH_GLOBALTHIS__;
+      delete Object.prototype.__GLOBALTHIS__;
     }
-  }
+  } // Still unable to determine "globalThis", fall back to a naive method.
 
-  if (typeof magic === 'undefined') {
-    // Still unable to determine "globalThis", fall back to a naive method.
-    if (typeof self !== 'undefined') {
-      magic = self;
-    } else if (typeof window !== 'undefined') {
-      magic = window;
-    } else if (typeof global !== 'undefined') {
-      magic = global;
-    }
-  }
+  /* eslint-disable no-undef, no-restricted-globals */
 
-  return magic;
+  if (typeof self !== 'undefined') return self;else if (typeof window !== 'undefined') return window;else if (typeof global !== 'undefined') return global;
   /* eslint-enable */
+
+  return undefined;
 }();
 
 /**
@@ -1251,7 +1242,7 @@ var magicalGlobalThis = function () {
  * @type {boolean}
  */
 
-var isNode = Object.prototype.toString.call(magicalGlobalThis.process) === '[object process]';
+var isNode = Object.prototype.toString.call(globalThis.process) === '[object process]';
 
 /**
  * Dynamically import Node.js modules ("eval" is used to prevent bundlers from including the module).
@@ -1263,7 +1254,7 @@ var isNode = Object.prototype.toString.call(magicalGlobalThis.process) === '[obj
 var nodeRequire = isNode // eslint-disable-next-line no-eval
 ? eval('require') : function () {};
 
-var NodeBuffer$1 = isNode ? magicalGlobalThis.Buffer : undefined;
+var NodeBuffer$1 = isNode ? globalThis.Buffer : undefined;
 var NodeCrypto$2 = isNode ? nodeRequire('crypto') : undefined;
 /**
  * OpenSSL to jsSHA algorithms.
@@ -1373,6 +1364,7 @@ var base32ToBuf = function base32ToBuf(str) {
  * @returns {string} Base32 string.
  */
 
+
 var base32FromBuf = function base32FromBuf(buf) {
   var arr = new Uint8Array(buf);
   var bits = 0;
@@ -1397,10 +1389,27 @@ var base32FromBuf = function base32FromBuf(buf) {
 };
 
 /**
+ * Converts a hexadecimal string to an ArrayBuffer.
+ * @param {string} str Hexadecimal string.
+ * @returns {ArrayBuffer} ArrayBuffer.
+ */
+var hexToBuf = function hexToBuf(str) {
+  var buf = new ArrayBuffer(str.length / 2);
+  var arr = new Uint8Array(buf);
+
+  for (var i = 0; i < str.length; i += 2) {
+    arr[i / 2] = parseInt(str.substr(i, 2), 16);
+  }
+
+  return buf;
+};
+/**
  * Converts an ArrayBuffer to a hexadecimal string.
  * @param {ArrayBuffer} buf ArrayBuffer.
  * @returns {string} Hexadecimal string.
  */
+
+
 var hexFromBuf = function hexFromBuf(buf) {
   var arr = new Uint8Array(buf);
   var str = '';
@@ -1412,22 +1421,6 @@ var hexFromBuf = function hexFromBuf(buf) {
   }
 
   return str.toUpperCase();
-};
-/**
- * Converts a hexadecimal string to an ArrayBuffer.
- * @param {string} str Hexadecimal string.
- * @returns {ArrayBuffer} ArrayBuffer.
- */
-
-var hexToBuf = function hexToBuf(str) {
-  var buf = new ArrayBuffer(str.length / 2);
-  var arr = new Uint8Array(buf);
-
-  for (var i = 0; i < str.length; i += 2) {
-    arr[i / 2] = parseInt(str.substr(i, 2), 16);
-  }
-
-  return buf;
 };
 
 /**
@@ -1451,6 +1444,7 @@ var latin1ToBuf = function latin1ToBuf(str) {
  * @returns {string} Latin-1 string.
  */
 
+
 var latin1FromBuf = function latin1FromBuf(buf) {
   var arr = new Uint8Array(buf);
   var str = '';
@@ -1467,13 +1461,13 @@ var latin1FromBuf = function latin1FromBuf(buf) {
  * @type {TextEncoder|null}
  */
 
-var ENCODER = magicalGlobalThis.TextEncoder ? new magicalGlobalThis.TextEncoder('utf-8') : null;
+var ENCODER = globalThis.TextEncoder ? new globalThis.TextEncoder('utf-8') : null;
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
  */
 
-var DECODER = magicalGlobalThis.TextDecoder ? new magicalGlobalThis.TextDecoder('utf-8') : null;
+var DECODER = globalThis.TextDecoder ? new globalThis.TextDecoder('utf-8') : null;
 /**
  * Converts an UTF-8 string to an ArrayBuffer.
  * @param {string} str String.
@@ -1493,6 +1487,7 @@ var utf8ToBuf = function utf8ToBuf(str) {
  * @returns {string} String.
  */
 
+
 var utf8FromBuf = function utf8FromBuf(buf) {
   if (!DECODER) {
     throw new Error('Encoding API not available');
@@ -1502,7 +1497,7 @@ var utf8FromBuf = function utf8FromBuf(buf) {
 };
 
 var NodeCrypto$1 = isNode ? nodeRequire('crypto') : undefined;
-var BrowserCrypto = !isNode ? magicalGlobalThis.crypto || magicalGlobalThis.msCrypto : undefined;
+var BrowserCrypto = !isNode ? globalThis.crypto || globalThis.msCrypto : undefined;
 /**
  * Returns random bytes.
  * @param {number} size Size.
@@ -1521,10 +1516,13 @@ var randomBytes = function randomBytes(size) {
   }
 };
 
+/**
+ * OTP secret key.
+ */
+
 var Secret = /*#__PURE__*/function () {
   /**
-   * Secret key object.
-   * @constructor
+   * Creates a secret key object.
    * @param {Object} [config] Configuration options.
    * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
    * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
@@ -1657,7 +1655,7 @@ var Secret = /*#__PURE__*/function () {
   return Secret;
 }();
 
-var NodeBuffer = isNode ? magicalGlobalThis.Buffer : undefined;
+var NodeBuffer = isNode ? globalThis.Buffer : undefined;
 var NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
 /**
  * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
@@ -1685,11 +1683,14 @@ var timingSafeEqual = function timingSafeEqual(a, b) {
   }
 };
 
+/**
+ * HOTP: An HMAC-based One-time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ */
+
 var HOTP = /*#__PURE__*/function () {
   /**
-   * HOTP: An HMAC-based One-time Password Algorithm.
-   * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
-   * @constructor
+   * Creates an HOTP object.
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
@@ -1905,11 +1906,14 @@ var HOTP = /*#__PURE__*/function () {
   return HOTP;
 }();
 
+/**
+ * TOTP: Time-Based One-Time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ */
+
 var TOTP = /*#__PURE__*/function () {
   /**
-   * TOTP: Time-Based One-Time Password Algorithm.
-   * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
-   * @constructor
+   * Creates a TOTP object.
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
@@ -2294,6 +2298,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '7.0.0';
+var version = '7.0.1';
 
 export { HOTP, Secret, TOTP, URI, version };

@@ -1,4 +1,8 @@
-export default class TOTP {
+/**
+ * TOTP: Time-Based One-Time Password Algorithm.
+ * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ */
+export class TOTP {
     /**
      * Default configuration.
      * @type {{
@@ -57,9 +61,7 @@ export default class TOTP {
         window?: number | undefined;
     }): number | null;
     /**
-     * TOTP: Time-Based One-Time Password Algorithm.
-     * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
-     * @constructor
+     * Creates a TOTP object.
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
@@ -134,4 +136,4 @@ export default class TOTP {
      */
     toString(): string;
 }
-import Secret from "./secret";
+import { Secret } from "./secret";

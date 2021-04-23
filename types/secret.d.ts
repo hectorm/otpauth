@@ -1,4 +1,7 @@
-export default class Secret {
+/**
+ * OTP secret key.
+ */
+export class Secret {
     /**
      * Converts a Latin-1 string to a Secret object.
      * @param {string} str Latin-1 string.
@@ -24,8 +27,7 @@ export default class Secret {
      */
     static fromHex(str: string): Secret;
     /**
-     * Secret key object.
-     * @constructor
+     * Creates a secret key object.
      * @param {Object} [config] Configuration options.
      * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
      * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
