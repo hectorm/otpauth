@@ -34,9 +34,9 @@
   "browser": "./dist/otpauth.umd.js",
   "types": "./dist/otpauth.d.ts",
   "files": [
-    "./dist/",
-    "./src/",
-    "./types/"
+    "dist/",
+    "src/",
+    "types/"
   ],
   "scripts": {
     "lint": "eslint ./",
