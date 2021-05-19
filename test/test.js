@@ -26,6 +26,7 @@
 	try {
 		if (!('mocha' in context)) {
 			if (isDeno) {
+				// eslint-disable-next-line import/extensions
 				await import('../node_modules/mocha/mocha.js');
 			}
 		}
@@ -35,6 +36,7 @@
 				// eslint-disable-next-line global-require
 				context.chai = require('chai');
 			} else if (isDeno) {
+				// eslint-disable-next-line import/extensions
 				await import('../node_modules/chai/chai.js');
 			}
 		}
