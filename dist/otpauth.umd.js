@@ -1,4 +1,4 @@
-/*! otpauth v7.0.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.0.4 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 (function (global, factory) {
@@ -2304,7 +2304,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '7.0.3';
+  var version = '7.0.4';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
