@@ -40,7 +40,7 @@ jobs:
       - name: 'Test (deno)'
         run: |
           export DENO_INSTALL="$HOME/.deno"; export PATH="$DENO_INSTALL/bin:$PATH"
-          curl -fsSL --proto '=https' --tlsv1.3 'https://deno.land/x/install/install.sh' | sh
+          curl -fsSL --proto '=https' --tlsv1.2 'https://deno.land/x/install/install.sh' | sh
           deno --version
           npm run test:deno
       - name: 'Test (browser)'
