@@ -1,4 +1,4 @@
-/*! otpauth v7.0.5 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.0.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 (function (global, factory) {
@@ -100,6 +100,8 @@
   function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
+    } else if (call !== void 0) {
+      throw new TypeError("Derived constructors may only return object or undefined");
     }
 
     return _assertThisInitialized(self);
@@ -2304,7 +2306,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '7.0.5';
+  var version = '7.0.6';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
