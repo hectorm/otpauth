@@ -1,8 +1,8 @@
 [![Last version](https://img.shields.io/github/v/tag/hectorm/otpauth?label=version)](https://github.com/hectorm/otpauth/tags)
-[![Build Status](https://img.shields.io/github/workflow/status/hectorm/otpauth/Build?label=build)](https://github.com/hectorm/otpauth/actions)
-[![Dependencies status](https://img.shields.io/david/hectorm/otpauth?label=dependencies)](https://david-dm.org/hectorm/otpauth)
-[![Dev dependencies status](https://img.shields.io/david/dev/hectorm/otpauth?label=dev%20dependencies)](https://david-dm.org/hectorm/otpauth?type=dev)
-[![NPM downloads](https://img.shields.io/npm/dm/otpauth?label=npm%20downloads)](https://www.npmjs.com/package/otpauth)
+[![Build status](https://img.shields.io/github/workflow/status/hectorm/otpauth/Build?label=build)](https://github.com/hectorm/otpauth/actions)
+[![npm dependencies](https://img.shields.io/librariesio/release/npm/otpauth)](https://www.npmjs.com/package/otpauth?activeTab=dependencies)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/otpauth)](https://bundlephobia.com/package/otpauth)
+[![npm downloads](https://img.shields.io/npm/dm/otpauth?label=npm%20downloads)](https://www.npmjs.com/package/otpauth)
 
 ***
 
