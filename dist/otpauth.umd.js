@@ -1,11 +1,11 @@
-/*! otpauth v7.0.6 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.0.7 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.OTPAuth = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
   function _typeof(obj) {
     "@babel/helpers - typeof";
@@ -2306,7 +2306,7 @@
    * Library version.
    * @type {string}
    */
-  var version = '7.0.6';
+  var version = '7.0.7';
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
@@ -2316,4 +2316,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
