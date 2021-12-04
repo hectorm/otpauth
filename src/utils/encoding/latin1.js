@@ -4,14 +4,14 @@
  * @returns {ArrayBuffer} ArrayBuffer.
  */
 const latin1ToBuf = (str) => {
-	const buf = new ArrayBuffer(str.length);
-	const arr = new Uint8Array(buf);
+  const buf = new ArrayBuffer(str.length);
+  const arr = new Uint8Array(buf);
 
-	for (let i = 0; i < str.length; i++) {
-		arr[i] = str.charCodeAt(i) & 0xFF;
-	}
+  for (let i = 0; i < str.length; i++) {
+    arr[i] = str.charCodeAt(i) & 0xff;
+  }
 
-	return buf;
+  return buf;
 };
 
 /**
@@ -20,14 +20,14 @@ const latin1ToBuf = (str) => {
  * @returns {string} Latin-1 string.
  */
 const latin1FromBuf = (buf) => {
-	const arr = new Uint8Array(buf);
-	let str = '';
+  const arr = new Uint8Array(buf);
+  let str = "";
 
-	for (let i = 0; i < arr.length; i++) {
-		str += String.fromCharCode(arr[i]);
-	}
+  for (let i = 0; i < arr.length; i++) {
+    str += String.fromCharCode(arr[i]);
+  }
 
-	return str;
+  return str;
 };
 
 export { latin1ToBuf, latin1FromBuf };

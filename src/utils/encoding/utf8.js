@@ -1,20 +1,20 @@
-import { globalThis } from '../global-this';
+import { globalThis } from "../global-this.js";
 
 /**
  * TextEncoder instance.
  * @type {TextEncoder|null}
  */
 const ENCODER = globalThis.TextEncoder
-	? new globalThis.TextEncoder('utf-8')
-	: null;
+  ? new globalThis.TextEncoder("utf-8")
+  : null;
 
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
  */
 const DECODER = globalThis.TextDecoder
-	? new globalThis.TextDecoder('utf-8')
-	: null;
+  ? new globalThis.TextDecoder("utf-8")
+  : null;
 
 /**
  * Converts an UTF-8 string to an ArrayBuffer.
@@ -22,11 +22,11 @@ const DECODER = globalThis.TextDecoder
  * @returns {ArrayBuffer} ArrayBuffer.
  */
 const utf8ToBuf = (str) => {
-	if (!ENCODER) {
-		throw new Error('Encoding API not available');
-	}
+  if (!ENCODER) {
+    throw new Error("Encoding API not available");
+  }
 
-	return ENCODER.encode(str).buffer;
+  return ENCODER.encode(str).buffer;
 };
 
 /**
@@ -35,11 +35,11 @@ const utf8ToBuf = (str) => {
  * @returns {string} String.
  */
 const utf8FromBuf = (buf) => {
-	if (!DECODER) {
-		throw new Error('Encoding API not available');
-	}
+  if (!DECODER) {
+    throw new Error("Encoding API not available");
+  }
 
-	return DECODER.decode(buf);
+  return DECODER.decode(buf);
 };
 
 export { utf8ToBuf, utf8FromBuf };

@@ -5,10 +5,10 @@
  * @returns {string} Padded number.
  */
 const pad = (num, digits) => {
-	let prefix = '';
-	let repeat = digits - String(num).length;
-	while (repeat-- > 0) prefix += '0';
-	return `${prefix}${num}`;
+  let prefix = "";
+  let repeat = digits - String(num).length;
+  while (repeat-- > 0) prefix += "0";
+  return `${prefix}${num}`;
 };
 
 export { pad };

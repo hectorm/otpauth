@@ -1,26 +1,26 @@
-import jsSHA from 'jssha';
+import jsSHA from "jssha";
 
-import { globalThis } from '../global-this';
-import { isNode } from '../is-node';
-import { nodeRequire } from '../node-require';
+import { globalThis } from "../global-this.js";
+import { isNode } from "../is-node.js";
+import { nodeRequire } from "../node-require.js";
 
 const NodeBuffer = isNode ? globalThis.Buffer : undefined;
-const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
+const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
  * OpenSSL to jsSHA algorithms.
  * @type {Object.<string, string>}
  */
 const OPENSSL_TO_JSSHA_ALGO = {
-	'SHA1': 'SHA-1',
-	'SHA224': 'SHA-224',
-	'SHA256': 'SHA-256',
-	'SHA384': 'SHA-384',
-	'SHA512': 'SHA-512',
-	'SHA3-224': 'SHA3-224',
-	'SHA3-256': 'SHA3-256',
-	'SHA3-384': 'SHA3-384',
-	'SHA3-512': 'SHA3-512',
+  SHA1: "SHA-1",
+  SHA224: "SHA-224",
+  SHA256: "SHA-256",
+  SHA384: "SHA-384",
+  SHA512: "SHA-512",
+  "SHA3-224": "SHA3-224",
+  "SHA3-256": "SHA3-256",
+  "SHA3-384": "SHA3-384",
+  "SHA3-512": "SHA3-512",
 };
 
 /**
@@ -32,22 +32,21 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-	if (isNode) {
-		const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
-		hmac.update(NodeBuffer.from(message));
-		return hmac.digest().buffer;
-	} else {
-		const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
-		if (typeof variant === 'undefined') {
-			throw new TypeError('Unknown hash function');
-		}
-		// @ts-ignore
-		// eslint-disable-next-line @babel/new-cap
-		const hmac = new jsSHA(variant, 'ARRAYBUFFER');
-		hmac.setHMACKey(key, 'ARRAYBUFFER');
-		hmac.update(message);
-		return hmac.getHMAC('ARRAYBUFFER');
-	}
+  if (isNode) {
+    const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
+    hmac.update(NodeBuffer.from(message));
+    return hmac.digest().buffer;
+  } else {
+    const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
+    if (typeof variant === "undefined") {
+      throw new TypeError("Unknown hash function");
+    }
+    // @ts-ignore
+    const hmac = new jsSHA(variant, "ARRAYBUFFER");
+    hmac.setHMACKey(key, "ARRAYBUFFER");
+    hmac.update(message);
+    return hmac.getHMAC("ARRAYBUFFER");
+  }
 };
 
 export { hmacDigest };

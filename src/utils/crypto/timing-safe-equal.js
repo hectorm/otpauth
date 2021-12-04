@@ -1,9 +1,9 @@
-import { globalThis } from '../global-this';
-import { isNode } from '../is-node';
-import { nodeRequire } from '../node-require';
+import { globalThis } from "../global-this.js";
+import { isNode } from "../is-node.js";
+import { nodeRequire } from "../node-require.js";
 
 const NodeBuffer = isNode ? globalThis.Buffer : undefined;
-const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
+const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
  * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
@@ -12,19 +12,19 @@ const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-	if (isNode) {
-		return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
-	} else {
-		if (a.length !== b.length) {
-			throw new TypeError('Input strings must have the same length');
-		}
-		let i = -1;
-		let out = 0;
-		while (++i < a.length) {
-			out |= a.charCodeAt(i) ^ b.charCodeAt(i);
-		}
-		return out === 0;
-	}
+  if (isNode) {
+    return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
+  } else {
+    if (a.length !== b.length) {
+      throw new TypeError("Input strings must have the same length");
+    }
+    let i = -1;
+    let out = 0;
+    while (++i < a.length) {
+      out |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return out === 0;
+  }
 };
 
 export { timingSafeEqual };

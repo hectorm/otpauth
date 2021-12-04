@@ -1,4 +1,4 @@
-import { isNode } from './is-node';
+import { isNode } from "./is-node.js";
 
 /**
  * Dynamically import Node.js modules ("eval" is used to prevent bundlers from including the module).
@@ -6,9 +6,6 @@ import { isNode } from './is-node';
  * @param {string} name Module name.
  * @returns {*} Module.
  */
-const nodeRequire = isNode
-	// eslint-disable-next-line no-eval
-	? eval('require')
-	: () => {};
+const nodeRequire = isNode ? eval("require") : () => {};
 
 export { nodeRequire };

@@ -1,9 +1,11 @@
-import { globalThis } from '../global-this';
-import { isNode } from '../is-node';
-import { nodeRequire } from '../node-require';
+import { globalThis } from "../global-this.js";
+import { isNode } from "../is-node.js";
+import { nodeRequire } from "../node-require.js";
 
-const NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
-const BrowserCrypto = !isNode ? globalThis.crypto || globalThis.msCrypto : undefined;
+const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
+const BrowserCrypto = !isNode
+  ? globalThis.crypto || globalThis.msCrypto
+  : undefined;
 
 /**
  * Returns random bytes.
@@ -11,14 +13,14 @@ const BrowserCrypto = !isNode ? globalThis.crypto || globalThis.msCrypto : undef
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = (size) => {
-	if (isNode) {
-		return NodeCrypto.randomBytes(size).buffer;
-	} else {
-		if (!BrowserCrypto || !BrowserCrypto.getRandomValues) {
-			throw new Error('Cryptography API not available');
-		}
-		return BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
-	}
+  if (isNode) {
+    return NodeCrypto.randomBytes(size).buffer;
+  } else {
+    if (!BrowserCrypto || !BrowserCrypto.getRandomValues) {
+      throw new Error("Cryptography API not available");
+    }
+    return BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
+  }
 };
 
 export { randomBytes };
