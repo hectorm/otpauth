@@ -114,7 +114,7 @@ export class TOTP {
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    generate({ timestamp, }?: {
+    generate({ timestamp }?: {
         timestamp?: number | undefined;
     } | undefined): string;
     /**
@@ -125,7 +125,7 @@ export class TOTP {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    validate({ token, timestamp, window, }: {
+    validate({ token, timestamp, window }: {
         token: string;
         timestamp?: number | undefined;
         window?: number | undefined;
@@ -136,4 +136,4 @@ export class TOTP {
      */
     toString(): string;
 }
-import { Secret } from "./secret";
+import { Secret } from "./secret.js";

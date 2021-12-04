@@ -16,5 +16,5 @@ export class URI {
      */
     static stringify(otp: HOTP | TOTP): string;
 }
-import { HOTP } from "./hotp";
-import { TOTP } from "./totp";
+import { HOTP } from "./hotp.js";
+import { TOTP } from "./totp.js";

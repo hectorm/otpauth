@@ -1,4 +1,4 @@
-/*! otpauth v7.0.7 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.0.8 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 'use strict';
@@ -1213,12 +1213,11 @@ var _default = /*#__PURE__*/function () {
  * "globalThis" ponyfill.
  * {@link https://mathiasbynens.be/notes/globalthis|A horrifying globalThis polyfill in universal JavaScript}
  * @type {Object.<string, *>}
-*/
+ */
 var globalThis = function () {
   // @ts-ignore
-  if (_typeof(globalThis) === 'object') return globalThis;else {
-    // eslint-disable-next-line no-extend-native
-    Object.defineProperty(Object.prototype, '__GLOBALTHIS__', {
+  if (_typeof(globalThis) === "object") return globalThis;else {
+    Object.defineProperty(Object.prototype, "__GLOBALTHIS__", {
       get: function get() {
         return this;
       },
@@ -1228,18 +1227,14 @@ var globalThis = function () {
     try {
       // @ts-ignore
       // eslint-disable-next-line no-undef
-      if (typeof __GLOBALTHIS__ !== 'undefined') return __GLOBALTHIS__;
+      if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
     } finally {
       // @ts-ignore
       delete Object.prototype.__GLOBALTHIS__;
     }
   } // Still unable to determine "globalThis", fall back to a naive method.
 
-  /* eslint-disable no-undef, no-restricted-globals */
-
-  if (typeof self !== 'undefined') return self;else if (typeof window !== 'undefined') return window;else if (typeof global !== 'undefined') return global;
-  /* eslint-enable */
-
+  if (typeof self !== "undefined") return self;else if (typeof window !== "undefined") return window;else if (typeof global !== "undefined") return global;
   return undefined;
 }();
 
@@ -1248,7 +1243,7 @@ var globalThis = function () {
  * @type {boolean}
  */
 
-var isNode = Object.prototype.toString.call(globalThis.process) === '[object process]';
+var isNode = Object.prototype.toString.call(globalThis.process) === "[object process]";
 
 /**
  * Dynamically import Node.js modules ("eval" is used to prevent bundlers from including the module).
@@ -1257,26 +1252,25 @@ var isNode = Object.prototype.toString.call(globalThis.process) === '[object pro
  * @returns {*} Module.
  */
 
-var nodeRequire = isNode // eslint-disable-next-line no-eval
-? eval('require') : function () {};
+var nodeRequire = isNode ? eval("require") : function () {};
 
 var NodeBuffer$1 = isNode ? globalThis.Buffer : undefined;
-var NodeCrypto$2 = isNode ? nodeRequire('crypto') : undefined;
+var NodeCrypto$2 = isNode ? nodeRequire("crypto") : undefined;
 /**
  * OpenSSL to jsSHA algorithms.
  * @type {Object.<string, string>}
  */
 
 var OPENSSL_TO_JSSHA_ALGO = {
-  'SHA1': 'SHA-1',
-  'SHA224': 'SHA-224',
-  'SHA256': 'SHA-256',
-  'SHA384': 'SHA-384',
-  'SHA512': 'SHA-512',
-  'SHA3-224': 'SHA3-224',
-  'SHA3-256': 'SHA3-256',
-  'SHA3-384': 'SHA3-384',
-  'SHA3-512': 'SHA3-512'
+  SHA1: "SHA-1",
+  SHA224: "SHA-224",
+  SHA256: "SHA-256",
+  SHA384: "SHA-384",
+  SHA512: "SHA-512",
+  "SHA3-224": "SHA3-224",
+  "SHA3-256": "SHA3-256",
+  "SHA3-384": "SHA3-384",
+  "SHA3-512": "SHA3-512"
 };
 /**
  * Calculates an HMAC digest.
@@ -1295,19 +1289,18 @@ var hmacDigest = function hmacDigest(algorithm, key, message) {
   } else {
     var variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
 
-    if (typeof variant === 'undefined') {
-      throw new TypeError('Unknown hash function');
+    if (typeof variant === "undefined") {
+      throw new TypeError("Unknown hash function");
     } // @ts-ignore
-    // eslint-disable-next-line @babel/new-cap
 
 
-    var _hmac = new _default(variant, 'ARRAYBUFFER');
+    var _hmac = new _default(variant, "ARRAYBUFFER");
 
-    _hmac.setHMACKey(key, 'ARRAYBUFFER');
+    _hmac.setHMACKey(key, "ARRAYBUFFER");
 
     _hmac.update(message);
 
-    return _hmac.getHMAC('ARRAYBUFFER');
+    return _hmac.getHMAC("ARRAYBUFFER");
   }
 };
 
@@ -1318,11 +1311,11 @@ var hmacDigest = function hmacDigest(algorithm, key, message) {
  * @returns {string} Padded number.
  */
 var pad = function pad(num, digits) {
-  var prefix = '';
+  var prefix = "";
   var repeat = digits - String(num).length;
 
   while (repeat-- > 0) {
-    prefix += '0';
+    prefix += "0";
   }
 
   return "".concat(prefix).concat(num);
@@ -1332,7 +1325,7 @@ var pad = function pad(num, digits) {
  * RFC 4648 base32 alphabet without pad.
  * @type {string}
  */
-var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 /**
  * Converts a base32 string to an ArrayBuffer (RFC 4648).
  * {@link https://github.com/LinusU/base32-decode|LinusU/base32-decode}
@@ -1342,7 +1335,7 @@ var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 var base32ToBuf = function base32ToBuf(str) {
   // Canonicalize to all upper case and remove padding if it exists.
-  var cstr = str.toUpperCase().replace(/=+$/, '');
+  var cstr = str.toUpperCase().replace(/=+$/, "");
   var buf = new ArrayBuffer(cstr.length * 5 / 8 | 0);
   var arr = new Uint8Array(buf);
   var bits = 0;
@@ -1375,7 +1368,7 @@ var base32FromBuf = function base32FromBuf(buf) {
   var arr = new Uint8Array(buf);
   var bits = 0;
   var value = 0;
-  var str = '';
+  var str = "";
 
   for (var i = 0; i < arr.length; i++) {
     value = value << 8 | arr[i];
@@ -1418,11 +1411,11 @@ var hexToBuf = function hexToBuf(str) {
 
 var hexFromBuf = function hexFromBuf(buf) {
   var arr = new Uint8Array(buf);
-  var str = '';
+  var str = "";
 
   for (var i = 0; i < arr.length; i++) {
     var hex = arr[i].toString(16);
-    if (hex.length === 1) str += '0';
+    if (hex.length === 1) str += "0";
     str += hex;
   }
 
@@ -1439,7 +1432,7 @@ var latin1ToBuf = function latin1ToBuf(str) {
   var arr = new Uint8Array(buf);
 
   for (var i = 0; i < str.length; i++) {
-    arr[i] = str.charCodeAt(i) & 0xFF;
+    arr[i] = str.charCodeAt(i) & 0xff;
   }
 
   return buf;
@@ -1453,7 +1446,7 @@ var latin1ToBuf = function latin1ToBuf(str) {
 
 var latin1FromBuf = function latin1FromBuf(buf) {
   var arr = new Uint8Array(buf);
-  var str = '';
+  var str = "";
 
   for (var i = 0; i < arr.length; i++) {
     str += String.fromCharCode(arr[i]);
@@ -1467,13 +1460,13 @@ var latin1FromBuf = function latin1FromBuf(buf) {
  * @type {TextEncoder|null}
  */
 
-var ENCODER = globalThis.TextEncoder ? new globalThis.TextEncoder('utf-8') : null;
+var ENCODER = globalThis.TextEncoder ? new globalThis.TextEncoder("utf-8") : null;
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
  */
 
-var DECODER = globalThis.TextDecoder ? new globalThis.TextDecoder('utf-8') : null;
+var DECODER = globalThis.TextDecoder ? new globalThis.TextDecoder("utf-8") : null;
 /**
  * Converts an UTF-8 string to an ArrayBuffer.
  * @param {string} str String.
@@ -1482,7 +1475,7 @@ var DECODER = globalThis.TextDecoder ? new globalThis.TextDecoder('utf-8') : nul
 
 var utf8ToBuf = function utf8ToBuf(str) {
   if (!ENCODER) {
-    throw new Error('Encoding API not available');
+    throw new Error("Encoding API not available");
   }
 
   return ENCODER.encode(str).buffer;
@@ -1496,13 +1489,13 @@ var utf8ToBuf = function utf8ToBuf(str) {
 
 var utf8FromBuf = function utf8FromBuf(buf) {
   if (!DECODER) {
-    throw new Error('Encoding API not available');
+    throw new Error("Encoding API not available");
   }
 
   return DECODER.decode(buf);
 };
 
-var NodeCrypto$1 = isNode ? nodeRequire('crypto') : undefined;
+var NodeCrypto$1 = isNode ? nodeRequire("crypto") : undefined;
 var BrowserCrypto = !isNode ? globalThis.crypto || globalThis.msCrypto : undefined;
 /**
  * Returns random bytes.
@@ -1515,7 +1508,7 @@ var randomBytes = function randomBytes(size) {
     return NodeCrypto$1.randomBytes(size).buffer;
   } else {
     if (!BrowserCrypto || !BrowserCrypto.getRandomValues) {
-      throw new Error('Cryptography API not available');
+      throw new Error("Cryptography API not available");
     }
 
     return BrowserCrypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -1545,7 +1538,7 @@ var Secret = /*#__PURE__*/function () {
      * Secret key.
      * @type {ArrayBuffer}
      */
-    this.buffer = typeof buffer === 'undefined' ? randomBytes(size) : buffer;
+    this.buffer = typeof buffer === "undefined" ? randomBytes(size) : buffer;
   }
   /**
    * Converts a Latin-1 string to a Secret object.
@@ -1562,7 +1555,7 @@ var Secret = /*#__PURE__*/function () {
      * @type {string}
      */
     function get() {
-      Object.defineProperty(this, 'latin1', {
+      Object.defineProperty(this, "latin1", {
         enumerable: true,
         value: latin1FromBuf(this.buffer)
       });
@@ -1576,7 +1569,7 @@ var Secret = /*#__PURE__*/function () {
   }, {
     key: "utf8",
     get: function get() {
-      Object.defineProperty(this, 'utf8', {
+      Object.defineProperty(this, "utf8", {
         enumerable: true,
         value: utf8FromBuf(this.buffer)
       });
@@ -1590,7 +1583,7 @@ var Secret = /*#__PURE__*/function () {
   }, {
     key: "base32",
     get: function get() {
-      Object.defineProperty(this, 'base32', {
+      Object.defineProperty(this, "base32", {
         enumerable: true,
         value: base32FromBuf(this.buffer)
       });
@@ -1604,7 +1597,7 @@ var Secret = /*#__PURE__*/function () {
   }, {
     key: "hex",
     get: function get() {
-      Object.defineProperty(this, 'hex', {
+      Object.defineProperty(this, "hex", {
         enumerable: true,
         value: hexFromBuf(this.buffer)
       });
@@ -1662,7 +1655,7 @@ var Secret = /*#__PURE__*/function () {
 }();
 
 var NodeBuffer = isNode ? globalThis.Buffer : undefined;
-var NodeCrypto = isNode ? nodeRequire('crypto') : undefined;
+var NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 /**
  * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
  * @param {string} a String a.
@@ -1675,7 +1668,7 @@ var timingSafeEqual = function timingSafeEqual(a, b) {
     return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
   } else {
     if (a.length !== b.length) {
-      throw new TypeError('Input strings must have the same length');
+      throw new TypeError("Input strings must have the same length");
     }
 
     var i = -1;
@@ -1738,7 +1731,7 @@ var HOTP = /*#__PURE__*/function () {
      * @type {Secret}
      */
 
-    this.secret = typeof secret === 'string' ? Secret.fromBase32(secret) : secret;
+    this.secret = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -1836,7 +1829,7 @@ var HOTP = /*#__PURE__*/function () {
     key: "toString",
     value: function toString() {
       var e = encodeURIComponent;
-      return 'otpauth://hotp/' + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.base32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "counter=".concat(e(this.counter));
+      return "otpauth://hotp/" + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.base32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "counter=".concat(e(this.counter));
     }
   }], [{
     key: "defaults",
@@ -1854,9 +1847,9 @@ var HOTP = /*#__PURE__*/function () {
      */
     function get() {
       return {
-        issuer: '',
-        label: 'OTPAuth',
-        algorithm: 'SHA1',
+        issuer: "",
+        label: "OTPAuth",
+        algorithm: "SHA1",
         digits: 6,
         counter: 0,
         window: 1
@@ -1961,7 +1954,7 @@ var TOTP = /*#__PURE__*/function () {
      * @type {Secret}
      */
 
-    this.secret = typeof secret === 'string' ? Secret.fromBase32(secret) : secret;
+    this.secret = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -2062,7 +2055,7 @@ var TOTP = /*#__PURE__*/function () {
     key: "toString",
     value: function toString() {
       var e = encodeURIComponent;
-      return 'otpauth://totp/' + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.base32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "period=".concat(e(this.period));
+      return "otpauth://totp/" + "".concat(this.issuer.length > 0 ? "".concat(e(this.issuer), ":").concat(e(this.label), "?issuer=").concat(e(this.issuer), "&") : "".concat(e(this.label), "?")) + "secret=".concat(e(this.secret.base32), "&") + "algorithm=".concat(e(this.algorithm), "&") + "digits=".concat(e(this.digits), "&") + "period=".concat(e(this.period));
     }
   }], [{
     key: "defaults",
@@ -2080,9 +2073,9 @@ var TOTP = /*#__PURE__*/function () {
      */
     function get() {
       return {
-        issuer: '',
-        label: 'OTPAuth',
-        algorithm: 'SHA1',
+        issuer: "",
+        label: "OTPAuth",
+        algorithm: "SHA1",
         digits: 6,
         period: 30,
         window: 1
@@ -2189,7 +2182,7 @@ var URI = /*#__PURE__*/function () {
       }
 
       if (!Array.isArray(uriGroups)) {
-        throw new URIError('Invalid URI format');
+        throw new URIError("Invalid URI format");
       } // Extract URI groups.
 
 
@@ -2197,7 +2190,7 @@ var URI = /*#__PURE__*/function () {
       var uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
       /** @type {Object.<string, string>} */
 
-      var uriParams = uriGroups[3].split('&').reduce(function (acc, cur) {
+      var uriParams = uriGroups[3].split("&").reduce(function (acc, cur) {
         var pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
         var pairKey = pairArr[0].toLowerCase();
         var pairVal = pairArr[1];
@@ -2211,26 +2204,26 @@ var URI = /*#__PURE__*/function () {
       var OTP;
       var config = {};
 
-      if (uriType === 'hotp') {
+      if (uriType === "hotp") {
         OTP = HOTP; // Counter: required
 
-        if (typeof uriParams.counter !== 'undefined' && INTEGER_REGEX.test(uriParams.counter)) {
+        if (typeof uriParams.counter !== "undefined" && INTEGER_REGEX.test(uriParams.counter)) {
           config.counter = parseInt(uriParams.counter, 10);
         } else {
-          throw new TypeError('Missing or invalid \'counter\' parameter');
+          throw new TypeError("Missing or invalid 'counter' parameter");
         }
-      } else if (uriType === 'totp') {
+      } else if (uriType === "totp") {
         OTP = TOTP; // Period: optional
 
-        if (typeof uriParams.period !== 'undefined') {
+        if (typeof uriParams.period !== "undefined") {
           if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
             config.period = parseInt(uriParams.period, 10);
           } else {
-            throw new TypeError('Invalid \'period\' parameter');
+            throw new TypeError("Invalid 'period' parameter");
           }
         }
       } else {
-        throw new TypeError('Unknown OTP type');
+        throw new TypeError("Unknown OTP type");
       } // Label: required
       // Issuer: optional
 
@@ -2238,43 +2231,43 @@ var URI = /*#__PURE__*/function () {
       if (uriLabel.length === 2) {
         config.label = uriLabel[1];
 
-        if (typeof uriParams.issuer === 'undefined') {
+        if (typeof uriParams.issuer === "undefined") {
           config.issuer = uriLabel[0];
         } else if (uriParams.issuer === uriLabel[0]) {
           config.issuer = uriParams.issuer;
         } else {
-          throw new TypeError('Invalid \'issuer\' parameter');
+          throw new TypeError("Invalid 'issuer' parameter");
         }
       } else {
         config.label = uriLabel[0];
 
-        if (typeof uriParams.issuer !== 'undefined') {
+        if (typeof uriParams.issuer !== "undefined") {
           config.issuer = uriParams.issuer;
         }
       } // Secret: required
 
 
-      if (typeof uriParams.secret !== 'undefined' && SECRET_REGEX.test(uriParams.secret)) {
+      if (typeof uriParams.secret !== "undefined" && SECRET_REGEX.test(uriParams.secret)) {
         config.secret = uriParams.secret;
       } else {
-        throw new TypeError('Missing or invalid \'secret\' parameter');
+        throw new TypeError("Missing or invalid 'secret' parameter");
       } // Algorithm: optional
 
 
-      if (typeof uriParams.algorithm !== 'undefined') {
+      if (typeof uriParams.algorithm !== "undefined") {
         if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
           config.algorithm = uriParams.algorithm;
         } else {
-          throw new TypeError('Invalid \'algorithm\' parameter');
+          throw new TypeError("Invalid 'algorithm' parameter");
         }
       } // Digits: optional
 
 
-      if (typeof uriParams.digits !== 'undefined') {
+      if (typeof uriParams.digits !== "undefined") {
         if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
           config.digits = parseInt(uriParams.digits, 10);
         } else {
-          throw new TypeError('Invalid \'digits\' parameter');
+          throw new TypeError("Invalid 'digits' parameter");
         }
       }
 
@@ -2293,7 +2286,7 @@ var URI = /*#__PURE__*/function () {
         return otp.toString();
       }
 
-      throw new TypeError('Invalid \'HOTP/TOTP\' object');
+      throw new TypeError("Invalid 'HOTP/TOTP' object");
     }
   }]);
 
@@ -2304,7 +2297,7 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = '7.0.7';
+var version = "7.0.8";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;

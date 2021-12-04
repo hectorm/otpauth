@@ -110,7 +110,7 @@ export class HOTP {
      * @param {number} [config.counter=this.counter++] Counter value.
      * @returns {string} Token.
      */
-    generate({ counter, }?: {
+    generate({ counter }?: {
         counter?: number | undefined;
     } | undefined): string;
     /**
@@ -121,7 +121,7 @@ export class HOTP {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    validate({ token, counter, window, }: {
+    validate({ token, counter, window }: {
         token: string;
         counter?: number | undefined;
         window?: number | undefined;
@@ -132,4 +132,4 @@ export class HOTP {
      */
     toString(): string;
 }
-import { Secret } from "./secret";
+import { Secret } from "./secret.js";

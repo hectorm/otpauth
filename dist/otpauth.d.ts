@@ -175,7 +175,7 @@ declare class HOTP {
      * @param {number} [config.counter=this.counter++] Counter value.
      * @returns {string} Token.
      */
-    generate({ counter, }?: {
+    generate({ counter }?: {
         counter?: number | undefined;
     } | undefined): string;
     /**
@@ -186,7 +186,7 @@ declare class HOTP {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    validate({ token, counter, window, }: {
+    validate({ token, counter, window }: {
         token: string;
         counter?: number | undefined;
         window?: number | undefined;
@@ -314,7 +314,7 @@ declare class TOTP {
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    generate({ timestamp, }?: {
+    generate({ timestamp }?: {
         timestamp?: number | undefined;
     } | undefined): string;
     /**
@@ -325,7 +325,7 @@ declare class TOTP {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta, or null if the token is not found.
      */
-    validate({ token, timestamp, window, }: {
+    validate({ token, timestamp, window }: {
         token: string;
         timestamp?: number | undefined;
         window?: number | undefined;
