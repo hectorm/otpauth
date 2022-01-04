@@ -6,7 +6,7 @@ import { TOTP } from "./totp.js";
  * @type {RegExp}
  */
 const OTPURI_REGEX =
-  /^otpauth:\/\/([ht]otp)\/(.+)\?((?:&?[A-Z0-9.~_-]+=[^&]*)+)$/i;
+  /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-Z0-9.~_-]+=[^?&]*)*)$/i;
 
 /**
  * RFC 4648 base32 alphabet with pad.
