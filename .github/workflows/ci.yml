@@ -1,0 +1,145 @@
+name: 'CI'
+
+on:
+  push:
+    tags: ['*']
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+  schedule:
+    - cron: '25 12 * * 3'
+  workflow_dispatch:
+
+jobs:
+
+  lint:
+    name: 'Lint'
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['lts/*']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Lint'
+        run: 'npm run lint'
+
+  docs:
+    name: 'Docs'
+    needs: ['lint']
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['lts/*']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Docs'
+        run: 'npm run docs'
+
+  build-node:
+    name: 'Build and test on Node.js ${{matrix.node_version}}'
+    needs: ['lint']
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['14', '16', '17']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Build'
+        run: 'npm run types && npm run build'
+      - name: 'Test'
+        run: 'npm run test:node'
+
+  build-deno:
+    name: 'Build and test on Deno ${{matrix.deno_version}}'
+    needs: ['lint']
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['lts/*']
+        deno_version: ['vx.x.x']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Use Deno ${{matrix.deno_version}}'
+        uses: 'denoland/setup-deno@v1'
+        with:
+          deno-version: '${{matrix.deno_version}}'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Build'
+        run: 'npm run types && npm run build'
+      - name: 'Test'
+        run: 'npm run test:deno'
+
+  build-chromium:
+    name: 'Build and test on Chromium'
+    needs: ['lint']
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['lts/*']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Build'
+        run: 'npm run types && npm run build'
+      - name: 'Test'
+        run: 'npm run test:browser:chromium'
+
+  build-firefox:
+    name: 'Build and test on Firefox'
+    needs: ['lint']
+    runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        node_version: ['lts/*']
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Use Node.js ${{matrix.node_version}}'
+        uses: 'actions/setup-node@v2'
+        with:
+          node-version: '${{matrix.node_version}}'
+          cache: 'npm'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Build'
+        run: 'npm run types && npm run build'
+      - name: 'Test'
+        run: 'npm run test:browser:firefox'
