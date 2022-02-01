@@ -146,7 +146,9 @@ class HOTP {
     window = HOTP.defaults.window,
   }) {
     // Return early if the token length does not match the digit number.
-    if (token.length !== digits) return null;
+    const tokenString = token.toString();
+
+    if (tokenString.length !== digits) return null;
 
     let delta = null;
 
@@ -158,7 +160,7 @@ class HOTP {
         counter: i,
       });
 
-      if (timingSafeEqual(token, generatedToken)) {
+      if (timingSafeEqual(tokenString, generatedToken)) {
         delta = i - counter;
       }
     }
