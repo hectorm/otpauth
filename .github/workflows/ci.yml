@@ -14,7 +14,7 @@ jobs:
 
   lint:
     name: 'Lint'
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['lts/*']
@@ -34,7 +34,7 @@ jobs:
   docs:
     name: 'Docs'
     needs: ['lint']
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['lts/*']
@@ -54,7 +54,7 @@ jobs:
   build-node:
     name: 'Build and test on Node.js ${{matrix.node_version}}'
     needs: ['lint']
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['14', '16', '17']
@@ -76,7 +76,7 @@ jobs:
   build-deno:
     name: 'Build and test on Deno ${{matrix.deno_version}}'
     needs: ['lint']
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['lts/*']
@@ -103,7 +103,7 @@ jobs:
   build-chromium:
     name: 'Build and test on Chromium'
     needs: ['lint']
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['lts/*']
@@ -125,7 +125,7 @@ jobs:
   build-firefox:
     name: 'Build and test on Firefox'
     needs: ['lint']
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
     strategy:
       matrix:
         node_version: ['lts/*']
