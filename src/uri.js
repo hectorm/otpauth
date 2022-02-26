@@ -107,13 +107,7 @@ class URI {
     // Issuer: optional
     if (uriLabel.length === 2) {
       config.label = uriLabel[1];
-      if (typeof uriParams.issuer === "undefined") {
-        config.issuer = uriLabel[0];
-      } else if (uriParams.issuer === uriLabel[0]) {
-        config.issuer = uriParams.issuer;
-      } else {
-        throw new TypeError("Invalid 'issuer' parameter");
-      }
+      config.issuer = uriLabel[0];
     } else {
       config.label = uriLabel[0];
       if (typeof uriParams.issuer !== "undefined") {
