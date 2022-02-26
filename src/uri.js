@@ -57,7 +57,9 @@ class URI {
 
     // Extract URI groups.
     const uriType = uriGroups[1].toLowerCase();
-    const uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
+    const uriLabel = uriGroups[2]
+      .split(/(?::|%3A) *(.+)/i, 2)
+      .map(decodeURIComponent);
     /** @type {Object.<string, string>} */
     const uriParams = uriGroups[3].split("&").reduce((acc, cur) => {
       const pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
