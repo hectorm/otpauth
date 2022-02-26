@@ -99,8 +99,10 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6OWYXIW7QEYH34MFXCCXPZUBQDTIXBSX5GPKX4MSU2W6NHFNY2DOTEVK5OILVXN33GB6HN4QHHYLDN4AFTZZNH476KG3RAWESDUKZNHQW2KJLYMLTBHNJNPSTW33J4MAWWKNHPA&algorithm=SHA1&digits=6&counter=0",
+            "OTPAUTH://HOTP/OTPAuth?SECRET=6OWYXIW7QEYH34MFXCCXPZUBQDTIXBSX5GPKX4MSU2W6NHFNY2DOTEVK5OILVXN33GB6HN4QHHYLDN4AFTZZNH476KG3RAWESDUKZNHQW2KJLYMLTBHNJNPSTW33J4MAWWKNHPA&ALGORITHM=sha1&DIGITS=6&COUNTER=0",
+          ],
         },
       },
       totp: {
@@ -116,8 +118,10 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6OWYXIW7QEYH34MFXCCXPZUBQDTIXBSX5GPKX4MSU2W6NHFNY2DOTEVK5OILVXN33GB6HN4QHHYLDN4AFTZZNH476KG3RAWESDUKZNHQW2KJLYMLTBHNJNPSTW33J4MAWWKNHPA&algorithm=SHA1&digits=6&period=5",
+            "OTPAUTH://TOTP/OTPAuth?SECRET=6OWYXIW7QEYH34MFXCCXPZUBQDTIXBSX5GPKX4MSU2W6NHFNY2DOTEVK5OILVXN33GB6HN4QHHYLDN4AFTZZNH476KG3RAWESDUKZNHQW2KJLYMLTBHNJNPSTW33J4MAWWKNHPA&ALGORITHM=SHA1&DIGITS=6&PERIOD=5",
+          ],
         },
       },
     },
@@ -150,8 +154,10 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=E3HL4LDW4KZL3ZV5RPWZPJPQT6KJLWFBFXQ2HJHSX2KZNSEA6KU3HERRY2J7HMNFTHYL5AVLE3BJJ2FPSHY3RKUU4SQIP4ESW64WERGXWXPLLUNL5K53DRVW4643A&algorithm=SHA256&digits=6&counter=0",
+            "otpauth://hotp/OTPAuth?algorithm=SHA256&digits=6&counter=0&secret=E3HL4LDW4KZL3ZV5RPWZPJPQT6KJLWFBFXQ2HJHSX2KZNSEA6KU3HERRY2J7HMNFTHYL5AVLE3BJJ2FPSHY3RKUU4SQIP4ESW64WERGXWXPLLUNL5K53DRVW4643A",
+          ],
         },
       },
       totp: {
@@ -167,8 +173,10 @@
           output: -1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=E3HL4LDW4KZL3ZV5RPWZPJPQT6KJLWFBFXQ2HJHSX2KZNSEA6KU3HERRY2J7HMNFTHYL5AVLE3BJJ2FPSHY3RKUU4SQIP4ESW64WERGXWXPLLUNL5K53DRVW4643A&algorithm=SHA256&digits=6&period=10",
+            "otpauth://totp/OTPAuth?algorithm=SHA256&digits=6&period=10&secret=E3HL4LDW4KZL3ZV5RPWZPJPQT6KJLWFBFXQ2HJHSX2KZNSEA6KU3HERRY2J7HMNFTHYL5AVLE3BJJ2FPSHY3RKUU4SQIP4ESW64WERGXWXPLLUNL5K53DRVW4643A",
+          ],
         },
       },
     },
@@ -202,8 +210,10 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6OU2XBPNRSZTDXMS46VKJ4VCTC26ZBFJPHUK3LHRXSF27Y4LR7X37PPJVGU53LHCSOGMFPPDSWB7JB5YQLWLBF7TXS2JD4M7QSDNFL7QTSIJP4E7TKPUF4EUTSUPDNEZU7M3Z2MRWLZ3RA5I5OLLV4ULQOEQ&algorithm=SHA512&digits=6&counter=0",
+            "otpauth://hotp/OTPAuth?secret=6OU2XBPNRSZTDXMS46VKJ4VCTC26ZBFJPHUK3LHRXSF27Y4LR7X37PPJVGU53LHCSOGMFPPDSWB7JB5YQLWLBF7TXS2JD4M7QSDNFL7QTSIJP4E7TKPUF4EUTSUPDNEZU7M3Z2MRWLZ3RA5I5OLLV4ULQOEQ&algorithm=SHA512&digits=6&counter=0&extra=0",
+          ],
         },
       },
       totp: {
@@ -219,8 +229,10 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6OU2XBPNRSZTDXMS46VKJ4VCTC26ZBFJPHUK3LHRXSF27Y4LR7X37PPJVGU53LHCSOGMFPPDSWB7JB5YQLWLBF7TXS2JD4M7QSDNFL7QTSIJP4E7TKPUF4EUTSUPDNEZU7M3Z2MRWLZ3RA5I5OLLV4ULQOEQ&algorithm=SHA512&digits=6&period=15",
+            "otpauth://totp/OTPAuth?secret=6OU2XBPNRSZTDXMS46VKJ4VCTC26ZBFJPHUK3LHRXSF27Y4LR7X37PPJVGU53LHCSOGMFPPDSWB7JB5YQLWLBF7TXS2JD4M7QSDNFL7QTSIJP4E7TKPUF4EUTSUPDNEZU7M3Z2MRWLZ3RA5I5OLLV4ULQOEQ&algorithm=SHA512&digits=6&period=15&extra=0",
+          ],
         },
       },
     },
@@ -253,8 +265,15 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/ACME:OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&algorithm=SHA1&digits=6&counter=0",
+            "otpauth://hotp/ACME:OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+            "otpauth://hotp/ACME:  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+            "otpauth://hotp/ACME%3AOTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+            "otpauth://hotp/ACME%3A  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+            "otpauth://hotp/ACME%3aOTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+            "otpauth://hotp/ACME%3a  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&counter=0",
+          ],
         },
       },
       totp: {
@@ -270,8 +289,15 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/ACME:OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G&algorithm=SHA1&digits=6&period=30",
+            "otpauth://totp/ACME:OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+            "otpauth://totp/ACME:  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+            "otpauth://totp/ACME%3AOTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+            "otpauth://totp/ACME%3A  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+            "otpauth://totp/ACME%3aOTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+            "otpauth://totp/ACME%3a  OTPAuth?issuer=ACME&secret=OR6O5BU2ZCD6PPEJ6OB2LKW5SXUZ7LJM6KS3ND7PX664ZOTWZOY6JJN24KX3N2FPVPT3BA7RXO6ISLJN26MOLF4O6GDK3AHTQ6S3XY4PW7UITDRA6OUZPCGVU7Z2HHE34KL2G",
+          ],
         },
       },
     },
@@ -304,8 +330,15 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/:Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/:  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/%3AUsername?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/%3A  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/%3aUsername?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+            "otpauth://hotp/%3a  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&counter=0",
+          ],
         },
       },
       totp: {
@@ -321,8 +354,15 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/:Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/:  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/%3AUsername?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/%3A  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/%3aUsername?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+            "otpauth://totp/%3a  Username?secret=ZC6HDZFVQHH2TWMO6CV3ZPXRVGW3BRVH6G2JDOPCW255LBOWVHXIRC7AUSJMRAGWSXR33I7HWGE5PDOGVLHZXZVLXIQ7FA5MXQ3MTO7LQC4WDRMG6CV2LJO6WUZA&algorithm=SHA1&digits=7&period=30",
+          ],
         },
       },
     },
@@ -355,8 +395,12 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/ACME%20Co:Firstname%20Lastname?issuer=ACME%20Co&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&counter=0",
+            "otpauth://hotp/ACME%20Co:Firstname%20Lastname?issuer=Contoso%20Co&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&counter=0",
+            "otpauth://hotp/ACME%20Co:Firstname%20Lastname?issuer=&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&counter=0",
+            "otpauth://hotp/ACME%20Co:Firstname%20Lastname?secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&counter=0",
+          ],
         },
       },
       totp: {
@@ -372,8 +416,12 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/ACME%20Co:Firstname%20Lastname?issuer=ACME%20Co&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&period=30",
+            "otpauth://totp/ACME%20Co:Firstname%20Lastname?issuer=Contoso%20Co&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&period=30",
+            "otpauth://totp/ACME%20Co:Firstname%20Lastname?issuer=&secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&period=30",
+            "otpauth://totp/ACME%20Co:Firstname%20Lastname?secret=E3NK2X7FWS3ONJ5BPTZ3FD5Q3CWNDDDV6C5LRCHRVOC2L2EHV3TZHC265OOJ2M7SW2H3B4NPWOVCXVFM6GE3TD7QWK5ZX4ESWCKO7CFC3ODPDCNCQPRIPN7DS6WTRZMGSXZKJGEK&algorithm=SHA1&digits=8&period=30",
+          ],
         },
       },
     },
@@ -406,8 +454,9 @@
           output: -1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6O3YZEW2WXZKTDE73CLMLJWESPX35H234OAKXZUNSD2IHBMP5S32WRHEVKPVLS5V6GCYREXQUWMILYFBULULRLHUQO4LKUHTVCSJD2E3VHQ2LESS5S72ZTVV567334FHQK5SK2Q&algorithm=SHA1&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -423,8 +472,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6O3YZEW2WXZKTDE73CLMLJWESPX35H234OAKXZUNSD2IHBMP5S32WRHEVKPVLS5V6GCYREXQUWMILYFBULULRLHUQO4LKUHTVCSJD2E3VHQ2LESS5S72ZTVV567334FHQK5SK2Q&algorithm=SHA1&digits=6&period=30",
+          ],
         },
       },
     },
@@ -457,8 +507,9 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6COYZA7FRCFMJM6YQ3ZYPBFGJ3U25C7LQ6B4PPGKSBR6NKMN5KZ3IKSS5GF2Z3MFSDHJNXEX6O4ZDIHQVSA2N2F3VBTMNN62VDTJXMDSYSG7DFNNVHTK3EHSXKL3B3FDRA&algorithm=SHA1&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -474,8 +525,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6COYZA7FRCFMJM6YQ3ZYPBFGJ3U25C7LQ6B4PPGKSBR6NKMN5KZ3IKSS5GF2Z3MFSDHJNXEX6O4ZDIHQVSA2N2F3VBTMNN62VDTJXMDSYSG7DFNNVHTK3EHSXKL3B3FDRA&algorithm=SHA1&digits=6&period=30",
+          ],
         },
       },
     },
@@ -508,8 +560,9 @@
           output: 0,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=PTV3HJTL6KY3XBHHTCFUD2UDUHZYZKNFFXYZTP4Z56733Q4VL7R3HGPNRSE6HPEJ3GD67H44M7L3II7PX666DNVP6O2YFLHRRGWZJY4ZX7R3LFGURPPLV357XXYZ7BM56KZKLFQ&algorithm=SHA1&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -525,8 +578,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=PTV3HJTL6KY3XBHHTCFUD2UDUHZYZKNFFXYZTP4Z56733Q4VL7R3HGPNRSE6HPEJ3GD67H44M7L3II7PX666DNVP6O2YFLHRRGWZJY4ZX7R3LFGURPPLV357XXYZ7BM56KZKLFQ&algorithm=SHA1&digits=6&period=30",
+          ],
         },
       },
     },
@@ -559,8 +613,9 @@
           output: null,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=PXM372MNVTQYJBHBV2Q53JPTUSX2BUUZ22RFMLWHUDYZHDMOYKIFX4USQKUPFGUUWZJ7BO4MXPSZFJOWWYR7HLFFXRZ7BFMHQDYYFJ5H5KR3QMR7JPY3PMN6I4&algorithm=SHA1&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -576,8 +631,9 @@
           output: 0,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=PXM372MNVTQYJBHBV2Q53JPTUSX2BUUZ22RFMLWHUDYZHDMOYKIFX4USQKUPFGUUWZJ7BO4MXPSZFJOWWYR7HLFFXRZ7BFMHQDYYFJ5H5KR3QMR7JPY3PMN6I4&algorithm=SHA1&digits=6&period=30",
+          ],
         },
       },
     },
@@ -609,8 +665,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=4GSINR5NIPKI5X53ZWBNPEGLQXBICI3HYWP6LINNZCNC3Q44LV55RCXEUWYXR3MSTHYJLDFP2KZ5JEPIUKPNBJLMYWYTD3VMS7HYG&algorithm=SHA1&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -626,8 +683,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=4GSINR5NIPKI5X53ZWBNPEGLQXBICI3HYWP6LINNZCNC3Q44LV55RCXEUWYXR3MSTHYJLDFP2KZ5JEPIUKPNBJLMYWYTD3VMS7HYG&algorithm=SHA1&digits=6&period=5",
+          ],
         },
       },
     },
@@ -660,8 +718,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=E3KIN4MHX6TX33EBQPPLX4MRXWHMPCO4TDR2RGHRUWWZI6XIT2A65JU24SUJTZNQWJG67P5546J2H25PWPZ2BMMVZS2MTMO2U3YJXN5WEXGZSMHIUCJCX3V3SXTJJLA&algorithm=SHA224&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -677,8 +736,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=E3KIN4MHX6TX33EBQPPLX4MRXWHMPCO4TDR2RGHRUWWZI6XIT2A65JU24SUJTZNQWJG67P5546J2H25PWPZ2BMMVZS2MTMO2U3YJXN5WEXGZSMHIUCJCX3V3SXTJJLA&algorithm=SHA224&digits=6&period=5",
+          ],
         },
       },
     },
@@ -711,8 +771,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=YOMPHP53RTP3T4VVUW3PBHFGSLZ3FBNR562YGZPFQCMPHDETTZHONKVJFBB5LH2S4WHKFTNY4OL25TF2YSN4LBWSWHYLJNM32KBORFFP6GFIDIXMWST65DE3G3SZJJJY&algorithm=SHA256&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -728,8 +789,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=YOMPHP53RTP3T4VVUW3PBHFGSLZ3FBNR562YGZPFQCMPHDETTZHONKVJFBB5LH2S4WHKFTNY4OL25TF2YSN4LBWSWHYLJNM32KBORFFP6GFIDIXMWST65DE3G3SZJJJY&algorithm=SHA256&digits=6&period=5",
+          ],
         },
       },
     },
@@ -763,8 +825,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6GF2VJXDXGYOROFM46SYTRVH3GZ6VAUIKDLIT4E3WCEO7H5RYOPMVPCM56KJ7ZE6SXSZXCHBXWZN7BOXWTWIZNHSX6IIJ4EZU6T65IU2NPQLVOHTSSAJL34BR7IZ3ZMBVTZZBENI6GULZJA&algorithm=SHA384&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -780,8 +843,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6GF2VJXDXGYOROFM46SYTRVH3GZ6VAUIKDLIT4E3WCEO7H5RYOPMVPCM56KJ7ZE6SXSZXCHBXWZN7BOXWTWIZNHSX6IIJ4EZU6T65IU2NPQLVOHTSSAJL34BR7IZ3ZMBVTZZBENI6GULZJA&algorithm=SHA384&digits=6&period=5",
+          ],
         },
       },
     },
@@ -814,8 +878,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=YOXPBOERXTY2DA5I52VY3W4P6SFIVGOOUDN3DRMYZCKUNZFVUTYJPKUH5CFZHWU4ZCKCFZMAT3ZLPPE7ZW75TIG4THYZZO5WN7YJDK446KNYBJGKQV3EQMKMYWFQ&algorithm=SHA512&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -831,8 +896,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=YOXPBOERXTY2DA5I52VY3W4P6SFIVGOOUDN3DRMYZCKUNZFVUTYJPKUH5CFZHWU4ZCKCFZMAT3ZLPPE7ZW75TIG4THYZZO5WN7YJDK446KNYBJGKQV3EQMKMYWFQ&algorithm=SHA512&digits=6&period=5",
+          ],
         },
       },
     },
@@ -865,8 +931,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=2KUDTYFCS3F3ZTN73CE7FBNESDWIBFXLRGD6FLU35O6JX2EESLD25SM26SDK3J7FT2MCB45VXKFPFNEQSXHKKTHEXOWVJ4FCSKS6DHVA3GK5JPZ4MN3E7YFITM&algorithm=SHA3-224&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -882,8 +949,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=2KUDTYFCS3F3ZTN73CE7FBNESDWIBFXLRGD6FLU35O6JX2EESLD25SM26SDK3J7FT2MCB45VXKFPFNEQSXHKKTHEXOWVJ4FCSKS6DHVA3GK5JPZ4MN3E7YFITM&algorithm=SHA3-224&digits=6&period=5",
+          ],
         },
       },
     },
@@ -916,8 +984,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6OOITD7RRWPKYWPPSKLOPFEUHLM22MHTWOV3PSUDL7D32OXKQCAXB24SUNUFBVNU6SHINEKIMHY33FEH4WVI54FEWOBG3SFQ2WUNJLHQSCSLX44BXOVOLA4S&algorithm=SHA3-256&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -933,8 +1002,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6OOITD7RRWPKYWPPSKLOPFEUHLM22MHTWOV3PSUDL7D32OXKQCAXB24SUNUFBVNU6SHINEKIMHY33FEH4WVI54FEWOBG3SFQ2WUNJLHQSCSLX44BXOVOLA4S&algorithm=SHA3-256&digits=6&period=5",
+          ],
         },
       },
     },
@@ -967,8 +1037,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=4KN3V25ASPTKBC264652LZ5LT72I3CFN22A7DCUJXVF67H4R4W5LBYNAURJ63ANT6O63DNPPQGM5XB7QSKOIT4E7US2VOL7NSOVV7445USR6ZCEAZKLMFJ64VTWYXK6RR7ZJXBV2&algorithm=SHA3-384&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -984,8 +1055,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=4KN3V25ASPTKBC264652LZ5LT72I3CFN22A7DCUJXVF67H4R4W5LBYNAURJ63ANT6O63DNPPQGM5XB7QSKOIT4E7US2VOL7NSOVV7445USR6ZCEAZKLMFJ64VTWYXK6RR7ZJXBV2&algorithm=SHA3-384&digits=6&period=5",
+          ],
         },
       },
     },
@@ -1018,8 +1090,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=6OJZ5H7UQOYZJ4V7RCPPHGVSX3X2VC6VXLNKP3VOTZDMPDHQU673WN335CX3P5EBS6ZDSM7DROD6NJFTPNN6FA472GIPDE4VX3TIVOO7WLXLBM7GTW5N7I7MWSIMNMXRTOXZU&algorithm=SHA3-512&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -1035,8 +1108,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=6OJZ5H7UQOYZJ4V7RCPPHGVSX3X2VC6VXLNKP3VOTZDMPDHQU673WN335CX3P5EBS6ZDSM7DROD6NJFTPNN6FA472GIPDE4VX3TIVOO7WLXLBM7GTW5N7I7MWSIMNMXRTOXZU&algorithm=SHA3-512&digits=6&period=5",
+          ],
         },
       },
     },
@@ -1070,8 +1144,9 @@
           output: 90,
         },
         toString: {
-          output:
+          output: [
             "otpauth://hotp/OTPAuth?secret=AAAQEAYEAUDAOCAJBIFQYDIOB4IBCEQTCQKRMFYYDENBWHA5DYPSBQUAYKA4FAWCQPBIJQUFYKDMFB6CRDBITQUKYKF4FDGCRXBI5QUPYKIMFEOCSLBJHQUUYKK4FFWCS7BJRQUZYKNMFG6CTTBJ3QU6YKP4FIA&algorithm=SHA3-512&digits=6&counter=0",
+          ],
         },
       },
       totp: {
@@ -1087,8 +1162,9 @@
           output: 1,
         },
         toString: {
-          output:
+          output: [
             "otpauth://totp/OTPAuth?secret=AAAQEAYEAUDAOCAJBIFQYDIOB4IBCEQTCQKRMFYYDENBWHA5DYPSBQUAYKA4FAWCQPBIJQUFYKDMFB6CRDBITQUKYKF4FDGCRXBI5QUPYKIMFEOCSLBJHQUUYKK4FFWCS7BJRQUZYKNMFG6CTTBJ3QU6YKP4FIA&algorithm=SHA3-512&digits=6&period=5",
+          ],
         },
       },
     },
@@ -1268,7 +1344,7 @@
         });
 
         const output = hotp.toString();
-        assertEquals(output, input.hotp.toString.output);
+        assertEquals(output, input.hotp.toString.output[0]);
       });
     });
   });
@@ -1327,7 +1403,7 @@
         });
 
         const output = totp.toString();
-        assertEquals(output, input.totp.toString.output);
+        assertEquals(output, input.totp.toString.output[0]);
       });
     });
   });
@@ -1345,8 +1421,10 @@
           secret: new OTPAuth.Secret({ buffer: input.buffer }),
         });
 
-        const output = OTPAuth.URI.parse(input.hotp.toString.output);
-        assertEquals(output, hotp);
+        for (const uri of input.hotp.toString.output) {
+          const output = OTPAuth.URI.parse(uri);
+          assertEquals(output, hotp);
+        }
       });
     });
 
@@ -1357,8 +1435,10 @@
           secret: new OTPAuth.Secret({ buffer: input.buffer }),
         });
 
-        const output = OTPAuth.URI.parse(input.totp.toString.output);
-        assertEquals(output, totp);
+        for (const uri of input.totp.toString.output) {
+          const output = OTPAuth.URI.parse(uri);
+          assertEquals(output, totp);
+        }
       });
     });
 
@@ -1370,7 +1450,7 @@
         });
 
         const output = OTPAuth.URI.stringify(hotp);
-        assertEquals(output, input.hotp.toString.output);
+        assertEquals(output, input.hotp.toString.output[0]);
       });
     });
 
@@ -1382,7 +1462,7 @@
         });
 
         const output = OTPAuth.URI.stringify(totp);
-        assertEquals(output, input.totp.toString.output);
+        assertEquals(output, input.totp.toString.output[0]);
       });
     });
   });
