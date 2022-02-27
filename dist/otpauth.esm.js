@@ -1,4 +1,4 @@
-/*! otpauth v7.0.11 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.1.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 function _typeof(obj) {
@@ -2183,7 +2183,7 @@ var URI = /*#__PURE__*/function () {
 
 
       var uriType = uriGroups[1].toLowerCase();
-      var uriLabel = uriGroups[2].split(/:(.+)/, 2).map(decodeURIComponent);
+      var uriLabel = uriGroups[2].split(/(?::|%3A) *(.+)/i, 2).map(decodeURIComponent);
       /** @type {Object.<string, string>} */
 
       var uriParams = uriGroups[3].split("&").reduce(function (acc, cur) {
@@ -2226,14 +2226,7 @@ var URI = /*#__PURE__*/function () {
 
       if (uriLabel.length === 2) {
         config.label = uriLabel[1];
-
-        if (typeof uriParams.issuer === "undefined") {
-          config.issuer = uriLabel[0];
-        } else if (uriParams.issuer === uriLabel[0]) {
-          config.issuer = uriParams.issuer;
-        } else {
-          throw new TypeError("Invalid 'issuer' parameter");
-        }
+        config.issuer = uriLabel[0];
       } else {
         config.label = uriLabel[0];
 
@@ -2293,6 +2286,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = "7.0.11";
+var version = "7.1.0";
 
 export { HOTP, Secret, TOTP, URI, version };
