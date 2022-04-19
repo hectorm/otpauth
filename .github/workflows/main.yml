@@ -1,4 +1,4 @@
-name: 'CI'
+name: 'Main'
 
 on:
   push:
@@ -15,16 +15,18 @@ jobs:
   lint:
     name: 'Lint'
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
@@ -35,16 +37,18 @@ jobs:
     name: 'Docs'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
@@ -52,19 +56,21 @@ jobs:
         run: 'npm run docs'
 
   build-node:
-    name: 'Build and test on Node.js ${{matrix.node_version}}'
+    name: 'Build and test on Node.js ${{ matrix.node_version }}'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
-        node_version: ['14', '16', '17']
+        node_version: ['14', '16', '17', '18']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
@@ -74,9 +80,11 @@ jobs:
         run: 'npm run test:node'
 
   build-deno:
-    name: 'Build and test on Deno ${{matrix.deno_version}}'
+    name: 'Build and test on Deno ${{ matrix.deno_version }}'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
@@ -84,15 +92,15 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
-      - name: 'Use Deno ${{matrix.deno_version}}'
+      - name: 'Use Deno ${{ matrix.deno_version }}'
         uses: 'denoland/setup-deno@v1'
         with:
-          deno-version: '${{matrix.deno_version}}'
+          deno-version: '${{ matrix.deno_version }}'
       - name: 'Install'
         run: 'npm ci'
       - name: 'Build'
@@ -104,16 +112,18 @@ jobs:
     name: 'Build and test on Chromium'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci && npx playwright install-deps chromium'
@@ -126,16 +136,18 @@ jobs:
     name: 'Build and test on Firefox'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci && npx playwright install-deps firefox'
@@ -148,16 +160,18 @@ jobs:
     name: 'Build and test on WebKit'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
+    permissions:
+      contents: 'read'
     strategy:
       matrix:
         node_version: ['lts/*']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{matrix.node_version}}'
+      - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{matrix.node_version}}'
+          node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci && npx playwright install-deps webkit'
@@ -165,3 +179,33 @@ jobs:
         run: 'npm run types && npm run build'
       - name: 'Test'
         run: 'npm run test:browser:webkit'
+
+  release:
+    name: 'Create GitHub release'
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs:
+      - 'build-node'
+      - 'build-deno'
+      - 'build-chromium'
+      - 'build-firefox'
+      - 'build-webkit'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'write'
+    steps:
+      - name: 'Create release'
+        run: |
+          RELEASE_STATUS="$(curl -fs --proto '=https' --tlsv1.3 --globoff \
+            --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases/tags/${GITHUB_REF_NAME:?}" \
+            --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header 'Accept: application/vnd.github.v3+json' \
+            --header 'Content-Type: application/json' \
+            --write-out '%{http_code}' --output /dev/null ||:)"
+          if [ "${RELEASE_STATUS:?}" != '200' ]; then
+            RELEASE_ID="$(curl -fsS --proto '=https' --tlsv1.3 --globoff \
+              --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases" \
+              --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+              --header 'Accept: application/vnd.github.v3+json' \
+              --header 'Content-Type: application/json' \
+              --data "$(jq -rn --arg tag "${GITHUB_REF_NAME:?}" '{"name": $tag, "tag_name": $tag, "generate_release_notes": true}')" | jq -r '.id')"
+          fi
