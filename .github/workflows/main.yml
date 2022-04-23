@@ -17,16 +17,15 @@ jobs:
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: 'read'
-    strategy:
-      matrix:
-        node_version: ['lts/*']
+    env:
+      NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
+      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{ matrix.node_version }}'
+          node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
@@ -39,16 +38,15 @@ jobs:
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: 'read'
-    strategy:
-      matrix:
-        node_version: ['lts/*']
+    env:
+      NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
+      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{ matrix.node_version }}'
+          node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
@@ -62,6 +60,7 @@ jobs:
     permissions:
       contents: 'read'
     strategy:
+      fail-fast: false
       matrix:
         node_version: ['14', '16', '17', '18']
     steps:
@@ -86,16 +85,18 @@ jobs:
     permissions:
       contents: 'read'
     strategy:
+      fail-fast: false
       matrix:
-        node_version: ['lts/*']
         deno_version: ['vx.x.x']
+    env:
+      NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
+      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{ matrix.node_version }}'
+          node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Use Deno ${{ matrix.deno_version }}'
         uses: 'denoland/setup-deno@v1'
@@ -108,87 +109,40 @@ jobs:
       - name: 'Test'
         run: 'npm run test:deno'
 
-  build-chromium:
-    name: 'Build and test on Chromium'
+  build-browser:
+    name: 'Build and test on ${{ matrix.browser }} browser'
     needs: ['lint']
     runs-on: 'ubuntu-20.04'
     permissions:
       contents: 'read'
     strategy:
+      fail-fast: false
       matrix:
-        node_version: ['lts/*']
+        browser: ['chromium', 'firefox', 'webkit']
+    env:
+      NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
+      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@v3'
         with:
-          node-version: '${{ matrix.node_version }}'
+          node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Install'
-        run: 'npm ci && npx playwright install-deps chromium'
+        run: 'npm ci && npx playwright install-deps "${{ matrix.browser }}"'
       - name: 'Build'
         run: 'npm run types && npm run build'
       - name: 'Test'
-        run: 'npm run test:browser:chromium'
+        run: 'npm run test:browser:"${{ matrix.browser }}"'
 
-  build-firefox:
-    name: 'Build and test on Firefox'
-    needs: ['lint']
-    runs-on: 'ubuntu-20.04'
-    permissions:
-      contents: 'read'
-    strategy:
-      matrix:
-        node_version: ['lts/*']
-    steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@v3'
-        with:
-          node-version: '${{ matrix.node_version }}'
-          cache: 'npm'
-      - name: 'Install'
-        run: 'npm ci && npx playwright install-deps firefox'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
-      - name: 'Test'
-        run: 'npm run test:browser:firefox'
-
-  build-webkit:
-    name: 'Build and test on WebKit'
-    needs: ['lint']
-    runs-on: 'ubuntu-20.04'
-    permissions:
-      contents: 'read'
-    strategy:
-      matrix:
-        node_version: ['lts/*']
-    steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@v3'
-      - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@v3'
-        with:
-          node-version: '${{ matrix.node_version }}'
-          cache: 'npm'
-      - name: 'Install'
-        run: 'npm ci && npx playwright install-deps webkit'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
-      - name: 'Test'
-        run: 'npm run test:browser:webkit'
-
-  release:
+  release-github:
     name: 'Create GitHub release'
-    if: "startsWith(github.ref, 'refs/tags/')"
+    if: "startsWith(github.ref, 'refs/tags/v')"
     needs:
       - 'build-node'
       - 'build-deno'
-      - 'build-chromium'
-      - 'build-firefox'
-      - 'build-webkit'
+      - 'build-browser'
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'write'
