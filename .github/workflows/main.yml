@@ -159,7 +159,11 @@ jobs:
       - name: 'Publish package'
         env:
           NODE_AUTH_TOKEN: '${{ secrets.NPM_TOKEN }}'
-        run: 'npm publish'
+        run: |
+          PKG_NAME="$(jq -r '.name' ./package.json)"; PKG_VERSION="$(jq -r '.version' ./package.json)"
+          if [ "$(npm view "${PKG_NAME:?}" versions --json | jq -r --arg v "${PKG_VERSION:?}" 'index($v)')" = 'null' ]; then
+            npm publish
+          fi
 
   release-github:
     name: 'Create GitHub release'
