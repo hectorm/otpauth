@@ -177,17 +177,19 @@ jobs:
       contents: 'write'
     steps:
       - name: 'Create release'
+        env:
+          GITHUB_PAT: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           RELEASE_STATUS="$(curl -fs --proto '=https' --tlsv1.3 --globoff \
             --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases/tags/${GITHUB_REF_NAME:?}" \
-            --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header "Authorization: Bearer ${GITHUB_PAT:?}" \
             --header 'Accept: application/vnd.github.v3+json' \
             --header 'Content-Type: application/json' \
             --write-out '%{http_code}' --output /dev/null ||:)"
           if [ "${RELEASE_STATUS:?}" = '200' ]; then exit 0; fi
           RELEASE_ID="$(curl -fsS --proto '=https' --tlsv1.3 --globoff \
             --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases" \
-            --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            --header "Authorization: Bearer ${GITHUB_PAT:?}" \
             --header 'Accept: application/vnd.github.v3+json' \
             --header 'Content-Type: application/json' \
             --data "$(jq -rn --arg tag "${GITHUB_REF_NAME:?}" '{"name": $tag, "tag_name": $tag, "generate_release_notes": true}')" | jq -r '.id')"
