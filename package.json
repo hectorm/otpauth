@@ -1,6 +1,6 @@
 {
   "name": "otpauth",
-  "version": "7.1.2",
+  "version": "7.1.3",
   "description": "One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers",
   "keywords": [
     "otp",

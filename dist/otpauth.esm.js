@@ -1,4 +1,4 @@
-/*! otpauth v7.1.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v7.1.3 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 function _typeof(obj) {
@@ -2286,6 +2286,6 @@ var URI = /*#__PURE__*/function () {
  * Library version.
  * @type {string}
  */
-var version = "7.1.2";
+var version = "7.1.3";
 
 export { HOTP, Secret, TOTP, URI, version };
