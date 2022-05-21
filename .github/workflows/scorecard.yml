@@ -1,0 +1,34 @@
+name: 'Scorecard security analysis'
+
+on:
+  push:
+    branches: ['master']
+  schedule:
+    - cron: '25 10 * * 3'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+
+  analyze:
+    name: 'Scorecard security analysis'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      actions: 'read'
+      contents: 'read'
+      security-events: 'write'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
+      - name: 'Perform security analysis'
+        uses: 'ossf/scorecard-action@c1aec4ac820532bab364f02a81873c555a0ba3a1'
+        with:
+          results_file: './results.sarif'
+          results_format: 'sarif'
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          publish_results: false
+      - name: 'Upload SARIF file'
+        uses: 'github/codeql-action/upload-sarif@3673e4c8e07ab7a92d77d113c680405f5a0003e3'
+        with:
+          sarif_file: './results.sarif'
