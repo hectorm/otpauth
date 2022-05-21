@@ -21,9 +21,9 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -42,9 +42,9 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -65,9 +65,9 @@ jobs:
         node_version: ['14', '16', '17', '18']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
@@ -92,14 +92,14 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Use Deno ${{ matrix.deno_version }}'
-        uses: 'denoland/setup-deno@v1'
+        uses: 'denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366'
         with:
           deno-version: '${{ matrix.deno_version }}'
       - name: 'Install'
@@ -123,9 +123,9 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -150,9 +150,9 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@v3'
+        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           registry-url: 'https://registry.npmjs.org'

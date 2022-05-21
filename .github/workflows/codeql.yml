@@ -1,4 +1,4 @@
-name: 'CodeQL'
+name: 'CodeQL analysis'
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 jobs:
 
   analyze:
-    name: 'Analyze'
+    name: 'CodeQL analysis'
     runs-on: 'ubuntu-latest'
     permissions:
       actions: 'read'
@@ -25,12 +25,12 @@ jobs:
         language: ['javascript']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v3'
+        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Initialize CodeQL'
-        uses: 'github/codeql-action/init@v2'
+        uses: 'github/codeql-action/init@3673e4c8e07ab7a92d77d113c680405f5a0003e3'
         with:
           languages: '${{ matrix.language }}'
       - name: 'Autobuild'
-        uses: 'github/codeql-action/autobuild@v2'
+        uses: 'github/codeql-action/autobuild@3673e4c8e07ab7a92d77d113c680405f5a0003e3'
       - name: 'Perform CodeQL Analysis'
-        uses: 'github/codeql-action/analyze@v2'
+        uses: 'github/codeql-action/analyze@3673e4c8e07ab7a92d77d113c680405f5a0003e3'
