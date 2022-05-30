@@ -89,7 +89,7 @@
     "playwright": "~1.22.2",
     "prettier": "~2.6.2",
     "rimraf": "~3.0.2",
-    "rollup": "~2.74.1",
+    "rollup": "~2.75.3",
     "rollup-plugin-dts": "~4.2.2",
     "rollup-plugin-terser": "~7.0.2",
     "typedoc": "~0.22.15",
