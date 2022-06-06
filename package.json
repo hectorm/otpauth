@@ -92,7 +92,7 @@
     "rollup": "~2.75.3",
     "rollup-plugin-dts": "~4.2.2",
     "rollup-plugin-terser": "~7.0.2",
-    "typedoc": "~0.22.15",
+    "typedoc": "~0.22.17",
     "typescript": "~4.6.4"
   }
 }
