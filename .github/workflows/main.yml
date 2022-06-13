@@ -25,7 +25,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -46,7 +46,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -69,7 +69,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
@@ -96,7 +96,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -127,7 +127,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
@@ -154,7 +154,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@17f8bd926464a1afa4c6a11669539e9c1ba77048'
+        uses: 'actions/setup-node@eeb10cff27034e7acf239c5d29f62154018672fd'
         with:
           node-version: '${{ env.NODE_VERSION }}'
           registry-url: 'https://registry.npmjs.org'
