@@ -4,7 +4,6 @@ import { globalScope } from "../global-scope.js";
 import { isNode } from "../is-node.js";
 import { nodeRequire } from "../node-require.js";
 
-const NodeBuffer = isNode ? globalScope.Buffer : undefined;
 const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
@@ -33,8 +32,8 @@ const OPENSSL_TO_JSSHA_ALGO = {
  */
 const hmacDigest = (algorithm, key, message) => {
   if (isNode) {
-    const hmac = NodeCrypto.createHmac(algorithm, NodeBuffer.from(key));
-    hmac.update(NodeBuffer.from(message));
+    const hmac = NodeCrypto.createHmac(algorithm, globalScope.Buffer.from(key));
+    hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {
     const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];

@@ -2,7 +2,6 @@ import { globalScope } from "../global-scope.js";
 import { isNode } from "../is-node.js";
 import { nodeRequire } from "../node-require.js";
 
-const NodeBuffer = isNode ? globalScope.Buffer : undefined;
 const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
@@ -13,7 +12,10 @@ const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
  */
 const timingSafeEqual = (a, b) => {
   if (isNode) {
-    return NodeCrypto.timingSafeEqual(NodeBuffer.from(a), NodeBuffer.from(b));
+    return NodeCrypto.timingSafeEqual(
+      globalScope.Buffer.from(a),
+      globalScope.Buffer.from(b)
+    );
   } else {
     if (a.length !== b.length) {
       throw new TypeError("Input strings must have the same length");
