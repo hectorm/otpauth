@@ -12,7 +12,9 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
  */
 const base32ToBuf = (str) => {
   // Canonicalize to all upper case and remove padding if it exists.
-  const cstr = str.toUpperCase().replace(/=+$/, "");
+  let end = str.length;
+  while (str[end - 1] === "=") --end;
+  const cstr = (end < str.length ? str.substring(0, end) : str).toUpperCase();
 
   const buf = new ArrayBuffer(((cstr.length * 5) / 8) | 0);
   const arr = new Uint8Array(buf);
