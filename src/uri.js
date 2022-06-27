@@ -34,7 +34,7 @@ const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
 /**
  * HOTP/TOTP object/string conversion.
- * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
+ * @see [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
  */
 class URI {
   /**

@@ -47,7 +47,7 @@
     "build:compile": "rollup -c",
     "build": "run-s build:clean build:compile",
     "docs:clean": "rimraf ./docs/",
-    "docs:compile": "typedoc ./src/index.js --emit true --theme default --out ./docs/",
+    "docs:compile": "typedoc ./src/index.js --emit docs --theme default --out ./docs/",
     "docs": "run-s docs:clean docs:compile",
     "test:node:unminified": "mocha --ui bdd --reporter spec ./test/test.js",
     "test:node:minified": "MINIFIED=true run-s test:node:unminified",
@@ -92,7 +92,7 @@
     "rollup": "~2.75.7",
     "rollup-plugin-dts": "~4.2.2",
     "rollup-plugin-terser": "~7.0.2",
-    "typedoc": "~0.22.17",
+    "typedoc": "~0.23.1",
     "typescript": "~4.7.4"
   }
 }
