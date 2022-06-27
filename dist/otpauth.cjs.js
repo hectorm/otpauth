@@ -1,4 +1,4 @@
-/*! otpauth v8.0.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v8.0.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 'use strict';
@@ -1053,7 +1053,11 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 const base32ToBuf = str => {
   // Canonicalize to all upper case and remove padding if it exists.
-  const cstr = str.toUpperCase().replace(/=+$/, "");
+  let end = str.length;
+
+  while (str[end - 1] === "=") --end;
+
+  const cstr = (end < str.length ? str.substring(0, end) : str).toUpperCase();
   const buf = new ArrayBuffer(cstr.length * 5 / 8 | 0);
   const arr = new Uint8Array(buf);
   let bits = 0;
@@ -1067,8 +1071,8 @@ const base32ToBuf = str => {
     bits += 5;
 
     if (bits >= 8) {
-      arr[index++] = value >>> bits - 8 & 255;
       bits -= 8;
+      arr[index++] = value >>> bits;
     }
   }
 
@@ -1951,7 +1955,7 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "8.0.0";
+const version = "8.0.1";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
