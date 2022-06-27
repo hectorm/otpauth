@@ -30,8 +30,8 @@ const base32ToBuf = (str) => {
     bits += 5;
 
     if (bits >= 8) {
-      arr[index++] = (value >>> (bits - 8)) & 255;
       bits -= 8;
+      arr[index++] = value >>> bits;
     }
   }
 
