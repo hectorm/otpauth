@@ -1,4 +1,4 @@
-import { globalThis } from "./global-this.js";
+import { globalScope } from "./global-scope.js";
 
 /**
  * "console" ponyfill.
@@ -35,11 +35,11 @@ const console = (() => {
     "warn",
   ];
 
-  if (typeof globalThis.console === "object") {
+  if (typeof globalScope.console === "object") {
     for (const method of methods) {
       container[method] =
-        typeof globalThis.console[method] === "function"
-          ? globalThis.console[method]
+        typeof globalScope.console[method] === "function"
+          ? globalScope.console[method]
           : () => {};
     }
   } else {

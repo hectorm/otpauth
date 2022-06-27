@@ -1,19 +1,19 @@
-import { globalThis } from "../global-this.js";
+import { globalScope } from "../global-scope.js";
 
 /**
  * TextEncoder instance.
  * @type {TextEncoder|null}
  */
-const ENCODER = globalThis.TextEncoder
-  ? new globalThis.TextEncoder("utf-8")
+const ENCODER = globalScope.TextEncoder
+  ? new globalScope.TextEncoder("utf-8")
   : null;
 
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
  */
-const DECODER = globalThis.TextDecoder
-  ? new globalThis.TextDecoder("utf-8")
+const DECODER = globalScope.TextDecoder
+  ? new globalScope.TextDecoder("utf-8")
   : null;
 
 /**

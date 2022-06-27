@@ -1,10 +1,10 @@
-import { globalThis } from "../global-this.js";
+import { globalScope } from "../global-scope.js";
 import { isNode } from "../is-node.js";
 import { nodeRequire } from "../node-require.js";
 
 const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 const BrowserCrypto = !isNode
-  ? globalThis.crypto || globalThis.msCrypto
+  ? globalScope.crypto || globalScope.msCrypto
   : undefined;
 
 /**

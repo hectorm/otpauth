@@ -1,10 +1,10 @@
 import jsSHA from "jssha";
 
-import { globalThis } from "../global-this.js";
+import { globalScope } from "../global-scope.js";
 import { isNode } from "../is-node.js";
 import { nodeRequire } from "../node-require.js";
 
-const NodeBuffer = isNode ? globalThis.Buffer : undefined;
+const NodeBuffer = isNode ? globalScope.Buffer : undefined;
 const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**

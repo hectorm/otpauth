@@ -1,10 +1,10 @@
-import { globalThis } from "./global-this.js";
+import { globalScope } from "./global-scope.js";
 
 /**
  * Detect if running in Node.js.
  * @type {boolean}
  */
 const isNode =
-  Object.prototype.toString.call(globalThis.process) === "[object process]";
+  Object.prototype.toString.call(globalScope.process) === "[object process]";
 
 export { isNode };
