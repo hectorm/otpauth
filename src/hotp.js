@@ -6,7 +6,7 @@ import { timingSafeEqual } from "./utils/crypto/timing-safe-equal.js";
 
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.
- * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ * @see [RFC 4226](https://tools.ietf.org/html/rfc4226)
  */
 class HOTP {
   /**
