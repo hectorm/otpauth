@@ -1,6 +1,6 @@
 /**
  * TOTP: Time-Based One-Time Password Algorithm.
- * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ * @see [RFC 6238](https://tools.ietf.org/html/rfc6238)
  */
 export class TOTP {
     /**

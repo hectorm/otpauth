@@ -1,6 +1,6 @@
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.
- * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ * @see [RFC 4226](https://tools.ietf.org/html/rfc4226)
  */
 export class HOTP {
     /**

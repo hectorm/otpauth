@@ -65,7 +65,7 @@ declare class Secret {
 
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.
- * {@link https://tools.ietf.org/html/rfc4226|RFC 4226}
+ * @see [RFC 4226](https://tools.ietf.org/html/rfc4226)
  */
 declare class HOTP {
     /**
@@ -200,7 +200,7 @@ declare class HOTP {
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm.
- * {@link https://tools.ietf.org/html/rfc6238|RFC 6238}
+ * @see [RFC 6238](https://tools.ietf.org/html/rfc6238)
  */
 declare class TOTP {
     /**
@@ -339,7 +339,7 @@ declare class TOTP {
 
 /**
  * HOTP/TOTP object/string conversion.
- * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
+ * @see [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
  */
 declare class URI {
     /**

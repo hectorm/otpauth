@@ -1,6 +1,6 @@
 /**
  * HOTP/TOTP object/string conversion.
- * {@link https://github.com/google/google-authenticator/wiki/Key-Uri-Format|Key URI Format}
+ * @see [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
  */
 export class URI {
     /**
