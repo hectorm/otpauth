@@ -135,7 +135,7 @@ class HOTP {
    * @param {number} config.digits Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
-   * @returns {number|null} Token delta, or null if the token is not found.
+   * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
   static validate({
     token,
@@ -172,7 +172,7 @@ class HOTP {
    * @param {string} config.token Token value.
    * @param {number} [config.counter=this.counter] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
-   * @returns {number|null} Token delta, or null if the token is not found.
+   * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
   validate({ token, counter = this.counter, window }) {
     return HOTP.validate({
