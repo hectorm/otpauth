@@ -49,7 +49,7 @@ export class TOTP {
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
     static validate({ token, secret, algorithm, digits, period, timestamp, window, }: {
         token: string;
@@ -123,7 +123,7 @@ export class TOTP {
      * @param {string} config.token Token value.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
     validate({ token, timestamp, window }: {
         token: string;

@@ -1,4 +1,4 @@
-/*! otpauth v8.0.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v8.0.2 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.2.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 (function (global, factory) {
@@ -1527,7 +1527,7 @@
      * @param {number} config.digits Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
 
 
@@ -1565,7 +1565,7 @@
      * @param {string} config.token Token value.
      * @param {number} [config.counter=this.counter] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
 
 
@@ -1739,7 +1739,7 @@
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
 
 
@@ -1768,7 +1768,7 @@
      * @param {string} config.token Token value.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
-     * @returns {number|null} Token delta, or null if the token is not found.
+     * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
 
 
@@ -1957,7 +1957,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "8.0.1";
+  const version = "8.0.2";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
