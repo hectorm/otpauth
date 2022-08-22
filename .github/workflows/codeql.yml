@@ -27,7 +27,7 @@ jobs:
         language: ['javascript']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@d0651293c4a5a52e711f25b41b05b2212f385d28'
+        uses: 'actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b'
       - name: 'Initialize CodeQL'
         uses: 'github/codeql-action/init@7fee4ca032ac341c12486c4c06822c5221c76533'
         with:
