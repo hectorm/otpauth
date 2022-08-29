@@ -73,6 +73,8 @@ jobs:
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
+      - name: 'Upgrade npm CLI'
+        run: 'npm install -g npm@latest'
       - name: 'Install'
         run: 'npm ci'
       - name: 'Build'
