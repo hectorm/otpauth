@@ -1,10 +1,10 @@
 [![Last version](https://img.shields.io/github/v/tag/hectorm/otpauth?label=version)](https://github.com/hectorm/otpauth/tags)
-[![Build status](https://img.shields.io/github/workflow/status/hectorm/otpauth/Build?label=build)](https://github.com/hectorm/otpauth/actions)
-[![npm dependencies](https://img.shields.io/librariesio/release/npm/otpauth)](https://www.npmjs.com/package/otpauth?activeTab=dependencies)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/otpauth)](https://bundlephobia.com/package/otpauth)
 [![npm downloads](https://img.shields.io/npm/dm/otpauth?label=npm%20downloads)](https://www.npmjs.com/package/otpauth)
 
-***
+<p align="center">
+  <img src="./resources/logo/OTPAuth-Color-Reduced.svg" height="192">
+</p>
 
 # OTPAuth
 
