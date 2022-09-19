@@ -22,7 +22,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b'
       - name: 'Perform security analysis'
-        uses: 'ossf/scorecard-action@68bf5b3327e4fd443d2add8ab122280547b4a16d'
+        uses: 'ossf/scorecard-action@865b4092859256271290c77adbd10a43f4779972'
         with:
           results_file: './results.sarif'
           results_format: 'sarif'
