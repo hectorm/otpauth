@@ -70,7 +70,7 @@
     "version": "run-s all && git add -A ./types/ ./dist/ ./docs/"
   },
   "dependencies": {
-    "jssha": "~3.2.0"
+    "jssha": "~3.3.0"
   },
   "devDependencies": {
     "@babel/core": "~7.19.3",
