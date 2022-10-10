@@ -76,7 +76,7 @@
     "@babel/core": "~7.19.3",
     "@babel/eslint-parser": "~7.19.1",
     "@babel/eslint-plugin": "~7.19.1",
-    "@babel/preset-env": "~7.19.3",
+    "@babel/preset-env": "~7.19.4",
     "@rollup/plugin-babel": "~6.0.0",
     "@rollup/plugin-node-resolve": "~15.0.0",
     "@rollup/plugin-replace": "~5.0.0",
