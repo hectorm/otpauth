@@ -79,7 +79,7 @@
     "@babel/preset-env": "~7.19.3",
     "@rollup/plugin-babel": "~6.0.0",
     "@rollup/plugin-node-resolve": "~14.1.0",
-    "@rollup/plugin-replace": "~4.0.0",
+    "@rollup/plugin-replace": "~5.0.0",
     "chai": "~4.3.6",
     "eslint": "~8.24.0",
     "eslint-config-prettier": "~8.5.0",
