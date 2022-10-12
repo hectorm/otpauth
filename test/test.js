@@ -1,4 +1,4 @@
-/* global mocha, describe, it */
+/* global describe, it */
 /* global chai, assert, assertEquals, assertMatch */
 /* global Deno */
 /* global OTPAuth */
@@ -22,42 +22,43 @@
   const isDeno = "Deno" in context && Deno.version && Deno.version.deno;
 
   try {
-    if (!("mocha" in context)) {
-      if (isDeno) {
-        await import("../node_modules/mocha/mocha.js");
+    if (isNode) {
+      if (!("describe" in context) || !("it" in context)) {
+        const test = await import("node:test");
+        context.describe = test.describe;
+        context.it = test.it;
       }
-    }
 
-    if (!("chai" in context)) {
-      if (isNode) {
-        context.chai = require("chai");
-      } else if (isDeno) {
-        await import("../node_modules/chai/chai.js");
-      }
-    }
+      const { default: assert } = await import("node:assert");
+      context.assert = assert;
+      context.assertEquals = assert.deepStrictEqual;
+      context.assertMatch = assert.match;
 
-    if (!("describe" in context) || !("it" in context)) {
-      mocha.setup({ ui: "bdd", reporter: "spec" });
-      context.mochaSelfSetup = true;
-    }
-
-    if (!("OTPAuth" in context)) {
-      if (isNode) {
-        context.OTPAuth = require(process.env.MINIFIED === "true"
+      context.OTPAuth = await import(
+        process.env.MINIFIED === "true"
           ? "../dist/otpauth.cjs.min.js"
-          : "../dist/otpauth.cjs.js");
-      } else if (isDeno) {
-        context.OTPAuth = await import(
-          Deno.env.get("MINIFIED") === "true"
-            ? "../dist/otpauth.esm.min.js"
-            : "../dist/otpauth.esm.js"
-        );
-      }
-    }
+          : "../dist/otpauth.cjs.js"
+      );
+    } else if (isDeno) {
+      const bdd = await import("https://deno.land/std/testing/bdd.ts");
+      context.describe = bdd.describe;
+      context.it = bdd.it;
 
-    context.assert = chai.assert;
-    context.assertEquals = chai.assert.deepEqual;
-    context.assertMatch = chai.assert.match;
+      const asserts = await import("https://deno.land/std/testing/asserts.ts");
+      context.assert = asserts.assert;
+      context.assertEquals = asserts.assertEquals;
+      context.assertMatch = asserts.assertMatch;
+
+      context.OTPAuth = await import(
+        Deno.env.get("MINIFIED") === "true"
+          ? "../dist/otpauth.esm.min.js"
+          : "../dist/otpauth.esm.js"
+      );
+    } else {
+      context.assert = chai.assert;
+      context.assertEquals = chai.assert.deepEqual;
+      context.assertMatch = chai.assert.match;
+    }
   } catch (err) {
     console.error(err);
     if (isNode) process.exit(1);
@@ -1482,12 +1483,4 @@
       );
     });
   });
-
-  // Start tests if we were the ones who initialized Mocha.
-  if (context.mochaSelfSetup) {
-    mocha.run((code) => {
-      if (isNode) process.exit(code);
-      else if (isDeno) Deno.exit(code);
-    });
-  }
 })();
