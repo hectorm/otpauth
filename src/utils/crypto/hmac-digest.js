@@ -1,10 +1,7 @@
 import jsSHA from "jssha";
 
+import { nodeCrypto } from "./node-crypto.js";
 import { globalScope } from "../global-scope.js";
-import { isNode } from "../is-node.js";
-import { nodeRequire } from "../node-require.js";
-
-const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
  * OpenSSL to jsSHA algorithms.
@@ -31,8 +28,8 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (isNode) {
-    const hmac = NodeCrypto.createHmac(algorithm, globalScope.Buffer.from(key));
+  if (nodeCrypto) {
+    const hmac = nodeCrypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {

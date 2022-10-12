@@ -1,8 +1,5 @@
+import { nodeCrypto } from "./node-crypto.js";
 import { globalScope } from "../global-scope.js";
-import { isNode } from "../is-node.js";
-import { nodeRequire } from "../node-require.js";
-
-const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
  * Returns true if a is equal to b, without leaking timing information that would allow an attacker to guess one of the values.
@@ -11,8 +8,8 @@ const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (isNode) {
-    return NodeCrypto.timingSafeEqual(
+  if (nodeCrypto) {
+    return nodeCrypto.timingSafeEqual(
       globalScope.Buffer.from(a),
       globalScope.Buffer.from(b)
     );

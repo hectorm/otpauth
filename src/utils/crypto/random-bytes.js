@@ -1,8 +1,5 @@
+import { nodeCrypto } from "./node-crypto.js";
 import { globalScope } from "../global-scope.js";
-import { isNode } from "../is-node.js";
-import { nodeRequire } from "../node-require.js";
-
-const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
 
 /**
  * Returns random bytes.
@@ -10,8 +7,8 @@ const NodeCrypto = isNode ? nodeRequire("crypto") : undefined;
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = (size) => {
-  if (isNode) {
-    return NodeCrypto.randomBytes(size).buffer;
+  if (nodeCrypto) {
+    return nodeCrypto.randomBytes(size).buffer;
   } else {
     if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
       throw new Error("Cryptography API not available");

@@ -74,14 +74,6 @@ export default async () => {
         babel({ babelHelpers: "bundled" }),
       ],
       onwarn: (warning) => {
-        // Ignore "eval" in "node-require.js".
-        if (
-          warning.code === "EVAL" &&
-          /\/node-require\.js$/.test(warning.loc.file)
-        ) {
-          return;
-        }
-
         throw new Error(warning.message);
       },
     },
