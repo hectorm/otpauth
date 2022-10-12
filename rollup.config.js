@@ -69,8 +69,8 @@ export default async () => {
       ...mainEsOpts,
       input: "./src/index.js",
       output: [
-        { ...outOpts, file: "./dist/otpauth.esm.js", format: "es" },
-        { ...outMinOpts, file: "./dist/otpauth.esm.min.js", format: "es" },
+        { ...outOpts, file: "./dist/otpauth.esm.mjs", format: "es" },
+        { ...outMinOpts, file: "./dist/otpauth.esm.min.mjs", format: "es" },
       ],
     },
     {

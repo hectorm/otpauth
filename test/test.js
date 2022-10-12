@@ -51,8 +51,8 @@
 
       context.OTPAuth = await import(
         Deno.env.get("MINIFIED") === "true"
-          ? "../dist/otpauth.esm.min.js"
-          : "../dist/otpauth.esm.js"
+          ? "../dist/otpauth.esm.min.mjs"
+          : "../dist/otpauth.esm.mjs"
       );
     } else {
       context.assert = chai.assert;
