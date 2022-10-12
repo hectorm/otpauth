@@ -7,7 +7,34 @@ import { terser } from "rollup-plugin-terser";
 import packageJson from "./package.json";
 
 export default async () => {
-  const commonBuildOptions = {
+  const mainEsOpts = {
+    plugins: [
+      replace({
+        preventAssignment: true,
+        require: "await import",
+        __OTPAUTH_VERSION__: packageJson.version,
+      }),
+      resolve(),
+      babel({ babelHelpers: "bundled" }),
+    ],
+    onwarn: (warning) => {
+      throw new Error(warning.message);
+    },
+  };
+
+  const mainCjsOpts = {
+    ...mainEsOpts,
+    plugins: [
+      replace({
+        preventAssignment: true,
+        __OTPAUTH_VERSION__: packageJson.version,
+      }),
+      resolve(),
+      babel({ babelHelpers: "bundled" }),
+    ],
+  };
+
+  const outOpts = {
     name: "OTPAuth",
     exports: "named",
     banner: async () => {
@@ -31,51 +58,36 @@ export default async () => {
     },
   };
 
-  const minifiedBuildOptions = {
-    plugins: [
-      /* eslint-disable-next-line camelcase */
-      terser({ output: { max_line_len: 1024 } }),
-    ],
+  const outMinOpts = {
+    ...outOpts,
     sourcemap: true,
+    plugins: [terser({ output: { max_line_len: 1024 } })],
   };
 
   return [
     {
+      ...mainEsOpts,
       input: "./src/index.js",
       output: [
-        { file: "./dist/otpauth.cjs.js", format: "cjs", ...commonBuildOptions },
-        { file: "./dist/otpauth.umd.js", format: "umd", ...commonBuildOptions },
-        { file: "./dist/otpauth.esm.js", format: "es", ...commonBuildOptions },
-        {
-          file: "./dist/otpauth.cjs.min.js",
-          format: "cjs",
-          ...commonBuildOptions,
-          ...minifiedBuildOptions,
-        },
-        {
-          file: "./dist/otpauth.umd.min.js",
-          format: "umd",
-          ...commonBuildOptions,
-          ...minifiedBuildOptions,
-        },
-        {
-          file: "./dist/otpauth.esm.min.js",
-          format: "es",
-          ...commonBuildOptions,
-          ...minifiedBuildOptions,
-        },
+        { ...outOpts, file: "./dist/otpauth.esm.js", format: "es" },
+        { ...outMinOpts, file: "./dist/otpauth.esm.min.js", format: "es" },
       ],
-      plugins: [
-        replace({
-          preventAssignment: true,
-          __OTPAUTH_VERSION__: packageJson.version,
-        }),
-        resolve(),
-        babel({ babelHelpers: "bundled" }),
+    },
+    {
+      ...mainCjsOpts,
+      input: "./src/index.js",
+      output: [
+        { ...outOpts, file: "./dist/otpauth.cjs.js", format: "cjs" },
+        { ...outMinOpts, file: "./dist/otpauth.cjs.min.js", format: "cjs" },
       ],
-      onwarn: (warning) => {
-        throw new Error(warning.message);
-      },
+    },
+    {
+      ...mainCjsOpts,
+      input: "./src/index.js",
+      output: [
+        { ...outOpts, file: "./dist/otpauth.umd.js", format: "umd" },
+        { ...outMinOpts, file: "./dist/otpauth.umd.min.js", format: "umd" },
+      ],
     },
     {
       input: "./types/index.d.ts",
