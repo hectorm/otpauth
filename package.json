@@ -29,10 +29,16 @@
   "bugs": {
     "url": "https://github.com/hectorm/otpauth/issues"
   },
-  "main": "./dist/otpauth.cjs.js",
-  "module": "./dist/otpauth.esm.js",
-  "browser": "./dist/otpauth.umd.js",
   "types": "./dist/otpauth.d.ts",
+  "main": "./dist/otpauth.cjs.js",
+  "exports": {
+    ".": {
+      "types": "./dist/otpauth.d.ts",
+      "require": "./dist/otpauth.cjs.js",
+      "import": "./dist/otpauth.esm.mjs"
+    },
+    "./*": "./dist/*"
+  },
   "files": [
     "dist/",
     "src/",
