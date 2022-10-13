@@ -1,4 +1,4 @@
-/*! otpauth v9.0.0-beta.0 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
+/*! otpauth v9.0.0-beta.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
 /*! jssha v3.3.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
 
 (function (global, factory) {
@@ -784,7 +784,9 @@
    * Node.js crypto module.
    * @type {Object.<string, *>|undefined}
    */
-  const nodeCrypto = isNode ? require("crypto") : undefined;
+  const nodeCrypto = isNode ?
+  // A dynamically generated name is used to prevent some bundlers from including the module.
+  require(Array.from("otpyrc").reverse().join("")) : undefined;
 
   /**
    * OpenSSL to jsSHA algorithms.
@@ -1675,7 +1677,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.0.0-beta.0";
+  const version = "9.0.0-beta.1";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
