@@ -34,6 +34,7 @@
   "exports": {
     ".": {
       "types": "./dist/otpauth.d.ts",
+      "webpack": "./dist/otpauth.cjs.js",
       "require": "./dist/otpauth.cjs.js",
       "import": "./dist/otpauth.esm.mjs"
     },
