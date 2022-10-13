@@ -37,7 +37,7 @@
       "require": "./dist/otpauth.cjs.js",
       "import": "./dist/otpauth.esm.mjs"
     },
-    "./*": "./dist/*"
+    "./dist/*": "./dist/*"
   },
   "files": [
     "dist/",
