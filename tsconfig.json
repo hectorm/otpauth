@@ -1,7 +1,8 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
-    "target": "ES5",
+    "target": "ES2022",
+    "moduleResolution": "node",
     "strict": true,
     "allowJs": true,
     "checkJs": true,

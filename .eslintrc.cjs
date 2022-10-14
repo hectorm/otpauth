@@ -4,6 +4,9 @@ module.exports = {
   parser: "@babel/eslint-parser",
   parserOptions: {
     sourceType: "module",
+    babelOptions: {
+      plugins: ["@babel/plugin-syntax-import-assertions"],
+    },
   },
   env: {
     es2022: true,

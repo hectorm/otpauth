@@ -1,6 +1,6 @@
+import * as crypto from "node:crypto";
 import jsSHA from "jssha";
 
-import { nodeCrypto } from "./node-crypto.js";
 import { globalScope } from "../global-scope.js";
 
 /**
@@ -28,8 +28,8 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (nodeCrypto) {
-    const hmac = nodeCrypto.createHmac(algorithm, globalScope.Buffer.from(key));
+  if (crypto && crypto.createHmac) {
+    const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {

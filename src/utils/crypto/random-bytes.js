@@ -1,4 +1,5 @@
-import { nodeCrypto } from "./node-crypto.js";
+import * as crypto from "node:crypto";
+
 import { globalScope } from "../global-scope.js";
 
 /**
@@ -7,8 +8,8 @@ import { globalScope } from "../global-scope.js";
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = (size) => {
-  if (nodeCrypto) {
-    return nodeCrypto.randomBytes(size).buffer;
+  if (crypto && crypto.randomBytes) {
+    return crypto.randomBytes(size).buffer;
   } else {
     if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
       throw new Error("Cryptography API not available");

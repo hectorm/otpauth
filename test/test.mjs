@@ -23,22 +23,18 @@
 
   try {
     if (isNode) {
-      if (!("describe" in context) || !("it" in context)) {
-        const test = await import("node:test");
-        context.describe = test.describe;
-        context.it = test.it;
-      }
+      const test = await import("test");
+      context.describe = test.describe;
+      context.it = test.it;
 
       const { default: assert } = await import("node:assert");
       context.assert = assert;
       context.assertEquals = assert.deepStrictEqual;
       context.assertMatch = assert.match;
 
-      context.OTPAuth = await import(
-        process.env.MINIFIED === "true"
-          ? "../dist/otpauth.cjs.min.js"
-          : "../dist/otpauth.cjs.js"
-      );
+      if (!("OTPAuth" in context)) {
+        context.OTPAuth = await import(process.env.JSFILE);
+      }
     } else if (isDeno) {
       const bdd = await import("https://deno.land/std/testing/bdd.ts");
       context.describe = bdd.describe;
@@ -49,15 +45,17 @@
       context.assertEquals = asserts.assertEquals;
       context.assertMatch = asserts.assertMatch;
 
-      context.OTPAuth = await import(
-        Deno.env.get("MINIFIED") === "true"
-          ? "../dist/otpauth.esm.min.mjs"
-          : "../dist/otpauth.esm.mjs"
-      );
+      if (!("OTPAuth" in context)) {
+        context.OTPAuth = await import(Deno.env.get("JSFILE"));
+      }
     } else {
       context.assert = chai.assert;
       context.assertEquals = chai.assert.deepEqual;
       context.assertMatch = chai.assert.match;
+
+      if (!("OTPAuth" in context)) {
+        context.OTPAuth = await import(process.env.JSFILE);
+      }
     }
   } catch (err) {
     console.error(err);

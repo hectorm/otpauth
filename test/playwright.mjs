@@ -1,7 +1,10 @@
 /* global mocha, exitTest */
 
-const path = require("path");
-const playwright = require("playwright");
+import path from "node:path";
+import url from "node:url";
+import playwright from "playwright";
+
+const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
 
 (async () => {
   const browserName = process.env.BROWSER || "chromium";
@@ -17,16 +20,11 @@ const playwright = require("playwright");
   });
 
   await page.addScriptTag({
-    path: path.join(
-      __dirname,
-      process.env.MINIFIED === "true"
-        ? "../dist/otpauth.umd.min.js"
-        : "../dist/otpauth.umd.js"
-    ),
+    path: path.join(__dirname, process.env.JSFILE),
   });
 
   await page.evaluate(() => mocha.setup({ ui: "bdd", reporter: "tap" }));
-  await page.addScriptTag({ path: path.join(__dirname, "./test.js") });
+  await page.addScriptTag({ path: path.join(__dirname, "./test.mjs") });
 
   page.on("console", (msg) => process.stdout.write(msg.text()));
   page.exposeFunction("exitTest", async (code) => {

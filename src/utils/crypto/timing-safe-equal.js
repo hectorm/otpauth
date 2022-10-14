@@ -1,4 +1,5 @@
-import { nodeCrypto } from "./node-crypto.js";
+import * as crypto from "node:crypto";
+
 import { globalScope } from "../global-scope.js";
 
 /**
@@ -8,8 +9,8 @@ import { globalScope } from "../global-scope.js";
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (nodeCrypto) {
-    return nodeCrypto.timingSafeEqual(
+  if (crypto && crypto.timingSafeEqual) {
+    return crypto.timingSafeEqual(
       globalScope.Buffer.from(a),
       globalScope.Buffer.from(b)
     );
