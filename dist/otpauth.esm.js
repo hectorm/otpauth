@@ -1,10 +1,3 @@
-/*! otpauth v9.0.0-beta.1 | (c) Héctor Molinero Fernández <hector@molinero.dev> | MIT | https://github.com/hectorm/otpauth */
-/*! jssha v3.3.0 | (c) Brian Turek <brian.turek@gmail.com> | BSD-3-Clause | https://github.com/Caligatio/jsSHA */
-
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
 /**
  * Converts an integer to an ArrayBuffer.
  * @param {number} num Integer.
@@ -22,6 +15,17 @@ const uintToBuf = num => {
   }
   return buf;
 };
+
+const createHmac = undefined;
+          const randomBytes$1 = undefined;
+          const timingSafeEqual$1 = undefined;
+
+var crypto = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  createHmac: createHmac,
+  randomBytes: randomBytes$1,
+  timingSafeEqual: timingSafeEqual$1
+});
 
 /**
  * A JavaScript implementation of the SHA family of hashes - defined in FIPS PUB 180-4, FIPS PUB 202,
@@ -773,20 +777,6 @@ const globalScope = (() => {
 })();
 
 /**
- * Detect if running in Node.js.
- * @type {boolean}
- */
-const isNode = Object.prototype.toString.call(globalScope.process) === "[object process]";
-
-/**
- * Node.js crypto module.
- * @type {Object.<string, *>|undefined}
- */
-const nodeCrypto = isNode ?
-// A dynamically generated name is used to prevent some bundlers from including the module.
-require(Array.from("otpyrc").reverse().join("")) : undefined;
-
-/**
  * OpenSSL to jsSHA algorithms.
  * @type {Object.<string, string>}
  */
@@ -811,8 +801,8 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (nodeCrypto) {
-    const hmac = nodeCrypto.createHmac(algorithm, globalScope.Buffer.from(key));
+  if (crypto && createHmac) {
+    const hmac = createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {
@@ -1001,8 +991,8 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (nodeCrypto) {
-    return nodeCrypto.randomBytes(size).buffer;
+  if (crypto && randomBytes$1) {
+    return randomBytes$1(size).buffer;
   } else {
     if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
       throw new Error("Cryptography API not available");
@@ -1133,8 +1123,8 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (nodeCrypto) {
-    return nodeCrypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
+  if (crypto && timingSafeEqual$1) {
+    return timingSafeEqual$1(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
       throw new TypeError("Input strings must have the same length");
@@ -1675,10 +1665,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.0.0-beta.1";
+const version = "9.0.0-beta.2";
 
-exports.HOTP = HOTP;
-exports.Secret = Secret;
-exports.TOTP = TOTP;
-exports.URI = URI;
-exports.version = version;
+export { HOTP, Secret, TOTP, URI, version };
