@@ -1,3 +1,7 @@
+import path from "node:path";
+import url from "node:url";
+import fs from "node:fs/promises";
+
 import replace from "@rollup/plugin-replace";
 import virtual from "@rollup/plugin-virtual";
 import resolve from "@rollup/plugin-node-resolve";
@@ -5,14 +9,17 @@ import babel from "@rollup/plugin-babel";
 import esbuild from "rollup-plugin-esbuild";
 import dts from "rollup-plugin-dts";
 
-import packageJson from "./package.json" assert { type: "json" };
-
 export default async () => {
+  const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
+  const pkg = JSON.parse(
+    await fs.readFile(path.join(__dirname, "./package.json"), "utf8")
+  );
+
   const mainOpts = {
     plugins: [
       replace({
         preventAssignment: true,
-        __OTPAUTH_VERSION__: packageJson.version,
+        __OTPAUTH_VERSION__: pkg.version,
       }),
       virtual({
         "node:crypto": `
@@ -44,7 +51,7 @@ export default async () => {
     plugins: [
       replace({
         preventAssignment: true,
-        __OTPAUTH_VERSION__: packageJson.version,
+        __OTPAUTH_VERSION__: pkg.version,
       }),
       virtual({
         jssha: `
