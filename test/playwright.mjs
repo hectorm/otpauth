@@ -1,10 +1,9 @@
 /* global mocha, exit */
 
-import path from "node:path";
-import url from "node:url";
+import module from "node:module";
 import playwright from "playwright";
 
-const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
+const require = module.createRequire(import.meta.url);
 
 (async () => {
   const browserName = process.env.BROWSER || "chromium";
@@ -15,17 +14,17 @@ const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
     const page = await context.newPage();
 
     await page.addScriptTag({
-      path: path.join(__dirname, "../node_modules/mocha/mocha.js"),
+      path: require.resolve("mocha/mocha.js"),
     });
     await page.addScriptTag({
-      path: path.join(__dirname, "../node_modules/chai/chai.js"),
+      path: require.resolve("chai/chai.js"),
     });
     await page.addScriptTag({
-      path: path.join(__dirname, process.env.JSFILE),
+      path: require.resolve(process.env.JSFILE),
     });
 
     await page.evaluate(() => mocha.setup({ ui: "bdd", reporter: "tap" }));
-    await page.addScriptTag({ path: path.join(__dirname, "./test.mjs") });
+    await page.addScriptTag({ path: require.resolve("./test.mjs") });
 
     page.on("console", (msg) => process.stdout.write(msg.text()));
 
