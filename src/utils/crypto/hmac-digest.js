@@ -4,10 +4,10 @@ import jsSHA from "jssha";
 import { globalScope } from "../global-scope.js";
 
 /**
- * OpenSSL to jsSHA algorithms.
+ * OpenSSL to jsSHA algorithms map.
  * @type {Object.<string, string>}
  */
-const OPENSSL_TO_JSSHA_ALGO = {
+const OPENSSL_JSSHA_ALGO_MAP = {
   SHA1: "SHA-1",
   SHA224: "SHA-224",
   SHA256: "SHA-256",
@@ -28,12 +28,12 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto && crypto.createHmac) {
+  if (crypto?.createHmac) {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {
-    const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
+    const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
     if (typeof variant === "undefined") {
       throw new TypeError("Unknown hash function");
     }

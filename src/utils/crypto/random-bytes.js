@@ -8,7 +8,7 @@ import { globalScope } from "../global-scope.js";
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = (size) => {
-  if (crypto && crypto.randomBytes) {
+  if (crypto?.randomBytes) {
     return crypto.randomBytes(size).buffer;
   } else {
     if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {

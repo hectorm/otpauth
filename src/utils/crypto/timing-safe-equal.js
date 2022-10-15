@@ -9,7 +9,7 @@ import { globalScope } from "../global-scope.js";
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto && crypto.timingSafeEqual) {
+  if (crypto?.timingSafeEqual) {
     return crypto.timingSafeEqual(
       globalScope.Buffer.from(a),
       globalScope.Buffer.from(b)
