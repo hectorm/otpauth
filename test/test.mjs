@@ -43,10 +43,6 @@
       globalThis.assert = chai.assert;
       globalThis.assertEquals = chai.assert.deepEqual;
       globalThis.assertMatch = chai.assert.match;
-
-      if (!("OTPAuth" in globalThis)) {
-        globalThis.OTPAuth = await import(process.env.JSFILE);
-      }
     }
   } catch (err) {
     console.error(err);
