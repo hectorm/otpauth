@@ -1,5 +1,4 @@
 [![Last version](https://img.shields.io/github/v/tag/hectorm/otpauth?label=version)](https://github.com/hectorm/otpauth/tags)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/otpauth)](https://bundlephobia.com/package/otpauth)
 [![npm downloads](https://img.shields.io/npm/dm/otpauth?label=npm%20downloads)](https://www.npmjs.com/package/otpauth)
 
 <p align="center">
