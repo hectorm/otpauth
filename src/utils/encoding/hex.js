@@ -8,7 +8,7 @@ const hexToBuf = (str) => {
   const arr = new Uint8Array(buf);
 
   for (let i = 0; i < str.length; i += 2) {
-    arr[i / 2] = parseInt(str.substr(i, 2), 16);
+    arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
   }
 
   return buf;
