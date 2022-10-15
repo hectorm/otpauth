@@ -50,10 +50,10 @@ const globalScope = (() => {
 })();
 
 /**
- * OpenSSL to jsSHA algorithms.
+ * OpenSSL to jsSHA algorithms map.
  * @type {Object.<string, string>}
  */
-const OPENSSL_TO_JSSHA_ALGO = {
+const OPENSSL_JSSHA_ALGO_MAP = {
   SHA1: "SHA-1",
   SHA224: "SHA-224",
   SHA256: "SHA-256",
@@ -74,12 +74,12 @@ const OPENSSL_TO_JSSHA_ALGO = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto && crypto.createHmac) {
+  if (crypto !== null && crypto !== void 0 && crypto.createHmac) {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
   } else {
-    const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
+    const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
     if (typeof variant === "undefined") {
       throw new TypeError("Unknown hash function");
     }
@@ -173,7 +173,7 @@ const hexToBuf = str => {
   const buf = new ArrayBuffer(str.length / 2);
   const arr = new Uint8Array(buf);
   for (let i = 0; i < str.length; i += 2) {
-    arr[i / 2] = parseInt(str.substr(i, 2), 16);
+    arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
   }
   return buf;
 };
@@ -264,7 +264,7 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (crypto && crypto.randomBytes) {
+  if (crypto !== null && crypto !== void 0 && crypto.randomBytes) {
     return crypto.randomBytes(size).buffer;
   } else {
     if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
@@ -396,7 +396,7 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto && crypto.timingSafeEqual) {
+  if (crypto !== null && crypto !== void 0 && crypto.timingSafeEqual) {
     return crypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
@@ -938,6 +938,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.0.0-beta.2";
+const version = "9.0.0";
 
 export { HOTP, Secret, TOTP, URI, version };

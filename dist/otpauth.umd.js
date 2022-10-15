@@ -783,10 +783,10 @@
   })();
 
   /**
-   * OpenSSL to jsSHA algorithms.
+   * OpenSSL to jsSHA algorithms map.
    * @type {Object.<string, string>}
    */
-  const OPENSSL_TO_JSSHA_ALGO = {
+  const OPENSSL_JSSHA_ALGO_MAP = {
     SHA1: "SHA-1",
     SHA224: "SHA-224",
     SHA256: "SHA-256",
@@ -807,12 +807,12 @@
    * @returns {ArrayBuffer} Digest.
    */
   const hmacDigest = (algorithm, key, message) => {
-    if (crypto && createHmac) {
+    if (crypto !== null && crypto !== void 0 && createHmac) {
       const hmac = createHmac(algorithm, globalScope.Buffer.from(key));
       hmac.update(globalScope.Buffer.from(message));
       return hmac.digest().buffer;
     } else {
-      const variant = OPENSSL_TO_JSSHA_ALGO[algorithm.toUpperCase()];
+      const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
       if (typeof variant === "undefined") {
         throw new TypeError("Unknown hash function");
       }
@@ -906,7 +906,7 @@
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for (let i = 0; i < str.length; i += 2) {
-      arr[i / 2] = parseInt(str.substr(i, 2), 16);
+      arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
     }
     return buf;
   };
@@ -997,7 +997,7 @@
    * @returns {ArrayBuffer} Random bytes.
    */
   const randomBytes = size => {
-    if (crypto && randomBytes$1) {
+    if (crypto !== null && crypto !== void 0 && randomBytes$1) {
       return randomBytes$1(size).buffer;
     } else {
       if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
@@ -1129,7 +1129,7 @@
    * @returns {boolean} Equality result.
    */
   const timingSafeEqual = (a, b) => {
-    if (crypto && timingSafeEqual$1) {
+    if (crypto !== null && crypto !== void 0 && timingSafeEqual$1) {
       return timingSafeEqual$1(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
     } else {
       if (a.length !== b.length) {
@@ -1671,7 +1671,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.0.0-beta.2";
+  const version = "9.0.0";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
