@@ -9,52 +9,43 @@
    * ================================================
    */
 
-  const context = (() => {
-    if (typeof globalThis !== "undefined") return globalThis;
-    if (typeof global !== "undefined") return global;
-    if (typeof window !== "undefined") return window;
-    if (typeof self !== "undefined") return self;
-    return this;
-  })();
-
-  const isNode =
-    Object.prototype.toString.call(context.process) === "[object process]";
-  const isDeno = "Deno" in context && Deno.version && Deno.version.deno;
+  const isNode = globalThis.process?.versions?.node;
+  const isDeno = globalThis.Deno?.version?.deno;
 
   try {
     if (isNode) {
       const test = await import("test");
-      context.describe = test.describe;
-      context.it = test.it;
+      globalThis.describe = test.describe;
+      globalThis.it = test.it;
 
       const { default: assert } = await import("node:assert");
-      context.assert = assert;
-      context.assertEquals = assert.deepStrictEqual;
-      context.assertMatch = assert.match;
+      globalThis.assert = assert;
+      globalThis.assertEquals = assert.deepStrictEqual;
+      globalThis.assertMatch = assert.match;
 
-      if (!("OTPAuth" in context)) {
-        context.OTPAuth = await import(process.env.JSFILE);
+      if (!("OTPAuth" in globalThis)) {
+        globalThis.OTPAuth = await import(process.env.JSFILE);
       }
     } else if (isDeno) {
       const bdd = await import("https://deno.land/std/testing/bdd.ts");
-      context.describe = bdd.describe;
-      context.it = bdd.it;
+      globalThis.describe = bdd.describe;
+      globalThis.it = bdd.it;
 
       const asserts = await import("https://deno.land/std/testing/asserts.ts");
-      context.assert = asserts.assert;
-      context.assertEquals = asserts.assertEquals;
-      context.assertMatch = asserts.assertMatch;
+      globalThis.assert = asserts.assert;
+      globalThis.assertEquals = asserts.assertEquals;
+      globalThis.assertMatch = asserts.assertMatch;
 
-      if (!("OTPAuth" in context)) {
-        context.OTPAuth = await import(Deno.env.get("JSFILE"));
+      if (!("OTPAuth" in globalThis)) {
+        globalThis.OTPAuth = await import(Deno.env.get("JSFILE"));
       }
     } else {
-      context.assert = chai.assert;
-      context.assertEquals = chai.assert.deepEqual;
-      context.assertMatch = chai.assert.match;
+      globalThis.assert = chai.assert;
+      globalThis.assertEquals = chai.assert.deepEqual;
+      globalThis.assertMatch = chai.assert.match;
 
-      if (!("OTPAuth" in context)) {
-        context.OTPAuth = await import(process.env.JSFILE);
+      if (!("OTPAuth" in globalThis)) {
+        globalThis.OTPAuth = await import(process.env.JSFILE);
       }
     }
   } catch (err) {
