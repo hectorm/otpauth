@@ -24,7 +24,7 @@
       globalThis.assertMatch = assert.match;
 
       if (!("OTPAuth" in globalThis)) {
-        globalThis.OTPAuth = await import(process.env.JSFILE);
+        globalThis.OTPAuth = await import(process.argv[2]);
       }
     } else if (isDeno) {
       const bdd = await import("https://deno.land/std/testing/bdd.ts");
@@ -37,7 +37,7 @@
       globalThis.assertMatch = asserts.assertMatch;
 
       if (!("OTPAuth" in globalThis)) {
-        globalThis.OTPAuth = await import(Deno.env.get("JSFILE"));
+        globalThis.OTPAuth = await import(Deno.args[0]);
       }
     } else {
       globalThis.assert = chai.assert;
