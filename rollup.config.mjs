@@ -15,21 +15,35 @@ export default async () => {
     await fs.readFile(path.join(__dirname, "./package.json"), "utf8")
   );
 
+  const banner = `/// <reference types="./otpauth.d.ts" />`;
+
+  const replaceOpts = {
+    preventAssignment: true,
+    __OTPAUTH_VERSION__: pkg.version,
+  };
+
+  const babelOpts = {
+    babelHelpers: "bundled",
+  };
+
+  const esbuildOpts = {
+    target: "es2015",
+    minify: true,
+    banner,
+  };
+
   const mainOpts = {
     plugins: [
-      replace({
-        preventAssignment: true,
-        __OTPAUTH_VERSION__: pkg.version,
-      }),
+      replace(replaceOpts),
       virtual({
-        "node:crypto": `
-          export const createHmac = undefined;
-          export const randomBytes = undefined;
-          export const timingSafeEqual = undefined;
-        `,
+        "node:crypto": [
+          `export const createHmac = undefined;`,
+          `export const randomBytes = undefined;`,
+          `export const timingSafeEqual = undefined;`,
+        ].join("\n"),
       }),
       resolve(),
-      babel({ babelHelpers: "bundled" }),
+      babel(babelOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
@@ -38,28 +52,17 @@ export default async () => {
 
   const mainMinOpts = {
     ...mainOpts,
-    plugins: [
-      ...mainOpts.plugins,
-      esbuild({
-        target: "es2015",
-        minify: true,
-      }),
-    ],
+    plugins: [...mainOpts.plugins, esbuild(esbuildOpts)],
   };
 
   const mainNodeOpts = {
     plugins: [
-      replace({
-        preventAssignment: true,
-        __OTPAUTH_VERSION__: pkg.version,
-      }),
+      replace(replaceOpts),
       virtual({
-        jssha: `
-          export default undefined;
-        `,
+        jssha: `export default undefined;`,
       }),
       resolve(),
-      babel({ babelHelpers: "bundled" }),
+      babel(babelOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
@@ -68,18 +71,13 @@ export default async () => {
 
   const mainNodeMinOpts = {
     ...mainNodeOpts,
-    plugins: [
-      ...mainNodeOpts.plugins,
-      esbuild({
-        target: "es2015",
-        minify: true,
-      }),
-    ],
+    plugins: [...mainNodeOpts.plugins, esbuild(esbuildOpts)],
   };
 
   const outOpts = {
     name: "OTPAuth",
     exports: "named",
+    banner,
   };
 
   const outMinOpts = {
