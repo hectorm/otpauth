@@ -41,7 +41,10 @@
       },
       "default": "./dist/otpauth.esm.js"
     },
-    "./dist/*": "./dist/*"
+    "./dist/*": {
+      "types": "./dist/otpauth.d.ts",
+      "default": "./dist/*"
+    }
   },
   "files": [
     "dist/",
