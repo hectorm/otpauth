@@ -29,6 +29,7 @@
   "bugs": {
     "url": "https://github.com/hectorm/otpauth/issues"
   },
+  "funding": "https://github.com/hectorm/otpauth?sponsor=1",
   "type": "module",
   "types": "./dist/otpauth.d.ts",
   "main": "./dist/otpauth.node.cjs",
