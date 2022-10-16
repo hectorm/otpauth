@@ -1,3 +1,4 @@
+/// <reference types="./otpauth.d.ts" />
 /**
  * Converts an integer to an ArrayBuffer.
  * @param {number} num Integer.
@@ -17,8 +18,8 @@ const uintToBuf = num => {
 };
 
 const createHmac = undefined;
-          const randomBytes$1 = undefined;
-          const timingSafeEqual$1 = undefined;
+const randomBytes$1 = undefined;
+const timingSafeEqual$1 = undefined;
 
 var crypto = /*#__PURE__*/Object.freeze({
   __proto__: null,
@@ -753,7 +754,6 @@ class rt {
  * @type {Object.<string, *>}
  */
 const globalScope = (() => {
-  // @ts-ignore
   if (typeof globalThis === "object") return globalThis;else {
     Object.defineProperty(Object.prototype, "__GLOBALTHIS__", {
       get() {
@@ -778,7 +778,7 @@ const globalScope = (() => {
 
 /**
  * OpenSSL to jsSHA algorithms map.
- * @type {Object.<string, string>}
+ * @type {Object.<string, "SHA-1"|"SHA-224"|"SHA-256"|"SHA-384"|"SHA-512"|"SHA3-224"|"SHA3-256"|"SHA3-384"|"SHA3-512">}
  */
 const OPENSSL_JSSHA_ALGO_MAP = {
   SHA1: "SHA-1",
@@ -810,7 +810,6 @@ const hmacDigest = (algorithm, key, message) => {
     if (typeof variant === "undefined") {
       throw new TypeError("Unknown hash function");
     }
-    // @ts-ignore
     const hmac = new rt(variant, "ARRAYBUFFER");
     hmac.setHMACKey(key, "ARRAYBUFFER");
     hmac.update(message);
@@ -1665,6 +1664,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.0.0";
+const version = "9.0.1";
 
 export { HOTP, Secret, TOTP, URI, version };
