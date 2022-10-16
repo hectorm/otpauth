@@ -14,16 +14,16 @@ One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers.
 ### Node.js
 
 ```javascript
-import * as OTPAuth from 'otpauth';
+import * as OTPAuth from "otpauth";
 
 // Create a new TOTP object.
 let totp = new OTPAuth.TOTP({
-	issuer: 'ACME',
-	label: 'AzureDiamond',
-	algorithm: 'SHA1',
-	digits: 6,
-	period: 30,
-	secret: 'NB2W45DFOIZA' // or "OTPAuth.Secret.fromBase32('NB2W45DFOIZA')"
+  issuer: "ACME",
+  label: "AzureDiamond",
+  algorithm: "SHA1",
+  digits: 6,
+  period: 30,
+  secret: "NB2W45DFOIZA", // or 'OTPAuth.Secret.fromBase32("NB2W45DFOIZA")'
 });
 
 // Generate a token.
@@ -31,13 +31,13 @@ let token = totp.generate();
 
 // Validate a token.
 let delta = totp.validate({
-	token: token,
-	window: 1
+  token: token,
+  window: 1,
 });
 
-// Convert to Google Authenticator key URI.
-// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
-let uri = totp.toString(); // or "OTPAuth.URI.stringify(totp)"
+// Convert to Google Authenticator key URI:
+//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+let uri = totp.toString(); // or 'OTPAuth.URI.stringify(totp)'
 
 // Convert from Google Authenticator key URI.
 let parsedTotp = OTPAuth.URI.parse(uri);
@@ -47,7 +47,7 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 
 ```javascript
 // @deno-types="https://deno.land/x/otpauth@VERSION/dist/otpauth.d.ts"
-import * as OTPAuth from 'https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.js'
+import * as OTPAuth from "https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.js"
 
 // Same as above...
 ```
@@ -57,7 +57,7 @@ import * as OTPAuth from 'https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.j
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/VERSION/otpauth.umd.min.js"></script>
 <script>
-	// Same as above...
+  // Same as above...
 </script>
 ```
 
