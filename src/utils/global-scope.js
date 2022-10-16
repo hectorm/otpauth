@@ -4,7 +4,6 @@
  * @type {Object.<string, *>}
  */
 const globalScope = (() => {
-  // @ts-ignore
   if (typeof globalThis === "object") return globalThis;
   else {
     Object.defineProperty(Object.prototype, "__GLOBALTHIS__", {
