@@ -103,7 +103,7 @@ jobs:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Use Deno ${{ matrix.deno_version }}'
-        uses: 'denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366'
+        uses: 'denoland/setup-deno@9db7f66e8e16b5699a514448ce994936c63f0d54'
         with:
           deno-version: '${{ matrix.deno_version }}'
       - name: 'Install'
