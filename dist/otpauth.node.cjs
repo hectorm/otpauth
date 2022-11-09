@@ -3,7 +3,7 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var crypto = require('node:crypto');
+var crypto = require('crypto');
 
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
@@ -51,7 +51,7 @@ var jsSHA = undefined;
  * @type {Object.<string, *>}
  */
 const globalScope = (() => {
-  if (typeof globalThis === "object") return globalThis;else {
+  if (typeof globalThis === "object") return globalThis; else {
     Object.defineProperty(Object.prototype, "__GLOBALTHIS__", {
       get() {
         return this;
@@ -69,7 +69,7 @@ const globalScope = (() => {
   }
 
   // Still unable to determine "globalThis", fall back to a naive method.
-  if (typeof self !== "undefined") return self;else if (typeof window !== "undefined") return window;else if (typeof global !== "undefined") return global;
+  if (typeof self !== "undefined") return self; else if (typeof window !== "undefined") return window; else if (typeof global !== "undefined") return global;
   return undefined;
 })();
 
