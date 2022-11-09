@@ -1,4 +1,4 @@
-import * as crypto from "node:crypto";
+import * as crypto from "crypto";
 import jsSHA from "jssha";
 
 import { globalScope } from "../global-scope.js";

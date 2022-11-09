@@ -1,5 +1,5 @@
 /// <reference types="./otpauth.d.ts" />
-import * as crypto from 'node:crypto';
+import * as crypto from 'crypto';
 
 /**
  * Converts an integer to an ArrayBuffer.
@@ -27,7 +27,7 @@ var jsSHA = undefined;
  * @type {Object.<string, *>}
  */
 const globalScope = (() => {
-  if (typeof globalThis === "object") return globalThis;else {
+  if (typeof globalThis === "object") return globalThis; else {
     Object.defineProperty(Object.prototype, "__GLOBALTHIS__", {
       get() {
         return this;
@@ -45,7 +45,7 @@ const globalScope = (() => {
   }
 
   // Still unable to determine "globalThis", fall back to a naive method.
-  if (typeof self !== "undefined") return self;else if (typeof window !== "undefined") return window;else if (typeof global !== "undefined") return global;
+  if (typeof self !== "undefined") return self; else if (typeof window !== "undefined") return window; else if (typeof global !== "undefined") return global;
   return undefined;
 })();
 

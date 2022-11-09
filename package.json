@@ -90,6 +90,7 @@
     "version": "run-s all && git add -A ./types/ ./dist/ ./docs/"
   },
   "dependencies": {
+    "crypto": "^1.0.1",
     "jssha": "~3.3.0"
   },
   "devDependencies": {

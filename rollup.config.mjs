@@ -36,7 +36,7 @@ export default async () => {
     plugins: [
       replace(replaceOpts),
       virtual({
-        "node:crypto": [
+        "crypto": [
           `export const createHmac = undefined;`,
           `export const randomBytes = undefined;`,
           `export const timingSafeEqual = undefined;`,
