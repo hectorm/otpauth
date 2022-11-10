@@ -1670,14 +1670,12 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.0.1";
+  const version = "9.0.2";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
   exports.TOTP = TOTP;
   exports.URI = URI;
   exports.version = version;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

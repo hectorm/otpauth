@@ -1,12 +1,9 @@
 /// <reference types="./otpauth.d.ts" />
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var crypto = require('node:crypto');
 
-function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
+function _interopNamespaceDefault(e) {
   var n = Object.create(null);
   if (e) {
     Object.keys(e).forEach(function (k) {
@@ -19,11 +16,11 @@ function _interopNamespace(e) {
       }
     });
   }
-  n["default"] = e;
+  n.default = e;
   return Object.freeze(n);
 }
 
-var crypto__namespace = /*#__PURE__*/_interopNamespace(crypto);
+var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 
 /**
  * Converts an integer to an ArrayBuffer.
@@ -961,7 +958,7 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.0.1";
+const version = "9.0.2";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
