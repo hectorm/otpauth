@@ -111,7 +111,7 @@
     "playwright": "~1.28.1",
     "prettier": "~2.8.0",
     "rimraf": "~3.0.2",
-    "rollup": "~3.3.0",
+    "rollup": "~3.6.0",
     "rollup-plugin-dts": "~5.0.0",
     "rollup-plugin-esbuild": "~5.0.0",
     "test": "~3.2.1",
