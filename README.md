@@ -26,21 +26,18 @@ let totp = new OTPAuth.TOTP({
   secret: "NB2W45DFOIZA", // or 'OTPAuth.Secret.fromBase32("NB2W45DFOIZA")'
 });
 
-// Generate a token.
+// Generate a token (returns the current token as a string).
 let token = totp.generate();
 
-// Validate a token.
-let delta = totp.validate({
-  token: token,
-  window: 1,
-});
+// Validate a token (returns the token delta or null if it is not found in the search window, in which case it should be considered invalid).
+let delta = totp.validate({ token, window: 1 });
 
 // Convert to Google Authenticator key URI:
-//   otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
 let uri = totp.toString(); // or 'OTPAuth.URI.stringify(totp)'
 
 // Convert from Google Authenticator key URI.
-let parsedTotp = OTPAuth.URI.parse(uri);
+totp = OTPAuth.URI.parse(uri);
 ```
 
 ### Deno
@@ -48,7 +45,7 @@ let parsedTotp = OTPAuth.URI.parse(uri);
 ```javascript
 import * as OTPAuth from "https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.js"
 
-// Same as above...
+// Same as above.
 ```
 
 ### Browsers
@@ -56,7 +53,7 @@ import * as OTPAuth from "https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.j
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/VERSION/otpauth.umd.min.js"></script>
 <script>
-  // Same as above...
+  // Same as above.
 </script>
 ```
 
