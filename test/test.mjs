@@ -14,7 +14,7 @@
 
   try {
     if (isNode) {
-      const test = await import("test");
+      const { default: test } = await import("test");
       globalThis.describe = test.describe;
       globalThis.it = test.it;
 
