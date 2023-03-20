@@ -36,6 +36,7 @@
   "exports": {
     ".": {
       "types": "./dist/otpauth.d.ts",
+      "deno": "./dist/otpauth.esm.js",
       "node": {
         "import": "./dist/otpauth.node.mjs",
         "require": "./dist/otpauth.node.cjs"
