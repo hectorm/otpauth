@@ -11,8 +11,15 @@
 	<script src="../node_modules/mocha/mocha.js"></script>
 	<script src="../node_modules/chai/chai.js"></script>
 	<script src="../dist/otpauth.umd.js"></script>
-	<script>mocha.setup({ ui: "bdd", reporter: "html" });</script>
+	<script>
+		mocha.setup({ ui: "bdd", reporter: "html" });
+		globalThis.assert = chai.assert;
+		globalThis.assertEquals = chai.assert.deepEqual;
+		globalThis.assertMatch = chai.assert.match;
+	</script>
 	<script src="./test.mjs"></script>
-	<script>mocha.run();</script>
+	<script>
+		mocha.run();
+	</script>
 </body>
 </html>
