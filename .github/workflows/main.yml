@@ -113,6 +113,35 @@ jobs:
       - name: 'Test'
         run: 'npm run test:deno'
 
+  build-bun:
+    name: 'Build and test on Bun ${{ matrix.bun_version }}'
+    needs: ['lint']
+    runs-on: 'ubuntu-22.04'
+    permissions:
+      contents: 'read'
+    strategy:
+      fail-fast: false
+      matrix:
+        bun_version: ['latest']
+    env:
+      NODE_VERSION: 'lts/*'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c'
+      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
+        uses: 'actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c'
+        with:
+          node-version: '${{ env.NODE_VERSION }}'
+          cache: 'npm'
+      - name: 'Use Bun ${{ matrix.bun_version }}'
+        run: 'npm install -g bun@${{ matrix.bun_version }}'
+      - name: 'Install'
+        run: 'npm ci'
+      - name: 'Build'
+        run: 'npm run types && npm run build'
+      - name: 'Test'
+        run: 'npm run test:bun'
+
   build-browser:
     name: 'Build and test on ${{ matrix.browser }} browser'
     needs: ['lint']
@@ -146,6 +175,7 @@ jobs:
     needs:
       - 'build-node'
       - 'build-deno'
+      - 'build-bun'
       - 'build-browser'
     runs-on: 'ubuntu-latest'
     permissions:
@@ -175,6 +205,7 @@ jobs:
     needs:
       - 'build-node'
       - 'build-deno'
+      - 'build-bun'
       - 'build-browser'
     runs-on: 'ubuntu-latest'
     permissions:

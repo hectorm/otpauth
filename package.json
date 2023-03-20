@@ -1,7 +1,7 @@
 {
   "name": "otpauth",
   "version": "9.0.2",
-  "description": "One Time Password (HOTP/TOTP) library for Node.js, Deno and browsers",
+  "description": "One Time Password (HOTP/TOTP) library for Node.js, Deno, Bun and browsers",
   "keywords": [
     "otp",
     "hotp",
@@ -36,6 +36,7 @@
   "exports": {
     ".": {
       "types": "./dist/otpauth.d.ts",
+      "bun": "./dist/otpauth.esm.js",
       "deno": "./dist/otpauth.esm.js",
       "node": {
         "import": "./dist/otpauth.node.mjs",
@@ -73,6 +74,10 @@
     "test:deno:esm:min": "deno test --no-npm --allow-read=./test/,./dist/ --allow-net=deno.land ./test/deno.test.mjs -- ../dist/otpauth.esm.min.js",
     "test:deno:esm": "run-s test:deno:esm:*",
     "test:deno": "run-s test:deno:*",
+    "test:bun:esm:unmin": "bun test --cwd ./test/ bun ../dist/otpauth.esm.js",
+    "test:bun:esm:min": "bun test --cwd ./test/ bun ../dist/otpauth.esm.min.js",
+    "test:bun:esm": "run-s test:bun:esm:*",
+    "test:bun": "run-s test:bun:*",
     "test:browser:chromium:umd:unmin": "node ./test/browser.test.mjs chromium ../dist/otpauth.umd.js",
     "test:browser:chromium:umd:min": "node ./test/browser.test.mjs chromium ../dist/otpauth.umd.min.js",
     "test:browser:chromium:umd": "run-s test:browser:chromium:umd:*",
