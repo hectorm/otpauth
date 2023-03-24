@@ -937,6 +937,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.0";
+const version = "9.1.1";
 
 export { HOTP, Secret, TOTP, URI, version };
