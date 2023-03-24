@@ -33,6 +33,7 @@
   "type": "module",
   "types": "./dist/otpauth.d.ts",
   "main": "./dist/otpauth.node.cjs",
+  "browser": "./dist/otpauth.esm.js",
   "exports": {
     ".": {
       "types": "./dist/otpauth.d.ts",
