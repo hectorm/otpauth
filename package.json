@@ -123,6 +123,6 @@
     "rollup-plugin-esbuild": "~5.0.0",
     "test": "~3.3.0",
     "typedoc": "~0.24.1",
-    "typescript": "~5.0.3"
+    "typescript": "~5.0.4"
   }
 }
