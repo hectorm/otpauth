@@ -1,6 +1,5 @@
 import { uintToBuf } from "./utils/encoding/uint.js";
 import { hmacDigest } from "./utils/crypto/hmac-digest.js";
-import { pad } from "./utils/pad.js";
 import { Secret } from "./secret.js";
 import { timingSafeEqual } from "./utils/crypto/timing-safe-equal.js";
 
@@ -108,7 +107,7 @@ class HOTP {
         (digest[offset + 3] & 255)) %
       10 ** digits;
 
-    return pad(otp, digits);
+    return otp.toString().padStart(digits, "0");
   }
 
   /**
