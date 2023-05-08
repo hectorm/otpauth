@@ -74,7 +74,7 @@ const OPENSSL_JSSHA_ALGO_MAP = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto !== null && crypto !== void 0 && crypto.createHmac) {
+  if (crypto?.createHmac) {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
@@ -88,19 +88,6 @@ const hmacDigest = (algorithm, key, message) => {
     hmac.update(message);
     return hmac.getHMAC("ARRAYBUFFER");
   }
-};
-
-/**
- * Pads a number with leading zeros.
- * @param {number|string} num Number.
- * @param {number} digits Digits.
- * @returns {string} Padded number.
- */
-const pad = (num, digits) => {
-  let prefix = "";
-  let repeat = digits - String(num).length;
-  while (repeat-- > 0) prefix += "0";
-  return `${prefix}${num}`;
 };
 
 /**
@@ -263,10 +250,10 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (crypto !== null && crypto !== void 0 && crypto.randomBytes) {
+  if (crypto?.randomBytes) {
     return crypto.randomBytes(size).buffer;
   } else {
-    if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
+    if (!globalScope.crypto?.getRandomValues) {
       throw new Error("Cryptography API not available");
     }
     return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -395,7 +382,7 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto !== null && crypto !== void 0 && crypto.timingSafeEqual) {
+  if (crypto?.timingSafeEqual) {
     return crypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
@@ -507,7 +494,7 @@ class HOTP {
     const digest = new Uint8Array(hmacDigest(algorithm, secret.buffer, uintToBuf(counter)));
     const offset = digest[digest.byteLength - 1] & 15;
     const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
-    return pad(otp, digits);
+    return otp.toString().padStart(digits, "0");
   }
 
   /**
@@ -937,6 +924,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.1";
+const version = "9.1.2";
 
 export { HOTP, Secret, TOTP, URI, version };

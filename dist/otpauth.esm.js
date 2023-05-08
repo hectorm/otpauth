@@ -17,17 +17,6 @@ const uintToBuf = num => {
   return buf;
 };
 
-const createHmac = undefined;
-const randomBytes$1 = undefined;
-const timingSafeEqual$1 = undefined;
-
-var crypto = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  createHmac: createHmac,
-  randomBytes: randomBytes$1,
-  timingSafeEqual: timingSafeEqual$1
-});
-
 /**
  * A JavaScript implementation of the SHA family of hashes - defined in FIPS PUB 180-4, FIPS PUB 202,
  * and SP 800-185 - as well as the corresponding HMAC implementation as defined in FIPS PUB 198-1.
@@ -801,11 +790,7 @@ const OPENSSL_JSSHA_ALGO_MAP = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto !== null && crypto !== void 0 && createHmac) {
-    const hmac = createHmac(algorithm, globalScope.Buffer.from(key));
-    hmac.update(globalScope.Buffer.from(message));
-    return hmac.digest().buffer;
-  } else {
+  {
     const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
     if (typeof variant === "undefined") {
       throw new TypeError("Unknown hash function");
@@ -815,19 +800,6 @@ const hmacDigest = (algorithm, key, message) => {
     hmac.update(message);
     return hmac.getHMAC("ARRAYBUFFER");
   }
-};
-
-/**
- * Pads a number with leading zeros.
- * @param {number|string} num Number.
- * @param {number} digits Digits.
- * @returns {string} Padded number.
- */
-const pad = (num, digits) => {
-  let prefix = "";
-  let repeat = digits - String(num).length;
-  while (repeat-- > 0) prefix += "0";
-  return `${prefix}${num}`;
 };
 
 /**
@@ -990,10 +962,8 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (crypto !== null && crypto !== void 0 && randomBytes$1) {
-    return randomBytes$1(size).buffer;
-  } else {
-    if (!globalScope.crypto || !globalScope.crypto.getRandomValues) {
+  {
+    if (!globalScope.crypto?.getRandomValues) {
       throw new Error("Cryptography API not available");
     }
     return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -1122,9 +1092,7 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto !== null && crypto !== void 0 && timingSafeEqual$1) {
-    return timingSafeEqual$1(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
-  } else {
+  {
     if (a.length !== b.length) {
       throw new TypeError("Input strings must have the same length");
     }
@@ -1234,7 +1202,7 @@ class HOTP {
     const digest = new Uint8Array(hmacDigest(algorithm, secret.buffer, uintToBuf(counter)));
     const offset = digest[digest.byteLength - 1] & 15;
     const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
-    return pad(otp, digits);
+    return otp.toString().padStart(digits, "0");
   }
 
   /**
@@ -1664,6 +1632,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.1";
+const version = "9.1.2";
 
 export { HOTP, Secret, TOTP, URI, version };
