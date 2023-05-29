@@ -100,7 +100,7 @@
     "jssha": "~3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "~7.21.8",
+    "@babel/core": "~7.22.1",
     "@babel/eslint-parser": "~7.21.8",
     "@babel/eslint-plugin": "~7.19.1",
     "@babel/preset-env": "~7.21.5",
