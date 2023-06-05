@@ -122,7 +122,7 @@
     "rollup-plugin-dts": "~5.3.0",
     "rollup-plugin-esbuild": "~5.0.0",
     "test": "~3.3.0",
-    "typedoc": "~0.24.7",
+    "typedoc": "~0.24.8",
     "typescript": "~5.0.4"
   }
 }
