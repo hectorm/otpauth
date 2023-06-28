@@ -6,7 +6,7 @@ import playwright from "playwright";
 const require = module.createRequire(import.meta.url);
 
 (async () => {
-  const browserName = process.argv[2];
+  const browserName = process.env.TEST_BROWSER;
   const browser = await playwright[browserName].launch();
 
   try {
@@ -20,7 +20,7 @@ const require = module.createRequire(import.meta.url);
       path: require.resolve("chai/chai.js"),
     });
     await page.addScriptTag({
-      path: require.resolve(process.argv[3]),
+      path: require.resolve(process.env.TEST_LIBPATH),
     });
 
     await page.evaluate(() => {

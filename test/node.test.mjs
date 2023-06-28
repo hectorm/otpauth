@@ -8,6 +8,6 @@ globalThis.assertEquals = assert.deepStrictEqual;
 globalThis.assertMatch = assert.match;
 
 (async () => {
-  globalThis.OTPAuth = await import(process.argv[2]);
+  globalThis.OTPAuth = await import(process.env.TEST_LIBPATH);
   await import("./test.mjs");
 })();

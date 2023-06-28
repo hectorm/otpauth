@@ -10,6 +10,6 @@ globalThis.assertEquals = asserts.assertEquals;
 globalThis.assertMatch = asserts.assertMatch;
 
 (async () => {
-  globalThis.OTPAuth = await import(Deno.args[0]);
+  globalThis.OTPAuth = await import(Deno.env.get("TEST_LIBPATH"));
   await import("./test.mjs");
 })();

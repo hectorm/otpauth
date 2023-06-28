@@ -9,6 +9,6 @@ globalThis.assertEquals = (a, b) => test.expect(a).toStrictEqual(b);
 globalThis.assertMatch = (a, b) => test.expect(b.test(a)).toBe(true);
 
 (async () => {
-  globalThis.OTPAuth = await import(Bun.argv.slice(-1));
+  globalThis.OTPAuth = await import(Bun.env.TEST_LIBPATH);
   await import("./test.mjs");
 })();
