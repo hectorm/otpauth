@@ -74,7 +74,7 @@ const OPENSSL_JSSHA_ALGO_MAP = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto?.createHmac) {
+  if (crypto !== null && crypto !== void 0 && crypto.createHmac) {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
@@ -250,10 +250,11 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (crypto?.randomBytes) {
+  if (crypto !== null && crypto !== void 0 && crypto.randomBytes) {
     return crypto.randomBytes(size).buffer;
   } else {
-    if (!globalScope.crypto?.getRandomValues) {
+    var _globalScope$crypto;
+    if (!((_globalScope$crypto = globalScope.crypto) !== null && _globalScope$crypto !== void 0 && _globalScope$crypto.getRandomValues)) {
       throw new Error("Cryptography API not available");
     }
     return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -382,7 +383,7 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto?.timingSafeEqual) {
+  if (crypto !== null && crypto !== void 0 && crypto.timingSafeEqual) {
     return crypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
@@ -924,6 +925,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.2";
+const version = "9.1.3";
 
 export { HOTP, Secret, TOTP, URI, version };

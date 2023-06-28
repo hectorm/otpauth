@@ -17,6 +17,17 @@ const uintToBuf = num => {
   return buf;
 };
 
+const createHmac = undefined;
+const randomBytes$1 = undefined;
+const timingSafeEqual$1 = undefined;
+
+var crypto = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  createHmac: createHmac,
+  randomBytes: randomBytes$1,
+  timingSafeEqual: timingSafeEqual$1
+});
+
 /**
  * A JavaScript implementation of the SHA family of hashes - defined in FIPS PUB 180-4, FIPS PUB 202,
  * and SP 800-185 - as well as the corresponding HMAC implementation as defined in FIPS PUB 198-1.
@@ -790,7 +801,11 @@ const OPENSSL_JSSHA_ALGO_MAP = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  {
+  if (crypto !== null && crypto !== void 0 && createHmac) {
+    const hmac = createHmac(algorithm, globalScope.Buffer.from(key));
+    hmac.update(globalScope.Buffer.from(message));
+    return hmac.digest().buffer;
+  } else {
     const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
     if (typeof variant === "undefined") {
       throw new TypeError("Unknown hash function");
@@ -962,8 +977,11 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  {
-    if (!globalScope.crypto?.getRandomValues) {
+  if (crypto !== null && crypto !== void 0 && randomBytes$1) {
+    return randomBytes$1(size).buffer;
+  } else {
+    var _globalScope$crypto;
+    if (!((_globalScope$crypto = globalScope.crypto) !== null && _globalScope$crypto !== void 0 && _globalScope$crypto.getRandomValues)) {
       throw new Error("Cryptography API not available");
     }
     return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -1092,7 +1110,9 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  {
+  if (crypto !== null && crypto !== void 0 && timingSafeEqual$1) {
+    return timingSafeEqual$1(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
+  } else {
     if (a.length !== b.length) {
       throw new TypeError("Input strings must have the same length");
     }
@@ -1632,6 +1652,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.2";
+const version = "9.1.3";
 
 export { HOTP, Secret, TOTP, URI, version };
