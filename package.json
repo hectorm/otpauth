@@ -103,7 +103,7 @@
     "@babel/core": "~7.22.8",
     "@babel/eslint-parser": "~7.22.9",
     "@babel/eslint-plugin": "~7.22.5",
-    "@babel/preset-env": "~7.22.7",
+    "@babel/preset-env": "~7.22.9",
     "@rollup/plugin-babel": "~6.0.3",
     "@rollup/plugin-node-resolve": "~15.1.0",
     "@rollup/plugin-replace": "~5.0.2",
