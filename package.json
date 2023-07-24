@@ -108,7 +108,7 @@
     "@rollup/plugin-node-resolve": "~15.1.0",
     "@rollup/plugin-replace": "~5.0.2",
     "@rollup/plugin-virtual": "~3.0.1",
-    "@types/node": "~20.4.2",
+    "@types/node": "~20.4.4",
     "chai": "~4.3.7",
     "eslint": "~8.45.0",
     "eslint-config-prettier": "~8.8.0",
