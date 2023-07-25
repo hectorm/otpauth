@@ -23,17 +23,6 @@
     return buf;
   };
 
-  const createHmac = undefined;
-  const randomBytes$1 = undefined;
-  const timingSafeEqual$1 = undefined;
-
-  var crypto = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    createHmac: createHmac,
-    randomBytes: randomBytes$1,
-    timingSafeEqual: timingSafeEqual$1
-  });
-
   /**
    * A JavaScript implementation of the SHA family of hashes - defined in FIPS PUB 180-4, FIPS PUB 202,
    * and SP 800-185 - as well as the corresponding HMAC implementation as defined in FIPS PUB 198-1.
@@ -807,11 +796,7 @@
    * @returns {ArrayBuffer} Digest.
    */
   const hmacDigest = (algorithm, key, message) => {
-    if (crypto !== null && crypto !== void 0 && createHmac) {
-      const hmac = createHmac(algorithm, globalScope.Buffer.from(key));
-      hmac.update(globalScope.Buffer.from(message));
-      return hmac.digest().buffer;
-    } else {
+    {
       const variant = OPENSSL_JSSHA_ALGO_MAP[algorithm.toUpperCase()];
       if (typeof variant === "undefined") {
         throw new TypeError("Unknown hash function");
@@ -983,11 +968,8 @@
    * @returns {ArrayBuffer} Random bytes.
    */
   const randomBytes = size => {
-    if (crypto !== null && crypto !== void 0 && randomBytes$1) {
-      return randomBytes$1(size).buffer;
-    } else {
-      var _globalScope$crypto;
-      if (!((_globalScope$crypto = globalScope.crypto) !== null && _globalScope$crypto !== void 0 && _globalScope$crypto.getRandomValues)) {
+    {
+      if (!globalScope.crypto?.getRandomValues) {
         throw new Error("Cryptography API not available");
       }
       return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -1004,11 +986,10 @@
      * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
      * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
      */
-    constructor() {
-      let {
-        buffer,
-        size = 20
-      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor({
+      buffer,
+      size = 20
+    } = {}) {
       /**
        * Secret key.
        * @type {ArrayBuffer}
@@ -1116,9 +1097,7 @@
    * @returns {boolean} Equality result.
    */
   const timingSafeEqual = (a, b) => {
-    if (crypto !== null && crypto !== void 0 && timingSafeEqual$1) {
-      return timingSafeEqual$1(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
-    } else {
+    {
       if (a.length !== b.length) {
         throw new TypeError("Input strings must have the same length");
       }
@@ -1168,15 +1147,14 @@
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Initial counter value.
      */
-    constructor() {
-      let {
-        issuer = HOTP.defaults.issuer,
-        label = HOTP.defaults.label,
-        secret = new Secret(),
-        algorithm = HOTP.defaults.algorithm,
-        digits = HOTP.defaults.digits,
-        counter = HOTP.defaults.counter
-      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor({
+      issuer = HOTP.defaults.issuer,
+      label = HOTP.defaults.label,
+      secret = new Secret(),
+      algorithm = HOTP.defaults.algorithm,
+      digits = HOTP.defaults.digits,
+      counter = HOTP.defaults.counter
+    } = {}) {
       /**
        * Account provider.
        * @type {string}
@@ -1218,13 +1196,12 @@
      * @param {number} [config.counter=0] Counter value.
      * @returns {string} Token.
      */
-    static generate(_ref) {
-      let {
-        secret,
-        algorithm = HOTP.defaults.algorithm,
-        digits = HOTP.defaults.digits,
-        counter = HOTP.defaults.counter
-      } = _ref;
+    static generate({
+      secret,
+      algorithm = HOTP.defaults.algorithm,
+      digits = HOTP.defaults.digits,
+      counter = HOTP.defaults.counter
+    }) {
       const digest = new Uint8Array(hmacDigest(algorithm, secret.buffer, uintToBuf(counter)));
       const offset = digest[digest.byteLength - 1] & 15;
       const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
@@ -1237,10 +1214,9 @@
      * @param {number} [config.counter=this.counter++] Counter value.
      * @returns {string} Token.
      */
-    generate() {
-      let {
-        counter = this.counter++
-      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    generate({
+      counter = this.counter++
+    } = {}) {
       return HOTP.generate({
         secret: this.secret,
         algorithm: this.algorithm,
@@ -1260,15 +1236,14 @@
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate(_ref2) {
-      let {
-        token,
-        secret,
-        algorithm,
-        digits,
-        counter = HOTP.defaults.counter,
-        window = HOTP.defaults.window
-      } = _ref2;
+    static validate({
+      token,
+      secret,
+      algorithm,
+      digits,
+      counter = HOTP.defaults.counter,
+      window = HOTP.defaults.window
+    }) {
       // Return early if the token length does not match the digit number.
       if (token.length !== digits) return null;
       let delta = null;
@@ -1294,12 +1269,11 @@
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    validate(_ref3) {
-      let {
-        token,
-        counter = this.counter,
-        window
-      } = _ref3;
+    validate({
+      token,
+      counter = this.counter,
+      window
+    }) {
       return HOTP.validate({
         token,
         secret: this.secret,
@@ -1357,15 +1331,14 @@
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      */
-    constructor() {
-      let {
-        issuer = TOTP.defaults.issuer,
-        label = TOTP.defaults.label,
-        secret = new Secret(),
-        algorithm = TOTP.defaults.algorithm,
-        digits = TOTP.defaults.digits,
-        period = TOTP.defaults.period
-      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor({
+      issuer = TOTP.defaults.issuer,
+      label = TOTP.defaults.label,
+      secret = new Secret(),
+      algorithm = TOTP.defaults.algorithm,
+      digits = TOTP.defaults.digits,
+      period = TOTP.defaults.period
+    } = {}) {
       /**
        * Account provider.
        * @type {string}
@@ -1408,14 +1381,13 @@
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    static generate(_ref) {
-      let {
-        secret,
-        algorithm,
-        digits,
-        period = TOTP.defaults.period,
-        timestamp = Date.now()
-      } = _ref;
+    static generate({
+      secret,
+      algorithm,
+      digits,
+      period = TOTP.defaults.period,
+      timestamp = Date.now()
+    }) {
       return HOTP.generate({
         secret,
         algorithm,
@@ -1430,10 +1402,9 @@
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    generate() {
-      let {
-        timestamp = Date.now()
-      } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    generate({
+      timestamp = Date.now()
+    } = {}) {
       return TOTP.generate({
         secret: this.secret,
         algorithm: this.algorithm,
@@ -1455,16 +1426,15 @@
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate(_ref2) {
-      let {
-        token,
-        secret,
-        algorithm,
-        digits,
-        period = TOTP.defaults.period,
-        timestamp = Date.now(),
-        window
-      } = _ref2;
+    static validate({
+      token,
+      secret,
+      algorithm,
+      digits,
+      period = TOTP.defaults.period,
+      timestamp = Date.now(),
+      window
+    }) {
       return HOTP.validate({
         token,
         secret,
@@ -1483,12 +1453,11 @@
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    validate(_ref3) {
-      let {
-        token,
-        timestamp,
-        window
-      } = _ref3;
+    validate({
+      token,
+      timestamp,
+      window
+    }) {
       return TOTP.validate({
         token,
         secret: this.secret,
@@ -1658,7 +1627,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.1.3";
+  const version = "9.1.4";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;

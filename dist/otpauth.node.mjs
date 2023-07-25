@@ -74,7 +74,7 @@ const OPENSSL_JSSHA_ALGO_MAP = {
  * @returns {ArrayBuffer} Digest.
  */
 const hmacDigest = (algorithm, key, message) => {
-  if (crypto !== null && crypto !== void 0 && crypto.createHmac) {
+  if (crypto?.createHmac) {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest().buffer;
@@ -250,11 +250,10 @@ const utf8FromBuf = buf => {
  * @returns {ArrayBuffer} Random bytes.
  */
 const randomBytes = size => {
-  if (crypto !== null && crypto !== void 0 && crypto.randomBytes) {
+  if (crypto?.randomBytes) {
     return crypto.randomBytes(size).buffer;
   } else {
-    var _globalScope$crypto;
-    if (!((_globalScope$crypto = globalScope.crypto) !== null && _globalScope$crypto !== void 0 && _globalScope$crypto.getRandomValues)) {
+    if (!globalScope.crypto?.getRandomValues) {
       throw new Error("Cryptography API not available");
     }
     return globalScope.crypto.getRandomValues(new Uint8Array(size)).buffer;
@@ -271,11 +270,10 @@ class Secret {
    * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
    * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
    */
-  constructor() {
-    let {
-      buffer,
-      size = 20
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    buffer,
+    size = 20
+  } = {}) {
     /**
      * Secret key.
      * @type {ArrayBuffer}
@@ -383,7 +381,7 @@ class Secret {
  * @returns {boolean} Equality result.
  */
 const timingSafeEqual = (a, b) => {
-  if (crypto !== null && crypto !== void 0 && crypto.timingSafeEqual) {
+  if (crypto?.timingSafeEqual) {
     return crypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
@@ -435,15 +433,14 @@ class HOTP {
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Initial counter value.
    */
-  constructor() {
-    let {
-      issuer = HOTP.defaults.issuer,
-      label = HOTP.defaults.label,
-      secret = new Secret(),
-      algorithm = HOTP.defaults.algorithm,
-      digits = HOTP.defaults.digits,
-      counter = HOTP.defaults.counter
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    issuer = HOTP.defaults.issuer,
+    label = HOTP.defaults.label,
+    secret = new Secret(),
+    algorithm = HOTP.defaults.algorithm,
+    digits = HOTP.defaults.digits,
+    counter = HOTP.defaults.counter
+  } = {}) {
     /**
      * Account provider.
      * @type {string}
@@ -485,13 +482,12 @@ class HOTP {
    * @param {number} [config.counter=0] Counter value.
    * @returns {string} Token.
    */
-  static generate(_ref) {
-    let {
-      secret,
-      algorithm = HOTP.defaults.algorithm,
-      digits = HOTP.defaults.digits,
-      counter = HOTP.defaults.counter
-    } = _ref;
+  static generate({
+    secret,
+    algorithm = HOTP.defaults.algorithm,
+    digits = HOTP.defaults.digits,
+    counter = HOTP.defaults.counter
+  }) {
     const digest = new Uint8Array(hmacDigest(algorithm, secret.buffer, uintToBuf(counter)));
     const offset = digest[digest.byteLength - 1] & 15;
     const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
@@ -504,10 +500,9 @@ class HOTP {
    * @param {number} [config.counter=this.counter++] Counter value.
    * @returns {string} Token.
    */
-  generate() {
-    let {
-      counter = this.counter++
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  generate({
+    counter = this.counter++
+  } = {}) {
     return HOTP.generate({
       secret: this.secret,
       algorithm: this.algorithm,
@@ -527,15 +522,14 @@ class HOTP {
    * @param {number} [config.window=1] Window of counter values to test.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  static validate(_ref2) {
-    let {
-      token,
-      secret,
-      algorithm,
-      digits,
-      counter = HOTP.defaults.counter,
-      window = HOTP.defaults.window
-    } = _ref2;
+  static validate({
+    token,
+    secret,
+    algorithm,
+    digits,
+    counter = HOTP.defaults.counter,
+    window = HOTP.defaults.window
+  }) {
     // Return early if the token length does not match the digit number.
     if (token.length !== digits) return null;
     let delta = null;
@@ -561,12 +555,11 @@ class HOTP {
    * @param {number} [config.window=1] Window of counter values to test.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  validate(_ref3) {
-    let {
-      token,
-      counter = this.counter,
-      window
-    } = _ref3;
+  validate({
+    token,
+    counter = this.counter,
+    window
+  }) {
     return HOTP.validate({
       token,
       secret: this.secret,
@@ -624,15 +617,14 @@ class TOTP {
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
    */
-  constructor() {
-    let {
-      issuer = TOTP.defaults.issuer,
-      label = TOTP.defaults.label,
-      secret = new Secret(),
-      algorithm = TOTP.defaults.algorithm,
-      digits = TOTP.defaults.digits,
-      period = TOTP.defaults.period
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    issuer = TOTP.defaults.issuer,
+    label = TOTP.defaults.label,
+    secret = new Secret(),
+    algorithm = TOTP.defaults.algorithm,
+    digits = TOTP.defaults.digits,
+    period = TOTP.defaults.period
+  } = {}) {
     /**
      * Account provider.
      * @type {string}
@@ -675,14 +667,13 @@ class TOTP {
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @returns {string} Token.
    */
-  static generate(_ref) {
-    let {
-      secret,
-      algorithm,
-      digits,
-      period = TOTP.defaults.period,
-      timestamp = Date.now()
-    } = _ref;
+  static generate({
+    secret,
+    algorithm,
+    digits,
+    period = TOTP.defaults.period,
+    timestamp = Date.now()
+  }) {
     return HOTP.generate({
       secret,
       algorithm,
@@ -697,10 +688,9 @@ class TOTP {
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @returns {string} Token.
    */
-  generate() {
-    let {
-      timestamp = Date.now()
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  generate({
+    timestamp = Date.now()
+  } = {}) {
     return TOTP.generate({
       secret: this.secret,
       algorithm: this.algorithm,
@@ -722,16 +712,15 @@ class TOTP {
    * @param {number} [config.window=1] Window of counter values to test.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  static validate(_ref2) {
-    let {
-      token,
-      secret,
-      algorithm,
-      digits,
-      period = TOTP.defaults.period,
-      timestamp = Date.now(),
-      window
-    } = _ref2;
+  static validate({
+    token,
+    secret,
+    algorithm,
+    digits,
+    period = TOTP.defaults.period,
+    timestamp = Date.now(),
+    window
+  }) {
     return HOTP.validate({
       token,
       secret,
@@ -750,12 +739,11 @@ class TOTP {
    * @param {number} [config.window=1] Window of counter values to test.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  validate(_ref3) {
-    let {
-      token,
-      timestamp,
-      window
-    } = _ref3;
+  validate({
+    token,
+    timestamp,
+    window
+  }) {
     return TOTP.validate({
       token,
       secret: this.secret,
@@ -925,6 +913,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.3";
+const version = "9.1.4";
 
 export { HOTP, Secret, TOTP, URI, version };
