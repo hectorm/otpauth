@@ -12,7 +12,7 @@ import dts from "rollup-plugin-dts";
 export default async () => {
   const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
   const pkg = JSON.parse(
-    await fs.readFile(path.join(__dirname, "./package.json"), "utf8")
+    await fs.readFile(path.join(__dirname, "./package.json"), "utf8"),
   );
 
   const banner = `/// <reference types="./otpauth.d.ts" />`;

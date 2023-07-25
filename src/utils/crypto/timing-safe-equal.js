@@ -12,7 +12,7 @@ const timingSafeEqual = (a, b) => {
   if (crypto?.timingSafeEqual) {
     return crypto.timingSafeEqual(
       globalScope.Buffer.from(a),
-      globalScope.Buffer.from(b)
+      globalScope.Buffer.from(b),
     );
   } else {
     if (a.length !== b.length) {
