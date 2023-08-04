@@ -1,7 +1,7 @@
 /// <reference types="./otpauth.d.ts" />
 'use strict';
 
-var crypto = require('node:crypto');
+var crypto = require('crypto');
 
 function _interopNamespaceDefault(e) {
   var n = Object.create(null);
