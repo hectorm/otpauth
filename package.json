@@ -97,7 +97,7 @@
     "version": "run-s all && git add -A ./types/ ./dist/ ./docs/"
   },
   "dependencies": {
-    "jssha": "~3.3.0"
+    "jssha": "~3.3.1"
   },
   "devDependencies": {
     "@babel/core": "~7.22.9",
