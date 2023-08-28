@@ -23,7 +23,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -44,7 +44,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -67,7 +67,7 @@ jobs:
         node_version: ['lts/-1', 'lts/*', 'current']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -96,7 +96,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -127,7 +127,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -156,7 +156,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
@@ -184,7 +184,7 @@ jobs:
       NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9'
+        uses: 'actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744'
       - name: 'Use Node.js ${{ env.NODE_VERSION }}'
         uses: 'actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d'
         with:
