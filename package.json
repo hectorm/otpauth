@@ -119,7 +119,7 @@
     "prettier": "~3.0.3",
     "rimraf": "~5.0.1",
     "rollup": "~3.29.2",
-    "rollup-plugin-dts": "~6.0.0",
+    "rollup-plugin-dts": "~6.0.2",
     "rollup-plugin-esbuild": "~5.0.0",
     "test": "~3.3.0",
     "typedoc": "~0.25.1",
