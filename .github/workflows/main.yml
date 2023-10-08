@@ -161,7 +161,7 @@ jobs:
           node-version: '${{ env.NODE_VERSION }}'
           cache: 'npm'
       - name: 'Install'
-        run: 'npm ci && npx playwright install-deps "${{ matrix.browser }}"'
+        run: 'npm ci && npx playwright install --with-deps "${{ matrix.browser }}"'
       - name: 'Build'
         run: 'npm run types && npm run build'
       - name: 'Test'
