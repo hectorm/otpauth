@@ -6,8 +6,20 @@ import playwright from "playwright";
 const require = module.createRequire(import.meta.url);
 
 (async () => {
+  /*
+   * It is possible to run the tests on a remote server by setting the environment variable "TEST_BROWSER_WS_ENDPOINT".
+   * E.g.:
+   *   The following command will start a server on port 3000:
+   *     $ docker run --rm -it -p 127.0.0.1:3000:3000/tcp --entrypoint /bin/sh mcr.microsoft.com/playwright:latest -euc 'npx -y playwright run-server --port 3000'
+   *   Then, the tests can be run with:
+   *     $ TEST_BROWSER_WS_ENDPOINT=ws://127.0.0.1:3000/ npm run test:browser
+   */
+
   const browserName = process.env.TEST_BROWSER;
-  const browser = await playwright[browserName].launch();
+  const browserWsEndpoint = process.env.TEST_BROWSER_WS_ENDPOINT;
+  const browser = browserWsEndpoint
+    ? await playwright[browserName].connect(browserWsEndpoint)
+    : await playwright[browserName].launch();
 
   try {
     const context = await browser.newContext();
@@ -41,8 +53,14 @@ const require = module.createRequire(import.meta.url);
       mocha.run((code) => setTimeout(() => exit(code), 10));
     });
 
-    await page.waitForTimeout(120000);
-    throw new Error("Timeout");
+    page
+      .waitForTimeout(120000)
+      .then(async () => {
+        console.error("Timeout");
+        await browser.close();
+        process.exit(1);
+      })
+      .catch(() => {});
   } catch (error) {
     console.error(error);
     await browser.close();
