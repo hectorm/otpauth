@@ -913,6 +913,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.4";
+const version = "9.1.5";
 
 export { HOTP, Secret, TOTP, URI, version };
