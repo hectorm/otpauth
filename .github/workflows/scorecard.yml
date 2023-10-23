@@ -20,7 +20,7 @@ jobs:
       security-events: 'write'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608'
+        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Perform security analysis'
         uses: 'ossf/scorecard-action@483ef80eb98fb506c348f7d62e28055e49fe2398'
         with:
