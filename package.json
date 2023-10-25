@@ -106,7 +106,7 @@
     "@babel/preset-env": "~7.23.2",
     "@rollup/plugin-babel": "~6.0.3",
     "@rollup/plugin-node-resolve": "~15.2.3",
-    "@rollup/plugin-replace": "~5.0.2",
+    "@rollup/plugin-replace": "~5.0.4",
     "@rollup/plugin-virtual": "~3.0.1",
     "@types/node": "~20.8.8",
     "chai": "~4.3.10",
