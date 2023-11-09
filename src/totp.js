@@ -11,6 +11,7 @@ class TOTP {
    * @type {{
    *   issuer: string,
    *   label: string,
+   *   issuerInLabel: boolean,
    *   algorithm: string,
    *   digits: number,
    *   period: number
@@ -21,6 +22,7 @@ class TOTP {
     return {
       issuer: "",
       label: "OTPAuth",
+      issuerInLabel: true,
       algorithm: "SHA1",
       digits: 6,
       period: 30,
@@ -33,6 +35,7 @@ class TOTP {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
+   * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
    * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
@@ -41,6 +44,7 @@ class TOTP {
   constructor({
     issuer = TOTP.defaults.issuer,
     label = TOTP.defaults.label,
+    issuerInLabel = TOTP.defaults.issuerInLabel,
     secret = new Secret(),
     algorithm = TOTP.defaults.algorithm,
     digits = TOTP.defaults.digits,
@@ -56,6 +60,11 @@ class TOTP {
      * @type {string}
      */
     this.label = label;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    this.issuerInLabel = issuerInLabel;
     /**
      * Secret key.
      * @type {Secret}
@@ -181,7 +190,9 @@ class TOTP {
       "otpauth://totp/" +
       `${
         this.issuer.length > 0
-          ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+          ? this.issuerInLabel
+            ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+            : `${e(this.label)}?issuer=${e(this.issuer)}&`
           : `${e(this.label)}?`
       }` +
       `secret=${e(this.secret.base32)}&` +

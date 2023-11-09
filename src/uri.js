@@ -105,13 +105,20 @@ class URI {
 
     // Label: required
     // Issuer: optional
+    if (typeof uriParams.issuer !== "undefined") {
+      config.issuer = uriParams.issuer;
+    }
     if (uriLabel.length === 2) {
       config.label = uriLabel[1];
-      config.issuer = uriLabel[0];
+      if (typeof config.issuer === "undefined" || config.issuer === "") {
+        config.issuer = uriLabel[0];
+      } else if (uriLabel[0] === "") {
+        config.issuerInLabel = false;
+      }
     } else {
       config.label = uriLabel[0];
-      if (typeof uriParams.issuer !== "undefined") {
-        config.issuer = uriParams.issuer;
+      if (typeof config.issuer !== "undefined" && config.issuer !== "") {
+        config.issuerInLabel = false;
       }
     }
 
