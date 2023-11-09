@@ -7,6 +7,13 @@ updates:
     schedule:
       interval: 'weekly'
     versioning-strategy: 'increase'
+    groups:
+      npm-production-dependencies:
+        dependency-type: "production"
+        update-types: ["minor", "patch"]
+      npm-development-dependencies:
+        dependency-type: "development"
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: 'github-actions'
     directory: '/'
