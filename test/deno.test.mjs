@@ -1,15 +1,18 @@
 /* global Deno */
 
-import * as bdd from "https://deno.land/std/testing/bdd.ts";
-import * as asserts from "https://deno.land/std/testing/asserts.ts";
+import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import {
+  assert,
+  assertEquals,
+  assertMatch,
+} from "https://deno.land/std/testing/asserts.ts";
 
-globalThis.describe = bdd.describe;
-globalThis.it = bdd.it;
-globalThis.assert = asserts.assert;
-globalThis.assertEquals = asserts.assertEquals;
-globalThis.assertMatch = asserts.assertMatch;
+globalThis.describe = describe;
+globalThis.it = it;
+globalThis.assert = assert;
+globalThis.assertEquals = assertEquals;
+globalThis.assertMatch = assertMatch;
 
-(async () => {
-  globalThis.OTPAuth = await import(Deno.env.get("TEST_LIBPATH"));
-  await import("./test.mjs");
-})();
+globalThis.OTPAuth = await import(Deno.env.get("TEST_LIBPATH"));
+
+await import("./test.mjs");

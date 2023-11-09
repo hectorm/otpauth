@@ -1,25 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>Mocha</title>
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline';">
-	<link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    img-src 'self' data:;
+    script-src 'self' 'unsafe-inline';
+    style-src 'self';"
+  />
+  <title>Mocha</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==" />
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
 </head>
 <body>
-	<div id="mocha"></div>
-	<script src="../node_modules/mocha/mocha.js"></script>
-	<script src="../node_modules/chai/chai.js"></script>
-	<script src="../dist/otpauth.umd.js"></script>
-	<script>
-		mocha.setup({ ui: "bdd", reporter: "html" });
-		globalThis.assert = chai.assert;
-		globalThis.assertEquals = chai.assert.deepEqual;
-		globalThis.assertMatch = chai.assert.match;
-	</script>
-	<script src="./test.mjs"></script>
-	<script>
-		mocha.run();
-	</script>
+  <div id="mocha"></div>
+  <script>
+    mocha.setup({ ui: "bdd", reporter: "html" });
+
+    globalThis.assert = chai.assert;
+    globalThis.assertEquals = chai.assert.deepEqual;
+    globalThis.assertMatch = chai.assert.match;
+  </script>
+  <script src="../dist/otpauth.umd.js"></script>
+  <script src="./test.mjs"></script>
+  <script>
+    mocha.run();
+  </script>
 </body>
 </html>

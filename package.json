@@ -64,11 +64,11 @@
     "docs:clean": "rimraf ./docs/",
     "docs:compile": "typedoc ./src/index.js --emit docs --readme none --theme default --out ./docs/",
     "docs": "run-s docs:clean docs:compile",
-    "test:node:esm:unmin": "TEST_LIBPATH=../dist/otpauth.node.mjs node ./test/node.test.mjs",
-    "test:node:esm:min": "TEST_LIBPATH=../dist/otpauth.node.min.mjs node ./test/node.test.mjs",
+    "test:node:esm:unmin": "TEST_LIBPATH=../dist/otpauth.node.mjs node --test ./test/node.test.mjs",
+    "test:node:esm:min": "TEST_LIBPATH=../dist/otpauth.node.min.mjs node --test ./test/node.test.mjs",
     "test:node:esm": "run-s test:node:esm:*",
-    "test:node:cjs:unmin": "TEST_LIBPATH=../dist/otpauth.node.cjs node ./test/node.test.mjs",
-    "test:node:cjs:min": "TEST_LIBPATH=../dist/otpauth.node.min.cjs node ./test/node.test.mjs",
+    "test:node:cjs:unmin": "TEST_LIBPATH=../dist/otpauth.node.cjs node --test ./test/node.test.mjs",
+    "test:node:cjs:min": "TEST_LIBPATH=../dist/otpauth.node.min.cjs node --test ./test/node.test.mjs",
     "test:node:cjs": "run-s test:node:cjs:*",
     "test:node": "run-s test:node:*",
     "test:deno:esm:unmin": "TEST_LIBPATH=../dist/otpauth.esm.js deno test --no-npm --allow-env=TEST_LIBPATH --allow-read=./test/,./dist/ --allow-net=deno.land ./test/deno.test.mjs",
@@ -121,7 +121,6 @@
     "rollup": "~4.3.0",
     "rollup-plugin-dts": "~6.1.0",
     "rollup-plugin-esbuild": "~6.1.0",
-    "test": "~3.3.0",
     "typedoc": "~0.25.3",
     "typescript": "~5.2.2"
   }
