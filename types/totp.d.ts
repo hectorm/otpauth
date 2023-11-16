@@ -8,6 +8,7 @@ export class TOTP {
      * @type {{
      *   issuer: string,
      *   label: string,
+     *   issuerInLabel: boolean,
      *   algorithm: string,
      *   digits: number,
      *   period: number
@@ -17,6 +18,7 @@ export class TOTP {
     static get defaults(): {
         issuer: string;
         label: string;
+        issuerInLabel: boolean;
         algorithm: string;
         digits: number;
         period: number;
@@ -65,14 +67,16 @@ export class TOTP {
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
+     * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
      * @param {Secret|string} [config.secret=Secret] Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      */
-    constructor({ issuer, label, secret, algorithm, digits, period, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
+        issuerInLabel?: boolean | undefined;
         secret?: string | Secret | undefined;
         algorithm?: string | undefined;
         digits?: number | undefined;
@@ -88,6 +92,11 @@ export class TOTP {
      * @type {string}
      */
     label: string;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    issuerInLabel: boolean;
     /**
      * Secret key.
      * @type {Secret}

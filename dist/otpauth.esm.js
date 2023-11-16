@@ -1118,6 +1118,7 @@ class HOTP {
    * @type {{
    *   issuer: string,
    *   label: string,
+   *   issuerInLabel: boolean,
    *   algorithm: string,
    *   digits: number,
    *   counter: number
@@ -1128,6 +1129,7 @@ class HOTP {
     return {
       issuer: "",
       label: "OTPAuth",
+      issuerInLabel: true,
       algorithm: "SHA1",
       digits: 6,
       counter: 0,
@@ -1140,6 +1142,7 @@ class HOTP {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
+   * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
    * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
@@ -1148,6 +1151,7 @@ class HOTP {
   constructor({
     issuer = HOTP.defaults.issuer,
     label = HOTP.defaults.label,
+    issuerInLabel = HOTP.defaults.issuerInLabel,
     secret = new Secret(),
     algorithm = HOTP.defaults.algorithm,
     digits = HOTP.defaults.digits,
@@ -1163,6 +1167,11 @@ class HOTP {
      * @type {string}
      */
     this.label = label;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    this.issuerInLabel = issuerInLabel;
     /**
      * Secret key.
      * @type {Secret}
@@ -1288,7 +1297,7 @@ class HOTP {
    */
   toString() {
     const e = encodeURIComponent;
-    return "otpauth://hotp/" + `${this.issuer.length > 0 ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?`}` + `secret=${e(this.secret.base32)}&` + `algorithm=${e(this.algorithm)}&` + `digits=${e(this.digits)}&` + `counter=${e(this.counter)}`;
+    return "otpauth://hotp/" + `${this.issuer.length > 0 ? this.issuerInLabel ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?`}` + `secret=${e(this.secret.base32)}&` + `algorithm=${e(this.algorithm)}&` + `digits=${e(this.digits)}&` + `counter=${e(this.counter)}`;
   }
 }
 
@@ -1302,6 +1311,7 @@ class TOTP {
    * @type {{
    *   issuer: string,
    *   label: string,
+   *   issuerInLabel: boolean,
    *   algorithm: string,
    *   digits: number,
    *   period: number
@@ -1312,6 +1322,7 @@ class TOTP {
     return {
       issuer: "",
       label: "OTPAuth",
+      issuerInLabel: true,
       algorithm: "SHA1",
       digits: 6,
       period: 30,
@@ -1324,6 +1335,7 @@ class TOTP {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
+   * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
    * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
@@ -1332,6 +1344,7 @@ class TOTP {
   constructor({
     issuer = TOTP.defaults.issuer,
     label = TOTP.defaults.label,
+    issuerInLabel = TOTP.defaults.issuerInLabel,
     secret = new Secret(),
     algorithm = TOTP.defaults.algorithm,
     digits = TOTP.defaults.digits,
@@ -1347,6 +1360,11 @@ class TOTP {
      * @type {string}
      */
     this.label = label;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    this.issuerInLabel = issuerInLabel;
     /**
      * Secret key.
      * @type {Secret}
@@ -1473,7 +1491,7 @@ class TOTP {
    */
   toString() {
     const e = encodeURIComponent;
-    return "otpauth://totp/" + `${this.issuer.length > 0 ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?`}` + `secret=${e(this.secret.base32)}&` + `algorithm=${e(this.algorithm)}&` + `digits=${e(this.digits)}&` + `period=${e(this.period)}`;
+    return "otpauth://totp/" + `${this.issuer.length > 0 ? this.issuerInLabel ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?issuer=${e(this.issuer)}&` : `${e(this.label)}?`}` + `secret=${e(this.secret.base32)}&` + `algorithm=${e(this.algorithm)}&` + `digits=${e(this.digits)}&` + `period=${e(this.period)}`;
   }
 }
 
@@ -1571,13 +1589,20 @@ class URI {
 
     // Label: required
     // Issuer: optional
+    if (typeof uriParams.issuer !== "undefined") {
+      config.issuer = uriParams.issuer;
+    }
     if (uriLabel.length === 2) {
       config.label = uriLabel[1];
-      config.issuer = uriLabel[0];
+      if (typeof config.issuer === "undefined" || config.issuer === "") {
+        config.issuer = uriLabel[0];
+      } else if (uriLabel[0] === "") {
+        config.issuerInLabel = false;
+      }
     } else {
       config.label = uriLabel[0];
-      if (typeof uriParams.issuer !== "undefined") {
-        config.issuer = uriParams.issuer;
+      if (typeof config.issuer !== "undefined" && config.issuer !== "") {
+        config.issuerInLabel = false;
       }
     }
 
@@ -1625,6 +1650,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.1.5";
+const version = "9.2.0";
 
 export { HOTP, Secret, TOTP, URI, version };

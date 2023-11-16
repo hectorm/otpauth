@@ -73,6 +73,7 @@ declare class HOTP {
      * @type {{
      *   issuer: string,
      *   label: string,
+     *   issuerInLabel: boolean,
      *   algorithm: string,
      *   digits: number,
      *   counter: number
@@ -82,6 +83,7 @@ declare class HOTP {
     static get defaults(): {
         issuer: string;
         label: string;
+        issuerInLabel: boolean;
         algorithm: string;
         digits: number;
         counter: number;
@@ -126,14 +128,16 @@ declare class HOTP {
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
+     * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
      * @param {Secret|string} [config.secret=Secret] Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Initial counter value.
      */
-    constructor({ issuer, label, secret, algorithm, digits, counter, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, counter, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
+        issuerInLabel?: boolean | undefined;
         secret?: string | Secret | undefined;
         algorithm?: string | undefined;
         digits?: number | undefined;
@@ -149,6 +153,11 @@ declare class HOTP {
      * @type {string}
      */
     label: string;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    issuerInLabel: boolean;
     /**
      * Secret key.
      * @type {Secret}
@@ -208,6 +217,7 @@ declare class TOTP {
      * @type {{
      *   issuer: string,
      *   label: string,
+     *   issuerInLabel: boolean,
      *   algorithm: string,
      *   digits: number,
      *   period: number
@@ -217,6 +227,7 @@ declare class TOTP {
     static get defaults(): {
         issuer: string;
         label: string;
+        issuerInLabel: boolean;
         algorithm: string;
         digits: number;
         period: number;
@@ -265,14 +276,16 @@ declare class TOTP {
      * @param {Object} [config] Configuration options.
      * @param {string} [config.issuer=''] Account provider.
      * @param {string} [config.label='OTPAuth'] Account label.
+     * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
      * @param {Secret|string} [config.secret=Secret] Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      */
-    constructor({ issuer, label, secret, algorithm, digits, period, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
+        issuerInLabel?: boolean | undefined;
         secret?: string | Secret | undefined;
         algorithm?: string | undefined;
         digits?: number | undefined;
@@ -288,6 +301,11 @@ declare class TOTP {
      * @type {string}
      */
     label: string;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    issuerInLabel: boolean;
     /**
      * Secret key.
      * @type {Secret}
