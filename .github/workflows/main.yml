@@ -16,7 +16,7 @@ jobs:
 
   lint:
     name: 'Lint'
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     env:
@@ -37,7 +37,7 @@ jobs:
   docs:
     name: 'Docs'
     needs: ['lint']
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     env:
@@ -58,7 +58,7 @@ jobs:
   build-node:
     name: 'Build and test on Node.js ${{ matrix.node_version }}'
     needs: ['lint']
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     strategy:
@@ -83,7 +83,7 @@ jobs:
   build-deno:
     name: 'Build and test on Deno ${{ matrix.deno_version }}'
     needs: ['lint']
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     strategy:
@@ -114,7 +114,7 @@ jobs:
   build-bun:
     name: 'Build and test on Bun ${{ matrix.bun_version }}'
     needs: ['lint']
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     strategy:
@@ -143,7 +143,7 @@ jobs:
   build-browser:
     name: 'Build and test on ${{ matrix.browser }} browser'
     needs: ['lint']
-    runs-on: 'ubuntu-22.04'
+    runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
     strategy:
