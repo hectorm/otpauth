@@ -13,6 +13,7 @@ class HOTP {
    * @type {{
    *   issuer: string,
    *   label: string,
+   *   issuerInLabel: boolean,
    *   algorithm: string,
    *   digits: number,
    *   counter: number
@@ -23,6 +24,7 @@ class HOTP {
     return {
       issuer: "",
       label: "OTPAuth",
+      issuerInLabel: true,
       algorithm: "SHA1",
       digits: 6,
       counter: 0,
@@ -35,6 +37,7 @@ class HOTP {
    * @param {Object} [config] Configuration options.
    * @param {string} [config.issuer=''] Account provider.
    * @param {string} [config.label='OTPAuth'] Account label.
+   * @param {boolean} [config.issuerInLabel=true] Include issuer prefix in label.
    * @param {Secret|string} [config.secret=Secret] Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
@@ -43,6 +46,7 @@ class HOTP {
   constructor({
     issuer = HOTP.defaults.issuer,
     label = HOTP.defaults.label,
+    issuerInLabel = HOTP.defaults.issuerInLabel,
     secret = new Secret(),
     algorithm = HOTP.defaults.algorithm,
     digits = HOTP.defaults.digits,
@@ -58,6 +62,11 @@ class HOTP {
      * @type {string}
      */
     this.label = label;
+    /**
+     * Include issuer prefix in label.
+     * @type {boolean}
+     */
+    this.issuerInLabel = issuerInLabel;
     /**
      * Secret key.
      * @type {Secret}
@@ -194,7 +203,9 @@ class HOTP {
       "otpauth://hotp/" +
       `${
         this.issuer.length > 0
-          ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+          ? this.issuerInLabel
+            ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+            : `${e(this.label)}?issuer=${e(this.issuer)}&`
           : `${e(this.label)}?`
       }` +
       `secret=${e(this.secret.base32)}&` +
