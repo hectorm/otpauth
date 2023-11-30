@@ -36,13 +36,16 @@
   "browser": "./dist/otpauth.esm.js",
   "exports": {
     ".": {
-      "types": "./dist/otpauth.d.ts",
       "bun": "./dist/otpauth.esm.js",
       "deno": "./dist/otpauth.esm.js",
       "node": {
         "import": "./dist/otpauth.node.mjs",
-        "require": "./dist/otpauth.node.cjs"
+        "require": {
+          "types": "./dist/otpauth.d.cts",
+          "default": "./dist/otpauth.node.cjs"
+        }
       },
+      "types": "./dist/otpauth.d.ts",
       "default": "./dist/otpauth.esm.js"
     },
     "./dist/*": {

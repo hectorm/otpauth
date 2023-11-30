@@ -123,5 +123,10 @@ export default async () => {
       output: [{ file: "./dist/otpauth.d.ts", format: "es" }],
       plugins: [dts()],
     },
+    {
+      input: "./types/index.d.ts",
+      output: [{ file: "./dist/otpauth.d.cts", format: "cjs" }],
+      plugins: [dts()],
+    },
   ];
 };
