@@ -1656,7 +1656,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.2.0";
+  const version = "9.2.1";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
