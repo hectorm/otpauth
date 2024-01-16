@@ -1,5 +1,4 @@
-/* global mocha, chai, exit */
-
+import fs from "node:fs";
 import module from "node:module";
 import playwright from "playwright";
 
@@ -34,26 +33,42 @@ try {
   await page.addScriptTag({
     path: require.resolve("mocha/mocha.js"),
   });
+
+  const chaiJsUri = `data:application/javascript;base64,${fs
+    .readFileSync(require.resolve("chai/chai.js"))
+    .toString("base64")}`;
+
+  const testJsUri = `data:application/javascript;base64,${fs
+    .readFileSync(require.resolve("./test.mjs"))
+    .toString("base64")}`;
+
   await page.addScriptTag({
-    path: require.resolve("chai/chai.js"),
-  });
-
-  await page.evaluate(() => {
-    mocha.setup({ ui: "bdd", reporter: "tap" });
-
-    globalThis.assert = chai.assert;
-    globalThis.assertEquals = chai.assert.deepEqual;
-    globalThis.assertMatch = chai.assert.match;
+    type: "importmap",
+    content: JSON.stringify({
+      imports: {
+        chai: chaiJsUri,
+        test: testJsUri,
+      },
+    }),
   });
 
   await page.addScriptTag({
     path: require.resolve(process.env.TEST_LIBPATH),
   });
 
-  await page.addScriptTag({ path: require.resolve("./test.mjs") });
+  await page.addScriptTag({
+    type: "module",
+    content: `
+      import { assert } from "chai";
 
-  await page.evaluate(() => {
-    mocha.run((code) => setTimeout(() => exit(code), 10));
+      globalThis.assert = assert;
+      globalThis.assertEquals = assert.deepEqual;
+      globalThis.assertMatch = assert.match;
+
+      mocha.setup({ ui: "bdd", reporter: "tap" });
+      await import("test");
+      mocha.run((code) => setTimeout(() => exit(code), 10));
+    `,
   });
 
   page
