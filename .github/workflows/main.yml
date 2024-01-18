@@ -14,179 +14,147 @@ permissions: {}
 
 jobs:
 
-  lint:
-    name: 'Lint'
-    runs-on: 'ubuntu-latest'
+  build:
+    name: 'Build on ${{ matrix.os }}'
+    runs-on: '${{ matrix.os }}'
     permissions:
       contents: 'read'
-    env:
-      NODE_VERSION: 'lts/*'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
+      - name: 'Use Node.js lts/*'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
         with:
-          node-version: '${{ env.NODE_VERSION }}'
+          node-version: 'lts/*'
           cache: 'npm'
-      - name: 'Install'
+      - name: 'Install dependencies'
         run: 'npm ci'
-      - name: 'Lint'
+      - name: 'Run lint task'
         run: 'npm run lint'
-
-  docs:
-    name: 'Docs'
-    needs: ['lint']
-    runs-on: 'ubuntu-latest'
-    permissions:
-      contents: 'read'
-    env:
-      NODE_VERSION: 'lts/*'
-    steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
-        with:
-          node-version: '${{ env.NODE_VERSION }}'
-          cache: 'npm'
-      - name: 'Install'
-        run: 'npm ci'
-      - name: 'Docs'
+      - name: 'Run types task'
+        run: 'npm run types'
+      - name: 'Run build task'
+        run: 'npm run build'
+      - name: 'Run docs task'
         run: 'npm run docs'
 
-  build-node:
-    name: 'Build and test on Node.js ${{ matrix.node_version }}'
-    needs: ['lint']
-    runs-on: 'ubuntu-latest'
+  test-node:
+    name: 'Test on Node.js ${{ matrix.node_version }} on ${{ matrix.os }}'
+    needs: ['build']
+    runs-on: '${{ matrix.os }}'
     permissions:
       contents: 'read'
     strategy:
       fail-fast: false
       matrix:
         node_version: ['lts/-1', 'lts/*', 'current']
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
       - name: 'Test'
         run: 'npm run test:node'
 
-  build-deno:
-    name: 'Build and test on Deno ${{ matrix.deno_version }}'
-    needs: ['lint']
-    runs-on: 'ubuntu-latest'
+  test-deno:
+    name: 'Test on Deno ${{ matrix.deno_version }} on ${{ matrix.os }}'
+    needs: ['build']
+    runs-on: '${{ matrix.os }}'
     permissions:
       contents: 'read'
     strategy:
       fail-fast: false
       matrix:
         deno_version: ['vx.x.x']
-    env:
-      NODE_VERSION: 'lts/*'
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
-        with:
-          node-version: '${{ env.NODE_VERSION }}'
-          cache: 'npm'
       - name: 'Use Deno ${{ matrix.deno_version }}'
         uses: 'denoland/setup-deno@0df5d9c641efdff149993c321fc27c11c5df8623'
         with:
           deno-version: '${{ matrix.deno_version }}'
+      - name: 'Use Node.js lts/*'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
       - name: 'Install'
         run: 'npm ci'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
       - name: 'Test'
         run: 'npm run test:deno'
 
-  build-bun:
-    name: 'Build and test on Bun ${{ matrix.bun_version }}'
-    needs: ['lint']
-    runs-on: 'ubuntu-latest'
+  test-bun:
+    name: 'Test on Bun ${{ matrix.bun_version }} on ${{ matrix.os }}'
+    needs: ['build']
+    runs-on: '${{ matrix.os }}'
     permissions:
       contents: 'read'
     strategy:
       fail-fast: false
       matrix:
         bun_version: ['latest']
-    env:
-      NODE_VERSION: 'lts/*'
+        os: ['ubuntu-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
-        with:
-          node-version: '${{ env.NODE_VERSION }}'
-          cache: 'npm'
       - name: 'Use Bun ${{ matrix.bun_version }}'
-        run: 'npm install -g bun@${{ matrix.bun_version }}'
+        uses: 'oven-sh/setup-bun@a1800f471a0bc25cddac36bb13e6f436ddf341d7'
+        with:
+          bun-version: '${{ matrix.bun_version }}'
       - name: 'Install'
-        run: 'npm ci'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
+        run: 'bun install --frozen-lockfile'
       - name: 'Test'
-        run: 'npm run test:bun'
+        run: 'bun run test:bun'
 
-  build-browser:
-    name: 'Build and test on ${{ matrix.browser }} browser'
-    needs: ['lint']
-    runs-on: 'ubuntu-latest'
+  test-browser:
+    name: 'Test on ${{ matrix.browser }} browser on ${{ matrix.os }}'
+    needs: ['build']
+    runs-on: '${{ matrix.os }}'
     permissions:
       contents: 'read'
     strategy:
       fail-fast: false
       matrix:
         browser: ['chromium', 'firefox', 'webkit']
-    env:
-      NODE_VERSION: 'lts/*'
+        os: ['ubuntu-latest']
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
+      - name: 'Use Node.js lts/*'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
         with:
-          node-version: '${{ env.NODE_VERSION }}'
+          node-version: 'lts/*'
           cache: 'npm'
       - name: 'Install'
         run: 'npm ci && npx playwright install --with-deps "${{ matrix.browser }}"'
-      - name: 'Build'
-        run: 'npm run types && npm run build'
       - name: 'Test'
         run: 'npm run test:browser:"${{ matrix.browser }}"'
 
   publish-npm:
     name: 'Publish npm package'
     if: "startsWith(github.ref, 'refs/tags/v')"
-    needs:
-      - 'build-node'
-      - 'build-deno'
-      - 'build-bun'
-      - 'build-browser'
+    needs: ['test-node', 'test-deno', 'test-bun', 'test-browser']
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
-    env:
-      NODE_VERSION: 'lts/*'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
-      - name: 'Use Node.js ${{ env.NODE_VERSION }}'
-        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
+      - name: 'Use Node.js lts/*'
+        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
         with:
-          node-version: '${{ env.NODE_VERSION }}'
+          node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
       - name: 'Publish package'
         env:
@@ -197,19 +165,15 @@ jobs:
             npm publish
           fi
 
-  release-github:
-    name: 'Create GitHub release'
+  publish-github-release:
+    name: 'Publish GitHub release'
     if: "startsWith(github.ref, 'refs/tags/v')"
-    needs:
-      - 'build-node'
-      - 'build-deno'
-      - 'build-bun'
-      - 'build-browser'
+    needs: ['test-node', 'test-deno', 'test-bun', 'test-browser']
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'write'
     steps:
-      - name: 'Create release'
+      - name: 'Publish'
         env:
           GITHUB_PAT: '${{ secrets.GITHUB_TOKEN }}'
         run: |
