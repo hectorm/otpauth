@@ -27,7 +27,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Node.js lts/*'
-        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -61,7 +61,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Node.js ${{ matrix.node_version }}'
-        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
@@ -89,7 +89,7 @@ jobs:
         with:
           deno-version: '${{ matrix.deno_version }}'
       - name: 'Use Node.js lts/*'
-        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -136,7 +136,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Node.js lts/*'
-        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -157,7 +157,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Node.js lts/*'
-        uses: 'actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65'
+        uses: 'actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8'
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
