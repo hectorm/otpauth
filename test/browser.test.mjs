@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import module from "node:module";
+import process from "node:process";
 import playwright from "playwright";
 
 const require = module.createRequire(import.meta.url);
@@ -13,13 +14,15 @@ const require = module.createRequire(import.meta.url);
  *     $ TEST_BROWSER_WS_ENDPOINT=ws://127.0.0.1:3000/ npm run test:browser
  */
 
-const browserName = process.env.TEST_BROWSER;
+const browserName = process.argv[2];
 const browserWsEndpoint = process.env.TEST_BROWSER_WS_ENDPOINT;
 const browser = browserWsEndpoint
   ? await playwright[browserName].connect(browserWsEndpoint)
   : await playwright[browserName].launch();
 
 try {
+  globalThis.OTPAuthPath ??= "../dist/otpauth.umd.js";
+
   const context = await browser.newContext();
   const page = await context.newPage();
 
@@ -53,7 +56,7 @@ try {
   });
 
   await page.addScriptTag({
-    path: require.resolve(process.env.TEST_LIBPATH),
+    path: require.resolve(globalThis.OTPAuthPath),
   });
 
   await page.addScriptTag({

@@ -1,5 +1,3 @@
-/* global Deno */
-
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
 import {
   assert,
@@ -13,6 +11,6 @@ globalThis.assert = assert;
 globalThis.assertEquals = assertEquals;
 globalThis.assertMatch = assertMatch;
 
-globalThis.OTPAuth = await import(Deno.env.get("TEST_LIBPATH"));
+globalThis.OTPAuth ??= await import("../dist/otpauth.esm.js");
 
 await import("./test.mjs");

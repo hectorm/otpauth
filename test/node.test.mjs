@@ -7,6 +7,6 @@ globalThis.assert = assert;
 globalThis.assertEquals = assert.deepStrictEqual;
 globalThis.assertMatch = assert.match;
 
-globalThis.OTPAuth = await import(process.env.TEST_LIBPATH);
+globalThis.OTPAuth ??= await import("../dist/otpauth.node.mjs");
 
 await import("./test.mjs");
