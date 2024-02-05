@@ -113,7 +113,7 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
       - name: 'Use Bun ${{ matrix.bun_version }}'
-        uses: 'oven-sh/setup-bun@a1800f471a0bc25cddac36bb13e6f436ddf341d7'
+        uses: 'oven-sh/setup-bun@8642d99a51e2bb0e2548de7b1910bc95e88b932a'
         with:
           bun-version: '${{ matrix.bun_version }}'
       - name: 'Install'
