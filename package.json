@@ -114,7 +114,7 @@
     "@rollup/plugin-node-resolve": "~15.2.3",
     "@rollup/plugin-replace": "~5.0.5",
     "@rollup/plugin-virtual": "~3.0.2",
-    "@types/node": "~20.11.24",
+    "@types/node": "~20.11.25",
     "chai": "~5.1.0",
     "eslint": "~8.57.0",
     "eslint-config-prettier": "~9.1.0",
@@ -124,10 +124,10 @@
     "playwright": "~1.42.1",
     "prettier": "~3.2.5",
     "rimraf": "~5.0.5",
-    "rollup": "~4.12.0",
+    "rollup": "~4.12.1",
     "rollup-plugin-dts": "~6.1.0",
     "rollup-plugin-esbuild": "~6.1.1",
-    "typedoc": "~0.25.10",
-    "typescript": "~5.3.3"
+    "typedoc": "~0.25.12",
+    "typescript": "~5.4.2"
   }
 }
