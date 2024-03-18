@@ -25,7 +25,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Node.js lts/*'
         uses: 'actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8'
         with:
@@ -59,7 +59,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Node.js ${{ matrix.node_version }}'
         uses: 'actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8'
         with:
@@ -83,7 +83,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Deno ${{ matrix.deno_version }}'
         uses: 'denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba'
         with:
@@ -111,7 +111,7 @@ jobs:
         os: ['ubuntu-latest', 'macos-latest']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Bun ${{ matrix.bun_version }}'
         uses: 'oven-sh/setup-bun@d3603274aca5625baad52ec06108517a089cdd00'
         with:
@@ -134,7 +134,7 @@ jobs:
         os: ['ubuntu-latest']
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Node.js lts/*'
         uses: 'actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8'
         with:
@@ -155,7 +155,7 @@ jobs:
       id-token: 'write'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11'
+        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
       - name: 'Use Node.js lts/*'
         uses: 'actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8'
         with:
