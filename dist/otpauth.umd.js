@@ -762,7 +762,6 @@
       });
       try {
         // @ts-ignore
-        // eslint-disable-next-line no-undef
         if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
       } finally {
         // @ts-ignore
@@ -1656,7 +1655,7 @@
    * Library version.
    * @type {string}
    */
-  const version = "9.2.2";
+  const version = "9.2.3";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
