@@ -1,34 +1,33 @@
-name: 'Scorecard security analysis'
+name: "Scorecard security analysis"
 
 on:
   push:
-    branches: ['master']
+    branches: ["master"]
   schedule:
-    - cron: '25 10 * * 3'
+    - cron: "25 10 * * 3"
   workflow_dispatch:
 
 permissions: {}
 
 jobs:
-
   analyze:
-    name: 'Scorecard security analysis'
-    runs-on: 'ubuntu-latest'
+    name: "Scorecard security analysis"
+    runs-on: "ubuntu-latest"
     permissions:
-      actions: 'read'
-      contents: 'read'
-      security-events: 'write'
+      actions: "read"
+      contents: "read"
+      security-events: "write"
     steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633'
-      - name: 'Perform security analysis'
-        uses: 'ossf/scorecard-action@0864cf19026789058feabb7e87baa5f140aac736'
+      - name: "Checkout"
+        uses: "actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633"
+      - name: "Perform security analysis"
+        uses: "ossf/scorecard-action@0864cf19026789058feabb7e87baa5f140aac736"
         with:
-          results_file: './results.sarif'
-          results_format: 'sarif'
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          results_file: "./results.sarif"
+          results_format: "sarif"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           publish_results: false
-      - name: 'Upload SARIF file'
-        uses: 'github/codeql-action/upload-sarif@cdcdbb579706841c47f7063dda365e292e5cad7a'
+      - name: "Upload SARIF file"
+        uses: "github/codeql-action/upload-sarif@cdcdbb579706841c47f7063dda365e292e5cad7a"
         with:
-          sarif_file: './results.sarif'
+          sarif_file: "./results.sarif"
