@@ -33,13 +33,13 @@ jobs:
           cache: 'npm'
       - name: 'Install dependencies'
         run: 'npm ci'
-      - name: 'Run lint task'
+      - name: 'Lint'
         run: 'npm run lint'
-      - name: 'Run types task'
+      - name: 'Build types'
         run: 'npm run types'
-      - name: 'Run build task'
+      - name: 'Build lib'
         run: 'npm run build'
-      - name: 'Run docs task'
+      - name: 'Build docs'
         run: 'npm run docs'
       - name: 'Verify that the build is reproducible'
         if: "startsWith(github.ref, 'refs/tags/v')"
@@ -65,7 +65,7 @@ jobs:
         with:
           node-version: '${{ matrix.node_version }}'
           cache: 'npm'
-      - name: 'Install'
+      - name: 'Install dependencies'
         run: 'npm ci'
       - name: 'Test'
         run: 'npm run test:node'
@@ -93,7 +93,7 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
-      - name: 'Install'
+      - name: 'Install dependencies'
         run: 'npm ci'
       - name: 'Test'
         run: 'npm run test:deno'
@@ -116,7 +116,7 @@ jobs:
         uses: 'oven-sh/setup-bun@8f24390df009a496891208e5e36b8a1de1f45135'
         with:
           bun-version: '${{ matrix.bun_version }}'
-      - name: 'Install'
+      - name: 'Install dependencies'
         run: 'bun install --frozen-lockfile'
       - name: 'Test'
         run: 'bun run test:bun'
@@ -140,7 +140,7 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
-      - name: 'Install'
+      - name: 'Install dependencies'
         run: 'npm ci && npx playwright install --with-deps "${{ matrix.browser }}"'
       - name: 'Test'
         run: 'npm run test:browser:"${{ matrix.browser }}"'
