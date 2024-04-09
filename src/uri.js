@@ -47,7 +47,8 @@ class URI {
 
     try {
       uriGroups = uri.match(OTPURI_REGEX);
-    } catch (error) {
+      // eslint-disable-next-line no-unused-vars
+    } catch (_) {
       /* Handled below */
     }
 

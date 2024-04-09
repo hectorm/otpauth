@@ -113,6 +113,7 @@
   "devDependencies": {
     "@babel/core": "~7.24.4",
     "@babel/preset-env": "~7.24.4",
+    "@eslint/js": "~9.0.0",
     "@rollup/plugin-babel": "~6.0.4",
     "@rollup/plugin-node-resolve": "~15.2.3",
     "@rollup/plugin-replace": "~5.0.5",
