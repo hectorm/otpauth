@@ -14,7 +14,6 @@ const globalScope = (() => {
     });
     try {
       // @ts-ignore
-      // eslint-disable-next-line no-undef
       if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
     } finally {
       // @ts-ignore

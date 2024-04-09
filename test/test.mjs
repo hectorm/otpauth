@@ -1195,7 +1195,6 @@ describe("Secret", () => {
     assert(output.buffer instanceof ArrayBuffer);
     assertEquals(output.buffer.byteLength, 4096);
     assert(typeof output.latin1 === "string");
-    // eslint-disable-next-line no-control-regex
     assertMatch(output.latin1, /^[\u0000-\u00FF]{4096}$/);
     assert(typeof output.utf8 === "string");
     assert(typeof output.base32 === "string");
@@ -1210,7 +1209,6 @@ describe("Secret", () => {
     assert(output.buffer instanceof ArrayBuffer);
     assertEquals(output.buffer.byteLength, 20);
     assert(typeof output.latin1 === "string");
-    // eslint-disable-next-line no-control-regex
     assertMatch(output.latin1, /^[\u0000-\u00FF]{20}$/);
     assert(typeof output.utf8 === "string");
     assert(typeof output.base32 === "string");
