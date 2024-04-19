@@ -158,17 +158,24 @@ class HOTP {
 
     let delta = null;
 
-    for (let i = counter - window; i <= counter + window; ++i) {
+    const check = (/** @type {number} */ i) => {
       const generatedToken = HOTP.generate({
         secret,
         algorithm,
         digits,
         counter: i,
       });
-
       if (timingSafeEqual(token, generatedToken)) {
         delta = i - counter;
       }
+    };
+
+    check(counter);
+    for (let i = 1; i <= window && delta === null; ++i) {
+      check(counter - i);
+      if (delta !== null) break;
+      check(counter + i);
+      if (delta !== null) break;
     }
 
     return delta;
