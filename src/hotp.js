@@ -171,7 +171,7 @@ class HOTP {
     };
 
     check(counter);
-    for (let i = 0; i <= window && delta === null; ++i) {
+    for (let i = 1; i <= window && delta === null; ++i) {
       check(counter - i);
       if (delta !== null) break;
       check(counter + i);
@@ -208,12 +208,11 @@ class HOTP {
     const e = encodeURIComponent;
     return (
       "otpauth://hotp/" +
-      `${
-        this.issuer.length > 0
-          ? this.issuerInLabel
-            ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
-            : `${e(this.label)}?issuer=${e(this.issuer)}&`
-          : `${e(this.label)}?`
+      `${this.issuer.length > 0
+        ? this.issuerInLabel
+          ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+          : `${e(this.label)}?issuer=${e(this.issuer)}&`
+        : `${e(this.label)}?`
       }` +
       `secret=${e(this.secret.base32)}&` +
       `algorithm=${e(this.algorithm)}&` +
