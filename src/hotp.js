@@ -208,11 +208,12 @@ class HOTP {
     const e = encodeURIComponent;
     return (
       "otpauth://hotp/" +
-      `${this.issuer.length > 0
-        ? this.issuerInLabel
-          ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
-          : `${e(this.label)}?issuer=${e(this.issuer)}&`
-        : `${e(this.label)}?`
+      `${
+        this.issuer.length > 0
+          ? this.issuerInLabel
+            ? `${e(this.issuer)}:${e(this.label)}?issuer=${e(this.issuer)}&`
+            : `${e(this.label)}?issuer=${e(this.issuer)}&`
+          : `${e(this.label)}?`
       }` +
       `secret=${e(this.secret.base32)}&` +
       `algorithm=${e(this.algorithm)}&` +
