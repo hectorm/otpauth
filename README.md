@@ -56,12 +56,11 @@ var QRCodeSVG;
 // Normally we would fetch the uri from the local APP database. For this example we just use the uri created during the registration part above
 totp = OTPAuth.URI.parse(uri);
 let token = totp.generate();
-console.log("Sample Token: "+token)
+console.log("Sample Token: "+token);
 
 
 /* Validating the token on the server side */
 
-// Validate a token (returns the token delta or null if it is not found in the search window, in which case it should be considered invalid).
 // Normally the user would have to type the token into an online form, and the server would load the parameters to create the totp object from the database. 
 // For this example we just use the token and object created in the APP side example above.
 // If you want to give your users more time to type in the token, increase the window parameter to 2 or 3. But remember that this makes it easier
@@ -73,6 +72,7 @@ console.log("Sample Token: "+token)
 // on when exactly the script is run.
 setTimeout(CheckToken, 10000, token); 
 function CheckToken(token) {
+    // Validate a token. Returns the token delta or null if it is not found in the search window, in which case it should be considered invalid.
     let delta = totp.validate({ token, window: 1 });
 
     if (delta === null) {
