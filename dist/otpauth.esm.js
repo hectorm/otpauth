@@ -756,6 +756,7 @@ const globalScope = (() => {
     });
     try {
       // @ts-ignore
+      // eslint-disable-next-line no-undef
       if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
     } finally {
       // @ts-ignore
@@ -1253,7 +1254,7 @@ class HOTP {
     // Return early if the token length does not match the digit number.
     if (token.length !== digits) return null;
     let delta = null;
-    for (let i = counter - window; i <= counter + window; ++i) {
+    const check = ( /** @type {number} */i) => {
       const generatedToken = HOTP.generate({
         secret,
         algorithm,
@@ -1263,6 +1264,13 @@ class HOTP {
       if (timingSafeEqual(token, generatedToken)) {
         delta = i - counter;
       }
+    };
+    check(counter);
+    for (let i = 1; i <= window && delta === null; ++i) {
+      check(counter - i);
+      if (delta !== null) break;
+      check(counter + i);
+      if (delta !== null) break;
     }
     return delta;
   }
@@ -1538,7 +1546,8 @@ class URI {
     let uriGroups;
     try {
       uriGroups = uri.match(OTPURI_REGEX);
-    } catch (error) {
+      // eslint-disable-next-line no-unused-vars
+    } catch (_) {
       /* Handled below */
     }
     if (!Array.isArray(uriGroups)) {
@@ -1649,6 +1658,6 @@ class URI {
  * Library version.
  * @type {string}
  */
-const version = "9.2.3";
+const version = "9.2.4";
 
 export { HOTP, Secret, TOTP, URI, version };
