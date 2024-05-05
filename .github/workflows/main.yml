@@ -160,7 +160,7 @@ jobs:
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
-      - name: "Publish package"
+      - name: "Publish"
         env:
           NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}"
         run: |
@@ -178,20 +178,4 @@ jobs:
       contents: "write"
     steps:
       - name: "Publish"
-        env:
-          GITHUB_PAT: "${{ secrets.GITHUB_TOKEN }}"
-        run: |
-          RELEASE_STATUS="$(curl -fs --proto '=https' --tlsv1.3 --globoff \
-            --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases/tags/${GITHUB_REF_NAME:?}" \
-            --header "Authorization: Bearer ${GITHUB_PAT:?}" \
-            --header 'Accept: application/vnd.github.v3+json' \
-            --header 'Content-Type: application/json' \
-            --write-out '%{http_code}' --output /dev/null ||:)"
-          if [ "${RELEASE_STATUS:?}" = '200' ]; then exit 0; fi
-          RELEASE_ID="$(curl -fsS --proto '=https' --tlsv1.3 --globoff \
-            --url "https://api.github.com/repos/${GITHUB_REPOSITORY:?}/releases" \
-            --header "Authorization: Bearer ${GITHUB_PAT:?}" \
-            --header 'Accept: application/vnd.github.v3+json' \
-            --header 'Content-Type: application/json' \
-            --data "$(jq -rn --arg tag "${GITHUB_REF_NAME:?}" '{"name": $tag, "tag_name": $tag, "generate_release_notes": true}')" | jq -r '.id')"
-          if [ -z "${RELEASE_ID-}" ] || [ "${RELEASE_ID:?}" = 'null' ]; then exit 1; fi
+        uses: "hectorm/ghaction-release@066200d04c3549852afa243d631ea3dc93390f68"
