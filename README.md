@@ -28,9 +28,12 @@ let totp = new OTPAuth.TOTP({
   digits: 6,
   // Interval of time for which a token is valid, in seconds.
   period: 30,
-  // Arbitrary key encoded in Base32.
+  // Arbitrary key encoded in Base32 or OTPAuth.Secret instance.
   secret: "NB2W45DFOIZA", // or 'OTPAuth.Secret.fromBase32("NB2W45DFOIZA")'
 });
+
+// A cryptographically secure random secret can also be generated with:
+let secret = new OTPAuth.Secret({ size: 20 });
 
 // Generate a token (returns the current token as a string).
 let token = totp.generate();
