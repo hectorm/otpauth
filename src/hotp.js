@@ -105,8 +105,10 @@ class HOTP {
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
   }) {
-    const digest = new Uint8Array(
-      hmacDigest(algorithm, secret.buffer, uintToBuf(counter)),
+    const digest = hmacDigest(
+      algorithm,
+      new Uint8Array(secret.buffer),
+      new Uint8Array(uintToBuf(counter)),
     );
     const offset = digest[digest.byteLength - 1] & 15;
     const otp =
