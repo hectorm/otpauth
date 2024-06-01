@@ -1,9 +1,9 @@
 /**
- * Converts a hexadecimal string to an ArrayBuffer.
+ * Converts a hexadecimal string to an Uint8Array.
  * @param {string} str Hexadecimal string.
- * @returns {ArrayBuffer} ArrayBuffer.
+ * @returns {Uint8Array} Uint8Array.
  */
-const hexToBuf = (str) => {
+const hexDecode = (str) => {
   const buf = new ArrayBuffer(str.length / 2);
   const arr = new Uint8Array(buf);
 
@@ -11,16 +11,15 @@ const hexToBuf = (str) => {
     arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
   }
 
-  return buf;
+  return arr;
 };
 
 /**
- * Converts an ArrayBuffer to a hexadecimal string.
- * @param {ArrayBuffer} buf ArrayBuffer.
+ * Converts an Uint8Array to a hexadecimal string.
+ * @param {Uint8Array} arr Uint8Array.
  * @returns {string} Hexadecimal string.
  */
-const hexFromBuf = (buf) => {
-  const arr = new Uint8Array(buf);
+const hexEncode = (arr) => {
   let str = "";
 
   for (let i = 0; i < arr.length; i++) {
@@ -32,4 +31,4 @@ const hexFromBuf = (buf) => {
   return str.toUpperCase();
 };
 
-export { hexToBuf, hexFromBuf };
+export { hexDecode, hexEncode };

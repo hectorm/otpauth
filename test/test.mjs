@@ -1147,6 +1147,7 @@ describe("Secret", () => {
     it(`constructor[${index}]`, () => {
       const output = new OTPAuth.Secret({ buffer: input.buffer });
 
+      assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
@@ -1158,7 +1159,9 @@ describe("Secret", () => {
   it(`constructor[${cases.length}]`, () => {
     const output = new OTPAuth.Secret({ size: 4096 });
 
+    assert(output.bytes instanceof Uint8Array);
     assert(output.buffer instanceof ArrayBuffer);
+    assertEquals(output.bytes.length, 4096);
     assertEquals(output.buffer.byteLength, 4096);
     assert(typeof output.latin1 === "string");
     // eslint-disable-next-line no-control-regex
@@ -1173,7 +1176,9 @@ describe("Secret", () => {
   it(`constructor[${cases.length + 1}]`, () => {
     const output = new OTPAuth.Secret();
 
+    assert(output.bytes instanceof Uint8Array);
     assert(output.buffer instanceof ArrayBuffer);
+    assertEquals(output.bytes.length, 20);
     assertEquals(output.buffer.byteLength, 20);
     assert(typeof output.latin1 === "string");
     // eslint-disable-next-line no-control-regex
@@ -1190,7 +1195,7 @@ describe("Secret", () => {
       const output = OTPAuth.Secret.fromLatin1(input.latin1);
 
       assert(output instanceof OTPAuth.Secret);
-      assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
+      assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
       assertEquals(output.base32, input.base32);
@@ -1203,7 +1208,7 @@ describe("Secret", () => {
       const output = OTPAuth.Secret.fromUTF8(input.utf8);
 
       assert(output instanceof OTPAuth.Secret);
-      assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
+      assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
       assertEquals(output.base32, input.base32);
@@ -1216,7 +1221,7 @@ describe("Secret", () => {
       const output = OTPAuth.Secret.fromBase32(input.base32);
 
       assert(output instanceof OTPAuth.Secret);
-      assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
+      assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
       assertEquals(output.base32, input.base32);
@@ -1229,7 +1234,7 @@ describe("Secret", () => {
       const output = OTPAuth.Secret.fromHex(input.hex);
 
       assert(output instanceof OTPAuth.Secret);
-      assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
+      assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
       assertEquals(output.base32, input.base32);

@@ -5,12 +5,12 @@
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 /**
- * Converts a base32 string to an ArrayBuffer (RFC 4648).
+ * Converts a base32 string to an Uint8Array (RFC 4648).
  * @see [LinusU/base32-decode](https://github.com/LinusU/base32-decode)
  * @param {string} str Base32 string.
- * @returns {ArrayBuffer} ArrayBuffer.
+ * @returns {Uint8Array} Uint8Array.
  */
-const base32ToBuf = (str) => {
+const base32Decode = (str) => {
   // Canonicalize to all upper case and remove padding if it exists.
   let end = str.length;
   while (str[end - 1] === "=") --end;
@@ -35,17 +35,16 @@ const base32ToBuf = (str) => {
     }
   }
 
-  return buf;
+  return arr;
 };
 
 /**
- * Converts an ArrayBuffer to a base32 string (RFC 4648).
+ * Converts an Uint8Array to a base32 string (RFC 4648).
  * @see [LinusU/base32-encode](https://github.com/LinusU/base32-encode)
- * @param {ArrayBuffer} buf ArrayBuffer.
+ * @param {Uint8Array} arr Uint8Array.
  * @returns {string} Base32 string.
  */
-const base32FromBuf = (buf) => {
-  const arr = new Uint8Array(buf);
+const base32Encode = (arr) => {
   let bits = 0;
   let value = 0;
   let str = "";
@@ -67,4 +66,4 @@ const base32FromBuf = (buf) => {
   return str;
 };
 
-export { base32ToBuf, base32FromBuf };
+export { base32Decode, base32Encode };

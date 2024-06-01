@@ -13,29 +13,29 @@ const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder("utf-8") :
 const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder("utf-8") : null;
 
 /**
- * Converts an UTF-8 string to an ArrayBuffer.
+ * Converts an UTF-8 string to an Uint8Array.
  * @param {string} str String.
- * @returns {ArrayBuffer} ArrayBuffer.
+ * @returns {Uint8Array} Uint8Array.
  */
-const utf8ToBuf = (str) => {
+const utf8Decode = (str) => {
   if (!ENCODER) {
     throw new Error("Encoding API not available");
   }
 
-  return ENCODER.encode(str).buffer;
+  return ENCODER.encode(str);
 };
 
 /**
- * Converts an ArrayBuffer to an UTF-8 string.
- * @param {ArrayBuffer} buf ArrayBuffer.
+ * Converts an Uint8Array to an UTF-8 string.
+ * @param {Uint8Array} arr Uint8Array.
  * @returns {string} String.
  */
-const utf8FromBuf = (buf) => {
+const utf8Encode = (arr) => {
   if (!DECODER) {
     throw new Error("Encoding API not available");
   }
 
-  return DECODER.decode(buf);
+  return DECODER.decode(arr);
 };
 
-export { utf8ToBuf, utf8FromBuf };
+export { utf8Decode, utf8Encode };

@@ -1,9 +1,9 @@
 /**
- * Converts an integer to an ArrayBuffer.
+ * Converts an integer to an Uint8Array.
  * @param {number} num Integer.
- * @returns {ArrayBuffer} ArrayBuffer.
+ * @returns {Uint8Array} Uint8Array.
  */
-const uintToBuf = (num) => {
+const uintDecode = (num) => {
   const buf = new ArrayBuffer(8);
   const arr = new Uint8Array(buf);
   let acc = num;
@@ -15,16 +15,15 @@ const uintToBuf = (num) => {
     acc /= 256;
   }
 
-  return buf;
+  return arr;
 };
 
 /**
- * Converts an ArrayBuffer to an integer.
- * @param {ArrayBuffer} buf ArrayBuffer.
+ * Converts an Uint8Array to an integer.
+ * @param {Uint8Array} arr Uint8Array.
  * @returns {number} Integer.
  */
-const uintFromBuf = (buf) => {
-  const arr = new Uint8Array(buf);
+const uintEncode = (arr) => {
   let num = 0;
 
   for (let i = 0; i < arr.length; i++) {
@@ -37,4 +36,4 @@ const uintFromBuf = (buf) => {
   return num;
 };
 
-export { uintToBuf, uintFromBuf };
+export { uintDecode, uintEncode };

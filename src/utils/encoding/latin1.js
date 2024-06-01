@@ -1,9 +1,9 @@
 /**
- * Converts a Latin-1 string to an ArrayBuffer.
+ * Converts a Latin-1 string to an Uint8Array.
  * @param {string} str Latin-1 string.
- * @returns {ArrayBuffer} ArrayBuffer.
+ * @returns {Uint8Array} Uint8Array.
  */
-const latin1ToBuf = (str) => {
+const latin1Decode = (str) => {
   const buf = new ArrayBuffer(str.length);
   const arr = new Uint8Array(buf);
 
@@ -11,16 +11,15 @@ const latin1ToBuf = (str) => {
     arr[i] = str.charCodeAt(i) & 0xff;
   }
 
-  return buf;
+  return arr;
 };
 
 /**
- * Converts an ArrayBuffer to a Latin-1 string.
- * @param {ArrayBuffer} buf ArrayBuffer.
+ * Converts an Uint8Array to a Latin-1 string.
+ * @param {Uint8Array} arr Uint8Array.
  * @returns {string} Latin-1 string.
  */
-const latin1FromBuf = (buf) => {
-  const arr = new Uint8Array(buf);
+const latin1Encode = (arr) => {
   let str = "";
 
   for (let i = 0; i < arr.length; i++) {
@@ -30,4 +29,4 @@ const latin1FromBuf = (buf) => {
   return str;
 };
 
-export { latin1ToBuf, latin1FromBuf };
+export { latin1Decode, latin1Encode };

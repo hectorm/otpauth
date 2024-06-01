@@ -1,7 +1,7 @@
-import { base32ToBuf, base32FromBuf } from "./utils/encoding/base32.js";
-import { hexToBuf, hexFromBuf } from "./utils/encoding/hex.js";
-import { latin1ToBuf, latin1FromBuf } from "./utils/encoding/latin1.js";
-import { utf8ToBuf, utf8FromBuf } from "./utils/encoding/utf8.js";
+import { base32Decode, base32Encode } from "./utils/encoding/base32.js";
+import { hexDecode, hexEncode } from "./utils/encoding/hex.js";
+import { latin1Decode, latin1Encode } from "./utils/encoding/latin1.js";
+import { utf8Decode, utf8Encode } from "./utils/encoding/utf8.js";
 import { randomBytes } from "./utils/crypto/random-bytes.js";
 
 /**
@@ -11,15 +11,24 @@ class Secret {
   /**
    * Creates a secret key object.
    * @param {Object} [config] Configuration options.
-   * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
+   * @param {ArrayBufferLike} [config.buffer] Secret key buffer.
    * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
    */
   constructor({ buffer, size = 20 } = {}) {
     /**
      * Secret key.
-     * @type {ArrayBuffer}
+     * @type {Uint8Array}
+     * @readonly
      */
-    this.buffer = typeof buffer === "undefined" ? randomBytes(size) : buffer;
+    this.bytes = typeof buffer === "undefined" ? randomBytes(size) : new Uint8Array(buffer);
+
+    // Prevent the "bytes" property from being modified.
+    Object.defineProperty(this, "bytes", {
+      enumerable: true,
+      writable: false,
+      configurable: false,
+      value: this.bytes,
+    });
   }
 
   /**
@@ -28,7 +37,7 @@ class Secret {
    * @returns {Secret} Secret object.
    */
   static fromLatin1(str) {
-    return new Secret({ buffer: latin1ToBuf(str) });
+    return new Secret({ buffer: latin1Decode(str).buffer });
   }
 
   /**
@@ -37,7 +46,7 @@ class Secret {
    * @returns {Secret} Secret object.
    */
   static fromUTF8(str) {
-    return new Secret({ buffer: utf8ToBuf(str) });
+    return new Secret({ buffer: utf8Decode(str).buffer });
   }
 
   /**
@@ -46,7 +55,7 @@ class Secret {
    * @returns {Secret} Secret object.
    */
   static fromBase32(str) {
-    return new Secret({ buffer: base32ToBuf(str) });
+    return new Secret({ buffer: base32Decode(str).buffer });
   }
 
   /**
@@ -55,7 +64,16 @@ class Secret {
    * @returns {Secret} Secret object.
    */
   static fromHex(str) {
-    return new Secret({ buffer: hexToBuf(str) });
+    return new Secret({ buffer: hexDecode(str).buffer });
+  }
+
+  /**
+   * Secret key buffer.
+   * @deprecated For backward compatibility, the "bytes" property should be used instead.
+   * @type {ArrayBufferLike}
+   */
+  get buffer() {
+    return this.bytes.buffer;
   }
 
   /**
@@ -65,7 +83,9 @@ class Secret {
   get latin1() {
     Object.defineProperty(this, "latin1", {
       enumerable: true,
-      value: latin1FromBuf(this.buffer),
+      writable: false,
+      configurable: false,
+      value: latin1Encode(this.bytes),
     });
 
     return this.latin1;
@@ -78,7 +98,9 @@ class Secret {
   get utf8() {
     Object.defineProperty(this, "utf8", {
       enumerable: true,
-      value: utf8FromBuf(this.buffer),
+      writable: false,
+      configurable: false,
+      value: utf8Encode(this.bytes),
     });
 
     return this.utf8;
@@ -91,7 +113,9 @@ class Secret {
   get base32() {
     Object.defineProperty(this, "base32", {
       enumerable: true,
-      value: base32FromBuf(this.buffer),
+      writable: false,
+      configurable: false,
+      value: base32Encode(this.bytes),
     });
 
     return this.base32;
@@ -104,7 +128,9 @@ class Secret {
   get hex() {
     Object.defineProperty(this, "hex", {
       enumerable: true,
-      value: hexFromBuf(this.buffer),
+      writable: false,
+      configurable: false,
+      value: hexEncode(this.bytes),
     });
 
     return this.hex;

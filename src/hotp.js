@@ -1,4 +1,4 @@
-import { uintToBuf } from "./utils/encoding/uint.js";
+import { uintDecode } from "./utils/encoding/uint.js";
 import { hmacDigest } from "./utils/crypto/hmac-digest.js";
 import { Secret } from "./secret.js";
 import { timingSafeEqual } from "./utils/crypto/timing-safe-equal.js";
@@ -104,7 +104,7 @@ class HOTP {
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
   }) {
-    const digest = hmacDigest(algorithm, new Uint8Array(secret.buffer), new Uint8Array(uintToBuf(counter)));
+    const digest = hmacDigest(algorithm, secret.bytes, uintDecode(counter));
     const offset = digest[digest.byteLength - 1] & 15;
     const otp =
       (((digest[offset] & 127) << 24) |
