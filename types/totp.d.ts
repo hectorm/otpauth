@@ -34,7 +34,7 @@ export class TOTP {
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @returns {string} Token.
      */
-    static generate({ secret, algorithm, digits, period, timestamp, }: {
+    static generate({ secret, algorithm, digits, period, timestamp }: {
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
@@ -53,7 +53,7 @@ export class TOTP {
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, period, timestamp, window, }: {
+    static validate({ token, secret, algorithm, digits, period, timestamp, window }: {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;

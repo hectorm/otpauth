@@ -29,18 +29,25 @@ export class Secret {
     /**
      * Creates a secret key object.
      * @param {Object} [config] Configuration options.
-     * @param {ArrayBuffer} [config.buffer=randomBytes] Secret key.
+     * @param {ArrayBufferLike} [config.buffer] Secret key buffer.
      * @param {number} [config.size=20] Number of random bytes to generate, ignored if 'buffer' is provided.
      */
     constructor({ buffer, size }?: {
-        buffer?: ArrayBuffer | undefined;
+        buffer?: ArrayBufferLike | undefined;
         size?: number | undefined;
     } | undefined);
     /**
      * Secret key.
-     * @type {ArrayBuffer}
+     * @type {Uint8Array}
+     * @readonly
      */
-    buffer: ArrayBuffer;
+    readonly bytes: Uint8Array;
+    /**
+     * Secret key buffer.
+     * @deprecated For backward compatibility, the "bytes" property should be used instead.
+     * @type {ArrayBufferLike}
+     */
+    get buffer(): ArrayBufferLike;
     /**
      * Latin-1 string representation of secret key.
      * @type {string}
