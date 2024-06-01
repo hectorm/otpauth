@@ -1,7 +1,7 @@
-import { uintDecode } from "./utils/encoding/uint.js";
-import { hmacDigest } from "./utils/crypto/hmac-digest.js";
+import { uintDecode } from "./internal/encoding/uint.js";
+import { hmacDigest } from "./internal/crypto/hmac-digest.js";
 import { Secret } from "./secret.js";
-import { timingSafeEqual } from "./utils/crypto/timing-safe-equal.js";
+import { timingSafeEqual } from "./internal/crypto/timing-safe-equal.js";
 
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.

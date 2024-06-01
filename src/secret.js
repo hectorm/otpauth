@@ -1,8 +1,8 @@
-import { base32Decode, base32Encode } from "./utils/encoding/base32.js";
-import { hexDecode, hexEncode } from "./utils/encoding/hex.js";
-import { latin1Decode, latin1Encode } from "./utils/encoding/latin1.js";
-import { utf8Decode, utf8Encode } from "./utils/encoding/utf8.js";
-import { randomBytes } from "./utils/crypto/random-bytes.js";
+import { base32Decode, base32Encode } from "./internal/encoding/base32.js";
+import { hexDecode, hexEncode } from "./internal/encoding/hex.js";
+import { latin1Decode, latin1Encode } from "./internal/encoding/latin1.js";
+import { utf8Decode, utf8Encode } from "./internal/encoding/utf8.js";
+import { randomBytes } from "./internal/crypto/random-bytes.js";
 
 /**
  * OTP secret key.
