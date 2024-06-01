@@ -45,6 +45,7 @@ jobs:
         shell: "bash"
         run: '[ -z "$(git status --porcelain ./types/ ./dist/ ./docs/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
+        if: "runner.os == 'Linux'"
         uses: "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808"
         with:
           name: "dist"
