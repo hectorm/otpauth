@@ -1,132 +1,168 @@
-import path from "node:path";
-import url from "node:url";
-import fs from "node:fs/promises";
+import fs from "node:fs";
+import module from "node:module";
 
 import replace from "@rollup/plugin-replace";
 import virtual from "@rollup/plugin-virtual";
 import resolve from "@rollup/plugin-node-resolve";
-import babel from "@rollup/plugin-babel";
-import esbuild from "rollup-plugin-esbuild";
+import swc from "@rollup/plugin-swc";
+import terser from "@rollup/plugin-terser";
 import dts from "rollup-plugin-dts";
 
-export default async () => {
-  const __dirname = url.fileURLToPath(path.dirname(import.meta.url));
-  const pkg = JSON.parse(
-    await fs.readFile(path.join(__dirname, "./package.json"), "utf8"),
-  );
+const require = module.createRequire(import.meta.url);
 
-  const banner = `/// <reference types="./otpauth.d.ts" />`;
+const pkgSpec = (pkg) => {
+  return JSON.parse(
+    fs.readFileSync(require.resolve(`${pkg}/package.json`), "utf8"),
+  );
+};
+
+const mock = (...exports) => {
+  return exports.map((f) => `export const ${f} = undefined`).join(";\n");
+};
+
+export default () => {
+  const spec = pkgSpec(".");
 
   const replaceOpts = {
     preventAssignment: true,
-    __OTPAUTH_VERSION__: pkg.version,
+    __OTPAUTH_VERSION__: spec.version,
   };
 
-  const babelOpts = {
-    babelHelpers: "bundled",
+  const swcOpts = {
+    swc: {
+      jsc: {
+        target: "es2020",
+      },
+    },
   };
 
-  const esbuildOpts = {
-    target: "es2015",
-    minify: true,
-    banner,
+  const terserOpts = {
+    compress: {
+      passes: 2,
+    },
+    format: {
+      comments: /^(\s*@license\s*.+)|(\s*@ts-nocheck\s*)|(\/\s*<.+\/>\s*)$/,
+      max_line_len: 2048,
+      ecma: 2020,
+    },
   };
 
-  const mainOpts = {
+  const rollupOpts = {
     plugins: [
       replace(replaceOpts),
       virtual({
-        "node:crypto": [
-          `export const createHmac = undefined;`,
-          `export const randomBytes = undefined;`,
-          `export const timingSafeEqual = undefined;`,
-        ].join("\n"),
+        "node:crypto": mock("createHmac", "randomBytes", "timingSafeEqual"),
       }),
       resolve(),
-      babel(babelOpts),
+      swc(swcOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
   };
 
-  const mainMinOpts = {
-    ...mainOpts,
-    plugins: [...mainOpts.plugins, esbuild(esbuildOpts)],
+  const rollupMinOpts = {
+    ...rollupOpts,
+    plugins: [rollupOpts.plugins, terser(terserOpts)],
   };
 
-  const mainNodeOpts = {
+  const rollupNodeOpts = {
     plugins: [
       replace(replaceOpts),
       virtual({
-        "@noble/hashes/hmac": ["hmac"]
-          .map((f) => `export const ${f} = undefined`)
-          .join(";\n"),
-        "@noble/hashes/sha1": ["sha1"]
-          .map((f) => `export const ${f} = undefined`)
-          .join(";\n"),
-        "@noble/hashes/sha2": ["sha224", "sha256", "sha384", "sha512"]
-          .map((f) => `export const ${f} = undefined`)
-          .join(";\n"),
-        "@noble/hashes/sha3": ["sha3_224", "sha3_256", "sha3_384", "sha3_512"]
-          .map((f) => `export const ${f} = undefined`)
-          .join(";\n"),
+        "@noble/hashes/hmac": mock("hmac"),
+        "@noble/hashes/sha1": mock("sha1"),
+        "@noble/hashes/sha2": mock("sha224", "sha256", "sha384", "sha512"),
+        "@noble/hashes/sha3": mock(
+          "sha3_224",
+          "sha3_256",
+          "sha3_384",
+          "sha3_512",
+        ),
       }),
       resolve(),
-      babel(babelOpts),
+      swc(swcOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
   };
 
-  const mainNodeMinOpts = {
-    ...mainNodeOpts,
-    plugins: [...mainNodeOpts.plugins, esbuild(esbuildOpts)],
+  const rollupNodeMinOpts = {
+    ...rollupNodeOpts,
+    plugins: [rollupNodeOpts.plugins, terser(terserOpts)],
   };
 
-  const outOpts = {
+  const outputOpts = {
     name: "OTPAuth",
     exports: "named",
-    banner,
+    banner: [
+      `// @license otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
+      `// @license noble-hashes ${spec.dependencies["@noble/hashes"]} | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes`,
+      `// @ts-nocheck`,
+      `/// <reference types="./otpauth.d.ts" />`,
+    ].join("\n"),
   };
 
-  const outMinOpts = {
-    ...outOpts,
+  const outputMinOpts = {
+    ...outputOpts,
+    sourcemap: true,
+  };
+
+  const outputNodeOpts = {
+    name: "OTPAuth",
+    exports: "named",
+    banner: [
+      `// @license otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
+      `// @ts-nocheck`,
+      `/// <reference types="./otpauth.d.ts" />`,
+    ].join("\n"),
+  };
+
+  const outputNodeMinOpts = {
+    ...outputNodeOpts,
     sourcemap: true,
   };
 
   return [
     {
-      ...mainOpts,
+      ...rollupOpts,
       input: "./src/index.js",
       output: [
-        { ...outOpts, file: "./dist/otpauth.esm.js", format: "es" },
-        { ...outOpts, file: "./dist/otpauth.umd.js", format: "umd" },
+        { ...outputOpts, file: "./dist/otpauth.esm.js", format: "es" },
+        { ...outputOpts, file: "./dist/otpauth.umd.js", format: "umd" },
       ],
     },
     {
-      ...mainMinOpts,
+      ...rollupMinOpts,
       input: "./src/index.js",
       output: [
-        { ...outMinOpts, file: "./dist/otpauth.esm.min.js", format: "es" },
-        { ...outMinOpts, file: "./dist/otpauth.umd.min.js", format: "umd" },
+        { ...outputMinOpts, file: "./dist/otpauth.esm.min.js", format: "es" },
+        { ...outputMinOpts, file: "./dist/otpauth.umd.min.js", format: "umd" },
       ],
     },
     {
-      ...mainNodeOpts,
+      ...rollupNodeOpts,
       input: "./src/index.js",
       output: [
-        { ...outOpts, file: "./dist/otpauth.node.mjs", format: "es" },
-        { ...outOpts, file: "./dist/otpauth.node.cjs", format: "cjs" },
+        { ...outputNodeOpts, file: "./dist/otpauth.node.mjs", format: "es" },
+        { ...outputNodeOpts, file: "./dist/otpauth.node.cjs", format: "cjs" },
       ],
     },
     {
-      ...mainNodeMinOpts,
+      ...rollupNodeMinOpts,
       input: "./src/index.js",
       output: [
-        { ...outMinOpts, file: "./dist/otpauth.node.min.mjs", format: "es" },
-        { ...outMinOpts, file: "./dist/otpauth.node.min.cjs", format: "cjs" },
+        {
+          ...outputNodeMinOpts,
+          file: "./dist/otpauth.node.min.mjs",
+          format: "es",
+        },
+        {
+          ...outputNodeMinOpts,
+          file: "./dist/otpauth.node.min.cjs",
+          format: "cjs",
+        },
       ],
     },
     {
