@@ -43,7 +43,7 @@ jobs:
       - name: "Verify that the build is reproducible"
         if: "startsWith(github.ref, 'refs/tags/v')"
         shell: "bash"
-        run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
+        run: '[ -z "$(git status --porcelain ./types/ ./dist/ ./docs/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
         uses: "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808"
         with:
