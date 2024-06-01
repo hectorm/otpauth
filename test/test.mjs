@@ -1,6 +1,15 @@
-/* global describe, it */
-/* global assert, assertEquals, assertMatch */
-/* global OTPAuth */
+/** @type {(name: string, fn: () => void) => void} */
+const describe = globalThis.describe;
+/** @type {(name: string, fn: () => void) => void} */
+const it = globalThis.it;
+/** @type {(a: unknown) => void} */
+const assert = globalThis.assert;
+/** @type {(a: unknown, b: unknown) => void} */
+const assertEquals = globalThis.assertEquals;
+/** @type {(a: string, b: RegExp) => void} */
+const assertMatch = globalThis.assertMatch;
+/** @type {import("../dist/otpauth.d.ts")} */
+const OTPAuth = globalThis.OTPAuth;
 
 /* ================================================
  * Test cases

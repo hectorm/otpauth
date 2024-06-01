@@ -7,6 +7,8 @@ globalThis.assert = assert;
 globalThis.assertEquals = assert.deepStrictEqual;
 globalThis.assertMatch = assert.match;
 
-globalThis.OTPAuth ??= await import("../dist/otpauth.node.mjs");
+if (!("OTPAuth" in globalThis)) {
+  globalThis.OTPAuth = await import("../dist/otpauth.node.mjs");
+}
 
 await import("./test.mjs");

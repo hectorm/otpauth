@@ -2,6 +2,9 @@ import eslintJs from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import globals from "globals";
 
+/** @typedef {import("eslint").Linter.FlatConfig} FlatConfig */
+
+/** @type {FlatConfig[]} */
 export default [
   eslintJs.configs.recommended,
   eslintConfigPrettier,

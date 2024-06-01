@@ -15,20 +15,36 @@ const require = module.createRequire(import.meta.url);
  */
 
 const browserName = process.argv[2];
+/** @type playwright.BrowserType */
+let browserType;
+switch (browserName) {
+  case "chromium":
+    browserType = playwright.chromium;
+    break;
+  case "firefox":
+    browserType = playwright.firefox;
+    break;
+  case "webkit":
+    browserType = playwright.webkit;
+    break;
+  default:
+    console.error(`Invalid browser: ${browserName}`);
+    process.exit(1);
+}
 const browserWsEndpoint = process.env.PW_TEST_CONNECT_WS_ENDPOINT;
-const browser = browserWsEndpoint
-  ? await playwright[browserName].connect(browserWsEndpoint)
-  : await playwright[browserName].launch();
+const browser = await (browserWsEndpoint ? browserType.connect(browserWsEndpoint) : browserType.launch());
 
 try {
-  globalThis.OTPAuthPath ??= "../dist/otpauth.umd.js";
+  if (!("OTPAuthPath" in globalThis)) {
+    globalThis.OTPAuthPath = "../dist/otpauth.umd.js";
+  }
 
   const context = await browser.newContext();
   const page = await context.newPage();
 
   page.on("console", (msg) => process.stdout.write(msg.text()));
 
-  await page.exposeFunction("exit", async (code) => {
+  await page.exposeFunction("exit", async (/** @type number */ code) => {
     await browser.close();
     process.exit(code);
   });

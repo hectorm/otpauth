@@ -1,9 +1,9 @@
 {
   "include": ["**/*"],
-  "exclude": ["node_modules/**", "dist/**", "docs/**"],
   "compilerOptions": {
-    "noEmit": true,
-    "skipLibCheck": true,
+    "outDir": "../types/",
+    "emitDeclarationOnly": true,
+    "declaration": true,
     "allowJs": true,
     "checkJs": true,
     "target": "ESNext",

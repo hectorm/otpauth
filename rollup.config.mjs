@@ -8,24 +8,41 @@ import swc from "@rollup/plugin-swc";
 import terser from "@rollup/plugin-terser";
 import dts from "rollup-plugin-dts";
 
+/** @typedef {import("rollup").RollupOptions} RollupOptions */
+/** @typedef {import("rollup").InputPluginOption} InputPluginOption */
+/** @typedef {import("rollup").OutputOptions} OutputOptions */
+/** @typedef {Parameters<typeof replace.default>[0]} RollupReplaceOptions */
+/** @typedef {Parameters<typeof virtual.default>[0]} RollupVirtualOptions */
+/** @typedef {Parameters<typeof resolve.default>[0]} RollupResolveOptions */
+/** @typedef {Parameters<typeof swc.default>[0]} RollupSwcOptions */
+/** @typedef {Parameters<typeof terser.default>[0]} RollupTerserOptions */
+
+/** @template T @param {{default: T}} f */
+const t = (f) => /** @type {T} */ (f);
+
 const require = module.createRequire(import.meta.url);
 
+/** @type {(pkg: string) => any} */
 const pkgSpec = (pkg) => {
   return JSON.parse(fs.readFileSync(require.resolve(`${pkg}/package.json`), "utf8"));
 };
 
+/** @type {(...exports: string[]) => string} */
 const mock = (...exports) => {
   return exports.map((f) => `export const ${f} = undefined`).join(";\n");
 };
 
+/** @type {() => RollupOptions[]} */
 export default () => {
   const spec = pkgSpec(".");
 
+  /** @type {RollupReplaceOptions} */
   const replaceOpts = {
     preventAssignment: true,
     __OTPAUTH_VERSION__: spec.version,
   };
 
+  /** @type {RollupSwcOptions} */
   const swcOpts = {
     swc: {
       jsc: {
@@ -34,6 +51,7 @@ export default () => {
     },
   };
 
+  /** @type {RollupTerserOptions} */
   const terserOpts = {
     compress: {
       passes: 2,
@@ -45,47 +63,52 @@ export default () => {
     },
   };
 
+  /** @type {RollupOptions} */
   const rollupOpts = {
     plugins: [
-      replace(replaceOpts),
-      virtual({
+      t(replace)(replaceOpts),
+      t(virtual)({
         "node:crypto": mock("createHmac", "randomBytes", "timingSafeEqual"),
       }),
-      resolve(),
-      swc(swcOpts),
+      t(resolve)(),
+      t(swc)(swcOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
   };
 
+  /** @type {RollupOptions} */
   const rollupMinOpts = {
     ...rollupOpts,
-    plugins: [rollupOpts.plugins, terser(terserOpts)],
+    plugins: [rollupOpts.plugins, t(terser)(terserOpts)],
   };
 
+  /** @type {RollupOptions} */
   const rollupNodeOpts = {
     plugins: [
-      replace(replaceOpts),
-      virtual({
+      t(replace)(replaceOpts),
+      t(virtual)({
         "@noble/hashes/hmac": mock("hmac"),
         "@noble/hashes/sha1": mock("sha1"),
         "@noble/hashes/sha2": mock("sha224", "sha256", "sha384", "sha512"),
         "@noble/hashes/sha3": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
       }),
-      resolve(),
-      swc(swcOpts),
+      t(resolve)(),
+      t(swc)(swcOpts),
     ],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
   };
 
+  /** @type {RollupOptions} */
   const rollupNodeMinOpts = {
     ...rollupNodeOpts,
-    plugins: [rollupNodeOpts.plugins, terser(terserOpts)],
+    plugins: [rollupNodeOpts.plugins, t(terser)(terserOpts)],
   };
 
+  /** @type {OutputOptions} */
   const outputOpts = {
     name: "OTPAuth",
     exports: "named",
@@ -97,11 +120,13 @@ export default () => {
     ].join("\n"),
   };
 
+  /** @type {OutputOptions} */
   const outputMinOpts = {
     ...outputOpts,
     sourcemap: true,
   };
 
+  /** @type {OutputOptions} */
   const outputNodeOpts = {
     name: "OTPAuth",
     exports: "named",
@@ -112,6 +137,7 @@ export default () => {
     ].join("\n"),
   };
 
+  /** @type {OutputOptions} */
   const outputNodeMinOpts = {
     ...outputNodeOpts,
     sourcemap: true,
