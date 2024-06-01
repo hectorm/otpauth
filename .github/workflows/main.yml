@@ -44,6 +44,12 @@ jobs:
         if: "startsWith(github.ref, 'refs/tags/v')"
         shell: "bash"
         run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
+      - name: "Upload dist artifact"
+        uses: "actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808"
+        with:
+          name: "dist"
+          path: "./dist/"
+          retention-days: 1
 
   test-node:
     name: "Test on Node.js ${{ matrix.node_version }} on ${{ matrix.os }}"
@@ -59,6 +65,14 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29"
+      - name: "Remove dist directory"
+        shell: "bash"
+        run: "rm -rf ./dist/"
+      - name: "Download dist artifact"
+        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        with:
+          name: "dist"
+          path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
         uses: "actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8"
         with:
@@ -83,6 +97,14 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29"
+      - name: "Remove dist directory"
+        shell: "bash"
+        run: "rm -rf ./dist/"
+      - name: "Download dist artifact"
+        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        with:
+          name: "dist"
+          path: "./dist/"
       - name: "Use Deno ${{ matrix.deno_version }}"
         uses: "denoland/setup-deno@041b854f97b325bd60e53e9dc2de9cb9f9ac0cba"
         with:
@@ -111,6 +133,14 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29"
+      - name: "Remove dist directory"
+        shell: "bash"
+        run: "rm -rf ./dist/"
+      - name: "Download dist artifact"
+        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        with:
+          name: "dist"
+          path: "./dist/"
       - name: "Use Bun ${{ matrix.bun_version }}"
         uses: "oven-sh/setup-bun@8f24390df009a496891208e5e36b8a1de1f45135"
         with:
@@ -134,6 +164,14 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29"
+      - name: "Remove dist directory"
+        shell: "bash"
+        run: "rm -rf ./dist/"
+      - name: "Download dist artifact"
+        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        with:
+          name: "dist"
+          path: "./dist/"
       - name: "Use Node.js lts/*"
         uses: "actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8"
         with:
@@ -155,6 +193,14 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29"
+      - name: "Remove dist directory"
+        shell: "bash"
+        run: "rm -rf ./dist/"
+      - name: "Download dist artifact"
+        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        with:
+          name: "dist"
+          path: "./dist/"
       - name: "Use Node.js lts/*"
         uses: "actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8"
         with:
