@@ -37,10 +37,7 @@ const console = (() => {
 
   if (typeof globalScope.console === "object") {
     for (const method of methods) {
-      container[method] =
-        typeof globalScope.console[method] === "function"
-          ? globalScope.console[method]
-          : () => {};
+      container[method] = typeof globalScope.console[method] === "function" ? globalScope.console[method] : () => {};
     }
   } else {
     for (const method of methods) {

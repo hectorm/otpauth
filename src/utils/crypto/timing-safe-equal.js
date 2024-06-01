@@ -10,10 +10,7 @@ import { globalScope } from "../global-scope.js";
  */
 const timingSafeEqual = (a, b) => {
   if (crypto?.timingSafeEqual) {
-    return crypto.timingSafeEqual(
-      globalScope.Buffer.from(a),
-      globalScope.Buffer.from(b),
-    );
+    return crypto.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
   } else {
     if (a.length !== b.length) {
       throw new TypeError("Input strings must have the same length");

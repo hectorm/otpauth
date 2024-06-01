@@ -4,17 +4,13 @@ import { globalScope } from "../global-scope.js";
  * TextEncoder instance.
  * @type {TextEncoder|null}
  */
-const ENCODER = globalScope.TextEncoder
-  ? new globalScope.TextEncoder("utf-8")
-  : null;
+const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder("utf-8") : null;
 
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
  */
-const DECODER = globalScope.TextDecoder
-  ? new globalScope.TextDecoder("utf-8")
-  : null;
+const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder("utf-8") : null;
 
 /**
  * Converts an UTF-8 string to an ArrayBuffer.

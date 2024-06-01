@@ -11,9 +11,7 @@ import dts from "rollup-plugin-dts";
 const require = module.createRequire(import.meta.url);
 
 const pkgSpec = (pkg) => {
-  return JSON.parse(
-    fs.readFileSync(require.resolve(`${pkg}/package.json`), "utf8"),
-  );
+  return JSON.parse(fs.readFileSync(require.resolve(`${pkg}/package.json`), "utf8"));
 };
 
 const mock = (...exports) => {
@@ -73,12 +71,7 @@ export default () => {
         "@noble/hashes/hmac": mock("hmac"),
         "@noble/hashes/sha1": mock("sha1"),
         "@noble/hashes/sha2": mock("sha224", "sha256", "sha384", "sha512"),
-        "@noble/hashes/sha3": mock(
-          "sha3_224",
-          "sha3_256",
-          "sha3_384",
-          "sha3_512",
-        ),
+        "@noble/hashes/sha3": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
       }),
       resolve(),
       swc(swcOpts),
@@ -153,16 +146,8 @@ export default () => {
       ...rollupNodeMinOpts,
       input: "./src/index.js",
       output: [
-        {
-          ...outputNodeMinOpts,
-          file: "./dist/otpauth.node.min.mjs",
-          format: "es",
-        },
-        {
-          ...outputNodeMinOpts,
-          file: "./dist/otpauth.node.min.cjs",
-          format: "cjs",
-        },
+        { ...outputNodeMinOpts, file: "./dist/otpauth.node.min.mjs", format: "es" },
+        { ...outputNodeMinOpts, file: "./dist/otpauth.node.min.cjs", format: "cjs" },
       ],
     },
     {

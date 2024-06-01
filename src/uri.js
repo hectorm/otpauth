@@ -5,8 +5,7 @@ import { TOTP } from "./totp.js";
  * Key URI regex (otpauth://TYPE/[ISSUER:]LABEL?PARAMETERS).
  * @type {RegExp}
  */
-const OTPURI_REGEX =
-  /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-Z0-9.~_-]+=[^?&]*)*)$/i;
+const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-Z0-9.~_-]+=[^?&]*)*)$/i;
 
 /**
  * RFC 4648 base32 alphabet with pad.
@@ -58,9 +57,7 @@ class URI {
 
     // Extract URI groups.
     const uriType = uriGroups[1].toLowerCase();
-    const uriLabel = uriGroups[2]
-      .split(/(?::|%3A) *(.+)/i, 2)
-      .map(decodeURIComponent);
+    const uriLabel = uriGroups[2].split(/(?::|%3A) *(.+)/i, 2).map(decodeURIComponent);
     /** @type {Object.<string, string>} */
     const uriParams = uriGroups[3].split("&").reduce((acc, cur) => {
       const pairArr = cur.split(/=(.*)/, 2).map(decodeURIComponent);
@@ -81,10 +78,7 @@ class URI {
       OTP = HOTP;
 
       // Counter: required
-      if (
-        typeof uriParams.counter !== "undefined" &&
-        INTEGER_REGEX.test(uriParams.counter)
-      ) {
+      if (typeof uriParams.counter !== "undefined" && INTEGER_REGEX.test(uriParams.counter)) {
         config.counter = parseInt(uriParams.counter, 10);
       } else {
         throw new TypeError("Missing or invalid 'counter' parameter");
@@ -124,10 +118,7 @@ class URI {
     }
 
     // Secret: required
-    if (
-      typeof uriParams.secret !== "undefined" &&
-      SECRET_REGEX.test(uriParams.secret)
-    ) {
+    if (typeof uriParams.secret !== "undefined" && SECRET_REGEX.test(uriParams.secret)) {
       config.secret = uriParams.secret;
     } else {
       throw new TypeError("Missing or invalid 'secret' parameter");

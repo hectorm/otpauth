@@ -1,9 +1,5 @@
 import { describe, it } from "https://deno.land/std/testing/bdd.ts";
-import {
-  assert,
-  assertEquals,
-  assertMatch,
-} from "https://deno.land/std/testing/asserts.ts";
+import { assert, assertEquals, assertMatch } from "https://deno.land/std/testing/asserts.ts";
 
 globalThis.describe = describe;
 globalThis.it = it;

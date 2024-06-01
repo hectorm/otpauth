@@ -69,8 +69,7 @@ class TOTP {
      * Secret key.
      * @type {Secret}
      */
-    this.secret =
-      typeof secret === "string" ? Secret.fromBase32(secret) : secret;
+    this.secret = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -98,13 +97,7 @@ class TOTP {
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @returns {string} Token.
    */
-  static generate({
-    secret,
-    algorithm,
-    digits,
-    period = TOTP.defaults.period,
-    timestamp = Date.now(),
-  }) {
+  static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now() }) {
     return HOTP.generate({
       secret,
       algorithm,
@@ -141,15 +134,7 @@ class TOTP {
    * @param {number} [config.window=1] Window of counter values to test.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  static validate({
-    token,
-    secret,
-    algorithm,
-    digits,
-    period = TOTP.defaults.period,
-    timestamp = Date.now(),
-    window,
-  }) {
+  static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window }) {
     return HOTP.validate({
       token,
       secret,

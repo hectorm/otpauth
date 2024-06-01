@@ -71,8 +71,7 @@ class HOTP {
      * Secret key.
      * @type {Secret}
      */
-    this.secret =
-      typeof secret === "string" ? Secret.fromBase32(secret) : secret;
+    this.secret = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
     /**
      * HMAC hashing algorithm.
      * @type {string}
@@ -105,11 +104,7 @@ class HOTP {
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
   }) {
-    const digest = hmacDigest(
-      algorithm,
-      new Uint8Array(secret.buffer),
-      new Uint8Array(uintToBuf(counter)),
-    );
+    const digest = hmacDigest(algorithm, new Uint8Array(secret.buffer), new Uint8Array(uintToBuf(counter)));
     const offset = digest[digest.byteLength - 1] & 15;
     const otp =
       (((digest[offset] & 127) << 24) |
