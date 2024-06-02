@@ -1,6 +1,6 @@
-// @license otpauth 9.2.4 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-// @ts-nocheck
+//! otpauth 9.3.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
+// @ts-nocheck
 import * as crypto from 'node:crypto';
 
 /**
@@ -19,20 +19,6 @@ import * as crypto from 'node:crypto';
     }
     return arr;
 };
-
-const hmac = undefined;
-
-const sha1 = undefined;
-
-const sha224 = undefined;
-const sha256 = undefined;
-const sha384 = undefined;
-const sha512 = undefined;
-
-const sha3_224 = undefined;
-const sha3_256 = undefined;
-const sha3_384 = undefined;
-const sha3_512 = undefined;
 
 /**
  * "globalThis" ponyfill.
@@ -64,20 +50,6 @@ const sha3_512 = undefined;
 })();
 
 /**
- * OpenSSL-Noble hashes map.
- * @type {Object.<string, sha1|sha224|sha256|sha384|sha512|sha3_224|sha3_256|sha3_384|sha3_512>}
- */ const OPENSSL_NOBLE_HASHES = {
-    SHA1: sha1,
-    SHA224: sha224,
-    SHA256: sha256,
-    SHA384: sha384,
-    SHA512: sha512,
-    "SHA3-224": sha3_224,
-    "SHA3-256": sha3_256,
-    "SHA3-384": sha3_384,
-    "SHA3-512": sha3_512
-};
-/**
  * Calculates an HMAC digest.
  * In Node.js, the command "openssl list -digest-algorithms" displays the available digest algorithms.
  * @param {string} algorithm Algorithm.
@@ -90,11 +62,7 @@ const sha3_512 = undefined;
         hmac.update(globalScope.Buffer.from(message));
         return hmac.digest();
     } else {
-        const hash = OPENSSL_NOBLE_HASHES[algorithm.toUpperCase()];
-        if (typeof hash === "undefined") {
-            throw new TypeError("Unknown hash function");
-        }
-        return hmac(hash, key, message);
+        throw new Error("Missing HMAC function");
     }
 };
 
@@ -205,11 +173,11 @@ const sha3_512 = undefined;
 /**
  * TextEncoder instance.
  * @type {TextEncoder|null}
- */ const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder("utf-8") : null;
+ */ const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder() : null;
 /**
  * TextDecoder instance.
  * @type {TextDecoder|null}
- */ const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder("utf-8") : null;
+ */ const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder() : null;
 /**
  * Converts an UTF-8 string to an Uint8Array.
  * @param {string} str String.
@@ -810,6 +778,6 @@ const sha3_512 = undefined;
 /**
  * Library version.
  * @type {string}
- */ const version = "9.2.4";
+ */ const version = "9.3.0";
 
 export { HOTP, Secret, TOTP, URI, version };
