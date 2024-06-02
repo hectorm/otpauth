@@ -79,9 +79,21 @@ export default () => {
   };
 
   /** @type {RollupOptions} */
+  const rollupSlimOpts = {
+    ...rollupOpts,
+    external: [/^@noble\/hashes(\/.+)?$/],
+  };
+
+  /** @type {RollupOptions} */
   const rollupMinOpts = {
     ...rollupOpts,
     plugins: [rollupOpts.plugins, t(terser)(terserOpts)],
+  };
+
+  /** @type {RollupOptions} */
+  const rollupSlimMinOpts = {
+    ...rollupMinOpts,
+    external: [/^@noble\/hashes(\/.+)?$/],
   };
 
   /** @type {RollupOptions} */
@@ -159,6 +171,16 @@ export default () => {
         { ...outputMinOpts, file: "./dist/otpauth.esm.min.js", format: "es" },
         { ...outputMinOpts, file: "./dist/otpauth.umd.min.js", format: "umd" },
       ],
+    },
+    {
+      ...rollupSlimOpts,
+      input: "./src/index.js",
+      output: [{ ...outputOpts, file: "./dist/otpauth.slim.esm.js", format: "es" }],
+    },
+    {
+      ...rollupSlimMinOpts,
+      input: "./src/index.js",
+      output: [{ ...outputMinOpts, file: "./dist/otpauth.slim.esm.min.js", format: "es" }],
     },
     {
       ...rollupNodeOpts,
