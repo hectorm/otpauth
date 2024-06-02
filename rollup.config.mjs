@@ -36,6 +36,19 @@ const mock = (...exports) => {
 export default () => {
   const spec = pkgSpec(".");
 
+  const banner = [
+    `//! otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
+    `//! noble-hashes ${spec.dependencies["@noble/hashes"]} | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes`,
+    `/// <reference types="./otpauth.d.ts" />`,
+    `// @ts-nocheck`,
+  ].join("\n");
+
+  const bannerNode = [
+    `//! otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
+    `/// <reference types="./otpauth.d.ts" />`,
+    `// @ts-nocheck`,
+  ].join("\n");
+
   /** @type {RollupReplaceOptions} */
   const replaceOpts = {
     preventAssignment: true,
@@ -57,9 +70,19 @@ export default () => {
       passes: 2,
     },
     format: {
-      comments: /^(\s*@license\s*.+)|(\s*@ts-nocheck\s*)|(\/\s*<.+\/>\s*)$/,
+      comments: false,
+      preamble: banner,
       max_line_len: 2048,
       ecma: 2020,
+    },
+  };
+
+  /** @type {RollupTerserOptions} */
+  const terserNodeOpts = {
+    ...terserOpts,
+    format: {
+      ...terserOpts.format,
+      preamble: bannerNode,
     },
   };
 
@@ -117,19 +140,14 @@ export default () => {
   /** @type {RollupOptions} */
   const rollupNodeMinOpts = {
     ...rollupNodeOpts,
-    plugins: [rollupNodeOpts.plugins, t(terser)(terserOpts)],
+    plugins: [rollupNodeOpts.plugins, t(terser)(terserNodeOpts)],
   };
 
   /** @type {OutputOptions} */
   const outputOpts = {
     name: "OTPAuth",
     exports: "named",
-    banner: [
-      `// @license otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
-      `// @license noble-hashes ${spec.dependencies["@noble/hashes"]} | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes`,
-      `// @ts-nocheck`,
-      `/// <reference types="./otpauth.d.ts" />`,
-    ].join("\n"),
+    banner: banner,
   };
 
   /** @type {OutputOptions} */
@@ -140,13 +158,8 @@ export default () => {
 
   /** @type {OutputOptions} */
   const outputNodeOpts = {
-    name: "OTPAuth",
-    exports: "named",
-    banner: [
-      `// @license otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
-      `// @ts-nocheck`,
-      `/// <reference types="./otpauth.d.ts" />`,
-    ].join("\n"),
+    ...outputOpts,
+    banner: bannerNode,
   };
 
   /** @type {OutputOptions} */
