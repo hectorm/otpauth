@@ -43,7 +43,7 @@ let token = totp.generate();
 let delta = totp.validate({ token, window: 1 });
 
 // Get the remaining seconds until the current token changes.
-let seconds = (totp.period * (1 - ((Date.now() / 1000 / totp.period) % 1))) | 0;
+let seconds = totp.period - (Math.floor(Date.now() / 1000) % totp.period);
 
 // Convert to Google Authenticator key URI format (usually the URI is encoded
 // in a QR code that can be scanned by the user. This functionality is outside
