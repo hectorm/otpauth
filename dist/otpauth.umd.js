@@ -1,7 +1,7 @@
-//! otpauth 9.3.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
-/// <reference types="./otpauth.d.ts" />
+// @license otpauth 9.2.4 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+// @license noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 // @ts-nocheck
+/// <reference types="./otpauth.d.ts" />
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -1150,12 +1150,12 @@
    * @param {Uint8Array} message Message.
    * @returns {Uint8Array} Digest.
    */ const hmacDigest = (algorithm, key, message)=>{
-      if (hmac) {
+      {
           const hash = OPENSSL_NOBLE_HASHES[algorithm.toUpperCase()];
-          if (!hash) throw new TypeError("Unknown hash function");
+          if (typeof hash === "undefined") {
+              throw new TypeError("Unknown hash function");
+          }
           return hmac(hash, key, message);
-      } else {
-          throw new Error("Missing HMAC function");
       }
   };
 
@@ -1266,11 +1266,11 @@
   /**
    * TextEncoder instance.
    * @type {TextEncoder|null}
-   */ const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder() : null;
+   */ const ENCODER = globalScope.TextEncoder ? new globalScope.TextEncoder("utf-8") : null;
   /**
    * TextDecoder instance.
    * @type {TextDecoder|null}
-   */ const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder() : null;
+   */ const DECODER = globalScope.TextDecoder ? new globalScope.TextDecoder("utf-8") : null;
   /**
    * Converts an UTF-8 string to an Uint8Array.
    * @param {string} str String.
@@ -1867,7 +1867,7 @@
   /**
    * Library version.
    * @type {string}
-   */ const version = "9.3.0";
+   */ const version = "9.2.4";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
