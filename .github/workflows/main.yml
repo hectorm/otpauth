@@ -51,6 +51,12 @@ jobs:
           name: "dist"
           path: "./dist/"
           retention-days: 1
+      - name: "Upload docs artifact"
+        if: "runner.os == 'Linux' && startsWith(github.ref, 'refs/tags/v')"
+        uses: "actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa"
+        with:
+          path: "./docs/"
+          retention-days: 1
 
   test-node:
     name: "Test on Node.js ${{ matrix.node_version }} on ${{ matrix.os }}"
@@ -226,3 +232,19 @@ jobs:
     steps:
       - name: "Publish"
         uses: "hectorm/ghaction-release@066200d04c3549852afa243d631ea3dc93390f68"
+
+  publish-github-pages:
+    name: "Publish GitHub Pages"
+    if: "startsWith(github.ref, 'refs/tags/v')"
+    needs: ["test-node", "test-deno", "test-bun", "test-browser"]
+    runs-on: "ubuntu-latest"
+    permissions:
+      id-token: "write"
+      pages: "write"
+    environment:
+      name: "github-pages"
+      url: "${{ steps.deployment.outputs.page_url }}"
+    steps:
+      - name: "Publish"
+        id: "deployment"
+        uses: "actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e"
