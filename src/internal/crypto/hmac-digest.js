@@ -34,12 +34,12 @@ const hmacDigest = (algorithm, key, message) => {
     const hmac = crypto.createHmac(algorithm, globalScope.Buffer.from(key));
     hmac.update(globalScope.Buffer.from(message));
     return hmac.digest();
-  } else {
+  } else if (hmac) {
     const hash = OPENSSL_NOBLE_HASHES[algorithm.toUpperCase()];
-    if (typeof hash === "undefined") {
-      throw new TypeError("Unknown hash function");
-    }
+    if (!hash) throw new TypeError("Unknown hash function");
     return hmac(hash, key, message);
+  } else {
+    throw new Error("Missing HMAC function");
   }
 };
 
