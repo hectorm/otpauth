@@ -1,28 +1,11 @@
 //! otpauth 9.3.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
-'use strict';
-
-var crypto = require('node:crypto');
-
-function _interopNamespaceDefault(e) {
-  var n = Object.create(null);
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () { return e[k]; }
-        });
-      }
-    });
-  }
-  n.default = e;
-  return Object.freeze(n);
-}
-
-var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
+import { hmac } from '@noble/hashes/hmac';
+import { sha1 } from '@noble/hashes/sha1';
+import { sha224, sha256, sha384, sha512 } from '@noble/hashes/sha2';
+import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
 
 /**
  * Converts an integer to an Uint8Array.
@@ -71,6 +54,20 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 })();
 
 /**
+ * OpenSSL-Noble hashes map.
+ * @type {Object.<string, sha1|sha224|sha256|sha384|sha512|sha3_224|sha3_256|sha3_384|sha3_512>}
+ */ const OPENSSL_NOBLE_HASHES = {
+    SHA1: sha1,
+    SHA224: sha224,
+    SHA256: sha256,
+    SHA384: sha384,
+    SHA512: sha512,
+    "SHA3-224": sha3_224,
+    "SHA3-256": sha3_256,
+    "SHA3-384": sha3_384,
+    "SHA3-512": sha3_512
+};
+/**
  * Calculates an HMAC digest.
  * In Node.js, the command "openssl list -digest-algorithms" displays the available digest algorithms.
  * @param {string} algorithm Algorithm.
@@ -78,10 +75,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @param {Uint8Array} message Message.
  * @returns {Uint8Array} Digest.
  */ const hmacDigest = (algorithm, key, message)=>{
-    if (crypto__namespace?.createHmac) {
-        const hmac = crypto__namespace.createHmac(algorithm, globalScope.Buffer.from(key));
-        hmac.update(globalScope.Buffer.from(message));
-        return hmac.digest();
+    if (hmac) {
+        const hash = OPENSSL_NOBLE_HASHES[algorithm.toUpperCase()];
+        if (!hash) throw new TypeError("Unknown hash function");
+        return hmac(hash, key, message);
     } else {
         throw new Error("Missing HMAC function");
     }
@@ -225,9 +222,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @param {number} size Size.
  * @returns {Uint8Array} Random bytes.
  */ const randomBytes = (size)=>{
-    if (crypto__namespace?.randomBytes) {
-        return crypto__namespace.randomBytes(size);
-    } else {
+    {
         if (!globalScope.crypto?.getRandomValues) {
             throw new Error("Cryptography API not available");
         }
@@ -356,9 +351,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @param {string} b String b.
  * @returns {boolean} Equality result.
  */ const timingSafeEqual = (a, b)=>{
-    if (crypto__namespace?.timingSafeEqual) {
-        return crypto__namespace.timingSafeEqual(globalScope.Buffer.from(a), globalScope.Buffer.from(b));
-    } else {
+    {
         if (a.length !== b.length) {
             throw new TypeError("Input strings must have the same length");
         }
@@ -801,8 +794,4 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @type {string}
  */ const version = "9.3.0";
 
-exports.HOTP = HOTP;
-exports.Secret = Secret;
-exports.TOTP = TOTP;
-exports.URI = URI;
-exports.version = version;
+export { HOTP, Secret, TOTP, URI, version };
