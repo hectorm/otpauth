@@ -106,7 +106,9 @@
     "test:browser:webkit:umd": "run-s test:browser:webkit:umd:*",
     "test:browser:webkit:umd:unmin": "node ./test/browser.test.mjs webkit",
     "test:browser:webkit:umd:min": "node ./test/browser.test.min.mjs webkit",
-    "version": "run-s all && git add -A ./types/ ./dist/ ./docs/"
+    "version": "run-s all version:jsr version:git",
+    "version:jsr": "node ./scripts/jsr.mjs",
+    "version:git": "git add -A ./jsr.json ./types/ ./dist/ ./docs/"
   },
   "dependencies": {
     "@noble/hashes": "1.4.0"
