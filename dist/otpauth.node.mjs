@@ -1,4 +1,4 @@
-//! otpauth 9.3.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 import * as crypto from 'node:crypto';
@@ -778,6 +778,6 @@ import * as crypto from 'node:crypto';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.0";
+ */ const version = "9.3.1";
 
 export { HOTP, Secret, TOTP, URI, version };

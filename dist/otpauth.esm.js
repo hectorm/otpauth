@@ -1,4 +1,4 @@
-//! otpauth 9.3.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 //! noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
@@ -1861,6 +1861,6 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.0";
+ */ const version = "9.3.1";
 
 export { HOTP, Secret, TOTP, URI, version };
