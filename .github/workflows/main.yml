@@ -76,7 +76,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
@@ -108,7 +108,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
@@ -144,7 +144,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
@@ -175,7 +175,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
@@ -204,7 +204,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
@@ -237,7 +237,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e"
+        uses: "actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16"
         with:
           name: "dist"
           path: "./dist/"
