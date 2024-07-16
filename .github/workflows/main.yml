@@ -113,7 +113,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Deno ${{ matrix.deno_version }}"
-        uses: "denoland/setup-deno@f99b7edee36540f7183c45aad62fbb93d6d41d9d"
+        uses: "denoland/setup-deno@5fae568d37c3b73449009674875529a984555dd1"
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Use Node.js lts/*"
