@@ -15,7 +15,7 @@ const require = module.createRequire(import.meta.url);
  */
 
 const browserName = process.argv[2];
-/** @type playwright.BrowserType */
+/** @type {playwright.BrowserType} */
 let browserType;
 switch (browserName) {
   case "chromium":
@@ -44,7 +44,7 @@ try {
 
   page.on("console", (msg) => process.stdout.write(msg.text()));
 
-  await page.exposeFunction("exit", async (/** @type number */ code) => {
+  await page.exposeFunction("exit", async (/** @type {number} */ code) => {
     await browser.close();
     process.exit(code);
   });
