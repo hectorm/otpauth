@@ -15,7 +15,7 @@ permissions: {}
 
 jobs:
   analyze:
-    name: "CodeQL analysis"
+    name: "CodeQL analysis (${{ matrix.language }})"
     runs-on: "ubuntu-latest"
     permissions:
       actions: "read"
