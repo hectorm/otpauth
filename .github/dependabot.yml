@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://json.schemastore.org/dependabot-2.0.json
 version: 2
 
 updates:
@@ -7,14 +8,17 @@ updates:
       interval: "weekly"
     versioning-strategy: "increase"
     groups:
-      npm-production-dependencies:
+      npm-production-minor-patch:
         dependency-type: "production"
         update-types: ["minor", "patch"]
-      npm-development-dependencies:
+      npm-development-minor-patch:
         dependency-type: "development"
         update-types: ["minor", "patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      github-actions-all:
+        patterns: ["*"]
