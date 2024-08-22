@@ -1,6 +1,6 @@
 {
   "name": "@hectorm/otpauth",
-  "version": "9.3.1",
+  "version": "9.3.2",
   "exports": {
     ".": "./dist/otpauth.esm.js"
   },

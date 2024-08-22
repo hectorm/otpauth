@@ -1,4 +1,4 @@
-//! otpauth 9.3.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 import * as crypto from 'node:crypto';
@@ -206,11 +206,10 @@ import * as crypto from 'node:crypto';
  */ const randomBytes = (size)=>{
     if (crypto?.randomBytes) {
         return crypto.randomBytes(size);
-    } else {
-        if (!globalScope.crypto?.getRandomValues) {
-            throw new Error("Cryptography API not available");
-        }
+    } else if (globalScope.crypto?.getRandomValues) {
         return globalScope.crypto.getRandomValues(new Uint8Array(size));
+    } else {
+        throw new Error("Cryptography API not available");
     }
 };
 
@@ -778,6 +777,6 @@ import * as crypto from 'node:crypto';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.1";
+ */ const version = "9.3.2";
 
 export { HOTP, Secret, TOTP, URI, version };
