@@ -10,11 +10,10 @@ import { globalScope } from "../global-scope.js";
 const randomBytes = (size) => {
   if (crypto?.randomBytes) {
     return crypto.randomBytes(size);
-  } else {
-    if (!globalScope.crypto?.getRandomValues) {
-      throw new Error("Cryptography API not available");
-    }
+  } else if (globalScope.crypto?.getRandomValues) {
     return globalScope.crypto.getRandomValues(new Uint8Array(size));
+  } else {
+    throw new Error("Cryptography API not available");
   }
 };
 
