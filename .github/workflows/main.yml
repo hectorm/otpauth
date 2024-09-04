@@ -47,7 +47,7 @@ jobs:
         run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
         if: "runner.os == 'Linux'"
-        uses: "actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b"
+        uses: "actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874"
         with:
           name: "dist"
           path: "./dist/"
@@ -114,7 +114,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Deno ${{ matrix.deno_version }}"
-        uses: "denoland/setup-deno@5fae568d37c3b73449009674875529a984555dd1"
+        uses: "denoland/setup-deno@916edb9a40fd86d1ff57b758807ebe57242f7407"
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Use Node.js lts/*"
