@@ -60,13 +60,13 @@
     "dist/"
   ],
   "scripts": {
-    "all": "run-s types build docs lint test",
-    "types": "run-s types:clean types:compile",
-    "types:clean": "rimraf ./types/",
-    "types:compile": "tsc -p ./src/",
-    "build": "run-s build:clean build:compile",
+    "all": "run-s build docs lint test",
+    "build": "run-s build:clean build:types build:compile",
     "build:clean": "rimraf ./dist/",
     "build:compile": "rollup -c",
+    "build:types": "run-s build:types:clean build:types:compile",
+    "build:types:clean": "rimraf ./types/",
+    "build:types:compile": "tsc -p ./src/",
     "docs": "run-s docs:clean docs:compile",
     "docs:clean": "rimraf ./docs/",
     "docs:compile": "typedoc ./src/index.js --readme none --out ./docs/",

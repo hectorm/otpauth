@@ -33,8 +33,6 @@ jobs:
           cache: "npm"
       - name: "Install dependencies"
         run: "npm ci"
-      - name: "Build types"
-        run: "npm run types"
       - name: "Build lib"
         run: "npm run build"
       - name: "Build docs"
