@@ -4,6 +4,9 @@
  * @returns {Uint8Array} Uint8Array.
  */
 const hexDecode = (str) => {
+  // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
+  str = str.replaceAll(" ", "");
+
   const buf = new ArrayBuffer(str.length / 2);
   const arr = new Uint8Array(buf);
 
