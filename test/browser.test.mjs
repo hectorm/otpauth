@@ -9,7 +9,7 @@ const require = module.createRequire(import.meta.url);
  * It is possible to run the tests on a remote server by setting the environment variable "PW_TEST_CONNECT_WS_ENDPOINT".
  * E.g.:
  *   The following command will start a server on port 3000:
- *     $ docker run --rm -it -p 127.0.0.1:3000:3000/tcp --entrypoint /bin/sh mcr.microsoft.com/playwright:latest -euc 'npx -y playwright run-server --port 3000'
+ *     $ docker run --rm -it -p 127.0.0.1:3000:3000/tcp --entrypoint /bin/sh mcr.microsoft.com/playwright:${PLAYWRIGHT_VERSION} -euc 'npx -y playwright run-server --port 3000'
  *   Then, the tests can be run with:
  *     $ PW_TEST_CONNECT_WS_ENDPOINT=ws://127.0.0.1:3000/ npm run test:browser
  */
