@@ -1,5 +1,5 @@
-//! otpauth 9.3.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.3.3 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -170,11 +170,16 @@ class HMAC extends Hash {
  * @param hash - function that would be used e.g. sha256
  * @param key - message key
  * @param message - message data
+ * @example
+ * import { hmac } from '@noble/hashes/hmac';
+ * import { sha256 } from '@noble/hashes/sha2';
+ * const mac1 = hmac(sha256, 'key', 'message');
  */ const hmac = (hash, key, message)=>new HMAC(hash, key).update(message).digest();
 hmac.create = (hash, key)=>new HMAC(hash, key);
 
-// Polyfill for Safari 14
-function setBigUint64(view, byteOffset, value, isLE) {
+/**
+ * Polyfill for Safari 14
+ */ function setBigUint64(view, byteOffset, value, isLE) {
     if (typeof view.setBigUint64 === 'function') return view.setBigUint64(byteOffset, value, isLE);
     const _32n = BigInt(32);
     const _u32_max = BigInt(0xffffffff);
@@ -185,10 +190,12 @@ function setBigUint64(view, byteOffset, value, isLE) {
     view.setUint32(byteOffset + h, wh, isLE);
     view.setUint32(byteOffset + l, wl, isLE);
 }
-// Choice: a ? b : c
-const Chi = (a, b, c)=>a & b ^ ~a & c;
-// Majority function, true if any two inpust is true
-const Maj = (a, b, c)=>a & b ^ a & c ^ b & c;
+/**
+ * Choice: a ? b : c
+ */ const Chi = (a, b, c)=>a & b ^ ~a & c;
+/**
+ * Majority function, true if any two inputs is true
+ */ const Maj = (a, b, c)=>a & b ^ a & c ^ b & c;
 /**
  * Merkle-Damgard hash construction base class.
  * Could be used to create MD5, RIPEMD, SHA1, SHA2.
@@ -285,7 +292,7 @@ const Maj = (a, b, c)=>a & b ^ a & c ^ b & c;
     }
 }
 
-// SHA1 (RFC 3174) was cryptographically broken. It's still used. Don't use it for a new protocol.
+// SHA1 (RFC 3174). It was cryptographically broken: prefer newer algorithms.
 // Initial state
 const SHA1_IV = /* @__PURE__ */ new Uint32Array([
     0x67452301,
@@ -366,7 +373,11 @@ class SHA1 extends HashMD {
         this.E = SHA1_IV[4] | 0;
     }
 }
-const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
+/**
+ * SHA1 (RFC 3174) hash function.
+ * It was cryptographically broken: prefer newer algorithms.
+ * @param message - data that would be hashed
+ */ const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
 
 // SHA2-256 need to try 2^128 hashes to execute birthday attack.
 // BTC network is doing 2^67 hashes/sec as per early 2023.
@@ -557,7 +568,9 @@ class SHA224 extends SHA256 {
  * SHA2-256 hash function
  * @param message - data that would be hashed
  */ const sha256 = /* @__PURE__ */ wrapConstructor(()=>new SHA256());
-const sha224 = /* @__PURE__ */ wrapConstructor(()=>new SHA224());
+/**
+ * SHA2-224 hash function
+ */ const sha224 = /* @__PURE__ */ wrapConstructor(()=>new SHA224());
 
 const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
 const _32n = /* @__PURE__ */ BigInt(32);
@@ -1163,18 +1176,20 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
  * @param {string} str Base32 string.
  * @returns {Uint8Array} Uint8Array.
  */ const base32Decode = (str)=>{
+    // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
+    str = str.replaceAll(" ", "");
     // Canonicalize to all upper case and remove padding if it exists.
     let end = str.length;
     while(str[end - 1] === "=")--end;
-    const cstr = (end < str.length ? str.substring(0, end) : str).toUpperCase();
-    const buf = new ArrayBuffer(cstr.length * 5 / 8 | 0);
+    str = (end < str.length ? str.substring(0, end) : str).toUpperCase();
+    const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
     const arr = new Uint8Array(buf);
     let bits = 0;
     let value = 0;
     let index = 0;
-    for(let i = 0; i < cstr.length; i++){
-        const idx = ALPHABET.indexOf(cstr[i]);
-        if (idx === -1) throw new TypeError(`Invalid character found: ${cstr[i]}`);
+    for(let i = 0; i < str.length; i++){
+        const idx = ALPHABET.indexOf(str[i]);
+        if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
         value = value << 5 | idx;
         bits += 5;
         if (bits >= 8) {
@@ -1212,6 +1227,8 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
  * @param {string} str Hexadecimal string.
  * @returns {Uint8Array} Uint8Array.
  */ const hexDecode = (str)=>{
+    // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
+    str = str.replaceAll(" ", "");
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for(let i = 0; i < str.length; i += 2){
@@ -1860,6 +1877,6 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.2";
+ */ const version = "9.3.3";
 
 export { HOTP, Secret, TOTP, URI, version };

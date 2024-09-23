@@ -1,5 +1,5 @@
-//! otpauth 9.3.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.3.3 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 import { hmac } from '@noble/hashes/hmac';
@@ -94,18 +94,20 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
  * @param {string} str Base32 string.
  * @returns {Uint8Array} Uint8Array.
  */ const base32Decode = (str)=>{
+    // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
+    str = str.replaceAll(" ", "");
     // Canonicalize to all upper case and remove padding if it exists.
     let end = str.length;
     while(str[end - 1] === "=")--end;
-    const cstr = (end < str.length ? str.substring(0, end) : str).toUpperCase();
-    const buf = new ArrayBuffer(cstr.length * 5 / 8 | 0);
+    str = (end < str.length ? str.substring(0, end) : str).toUpperCase();
+    const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
     const arr = new Uint8Array(buf);
     let bits = 0;
     let value = 0;
     let index = 0;
-    for(let i = 0; i < cstr.length; i++){
-        const idx = ALPHABET.indexOf(cstr[i]);
-        if (idx === -1) throw new TypeError(`Invalid character found: ${cstr[i]}`);
+    for(let i = 0; i < str.length; i++){
+        const idx = ALPHABET.indexOf(str[i]);
+        if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
         value = value << 5 | idx;
         bits += 5;
         if (bits >= 8) {
@@ -143,6 +145,8 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
  * @param {string} str Hexadecimal string.
  * @returns {Uint8Array} Uint8Array.
  */ const hexDecode = (str)=>{
+    // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
+    str = str.replaceAll(" ", "");
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for(let i = 0; i < str.length; i += 2){
@@ -791,6 +795,6 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.2";
+ */ const version = "9.3.3";
 
 export { HOTP, Secret, TOTP, URI, version };
