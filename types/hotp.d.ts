@@ -45,7 +45,7 @@ export class HOTP {
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-     * @param {number} config.digits Token length.
+     * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
@@ -54,7 +54,7 @@ export class HOTP {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
-        digits: number;
+        digits?: number | undefined;
         counter?: number | undefined;
         window?: number | undefined;
     }): number | null;

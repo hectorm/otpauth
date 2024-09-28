@@ -47,7 +47,7 @@ export class TOTP {
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-     * @param {number} config.digits Token length.
+     * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
@@ -57,7 +57,7 @@ export class TOTP {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
-        digits: number;
+        digits?: number | undefined;
         period?: number | undefined;
         timestamp?: number | undefined;
         window?: number | undefined;

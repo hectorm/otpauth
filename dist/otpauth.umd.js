@@ -1,4 +1,4 @@
-//! otpauth 9.3.3 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.4 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 //! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
@@ -1514,11 +1514,11 @@
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-     * @param {number} config.digits Token length.
+     * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-     */ static validate({ token, secret, algorithm, digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window }) {
+     */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window }) {
           // Return early if the token length does not match the digit number.
           if (token.length !== digits) return null;
           let delta = null;
@@ -1671,7 +1671,7 @@
      * @param {string} config.token Token value.
      * @param {Secret} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
-     * @param {number} config.digits Token length.
+     * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
@@ -1883,7 +1883,7 @@
   /**
    * Library version.
    * @type {string}
-   */ const version = "9.3.3";
+   */ const version = "9.3.4";
 
   exports.HOTP = HOTP;
   exports.Secret = Secret;
