@@ -13,6 +13,7 @@ One Time Password (HOTP/TOTP) library for Node.js, Deno, Bun and browsers.
 > You can try the library with the demo application available at [otpauth.molinero.dev](https://otpauth.molinero.dev).
 >
 > If you wish to interact with the library in your browser console, the following snippet can be used:
+>
 > ```javascript
 > const OTPAuth = await import("otpauth");
 > ```
