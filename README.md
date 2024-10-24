@@ -8,8 +8,8 @@
 # OTPAuth
 
 One Time Password library for Node.js, Deno, Bun and browsers. It supports the generation and validation of
-HMAC-Based One-Time Passwords as specified in [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and
-Time-Based One-Time Passwords as specified in [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238).
+HMAC-Based One-Time Passwords (HOTP) as specified in [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and
+Time-Based One-Time Passwords (TOTP) as specified in [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238).
 Frequently used in Multi-Factor Authentication (MFA) / Two-Factor Authentication (2FA) systems.
 
 > [!TIP]
