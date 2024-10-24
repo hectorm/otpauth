@@ -3,7 +3,7 @@ import { Secret } from "./secret.js";
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm.
- * @see [RFC 6238](https://tools.ietf.org/html/rfc6238)
+ * @see [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238)
  */
 class TOTP {
   /**
