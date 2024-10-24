@@ -70,7 +70,7 @@ totp = OTPAuth.URI.parse(uri);
 ### Deno
 
 ```javascript
-import * as OTPAuth from "https://deno.land/x/otpauth@VERSION/dist/otpauth.esm.js";
+import * as OTPAuth from "jsr:@hectorm/otpauth";
 
 // Same as above.
 ```

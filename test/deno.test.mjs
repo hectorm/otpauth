@@ -1,7 +1,7 @@
 // @ts-expect-error
-import { describe, it } from "https://deno.land/std/testing/bdd.ts";
+import { describe, it } from "jsr:@std/testing@1/bdd";
 // @ts-expect-error
-import { assert, assertEquals, assertMatch } from "https://deno.land/std/assert/mod.ts";
+import { assert, assertEquals, assertMatch } from "jsr:@std/assert@1";
 
 globalThis.describe = describe;
 globalThis.it = it;
