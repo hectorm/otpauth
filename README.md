@@ -104,7 +104,12 @@ import * as OTPAuth from "otpauth";
 ### [Browsers (UMD)](https://www.jsdelivr.com/package/npm/otpauth)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/otpauth@%VERSION%/dist/otpauth.umd.min.js" integrity="%HASH%" crossorigin="anonymous"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/otpauth@%VERSION%/dist/otpauth.umd.min.js"
+  integrity="%HASH%"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 <script>
   // Same as above.
 </script>
