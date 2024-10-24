@@ -20,7 +20,7 @@ One Time Password (HOTP/TOTP) library for Node.js, Deno, Bun and browsers.
 
 ## Usage
 
-### Node.js
+### [Node.js](https://www.npmjs.com/package/otpauth)
 
 ```javascript
 import * as OTPAuth from "otpauth";
@@ -30,7 +30,7 @@ let totp = new OTPAuth.TOTP({
   // Provider or service the account is associated with.
   issuer: "ACME",
   // Account identifier.
-  label: "AzureDiamond",
+  label: "Alice",
   // Algorithm used for the HMAC function.
   algorithm: "SHA1",
   // Length of the generated tokens.
@@ -39,7 +39,9 @@ let totp = new OTPAuth.TOTP({
   period: 30,
   // Arbitrary key encoded in base32 or OTPAuth.Secret instance
   // (if omitted, a cryptographically secure random secret is generated).
-  secret: "NB2W45DFOIZA", // or `OTPAuth.Secret.fromBase32("NB2W45DFOIZA")` or `new OTPAuth.Secret()`
+  secret: "US3WHSG7X5KAPV27VANWKQHF3SH3HULL",
+  //   or `OTPAuth.Secret.fromBase32("US3WHSG7X5KAPV27VANWKQHF3SH3HULL")`
+  //   or `new OTPAuth.Secret()`
 });
 
 // A cryptographically secure random secret can also be generated with:
@@ -60,14 +62,14 @@ let seconds = totp.period - (Math.floor(Date.now() / 1000) % totp.period);
 // the scope of the project, but there are many libraries that can be used for
 // this purpose).
 //
-// otpauth://totp/ACME:AzureDiamond?issuer=ACME&secret=NB2W45DFOIZA&algorithm=SHA1&digits=6&period=30
+// otpauth://totp/ACME:Alice?issuer=ACME&secret=US3WHSG7X5KAPV27VANWKQHF3SH3HULL&algorithm=SHA1&digits=6&period=30
 let uri = totp.toString(); // or 'OTPAuth.URI.stringify(totp)'
 
 // Convert from Google Authenticator key URI format.
 totp = OTPAuth.URI.parse(uri);
 ```
 
-### Deno
+### [Deno](https://jsr.io/@hectorm/otpauth)
 
 ```javascript
 import * as OTPAuth from "jsr:@hectorm/otpauth";
@@ -75,7 +77,7 @@ import * as OTPAuth from "jsr:@hectorm/otpauth";
 // Same as above.
 ```
 
-### Bun
+### [Bun](https://www.npmjs.com/package/otpauth)
 
 ```javascript
 import * as OTPAuth from "otpauth";
@@ -83,10 +85,26 @@ import * as OTPAuth from "otpauth";
 // Same as above.
 ```
 
-### Browsers
+### [Browsers (ESM)](https://www.jsdelivr.com/package/npm/otpauth)
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/VERSION/otpauth.umd.min.js"></script>
+<script type="importmap">
+  {
+    "imports": { "otpauth": "https://cdn.jsdelivr.net/npm/otpauth@%VERSION%/dist/otpauth.esm.min.js" },
+    "integrity": { "https://cdn.jsdelivr.net/npm/otpauth@%VERSION%/dist/otpauth.esm.min.js": "%HASH%" }
+  }
+</script>
+<script type="module">
+  import * as OTPAuth from "otpauth";
+
+  // Same as above.
+</script>
+```
+
+### [Browsers (UMD)](https://www.jsdelivr.com/package/npm/otpauth)
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/otpauth@%VERSION%/dist/otpauth.umd.min.js" integrity="%HASH%" crossorigin="anonymous"></script>
 <script>
   // Same as above.
 </script>
