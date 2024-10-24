@@ -2,12 +2,15 @@
 [![npm downloads](https://img.shields.io/npm/dm/otpauth?label=npm%20downloads)](https://www.npmjs.com/package/otpauth)
 
 <p align="center">
-  <img src="./resources/logo/OTPAuth-Color-Reduced.svg" height="192">
+  <img alt="OTPAuth" src="./resources/logo/OTPAuth-Color-Reduced.svg" height="192" />
 </p>
 
 # OTPAuth
 
-One Time Password (HOTP/TOTP) library for Node.js, Deno, Bun and browsers.
+One Time Password library for Node.js, Deno, Bun and browsers. It supports the generation and validation of
+HMAC-Based One-Time Passwords as specified in [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and
+Time-Based One-Time Passwords as specified in [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238).
+Frequently used in Multi-Factor Authentication (MFA) / Two-Factor Authentication (2FA) systems.
 
 > [!TIP]
 > You can try the library with the demo application available at [otpauth.molinero.dev](https://otpauth.molinero.dev).
@@ -19,6 +22,8 @@ One Time Password (HOTP/TOTP) library for Node.js, Deno, Bun and browsers.
 > ```
 
 ## Usage
+
+This section presents an overview of the most common usage patterns, along with some security recommendations.
 
 ### [Node.js](https://www.npmjs.com/package/otpauth)
 
@@ -37,14 +42,19 @@ let totp = new OTPAuth.TOTP({
   digits: 6,
   // Interval of time for which a token is valid, in seconds.
   period: 30,
-  // Arbitrary key encoded in base32 or OTPAuth.Secret instance
+  // Arbitrary key encoded in base32 or `OTPAuth.Secret` instance
   // (if omitted, a cryptographically secure random secret is generated).
   secret: "US3WHSG7X5KAPV27VANWKQHF3SH3HULL",
-  //   or `OTPAuth.Secret.fromBase32("US3WHSG7X5KAPV27VANWKQHF3SH3HULL")`
-  //   or `new OTPAuth.Secret()`
+  //   or: `OTPAuth.Secret.fromBase32("US3WHSG7X5KAPV27VANWKQHF3SH3HULL")`
+  //   or: `new OTPAuth.Secret()`
 });
 
-// A cryptographically secure random secret can also be generated with:
+// Unless you know what you are doing, it is recommended to use the default
+// values for the algorithm, digits, and period options, as these are the most
+// common values used by most services.
+
+// Generate a cryptographically secure random secret.
+// It is NOT recommended to use less than 128 bits (16 bytes).
 let secret = new OTPAuth.Secret({ size: 20 });
 
 // Generate a token (returns the current token as a string).
@@ -52,18 +62,28 @@ let token = totp.generate();
 
 // Validate a token (returns the token delta or null if it is not found in the
 // search window, in which case it should be considered invalid).
+//
+// A search window is useful to account for clock drift between the client and
+// server; however, it should be kept as small as possible to prevent brute
+// force attacks. In most cases, a value of 1 is sufficient. Furthermore, it is
+// essential to implement a throttling mechanism on the server.
+//
+// For further details on the security considerations, it is advised to refer
+// to Section 7 of RFC 4226 and Section 5 of RFC 6238:
+//   https://datatracker.ietf.org/doc/html/rfc4226#section-7
+//   https://datatracker.ietf.org/doc/html/rfc6238#section-5
 let delta = totp.validate({ token, window: 1 });
 
 // Get the remaining seconds until the current token changes.
 let seconds = totp.period - (Math.floor(Date.now() / 1000) % totp.period);
 
-// Convert to Google Authenticator key URI format (usually the URI is encoded
-// in a QR code that can be scanned by the user. This functionality is outside
-// the scope of the project, but there are many libraries that can be used for
-// this purpose).
-//
-// otpauth://totp/ACME:Alice?issuer=ACME&secret=US3WHSG7X5KAPV27VANWKQHF3SH3HULL&algorithm=SHA1&digits=6&period=30
-let uri = totp.toString(); // or 'OTPAuth.URI.stringify(totp)'
+// Convert to Google Authenticator key URI format.
+// Usually the URI is encoded in a QR code that can be scanned by the user.
+// This functionality is outside the scope of the project, but there are many
+// libraries that can be used for this purpose, such as `@paulmillr/qr`.
+let uri = totp.toString();
+//   or:      `OTPAuth.URI.stringify(totp)`
+//   returns: `otpauth://totp/ACME:Alice?issuer=ACME&secret=US3WHSG7X5KAPV27VANWKQHF3SH3HULL&algorithm=SHA1&digits=6&period=30`
 
 // Convert from Google Authenticator key URI format.
 totp = OTPAuth.URI.parse(uri);
@@ -117,9 +137,7 @@ import * as OTPAuth from "otpauth";
 
 ## Documentation
 
-See the documentation page.
-
-> [https://hectorm.github.io/otpauth/](https://hectorm.github.io/otpauth/)
+For additional information, please refer to the documentation page at [hectorm.github.io/otpauth/](https://hectorm.github.io/otpauth/).
 
 ## Supported hashing algorithms
 
