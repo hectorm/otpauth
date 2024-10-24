@@ -13,11 +13,11 @@ const globalScope = (() => {
       configurable: true,
     });
     try {
-      // @ts-ignore
+      // @ts-expect-error
       // eslint-disable-next-line no-undef
       if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
     } finally {
-      // @ts-ignore
+      // @ts-expect-error
       delete Object.prototype.__GLOBALTHIS__;
     }
   }
