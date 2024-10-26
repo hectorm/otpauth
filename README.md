@@ -27,7 +27,7 @@ Frequently used in Multi-Factor Authentication (MFA) / Two-Factor Authentication
 
 This section presents an overview of the most common usage patterns, along with some security recommendations.
 
-### [Node.js](https://www.npmjs.com/package/otpauth)
+### [Node.js / Bun](https://www.npmjs.com/package/otpauth)
 
 ```javascript
 import * as OTPAuth from "otpauth";
@@ -97,14 +97,6 @@ totp = OTPAuth.URI.parse(uri);
 
 ```javascript
 import * as OTPAuth from "jsr:@hectorm/otpauth";
-
-// Same as above.
-```
-
-### [Bun](https://www.npmjs.com/package/otpauth)
-
-```javascript
-import * as OTPAuth from "otpauth";
 
 // Same as above.
 ```
