@@ -1,3 +1,4 @@
+import { canonicalizeAlgorithm } from "./internal/crypto/hmac-digest.js";
 import { HOTP } from "./hotp.js";
 import { Secret } from "./secret.js";
 
@@ -74,7 +75,7 @@ class TOTP {
      * HMAC hashing algorithm.
      * @type {string}
      */
-    this.algorithm = algorithm.toUpperCase();
+    this.algorithm = canonicalizeAlgorithm(algorithm);
     /**
      * Token length.
      * @type {number}

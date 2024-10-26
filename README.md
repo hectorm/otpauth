@@ -7,7 +7,9 @@
 
 # OTPAuth
 
-One Time Password library for Node.js, Deno, Bun and browsers. It supports the generation and validation of
+One Time Password library for Node.js, Deno, Bun and browsers.
+
+It supports the generation and validation of
 HMAC-Based One-Time Passwords (HOTP) as specified in [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) and
 Time-Based One-Time Passwords (TOTP) as specified in [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238).
 Frequently used in Multi-Factor Authentication (MFA) / Two-Factor Authentication (2FA) systems.
@@ -36,7 +38,9 @@ let totp = new OTPAuth.TOTP({
   issuer: "ACME",
   // Account identifier.
   label: "Alice",
-  // Algorithm used for the HMAC function.
+  // Algorithm used for the HMAC function, possible values are:
+  //   "SHA1", "SHA224", "SHA256", "SHA384", "SHA512",
+  //   "SHA3-224", "SHA3-256", "SHA3-384" and "SHA3-512".
   algorithm: "SHA1",
   // Length of the generated tokens.
   digits: 6,
@@ -138,14 +142,6 @@ import * as OTPAuth from "otpauth";
 ## Documentation
 
 For additional information, please refer to the documentation page at [hectorm.github.io/otpauth/](https://hectorm.github.io/otpauth/).
-
-## Supported hashing algorithms
-
-In Node.js, the same algorithms as
-[`Crypto.createHmac`](https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key_options)
-function are supported, since it is used internally. In Deno, Bun and browsers, the `SHA1`, `SHA224`, `SHA256`, `SHA384`,
-`SHA512`, `SHA3-224`, `SHA3-256`, `SHA3-384` and `SHA3-512` algorithms are supported by using the
-[@noble/hashes](https://github.com/paulmillr/noble-hashes) library.
 
 ## License
 

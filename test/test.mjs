@@ -863,7 +863,7 @@ const cases = [
     },
     totp: {
       constructor: {
-        input: { algorithm: "sha512", period: 5 },
+        input: { algorithm: "sha-512", period: 5 },
       },
       generate: {
         input: { timestamp: 1451606400000 },

@@ -1,5 +1,5 @@
 import { uintDecode } from "./internal/encoding/uint.js";
-import { hmacDigest } from "./internal/crypto/hmac-digest.js";
+import { canonicalizeAlgorithm, hmacDigest } from "./internal/crypto/hmac-digest.js";
 import { Secret } from "./secret.js";
 import { timingSafeEqual } from "./internal/crypto/timing-safe-equal.js";
 
@@ -76,7 +76,7 @@ class HOTP {
      * HMAC hashing algorithm.
      * @type {string}
      */
-    this.algorithm = algorithm.toUpperCase();
+    this.algorithm = canonicalizeAlgorithm(algorithm);
     /**
      * Token length.
      * @type {number}
