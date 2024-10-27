@@ -1151,8 +1151,8 @@ describe("Secret", () => {
       assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replaceAll(" ", ""));
-      assertEquals(output.hex, input.hex.replaceAll(" ", ""));
+      assertEquals(output.base32, input.base32.replace(/ /g, ""));
+      assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 
@@ -1198,8 +1198,8 @@ describe("Secret", () => {
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replaceAll(" ", ""));
-      assertEquals(output.hex, input.hex.replaceAll(" ", ""));
+      assertEquals(output.base32, input.base32.replace(/ /g, ""));
+      assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 
@@ -1211,8 +1211,8 @@ describe("Secret", () => {
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replaceAll(" ", ""));
-      assertEquals(output.hex, input.hex.replaceAll(" ", ""));
+      assertEquals(output.base32, input.base32.replace(/ /g, ""));
+      assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 
@@ -1224,8 +1224,8 @@ describe("Secret", () => {
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replaceAll(" ", ""));
-      assertEquals(output.hex, input.hex.replaceAll(" ", ""));
+      assertEquals(output.base32, input.base32.replace(/ /g, ""));
+      assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 
@@ -1237,8 +1237,8 @@ describe("Secret", () => {
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
       assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replaceAll(" ", ""));
-      assertEquals(output.hex, input.hex.replaceAll(" ", ""));
+      assertEquals(output.base32, input.base32.replace(/ /g, ""));
+      assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 });

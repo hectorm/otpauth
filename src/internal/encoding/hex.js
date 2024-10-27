@@ -5,7 +5,7 @@
  */
 const hexDecode = (str) => {
   // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-  str = str.replaceAll(" ", "");
+  str = str.replace(/ /g, "");
 
   const buf = new ArrayBuffer(str.length / 2);
   const arr = new Uint8Array(buf);
