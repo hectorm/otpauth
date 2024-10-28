@@ -98,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno_version: ["vx.x.x"]
+        deno_version: ["v2.x"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
@@ -115,15 +115,10 @@ jobs:
         uses: "denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb"
         with:
           deno-version: "${{ matrix.deno_version }}"
-      - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-        with:
-          node-version: "lts/*"
-          cache: "npm"
       - name: "Install dependencies"
-        run: "npm ci"
+        run: "deno install"
       - name: "Test"
-        run: "npm run test:deno"
+        run: "deno task test:deno"
 
   test-bun:
     name: "Test on Bun ${{ matrix.bun_version }} on ${{ matrix.os }}"
