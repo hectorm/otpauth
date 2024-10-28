@@ -1150,7 +1150,9 @@ describe("Secret", () => {
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(new Uint8Array(output.buffer), new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
-      assertEquals(output.utf8, input.utf8);
+      if (globalThis.TextEncoder && globalThis.TextDecoder) {
+        assertEquals(output.utf8, input.utf8);
+      }
       assertEquals(output.base32, input.base32.replace(/ /g, ""));
       assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
@@ -1166,7 +1168,9 @@ describe("Secret", () => {
     assert(typeof output.latin1 === "string");
     // eslint-disable-next-line no-control-regex
     assertMatch(output.latin1, /^[\u0000-\u00FF]{4096}$/);
-    assert(typeof output.utf8 === "string");
+    if (globalThis.TextEncoder && globalThis.TextDecoder) {
+      assert(typeof output.utf8 === "string");
+    }
     assert(typeof output.base32 === "string");
     assertMatch(output.base32, /^[2-7A-Z]{6554}$/);
     assert(typeof output.hex === "string");
@@ -1183,7 +1187,9 @@ describe("Secret", () => {
     assert(typeof output.latin1 === "string");
     // eslint-disable-next-line no-control-regex
     assertMatch(output.latin1, /^[\u0000-\u00FF]{20}$/);
-    assert(typeof output.utf8 === "string");
+    if (globalThis.TextEncoder && globalThis.TextDecoder) {
+      assert(typeof output.utf8 === "string");
+    }
     assert(typeof output.base32 === "string");
     assertMatch(output.base32, /^[2-7A-Z]{32}$/);
     assert(typeof output.hex === "string");
@@ -1197,24 +1203,28 @@ describe("Secret", () => {
       assert(output instanceof OTPAuth.Secret);
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
-      assertEquals(output.utf8, input.utf8);
+      if (globalThis.TextEncoder && globalThis.TextDecoder) {
+        assertEquals(output.utf8, input.utf8);
+      }
       assertEquals(output.base32, input.base32.replace(/ /g, ""));
       assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
   });
 
-  cases.forEach((input, index) => {
-    it(`fromUTF8[${index}]`, () => {
-      const output = OTPAuth.Secret.fromUTF8(input.utf8);
+  if (globalThis.TextEncoder && globalThis.TextDecoder) {
+    cases.forEach((input, index) => {
+      it(`fromUTF8[${index}]`, () => {
+        const output = OTPAuth.Secret.fromUTF8(input.utf8);
 
-      assert(output instanceof OTPAuth.Secret);
-      assertEquals(output.bytes, new Uint8Array(input.buffer));
-      assertEquals(output.latin1, input.latin1);
-      assertEquals(output.utf8, input.utf8);
-      assertEquals(output.base32, input.base32.replace(/ /g, ""));
-      assertEquals(output.hex, input.hex.replace(/ /g, ""));
+        assert(output instanceof OTPAuth.Secret);
+        assertEquals(output.bytes, new Uint8Array(input.buffer));
+        assertEquals(output.latin1, input.latin1);
+        assertEquals(output.utf8, input.utf8);
+        assertEquals(output.base32, input.base32.replace(/ /g, ""));
+        assertEquals(output.hex, input.hex.replace(/ /g, ""));
+      });
     });
-  });
+  }
 
   cases.forEach((input, index) => {
     it(`fromBase32[${index}]`, () => {
@@ -1223,7 +1233,9 @@ describe("Secret", () => {
       assert(output instanceof OTPAuth.Secret);
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
-      assertEquals(output.utf8, input.utf8);
+      if (globalThis.TextEncoder && globalThis.TextDecoder) {
+        assertEquals(output.utf8, input.utf8);
+      }
       assertEquals(output.base32, input.base32.replace(/ /g, ""));
       assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
@@ -1236,7 +1248,9 @@ describe("Secret", () => {
       assert(output instanceof OTPAuth.Secret);
       assertEquals(output.bytes, new Uint8Array(input.buffer));
       assertEquals(output.latin1, input.latin1);
-      assertEquals(output.utf8, input.utf8);
+      if (globalThis.TextEncoder && globalThis.TextDecoder) {
+        assertEquals(output.utf8, input.utf8);
+      }
       assertEquals(output.base32, input.base32.replace(/ /g, ""));
       assertEquals(output.hex, input.hex.replace(/ /g, ""));
     });
