@@ -25,9 +25,9 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -45,7 +45,7 @@ jobs:
         run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
         if: "runner.os == 'Linux'"
-        uses: "actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874"
+        uses: "actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882"
         with:
           name: "dist"
           path: "./dist/"
@@ -70,7 +70,7 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -80,7 +80,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "${{ matrix.node_version }}"
           cache: "npm"
@@ -102,7 +102,7 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -112,11 +112,11 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Deno ${{ matrix.deno_version }}"
-        uses: "denoland/setup-deno@5e01c016a857a4dbb5afe9d0f9733cd472cba985"
+        uses: "denoland/setup-deno@4606d5cc6fb3f673efd4f594850e3f4b3e9d29cd"
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -138,7 +138,7 @@ jobs:
         os: ["ubuntu-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -169,7 +169,7 @@ jobs:
         os: ["ubuntu-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -179,7 +179,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -198,7 +198,7 @@ jobs:
       id-token: "write"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -208,7 +208,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
@@ -231,7 +231,7 @@ jobs:
       id-token: "write"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -241,7 +241,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@0a44ba7841725637a19e28fa30b79a866c81b0a6"
+        uses: "actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
         with:
           node-version: "lts/*"
       - name: "Publish"
