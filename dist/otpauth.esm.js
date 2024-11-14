@@ -1,4 +1,4 @@
-//! otpauth 9.3.4 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.5 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 //! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
@@ -1120,11 +1120,11 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
             configurable: true
         });
         try {
-            // @ts-ignore
+            // @ts-expect-error
             // eslint-disable-next-line no-undef
             if (typeof __GLOBALTHIS__ !== "undefined") return __GLOBALTHIS__;
         } finally{
-            // @ts-ignore
+            // @ts-expect-error
             delete Object.prototype.__GLOBALTHIS__;
         }
     }
@@ -1136,9 +1136,9 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 })();
 
 /**
- * OpenSSL-Noble hashes map.
+ * @noble/hashes hash functions.
  * @type {Object.<string, sha1|sha224|sha256|sha384|sha512|sha3_224|sha3_256|sha3_384|sha3_512>}
- */ const OPENSSL_NOBLE_HASHES = {
+ */ const nobleHashes = {
     SHA1: sha1,
     SHA224: sha224,
     SHA256: sha256,
@@ -1150,16 +1150,42 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
     "SHA3-512": sha3_512
 };
 /**
+ * Canonicalizes a hash algorithm name.
+ * @param {string} algorithm Hash algorithm name.
+ * @returns {"SHA1"|"SHA224"|"SHA256"|"SHA384"|"SHA512"|"SHA3-224"|"SHA3-256"|"SHA3-384"|"SHA3-512"} Canonicalized hash algorithm name.
+ */ const canonicalizeAlgorithm = (algorithm)=>{
+    switch(true){
+        case /^(?:SHA-?1|SSL3-SHA1)$/i.test(algorithm):
+            return "SHA1";
+        case /^SHA(?:2?-)?224$/i.test(algorithm):
+            return "SHA224";
+        case /^SHA(?:2?-)?256$/i.test(algorithm):
+            return "SHA256";
+        case /^SHA(?:2?-)?384$/i.test(algorithm):
+            return "SHA384";
+        case /^SHA(?:2?-)?512$/i.test(algorithm):
+            return "SHA512";
+        case /^SHA3-224$/i.test(algorithm):
+            return "SHA3-224";
+        case /^SHA3-256$/i.test(algorithm):
+            return "SHA3-256";
+        case /^SHA3-384$/i.test(algorithm):
+            return "SHA3-384";
+        case /^SHA3-512$/i.test(algorithm):
+            return "SHA3-512";
+        default:
+            throw new TypeError(`Unknown hash algorithm: ${algorithm}`);
+    }
+};
+/**
  * Calculates an HMAC digest.
- * In Node.js, the command "openssl list -digest-algorithms" displays the available digest algorithms.
  * @param {string} algorithm Algorithm.
  * @param {Uint8Array} key Key.
  * @param {Uint8Array} message Message.
  * @returns {Uint8Array} Digest.
  */ const hmacDigest = (algorithm, key, message)=>{
     if (hmac) {
-        const hash = OPENSSL_NOBLE_HASHES[algorithm.toUpperCase()];
-        if (!hash) throw new TypeError("Unknown hash function");
+        const hash = nobleHashes[algorithm] ?? nobleHashes[canonicalizeAlgorithm(algorithm)];
         return hmac(hash, key, message);
     } else {
         throw new Error("Missing HMAC function");
@@ -1177,7 +1203,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
  * @returns {Uint8Array} Uint8Array.
  */ const base32Decode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replaceAll(" ", "");
+    str = str.replace(/ /g, "");
     // Canonicalize to all upper case and remove padding if it exists.
     let end = str.length;
     while(str[end - 1] === "=")--end;
@@ -1228,7 +1254,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
  * @returns {Uint8Array} Uint8Array.
  */ const hexDecode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replaceAll(" ", "");
+    str = str.replace(/ /g, "");
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for(let i = 0; i < str.length; i += 2){
@@ -1451,7 +1477,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.
- * @see [RFC 4226](https://tools.ietf.org/html/rfc4226)
+ * @see [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226)
  */ class HOTP {
     /**
    * Default configuration.
@@ -1590,7 +1616,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = algorithm.toUpperCase();
+     */ this.algorithm = canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -1604,7 +1630,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm.
- * @see [RFC 6238](https://tools.ietf.org/html/rfc6238)
+ * @see [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238)
  */ class TOTP {
     /**
    * Default configuration.
@@ -1735,7 +1761,7 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = algorithm.toUpperCase();
+     */ this.algorithm = canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -1877,6 +1903,6 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.4";
+ */ const version = "9.3.5";
 
 export { HOTP, Secret, TOTP, URI, version };

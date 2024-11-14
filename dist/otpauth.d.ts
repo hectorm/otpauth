@@ -72,7 +72,7 @@ declare class Secret {
 
 /**
  * HOTP: An HMAC-based One-time Password Algorithm.
- * @see [RFC 4226](https://tools.ietf.org/html/rfc4226)
+ * @see [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226)
  */
 declare class HOTP {
     /**
@@ -216,7 +216,7 @@ declare class HOTP {
 
 /**
  * TOTP: Time-Based One-Time Password Algorithm.
- * @see [RFC 6238](https://tools.ietf.org/html/rfc6238)
+ * @see [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238)
  */
 declare class TOTP {
     /**
