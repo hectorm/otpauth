@@ -1385,31 +1385,31 @@ describe("TOTP", () => {
 
 describe("URI", () => {
   cases.forEach((input, index) => {
-    it(`parse[${index}] - HOTP`, () => {
-      const hotp = new OTPAuth.HOTP({
-        ...input.hotp.constructor.input,
-        secret: new OTPAuth.Secret({ buffer: input.buffer }),
-      });
+    for (let n = 0; n < input.hotp.toString.output.length; n++) {
+      it(`parse[${index}][${n}] - HOTP`, () => {
+        const hotp = new OTPAuth.HOTP({
+          ...input.hotp.constructor.input,
+          secret: new OTPAuth.Secret({ buffer: input.buffer }),
+        });
 
-      for (const uri of input.hotp.toString.output) {
-        const output = OTPAuth.URI.parse(uri);
+        const output = OTPAuth.URI.parse(input.hotp.toString.output[n]);
         assertEquals(output, hotp);
-      }
-    });
+      });
+    }
   });
 
   cases.forEach((input, index) => {
-    it(`parse[${index}] - TOTP`, () => {
-      const totp = new OTPAuth.TOTP({
-        ...input.totp.constructor.input,
-        secret: new OTPAuth.Secret({ buffer: input.buffer }),
-      });
+    for (let n = 0; n < input.totp.toString.output.length; n++) {
+      it(`parse[${index}][${n}] - TOTP`, () => {
+        const totp = new OTPAuth.TOTP({
+          ...input.totp.constructor.input,
+          secret: new OTPAuth.Secret({ buffer: input.buffer }),
+        });
 
-      for (const uri of input.totp.toString.output) {
-        const output = OTPAuth.URI.parse(uri);
+        const output = OTPAuth.URI.parse(input.totp.toString.output[n]);
         assertEquals(output, totp);
-      }
-    });
+      });
+    }
   });
 
   cases.forEach((input, index) => {
