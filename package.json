@@ -119,7 +119,7 @@
   },
   "devDependencies": {
     "@eslint/core": "~0.9.0",
-    "@eslint/js": "~9.15.0",
+    "@eslint/js": "~9.16.0",
     "@rollup/plugin-node-resolve": "~15.3.0",
     "@rollup/plugin-replace": "~6.0.1",
     "@rollup/plugin-swc": "~0.4.0",
@@ -129,19 +129,19 @@
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/eslint__js": "~8.42.3",
-    "@types/node": "~22.10.0",
+    "@types/node": "~22.10.1",
     "chai": "~5.1.2",
-    "eslint": "~9.15.0",
+    "eslint": "~9.16.0",
     "eslint-config-prettier": "~9.1.0",
-    "globals": "~15.12.0",
+    "globals": "~15.13.0",
     "mocha": "~10.8.2",
     "npm-run-all2": "~7.0.1",
     "playwright": "~1.49.0",
     "prettier": "~3.4.1",
     "rimraf": "~6.0.1",
-    "rollup": "~4.27.4",
+    "rollup": "~4.28.0",
     "rollup-plugin-dts": "~6.1.1",
-    "typedoc": "~0.27.0",
+    "typedoc": "~0.27.2",
     "typescript": "~5.7.2"
   }
 }
