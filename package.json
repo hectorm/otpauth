@@ -134,7 +134,7 @@
     "eslint": "~9.16.0",
     "eslint-config-prettier": "~9.1.0",
     "globals": "~15.13.0",
-    "mocha": "~10.8.2",
+    "mocha": "~11.0.1",
     "npm-run-all2": "~7.0.1",
     "playwright": "~1.49.0",
     "prettier": "~3.4.1",
