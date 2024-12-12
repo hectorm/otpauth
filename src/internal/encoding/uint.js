@@ -27,10 +27,8 @@ const uintEncode = (arr) => {
   let num = 0;
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== 0) {
-      num *= 256;
-      num += arr[i];
-    }
+    num *= 256;
+    num += arr[i];
   }
 
   return num;
