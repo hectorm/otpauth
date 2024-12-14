@@ -1,4 +1,4 @@
-//! otpauth 9.3.5 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 'use strict';
@@ -829,7 +829,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.5";
+ */ const version = "9.3.6";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;

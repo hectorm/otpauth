@@ -1,5 +1,5 @@
-//! otpauth 9.3.5 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.6.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -19,31 +19,31 @@
     return arr;
 };
 
-function number(n) {
-    if (!Number.isSafeInteger(n) || n < 0) throw new Error(`positive integer expected, not ${n}`);
+function anumber(n) {
+    if (!Number.isSafeInteger(n) || n < 0) throw new Error('positive integer expected, got ' + n);
 }
 // copied from utils
 function isBytes(a) {
-    return a instanceof Uint8Array || a != null && typeof a === 'object' && a.constructor.name === 'Uint8Array';
+    return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === 'Uint8Array';
 }
-function bytes(b, ...lengths) {
+function abytes(b, ...lengths) {
     if (!isBytes(b)) throw new Error('Uint8Array expected');
-    if (lengths.length > 0 && !lengths.includes(b.length)) throw new Error(`Uint8Array expected of length ${lengths}, not of length=${b.length}`);
+    if (lengths.length > 0 && !lengths.includes(b.length)) throw new Error('Uint8Array expected of length ' + lengths + ', got length=' + b.length);
 }
-function hash(h) {
+function ahash(h) {
     if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash should be wrapped by utils.wrapConstructor');
-    number(h.outputLen);
-    number(h.blockLen);
+    anumber(h.outputLen);
+    anumber(h.blockLen);
 }
-function exists(instance, checkFinished = true) {
+function aexists(instance, checkFinished = true) {
     if (instance.destroyed) throw new Error('Hash instance has been destroyed');
     if (checkFinished && instance.finished) throw new Error('Hash#digest() has already been called');
 }
-function output(out, instance) {
-    bytes(out);
+function aoutput(out, instance) {
+    abytes(out);
     const min = instance.outputLen;
     if (out.length < min) {
-        throw new Error(`digestInto() expects output buffer of length at least ${min}`);
+        throw new Error('digestInto() expects output buffer of length at least ' + min);
     }
 }
 
@@ -60,9 +60,9 @@ const createView = (arr)=>new DataView(arr.buffer, arr.byteOffset, arr.byteLengt
 const rotr = (word, shift)=>word << 32 - shift | word >>> shift;
 // The rotate left (circular left shift) operation for uint32
 const rotl = (word, shift)=>word << shift | word >>> 32 - shift >>> 0;
-const isLE = new Uint8Array(new Uint32Array([
-    0x11223344
-]).buffer)[0] === 0x44;
+const isLE = /* @__PURE__ */ (()=>new Uint8Array(new Uint32Array([
+        0x11223344
+    ]).buffer)[0] === 0x44)();
 // The byte swap operation for uint32
 const byteSwap = (word)=>word << 24 & 0xff000000 | word << 8 & 0xff0000 | word >>> 8 & 0xff00 | word >>> 24 & 0xff;
 // In place byte swap for Uint32Array
@@ -74,7 +74,7 @@ function byteSwap32(arr) {
 /**
  * @example utf8ToBytes('abc') // new Uint8Array([97, 98, 99])
  */ function utf8ToBytes(str) {
-    if (typeof str !== 'string') throw new Error(`utf8ToBytes expected string, got ${typeof str}`);
+    if (typeof str !== 'string') throw new Error('utf8ToBytes expected string, got ' + typeof str);
     return new Uint8Array(new TextEncoder().encode(str)); // https://bugzil.la/1681809
 }
 /**
@@ -83,7 +83,7 @@ function byteSwap32(arr) {
  * Keep in mind for future mutable operations.
  */ function toBytes(data) {
     if (typeof data === 'string') data = utf8ToBytes(data);
-    bytes(data);
+    abytes(data);
     return data;
 }
 // For runtime check if class implements interface
@@ -105,13 +105,13 @@ function wrapConstructor(hashCons) {
 // HMAC (RFC 2104)
 class HMAC extends Hash {
     update(buf) {
-        exists(this);
+        aexists(this);
         this.iHash.update(buf);
         return this;
     }
     digestInto(out) {
-        exists(this);
-        bytes(out, this.outputLen);
+        aexists(this);
+        abytes(out, this.outputLen);
         this.finished = true;
         this.iHash.digestInto(out);
         this.oHash.update(out);
@@ -141,24 +141,24 @@ class HMAC extends Hash {
         this.oHash.destroy();
         this.iHash.destroy();
     }
-    constructor(hash$1, _key){
+    constructor(hash, _key){
         super();
         this.finished = false;
         this.destroyed = false;
-        hash(hash$1);
+        ahash(hash);
         const key = toBytes(_key);
-        this.iHash = hash$1.create();
+        this.iHash = hash.create();
         if (typeof this.iHash.update !== 'function') throw new Error('Expected instance of class which extends utils.Hash');
         this.blockLen = this.iHash.blockLen;
         this.outputLen = this.iHash.outputLen;
         const blockLen = this.blockLen;
         const pad = new Uint8Array(blockLen);
         // blockLen can be bigger than outputLen
-        pad.set(key.length > blockLen ? hash$1.create().update(key).digest() : key);
+        pad.set(key.length > blockLen ? hash.create().update(key).digest() : key);
         for(let i = 0; i < pad.length; i++)pad[i] ^= 0x36;
         this.iHash.update(pad);
         // By doing update (processing of first block) of outer hash here we can re-use it between multiple calls via clone
-        this.oHash = hash$1.create();
+        this.oHash = hash.create();
         // Undo internal XOR && apply outer XOR
         for(let i = 0; i < pad.length; i++)pad[i] ^= 0x36 ^ 0x5c;
         this.oHash.update(pad);
@@ -201,7 +201,7 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
  * Could be used to create MD5, RIPEMD, SHA1, SHA2.
  */ class HashMD extends Hash {
     update(data) {
-        exists(this);
+        aexists(this);
         const { view, buffer, blockLen } = this;
         data = toBytes(data);
         const len = data.length;
@@ -226,8 +226,8 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
         return this;
     }
     digestInto(out) {
-        exists(this);
-        output(out, this);
+        aexists(this);
+        aoutput(out, this);
         this.finished = true;
         // Padding
         // We can avoid allocation of buffer for padding completely if it
@@ -380,7 +380,7 @@ class SHA1 extends HashMD {
  */ const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
 
 // SHA2-256 need to try 2^128 hashes to execute birthday attack.
-// BTC network is doing 2^67 hashes/sec as per early 2023.
+// BTC network is doing 2^70 hashes/sec (2^95 hashes/year) as per late 2024.
 // Round constants:
 // first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311)
 // prettier-ignore
@@ -574,7 +574,8 @@ class SHA224 extends SHA256 {
 
 const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
 const _32n = /* @__PURE__ */ BigInt(32);
-// We are not using BigUint64Array, because they are extremely slow as per 2022
+// BigUint64Array is too slow as per 2024, so we implement it using Uint32Array.
+// TODO: re-check https://issues.chromium.org/issues/42212588
 function fromBig(n, le = false) {
     if (le) return {
         h: Number(n & U32_MASK64),
@@ -1003,7 +1004,7 @@ class Keccak extends Hash {
         this.pos = 0;
     }
     update(data) {
-        exists(this);
+        aexists(this);
         const { blockLen, state } = this;
         data = toBytes(data);
         const len = data.length;
@@ -1025,8 +1026,8 @@ class Keccak extends Hash {
         this.keccak();
     }
     writeInto(out) {
-        exists(this, false);
-        bytes(out);
+        aexists(this, false);
+        abytes(out);
         this.finish();
         const bufferOut = this.state;
         const { blockLen } = this;
@@ -1045,11 +1046,11 @@ class Keccak extends Hash {
         return this.writeInto(out);
     }
     xof(bytes) {
-        number(bytes);
+        anumber(bytes);
         return this.xofInto(new Uint8Array(bytes));
     }
     digestInto(out) {
-        output(out, this);
+        aoutput(out, this);
         if (this.finished) throw new Error('digest() was already called');
         this.writeInto(out);
         this.destroy();
@@ -1090,7 +1091,7 @@ class Keccak extends Hash {
         this.finished = false;
         this.destroyed = false;
         // Can be passed from user as dkLen
-        number(outputLen);
+        anumber(outputLen);
         // 1600 = 5x5 matrix of 64bit.  1600 bits === 200 bytes
         if (0 >= this.blockLen || this.blockLen >= 200) throw new Error('Sha3 supports only keccak-f1600 function');
         this.state = new Uint8Array(200);
@@ -1903,6 +1904,6 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.5";
+ */ const version = "9.3.6";
 
 export { HOTP, Secret, TOTP, URI, version };

@@ -1,5 +1,5 @@
-//! otpauth 9.3.5 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.5.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.6.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 import { hmac } from '@noble/hashes/hmac';
@@ -821,6 +821,6 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.5";
+ */ const version = "9.3.6";
 
 export { HOTP, Secret, TOTP, URI, version };

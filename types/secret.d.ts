@@ -35,7 +35,7 @@ export class Secret {
     constructor({ buffer, size }?: {
         buffer?: ArrayBufferLike | undefined;
         size?: number | undefined;
-    } | undefined);
+    });
     /**
      * Secret key.
      * @type {Uint8Array}

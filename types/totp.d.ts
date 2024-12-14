@@ -81,7 +81,7 @@ export class TOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
-    } | undefined);
+    });
     /**
      * Account provider.
      * @type {string}
@@ -125,7 +125,7 @@ export class TOTP {
      */
     generate({ timestamp }?: {
         timestamp?: number | undefined;
-    } | undefined): string;
+    }): string;
     /**
      * Validates a TOTP token.
      * @param {Object} config Configuration options.

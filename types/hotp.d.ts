@@ -77,7 +77,7 @@ export class HOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
-    } | undefined);
+    });
     /**
      * Account provider.
      * @type {string}
@@ -121,7 +121,7 @@ export class HOTP {
      */
     generate({ counter }?: {
         counter?: number | undefined;
-    } | undefined): string;
+    }): string;
     /**
      * Validates an HOTP token.
      * @param {Object} config Configuration options.

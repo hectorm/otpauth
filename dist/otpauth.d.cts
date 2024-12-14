@@ -35,7 +35,7 @@ declare class Secret {
     constructor({ buffer, size }?: {
         buffer?: ArrayBufferLike | undefined;
         size?: number | undefined;
-    } | undefined);
+    });
     /**
      * Secret key.
      * @type {Uint8Array}
@@ -149,7 +149,7 @@ declare class HOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
-    } | undefined);
+    });
     /**
      * Account provider.
      * @type {string}
@@ -193,7 +193,7 @@ declare class HOTP {
      */
     generate({ counter }?: {
         counter?: number | undefined;
-    } | undefined): string;
+    }): string;
     /**
      * Validates an HOTP token.
      * @param {Object} config Configuration options.
@@ -297,7 +297,7 @@ declare class TOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
-    } | undefined);
+    });
     /**
      * Account provider.
      * @type {string}
@@ -341,7 +341,7 @@ declare class TOTP {
      */
     generate({ timestamp }?: {
         timestamp?: number | undefined;
-    } | undefined): string;
+    }): string;
     /**
      * Validates a TOTP token.
      * @param {Object} config Configuration options.
