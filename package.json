@@ -115,7 +115,7 @@
     "version:git": "git add -A ./jsr.json ./types/ ./dist/ ./docs/"
   },
   "dependencies": {
-    "@noble/hashes": "1.6.1"
+    "@noble/hashes": "1.7.0"
   },
   "devDependencies": {
     "@eslint/core": "~0.9.1",
