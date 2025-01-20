@@ -132,7 +132,7 @@
     "@types/node": "~22.10.5",
     "chai": "~5.1.2",
     "eslint": "~9.18.0",
-    "eslint-config-prettier": "~9.1.0",
+    "eslint-config-prettier": "~10.0.1",
     "globals": "~15.14.0",
     "mocha": "~11.0.1",
     "npm-run-all2": "~7.0.2",
