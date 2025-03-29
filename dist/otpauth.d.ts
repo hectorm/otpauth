@@ -241,6 +241,28 @@ declare class TOTP {
         window: number;
     };
     /**
+     * Calculates the counter. i.e. the number of periods since timestamp 0.
+     * @param {Object} [config] Configuration options.
+     * @param {number} [config.period=30] Token time-step duration.
+     * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @returns {number} Counter.
+     */
+    static counter({ period, timestamp }?: {
+        period?: number | undefined;
+        timestamp?: number | undefined;
+    }): number;
+    /**
+     * Calculates the remaining time in milliseconds until the next token is generated.
+     * @param {Object} [config] Configuration options.
+     * @param {number} [config.period=30] Token time-step duration.
+     * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @returns {number} counter.
+     */
+    static remaining({ period, timestamp }?: {
+        period?: number | undefined;
+        timestamp?: number | undefined;
+    }): number;
+    /**
      * Generates a TOTP token.
      * @param {Object} config Configuration options.
      * @param {Secret} config.secret Secret key.
@@ -333,6 +355,24 @@ declare class TOTP {
      * @type {number}
      */
     period: number;
+    /**
+     * Calculates the counter. i.e. the number of periods since timestamp 0.
+     * @param {Object} [config] Configuration options.
+     * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @returns {number} Counter.
+     */
+    counter({ timestamp }?: {
+        timestamp?: number | undefined;
+    }): number;
+    /**
+     * Calculates the remaining time in milliseconds until the next token is generated.
+     * @param {Object} [config] Configuration options.
+     * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @returns {number} counter.
+     */
+    remaining({ timestamp }?: {
+        timestamp?: number | undefined;
+    }): number;
     /**
      * Generates a TOTP token.
      * @param {Object} [config] Configuration options.

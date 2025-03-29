@@ -1,5 +1,5 @@
-//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.6.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.4.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.7.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -19,27 +19,29 @@
     return arr;
 };
 
-function anumber(n) {
+/**
+ * Internal assertion helpers.
+ * @module
+ */ /** Asserts something is positive integer. */ function anumber(n) {
     if (!Number.isSafeInteger(n) || n < 0) throw new Error('positive integer expected, got ' + n);
 }
-// copied from utils
-function isBytes(a) {
+/** Is number an Uint8Array? Copied from utils for perf. */ function isBytes(a) {
     return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === 'Uint8Array';
 }
-function abytes(b, ...lengths) {
+/** Asserts something is Uint8Array. */ function abytes(b, ...lengths) {
     if (!isBytes(b)) throw new Error('Uint8Array expected');
     if (lengths.length > 0 && !lengths.includes(b.length)) throw new Error('Uint8Array expected of length ' + lengths + ', got length=' + b.length);
 }
-function ahash(h) {
+/** Asserts something is hash */ function ahash(h) {
     if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash should be wrapped by utils.wrapConstructor');
     anumber(h.outputLen);
     anumber(h.blockLen);
 }
-function aexists(instance, checkFinished = true) {
+/** Asserts a hash instance has not been destroyed / finished */ function aexists(instance, checkFinished = true) {
     if (instance.destroyed) throw new Error('Hash instance has been destroyed');
     if (checkFinished && instance.finished) throw new Error('Hash#digest() has already been called');
 }
-function aoutput(out, instance) {
+/** Asserts output is properly-sized byte array */ function aoutput(out, instance) {
     abytes(out);
     const min = instance.outputLen;
     if (out.length < min) {
@@ -47,31 +49,42 @@ function aoutput(out, instance) {
     }
 }
 
-/*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ // We use WebCrypto aka globalThis.crypto, which exists in browsers and node.js 16+.
+/**
+ * Utilities for hex, bytes, CSPRNG.
+ * @module
+ */ /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ // We use WebCrypto aka globalThis.crypto, which exists in browsers and node.js 16+.
 // node.js versions earlier than v19 don't declare it in global scope.
 // For node.js, package.json#exports field mapping rewrites import
 // from `crypto` to `cryptoNode`, which imports native module.
 // Makes the utils un-importable in browsers without a bundler.
 // Once node.js 18 is deprecated (2025-04-30), we can just drop the import.
-const u32 = (arr)=>new Uint32Array(arr.buffer, arr.byteOffset, Math.floor(arr.byteLength / 4));
+function u32(arr) {
+    return new Uint32Array(arr.buffer, arr.byteOffset, Math.floor(arr.byteLength / 4));
+}
 // Cast array to view
-const createView = (arr)=>new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
-// The rotate right (circular right shift) operation for uint32
-const rotr = (word, shift)=>word << 32 - shift | word >>> shift;
-// The rotate left (circular left shift) operation for uint32
-const rotl = (word, shift)=>word << shift | word >>> 32 - shift >>> 0;
-const isLE = /* @__PURE__ */ (()=>new Uint8Array(new Uint32Array([
+function createView(arr) {
+    return new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
+}
+/** The rotate right (circular right shift) operation for uint32 */ function rotr(word, shift) {
+    return word << 32 - shift | word >>> shift;
+}
+/** The rotate left (circular left shift) operation for uint32 */ function rotl(word, shift) {
+    return word << shift | word >>> 32 - shift >>> 0;
+}
+/** Is current platform little-endian? Most are. Big-Endian platform: IBM */ const isLE = /* @__PURE__ */ (()=>new Uint8Array(new Uint32Array([
         0x11223344
     ]).buffer)[0] === 0x44)();
 // The byte swap operation for uint32
-const byteSwap = (word)=>word << 24 & 0xff000000 | word << 8 & 0xff0000 | word >>> 8 & 0xff00 | word >>> 24 & 0xff;
-// In place byte swap for Uint32Array
-function byteSwap32(arr) {
+function byteSwap(word) {
+    return word << 24 & 0xff000000 | word << 8 & 0xff0000 | word >>> 8 & 0xff00 | word >>> 24 & 0xff;
+}
+/** In place byte swap for Uint32Array */ function byteSwap32(arr) {
     for(let i = 0; i < arr.length; i++){
         arr[i] = byteSwap(arr[i]);
     }
 }
 /**
+ * Convert JS string to byte array.
  * @example utf8ToBytes('abc') // new Uint8Array([97, 98, 99])
  */ function utf8ToBytes(str) {
     if (typeof str !== 'string') throw new Error('utf8ToBytes expected string, got ' + typeof str);
@@ -86,14 +99,13 @@ function byteSwap32(arr) {
     abytes(data);
     return data;
 }
-// For runtime check if class implements interface
-class Hash {
+/** For runtime check if class implements interface */ class Hash {
     // Safe version that clones internal state
     clone() {
         return this._cloneInto();
     }
 }
-function wrapConstructor(hashCons) {
+/** Wraps hash function, creating an interface on top of it */ function wrapConstructor(hashCons) {
     const hashC = (msg)=>hashCons().update(toBytes(msg)).digest();
     const tmp = hashCons();
     hashC.outputLen = tmp.outputLen;
@@ -102,7 +114,6 @@ function wrapConstructor(hashCons) {
     return hashC;
 }
 
-// HMAC (RFC 2104)
 class HMAC extends Hash {
     update(buf) {
         aexists(this);
@@ -177,9 +188,7 @@ class HMAC extends Hash {
  */ const hmac = (hash, key, message)=>new HMAC(hash, key).update(message).digest();
 hmac.create = (hash, key)=>new HMAC(hash, key);
 
-/**
- * Polyfill for Safari 14
- */ function setBigUint64(view, byteOffset, value, isLE) {
+/** Polyfill for Safari 14. https://caniuse.com/mdn-javascript_builtins_dataview_setbiguint64 */ function setBigUint64(view, byteOffset, value, isLE) {
     if (typeof view.setBigUint64 === 'function') return view.setBigUint64(byteOffset, value, isLE);
     const _32n = BigInt(32);
     const _u32_max = BigInt(0xffffffff);
@@ -190,12 +199,12 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
     view.setUint32(byteOffset + h, wh, isLE);
     view.setUint32(byteOffset + l, wl, isLE);
 }
-/**
- * Choice: a ? b : c
- */ const Chi = (a, b, c)=>a & b ^ ~a & c;
-/**
- * Majority function, true if any two inputs is true
- */ const Maj = (a, b, c)=>a & b ^ a & c ^ b & c;
+/** Choice: a ? b : c */ function Chi(a, b, c) {
+    return a & b ^ ~a & c;
+}
+/** Majority function, true if any two inputs is true. */ function Maj(a, b, c) {
+    return a & b ^ a & c ^ b & c;
+}
 /**
  * Merkle-Damgard hash construction base class.
  * Could be used to create MD5, RIPEMD, SHA1, SHA2.
@@ -292,7 +301,6 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
     }
 }
 
-// SHA1 (RFC 3174). It was cryptographically broken: prefer newer algorithms.
 // Initial state
 const SHA1_IV = /* @__PURE__ */ new Uint32Array([
     0x67452301,
@@ -373,17 +381,9 @@ class SHA1 extends HashMD {
         this.E = SHA1_IV[4] | 0;
     }
 }
-/**
- * SHA1 (RFC 3174) hash function.
- * It was cryptographically broken: prefer newer algorithms.
- * @param message - data that would be hashed
- */ const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
+/** SHA1 (RFC 3174) legacy hash function. It was cryptographically broken. */ const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
 
-// SHA2-256 need to try 2^128 hashes to execute birthday attack.
-// BTC network is doing 2^70 hashes/sec (2^95 hashes/year) as per late 2024.
-// Round constants:
-// first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311)
-// prettier-ignore
+/** Round constants: first 32 bits of fractional parts of the cube roots of the first 64 primes 2..311). */ // prettier-ignore
 const SHA256_K = /* @__PURE__ */ new Uint32Array([
     0x428a2f98,
     0x71374491,
@@ -450,9 +450,7 @@ const SHA256_K = /* @__PURE__ */ new Uint32Array([
     0xbef9a3f7,
     0xc67178f2
 ]);
-// Initial state:
-// first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19
-// prettier-ignore
+/** Initial state: first 32 bits of fractional parts of the square roots of the first 8 primes 2..19. */ // prettier-ignore
 const SHA256_IV = /* @__PURE__ */ new Uint32Array([
     0x6a09e667,
     0xbb67ae85,
@@ -463,9 +461,10 @@ const SHA256_IV = /* @__PURE__ */ new Uint32Array([
     0x1f83d9ab,
     0x5be0cd19
 ]);
-// Temporary buffer, not used to store anything between runs
-// Named this way because it matches specification.
-const SHA256_W = /* @__PURE__ */ new Uint32Array(64);
+/**
+ * Temporary buffer, not used to store anything between runs.
+ * Named this way because it matches specification.
+ */ const SHA256_W = /* @__PURE__ */ new Uint32Array(64);
 class SHA256 extends HashMD {
     get() {
         const { A, B, C, D, E, F, G, H } = this;
@@ -549,8 +548,9 @@ class SHA256 extends HashMD {
         this.H = SHA256_IV[7] | 0;
     }
 }
-// Constants from https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf
-class SHA224 extends SHA256 {
+/**
+ * Constants taken from https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf.
+ */ class SHA224 extends SHA256 {
     constructor(){
         super();
         this.A = 0xc1059ed8 | 0;
@@ -564,18 +564,15 @@ class SHA224 extends SHA256 {
         this.outputLen = 28;
     }
 }
-/**
- * SHA2-256 hash function
- * @param message - data that would be hashed
- */ const sha256 = /* @__PURE__ */ wrapConstructor(()=>new SHA256());
-/**
- * SHA2-224 hash function
- */ const sha224 = /* @__PURE__ */ wrapConstructor(()=>new SHA224());
+/** SHA2-256 hash function */ const sha256 = /* @__PURE__ */ wrapConstructor(()=>new SHA256());
+/** SHA2-224 hash function */ const sha224 = /* @__PURE__ */ wrapConstructor(()=>new SHA224());
 
-const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
+/**
+ * Internal helpers for u64. BigUint64Array is too slow as per 2025, so we implement it using Uint32Array.
+ * @todo re-check https://issues.chromium.org/issues/42212588
+ * @module
+ */ const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
 const _32n = /* @__PURE__ */ BigInt(32);
-// BigUint64Array is too slow as per 2024, so we implement it using Uint32Array.
-// TODO: re-check https://issues.chromium.org/issues/42212588
 function fromBig(n, le = false) {
     if (le) return {
         h: Number(n & U32_MASK64),
@@ -916,11 +913,9 @@ class SHA384 extends SHA512 {
         this.outputLen = 48;
     }
 }
-const sha512 = /* @__PURE__ */ wrapConstructor(()=>new SHA512());
-const sha384 = /* @__PURE__ */ wrapConstructor(()=>new SHA384());
+/** SHA2-512 hash function. */ const sha512 = /* @__PURE__ */ wrapConstructor(()=>new SHA512());
+/** SHA2-384 hash function. */ const sha384 = /* @__PURE__ */ wrapConstructor(()=>new SHA384());
 
-// SHA3 (keccak) is based on a new design: basically, the internal state is bigger than output size.
-// It's called a sponge function.
 // Various per round constants calculations
 const SHA3_PI = [];
 const SHA3_ROTL = [];
@@ -952,8 +947,7 @@ const [SHA3_IOTA_H, SHA3_IOTA_L] = /* @__PURE__ */ split(_SHA3_IOTA, true);
 // Left rotation (without 0, 32, 64)
 const rotlH = (h, l, s)=>s > 32 ? rotlBH(h, l, s) : rotlSH(h, l, s);
 const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
-// Same as keccakf1600, but allows to skip some rounds
-function keccakP(s, rounds = 24) {
+/** `keccakf1600` internal function, additionally allows to adjust round count. */ function keccakP(s, rounds = 24) {
     const B = new Uint32Array(5 * 2);
     // NOTE: all indices are x2 since we store state as u32 instead of u64 (bigints to slow in js)
     for(let round = 24 - rounds; round < 24; round++){
@@ -995,7 +989,7 @@ function keccakP(s, rounds = 24) {
     }
     B.fill(0);
 }
-class Keccak extends Hash {
+/** Keccak sponge function. */ class Keccak extends Hash {
     keccak() {
         if (!isLE) byteSwap32(this.state32);
         keccakP(this.state32, this.rounds);
@@ -1093,19 +1087,17 @@ class Keccak extends Hash {
         // Can be passed from user as dkLen
         anumber(outputLen);
         // 1600 = 5x5 matrix of 64bit.  1600 bits === 200 bytes
+        // 0 < blockLen < 200
         if (0 >= this.blockLen || this.blockLen >= 200) throw new Error('Sha3 supports only keccak-f1600 function');
         this.state = new Uint8Array(200);
         this.state32 = u32(this.state);
     }
 }
 const gen = (suffix, blockLen, outputLen)=>wrapConstructor(()=>new Keccak(blockLen, suffix, outputLen));
-const sha3_224 = /* @__PURE__ */ gen(0x06, 144, 224 / 8);
-/**
- * SHA3-256 hash function
- * @param message - that would be hashed
- */ const sha3_256 = /* @__PURE__ */ gen(0x06, 136, 256 / 8);
-const sha3_384 = /* @__PURE__ */ gen(0x06, 104, 384 / 8);
-const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
+/** SHA3-224 hash function. */ const sha3_224 = /* @__PURE__ */ gen(0x06, 144, 224 / 8);
+/** SHA3-256 hash function. Different from keccak-256. */ const sha3_256 = /* @__PURE__ */ gen(0x06, 136, 256 / 8);
+/** SHA3-384 hash function. */ const sha3_384 = /* @__PURE__ */ gen(0x06, 104, 384 / 8);
+/** SHA3-512 hash function. */ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 
 /**
  * "globalThis" ponyfill.
@@ -1656,6 +1648,46 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
         };
     }
     /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ static counter({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return Math.floor(timestamp / 1000 / period);
+    }
+    /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ counter({ timestamp = Date.now() } = {}) {
+        return TOTP.counter({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ static remaining({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return period * 1000 - timestamp % (period * 1000);
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ remaining({ timestamp = Date.now() } = {}) {
+        return TOTP.remaining({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {Secret} config.secret Secret key.
@@ -1669,7 +1701,10 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period)
+            counter: TOTP.counter({
+                period,
+                timestamp
+            })
         });
     }
     /**
@@ -1703,7 +1738,10 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period),
+            counter: TOTP.counter({
+                period,
+                timestamp
+            }),
             window
         });
     }
@@ -1904,6 +1942,6 @@ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.6";
+ */ const version = "9.4.0";
 
 export { HOTP, Secret, TOTP, URI, version };

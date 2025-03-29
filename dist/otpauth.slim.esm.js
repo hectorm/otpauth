@@ -1,11 +1,11 @@
-//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.6.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.4.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.7.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 import { hmac } from '@noble/hashes/hmac';
 import { sha1 } from '@noble/hashes/sha1';
-import { sha224, sha256, sha384, sha512 } from '@noble/hashes/sha2';
-import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
+import { sha512, sha384, sha256, sha224 } from '@noble/hashes/sha2';
+import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3';
 
 /**
  * Converts an integer to an Uint8Array.
@@ -573,6 +573,46 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
         };
     }
     /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ static counter({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return Math.floor(timestamp / 1000 / period);
+    }
+    /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ counter({ timestamp = Date.now() } = {}) {
+        return TOTP.counter({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ static remaining({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return period * 1000 - timestamp % (period * 1000);
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ remaining({ timestamp = Date.now() } = {}) {
+        return TOTP.remaining({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {Secret} config.secret Secret key.
@@ -586,7 +626,10 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period)
+            counter: TOTP.counter({
+                period,
+                timestamp
+            })
         });
     }
     /**
@@ -620,7 +663,10 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period),
+            counter: TOTP.counter({
+                period,
+                timestamp
+            }),
             window
         });
     }
@@ -821,6 +867,6 @@ import { sha3_224, sha3_256, sha3_384, sha3_512 } from '@noble/hashes/sha3';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.6";
+ */ const version = "9.4.0";
 
 export { HOTP, Secret, TOTP, URI, version };

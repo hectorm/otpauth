@@ -1,4 +1,4 @@
-//! otpauth 9.3.6 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.4.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 'use strict';
@@ -581,6 +581,46 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         };
     }
     /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ static counter({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return Math.floor(timestamp / 1000 / period);
+    }
+    /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */ counter({ timestamp = Date.now() } = {}) {
+        return TOTP.counter({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ static remaining({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+        return period * 1000 - timestamp % (period * 1000);
+    }
+    /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */ remaining({ timestamp = Date.now() } = {}) {
+        return TOTP.remaining({
+            period: this.period,
+            timestamp
+        });
+    }
+    /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {Secret} config.secret Secret key.
@@ -594,7 +634,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period)
+            counter: TOTP.counter({
+                period,
+                timestamp
+            })
         });
     }
     /**
@@ -628,7 +671,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             secret,
             algorithm,
             digits,
-            counter: Math.floor(timestamp / 1000 / period),
+            counter: TOTP.counter({
+                period,
+                timestamp
+            }),
             window
         });
     }
@@ -829,7 +875,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.3.6";
+ */ const version = "9.4.0";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
