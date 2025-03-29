@@ -113,6 +113,30 @@ class TOTP {
   }
 
   /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */
+  static remaining({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+    return period * 1000 - (timestamp % (period * 1000));
+  }
+
+  /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */
+  remaining({ timestamp = Date.now() } = {}) {
+    return TOTP.remaining({
+      period: this.period,
+      timestamp,
+    });
+  }
+
+  /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {Secret} config.secret Secret key.
