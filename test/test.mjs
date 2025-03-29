@@ -1341,6 +1341,22 @@ describe("TOTP", () => {
     assertEquals(totp.validate({ token: totp.generate() }), 0);
   });
 
+  it("counter", () => {
+    const totp = new OTPAuth.TOTP();
+    const timestamp = Date.now();
+
+    assertEquals(totp.counter({ timestamp }), Math.floor(timestamp / 30e3));
+    assertEquals(OTPAuth.TOTP.counter({ timestamp, period: 60 }), Math.floor(timestamp / 60e3));
+  });
+
+  it("remaining", () => {
+    const totp = new OTPAuth.TOTP();
+    const timestamp = Date.now();
+
+    assertEquals(totp.remaining({ timestamp }), 30e3 - (timestamp % 30e3));
+    assertEquals(OTPAuth.TOTP.remaining({ timestamp, period: 60 }), 60e3 - (timestamp % 60e3));
+  });
+
   cases.forEach((input, index) => {
     it(`generate[${index}]`, () => {
       const totp = new OTPAuth.TOTP({

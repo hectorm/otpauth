@@ -89,6 +89,54 @@ class TOTP {
   }
 
   /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */
+  static counter({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+    return Math.floor(timestamp / 1000 / period);
+  }
+
+  /**
+   * Calculates the counter. i.e. the number of periods since timestamp 0.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} Counter.
+   */
+  counter({ timestamp = Date.now() } = {}) {
+    return TOTP.counter({
+      period: this.period,
+      timestamp,
+    });
+  }
+
+  /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.period=30] Token time-step duration.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */
+  static remaining({ period = TOTP.defaults.period, timestamp = Date.now() } = {}) {
+    return period * 1000 - (timestamp % (period * 1000));
+  }
+
+  /**
+   * Calculates the remaining time in milliseconds until the next token is generated.
+   * @param {Object} [config] Configuration options.
+   * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @returns {number} counter.
+   */
+  remaining({ timestamp = Date.now() } = {}) {
+    return TOTP.remaining({
+      period: this.period,
+      timestamp,
+    });
+  }
+
+  /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {Secret} config.secret Secret key.
@@ -103,7 +151,7 @@ class TOTP {
       secret,
       algorithm,
       digits,
-      counter: Math.floor(timestamp / 1000 / period),
+      counter: TOTP.counter({ period, timestamp }),
     });
   }
 
@@ -141,7 +189,7 @@ class TOTP {
       secret,
       algorithm,
       digits,
-      counter: Math.floor(timestamp / 1000 / period),
+      counter: TOTP.counter({ period, timestamp }),
       window,
     });
   }
