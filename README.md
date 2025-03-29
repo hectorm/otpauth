@@ -78,8 +78,13 @@ let token = totp.generate();
 //   https://datatracker.ietf.org/doc/html/rfc6238#section-5
 let delta = totp.validate({ token, window: 1 });
 
-// Get the remaining seconds until the current token changes.
-let seconds = totp.period - (Math.floor(Date.now() / 1000) % totp.period);
+// Get the counter value (number of intervals since the Unix epoch).
+// Useful for implementing techniques against token reuse during the validity
+// period.
+let counter = totp.counter();
+
+// Get the remaining milliseconds until the current token changes.
+let remaining = totp.remaining();
 
 // Convert to Google Authenticator key URI format.
 // Usually the URI is encoded in a QR code that can be scanned by the user.
