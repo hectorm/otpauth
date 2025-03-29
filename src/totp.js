@@ -94,7 +94,7 @@ class TOTP {
    * @param {Object} config Configuration options.
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
-   * @returns {string} counter.
+   * @returns {number} counter.
    */
   static counter({ period = TOTP.defaults.period, timestamp = Date.now() }) {
     return Math.floor(timestamp / 1000 / period);
