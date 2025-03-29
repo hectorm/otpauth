@@ -1353,8 +1353,8 @@ describe("TOTP", () => {
     const totp = new OTPAuth.TOTP();
     const timestamp = Date.now();
 
-    assertEquals(totp.remaining({ timestamp }), 30e3 - (timestamp % (30e3)));
-    assertEquals(OTPAuth.TOTP.remaining({ timestamp, period: 60 }), 60e3 - (timestamp % (60e3)));
+    assertEquals(totp.remaining({ timestamp }), 30e3 - (timestamp % 30e3));
+    assertEquals(OTPAuth.TOTP.remaining({ timestamp, period: 60 }), 60e3 - (timestamp % 60e3));
   });
 
   cases.forEach((input, index) => {
