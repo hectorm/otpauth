@@ -89,7 +89,7 @@ let remaining = totp.remaining();
 // Convert to Google Authenticator key URI format.
 // Usually the URI is encoded in a QR code that can be scanned by the user.
 // This functionality is outside the scope of the project, but there are many
-// libraries that can be used for this purpose, such as `@paulmillr/qr`.
+// libraries that can be used for this purpose, such as npmjs.com/package/qr
 let uri = totp.toString();
 //   or:      `OTPAuth.URI.stringify(totp)`
 //   returns: `otpauth://totp/ACME:Alice?issuer=ACME&secret=US3WHSG7X5KAPV27VANWKQHF3SH3HULL&algorithm=SHA1&digits=6&period=30`
