@@ -27,7 +27,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -45,7 +45,7 @@ jobs:
         run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
         if: "runner.os == 'Linux'"
-        uses: "actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1"
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
         with:
           name: "dist"
           path: "./dist/"
@@ -75,12 +75,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "${{ matrix.node_version }}"
           cache: "npm"
@@ -107,7 +107,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
@@ -116,7 +116,7 @@ jobs:
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -143,7 +143,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
@@ -174,12 +174,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -203,12 +203,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
@@ -236,12 +236,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806"
+        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a"
+        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
         with:
           node-version: "lts/*"
       - name: "Publish"
