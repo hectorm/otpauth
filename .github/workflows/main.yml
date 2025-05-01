@@ -27,7 +27,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -75,12 +75,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "${{ matrix.node_version }}"
           cache: "npm"
@@ -107,7 +107,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
@@ -116,7 +116,7 @@ jobs:
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -143,12 +143,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Bun ${{ matrix.bun_version }}"
-        uses: "oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5"
+        uses: "oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76"
         with:
           bun-version: "${{ matrix.bun_version }}"
       - name: "Install dependencies"
@@ -174,12 +174,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -203,12 +203,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
@@ -236,12 +236,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e"
+        uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
         with:
           node-version: "lts/*"
       - name: "Publish"
