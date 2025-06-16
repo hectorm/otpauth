@@ -128,7 +128,7 @@
     "@swc/core": "~1.11.24",
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
-    "@types/node": "~22.15.17",
+    "@types/node": "~24.0.3",
     "chai": "~5.2.0",
     "eslint": "~9.26.0",
     "eslint-config-prettier": "~10.1.5",
