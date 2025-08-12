@@ -192,7 +192,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        quickjs_version: ["2024-01-13"]
+        quickjs_version: ["2025-04-26"]
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
@@ -206,7 +206,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use QuickJS ${{ matrix.quickjs_version }}"
-        uses: "hectorm/ghaction-setup-quickjs@0d9f55a8e5dfa8242f9af77dfa2729599fd02939"
+        uses: "hectorm/ghaction-setup-quickjs@c7fba7f777272a6125c0021440d6dc1bd9924090"
         with:
           quickjs-version: "${{ matrix.quickjs_version }}"
       - name: "Use Node.js lts/*"
