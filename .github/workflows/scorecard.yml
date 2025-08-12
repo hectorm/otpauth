@@ -20,7 +20,7 @@ jobs:
       security-events: "write"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+        uses: "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
       - name: "Perform security analysis"
         uses: "ossf/scorecard-action@05b42c624433fc40578a4040d5cf5e36ddca8cde"
         with:
@@ -29,6 +29,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           publish_results: false
       - name: "Upload SARIF file"
-        uses: "github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b"
+        uses: "github/codeql-action/upload-sarif@df559355d593797519d70b90fc8edd5db049e7a2"
         with:
           sarif_file: "./results.sarif"
