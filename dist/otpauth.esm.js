@@ -1,5 +1,5 @@
-//! otpauth 9.4.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.7.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.4.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.8.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -20,20 +20,26 @@
 };
 
 /**
- * Internal assertion helpers.
+ * Utilities for hex, bytes, CSPRNG.
  * @module
- */ /** Asserts something is positive integer. */ function anumber(n) {
-    if (!Number.isSafeInteger(n) || n < 0) throw new Error('positive integer expected, got ' + n);
-}
-/** Is number an Uint8Array? Copied from utils for perf. */ function isBytes(a) {
+ */ /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ // We use WebCrypto aka globalThis.crypto, which exists in browsers and node.js 16+.
+// node.js versions earlier than v19 don't declare it in global scope.
+// For node.js, package.json#exports field mapping rewrites import
+// from `crypto` to `cryptoNode`, which imports native module.
+// Makes the utils un-importable in browsers without a bundler.
+// Once node.js 18 is deprecated (2025-04-30), we can just drop the import.
+/** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */ function isBytes(a) {
     return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === 'Uint8Array';
+}
+/** Asserts something is positive integer. */ function anumber(n) {
+    if (!Number.isSafeInteger(n) || n < 0) throw new Error('positive integer expected, got ' + n);
 }
 /** Asserts something is Uint8Array. */ function abytes(b, ...lengths) {
     if (!isBytes(b)) throw new Error('Uint8Array expected');
     if (lengths.length > 0 && !lengths.includes(b.length)) throw new Error('Uint8Array expected of length ' + lengths + ', got length=' + b.length);
 }
 /** Asserts something is hash */ function ahash(h) {
-    if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash should be wrapped by utils.wrapConstructor');
+    if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash should be wrapped by utils.createHasher');
     anumber(h.outputLen);
     anumber(h.blockLen);
 }
@@ -48,21 +54,15 @@
         throw new Error('digestInto() expects output buffer of length at least ' + min);
     }
 }
-
-/**
- * Utilities for hex, bytes, CSPRNG.
- * @module
- */ /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ // We use WebCrypto aka globalThis.crypto, which exists in browsers and node.js 16+.
-// node.js versions earlier than v19 don't declare it in global scope.
-// For node.js, package.json#exports field mapping rewrites import
-// from `crypto` to `cryptoNode`, which imports native module.
-// Makes the utils un-importable in browsers without a bundler.
-// Once node.js 18 is deprecated (2025-04-30), we can just drop the import.
-function u32(arr) {
+/** Cast u8 / u16 / u32 to u32. */ function u32(arr) {
     return new Uint32Array(arr.buffer, arr.byteOffset, Math.floor(arr.byteLength / 4));
 }
-// Cast array to view
-function createView(arr) {
+/** Zeroize a byte array. Warning: JS provides no guarantees. */ function clean(...arrays) {
+    for(let i = 0; i < arrays.length; i++){
+        arrays[i].fill(0);
+    }
+}
+/** Create DataView of an array for easy byte-level manipulation. */ function createView(arr) {
     return new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
 }
 /** The rotate right (circular right shift) operation for uint32 */ function rotr(word, shift) {
@@ -74,20 +74,21 @@ function createView(arr) {
 /** Is current platform little-endian? Most are. Big-Endian platform: IBM */ const isLE = /* @__PURE__ */ (()=>new Uint8Array(new Uint32Array([
         0x11223344
     ]).buffer)[0] === 0x44)();
-// The byte swap operation for uint32
-function byteSwap(word) {
+/** The byte swap operation for uint32 */ function byteSwap(word) {
     return word << 24 & 0xff000000 | word << 8 & 0xff0000 | word >>> 8 & 0xff00 | word >>> 24 & 0xff;
 }
 /** In place byte swap for Uint32Array */ function byteSwap32(arr) {
     for(let i = 0; i < arr.length; i++){
         arr[i] = byteSwap(arr[i]);
     }
+    return arr;
 }
+const swap32IfBE = isLE ? (u)=>u : byteSwap32;
 /**
- * Convert JS string to byte array.
- * @example utf8ToBytes('abc') // new Uint8Array([97, 98, 99])
+ * Converts string to bytes using UTF8 encoding.
+ * @example utf8ToBytes('abc') // Uint8Array.from([97, 98, 99])
  */ function utf8ToBytes(str) {
-    if (typeof str !== 'string') throw new Error('utf8ToBytes expected string, got ' + typeof str);
+    if (typeof str !== 'string') throw new Error('string expected');
     return new Uint8Array(new TextEncoder().encode(str)); // https://bugzil.la/1681809
 }
 /**
@@ -100,12 +101,8 @@ function byteSwap(word) {
     return data;
 }
 /** For runtime check if class implements interface */ class Hash {
-    // Safe version that clones internal state
-    clone() {
-        return this._cloneInto();
-    }
 }
-/** Wraps hash function, creating an interface on top of it */ function wrapConstructor(hashCons) {
+/** Wraps hash function, creating an interface on top of it */ function createHasher(hashCons) {
     const hashC = (msg)=>hashCons().update(toBytes(msg)).digest();
     const tmp = hashCons();
     hashC.outputLen = tmp.outputLen;
@@ -147,6 +144,9 @@ class HMAC extends Hash {
         to.iHash = iHash._cloneInto(to.iHash);
         return to;
     }
+    clone() {
+        return this._cloneInto();
+    }
     destroy() {
         this.destroyed = true;
         this.oHash.destroy();
@@ -173,7 +173,7 @@ class HMAC extends Hash {
         // Undo internal XOR && apply outer XOR
         for(let i = 0; i < pad.length; i++)pad[i] ^= 0x36 ^ 0x5c;
         this.oHash.update(pad);
-        pad.fill(0);
+        clean(pad);
     }
 }
 /**
@@ -211,8 +211,9 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
  */ class HashMD extends Hash {
     update(data) {
         aexists(this);
-        const { view, buffer, blockLen } = this;
         data = toBytes(data);
+        abytes(data);
+        const { view, buffer, blockLen } = this;
         const len = data.length;
         for(let pos = 0; pos < len;){
             const take = Math.min(blockLen - this.pos, len - pos);
@@ -245,7 +246,7 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
         let { pos } = this;
         // append the bit '1' to the message
         buffer[pos++] = 0b10000000;
-        this.buffer.subarray(pos).fill(0);
+        clean(this.buffer.subarray(pos));
         // we have less than padOffset left in buffer, so we cannot put length in
         // current block, need process it and pad again
         if (this.padOffset > blockLen - pos) {
@@ -279,40 +280,100 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
         to || (to = new this.constructor());
         to.set(...this.get());
         const { blockLen, buffer, length, finished, destroyed, pos } = this;
+        to.destroyed = destroyed;
+        to.finished = finished;
         to.length = length;
         to.pos = pos;
-        to.finished = finished;
-        to.destroyed = destroyed;
         if (length % blockLen) to.buffer.set(buffer);
         return to;
     }
+    clone() {
+        return this._cloneInto();
+    }
     constructor(blockLen, outputLen, padOffset, isLE){
         super();
-        this.blockLen = blockLen;
-        this.outputLen = outputLen;
-        this.padOffset = padOffset;
-        this.isLE = isLE;
         this.finished = false;
         this.length = 0;
         this.pos = 0;
         this.destroyed = false;
+        this.blockLen = blockLen;
+        this.outputLen = outputLen;
+        this.padOffset = padOffset;
+        this.isLE = isLE;
         this.buffer = new Uint8Array(blockLen);
         this.view = createView(this.buffer);
     }
 }
+/**
+ * Initial SHA-2 state: fractional parts of square roots of first 16 primes 2..53.
+ * Check out `test/misc/sha2-gen-iv.js` for recomputation guide.
+ */ /** Initial SHA256 state. Bits 0..32 of frac part of sqrt of primes 2..19 */ const SHA256_IV = /* @__PURE__ */ Uint32Array.from([
+    0x6a09e667,
+    0xbb67ae85,
+    0x3c6ef372,
+    0xa54ff53a,
+    0x510e527f,
+    0x9b05688c,
+    0x1f83d9ab,
+    0x5be0cd19
+]);
+/** Initial SHA224 state. Bits 32..64 of frac part of sqrt of primes 23..53 */ const SHA224_IV = /* @__PURE__ */ Uint32Array.from([
+    0xc1059ed8,
+    0x367cd507,
+    0x3070dd17,
+    0xf70e5939,
+    0xffc00b31,
+    0x68581511,
+    0x64f98fa7,
+    0xbefa4fa4
+]);
+/** Initial SHA384 state. Bits 0..64 of frac part of sqrt of primes 23..53 */ const SHA384_IV = /* @__PURE__ */ Uint32Array.from([
+    0xcbbb9d5d,
+    0xc1059ed8,
+    0x629a292a,
+    0x367cd507,
+    0x9159015a,
+    0x3070dd17,
+    0x152fecd8,
+    0xf70e5939,
+    0x67332667,
+    0xffc00b31,
+    0x8eb44a87,
+    0x68581511,
+    0xdb0c2e0d,
+    0x64f98fa7,
+    0x47b5481d,
+    0xbefa4fa4
+]);
+/** Initial SHA512 state. Bits 0..64 of frac part of sqrt of primes 2..19 */ const SHA512_IV = /* @__PURE__ */ Uint32Array.from([
+    0x6a09e667,
+    0xf3bcc908,
+    0xbb67ae85,
+    0x84caa73b,
+    0x3c6ef372,
+    0xfe94f82b,
+    0xa54ff53a,
+    0x5f1d36f1,
+    0x510e527f,
+    0xade682d1,
+    0x9b05688c,
+    0x2b3e6c1f,
+    0x1f83d9ab,
+    0xfb41bd6b,
+    0x5be0cd19,
+    0x137e2179
+]);
 
-// Initial state
-const SHA1_IV = /* @__PURE__ */ new Uint32Array([
+/** Initial SHA1 state */ const SHA1_IV = /* @__PURE__ */ Uint32Array.from([
     0x67452301,
     0xefcdab89,
     0x98badcfe,
     0x10325476,
     0xc3d2e1f0
 ]);
-// Temporary buffer, not used to store anything between runs
-// Named this way because it matches specification.
+// Reusable temporary buffer
 const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
-class SHA1 extends HashMD {
+/** SHA1 legacy hash class. */ class SHA1 extends HashMD {
     get() {
         const { A, B, C, D, E } = this;
         return [
@@ -366,11 +427,11 @@ class SHA1 extends HashMD {
         this.set(A, B, C, D, E);
     }
     roundClean() {
-        SHA1_W.fill(0);
+        clean(SHA1_W);
     }
     destroy() {
         this.set(0, 0, 0, 0, 0);
-        this.buffer.fill(0);
+        clean(this.buffer);
     }
     constructor(){
         super(64, 20, 8, false);
@@ -381,10 +442,77 @@ class SHA1 extends HashMD {
         this.E = SHA1_IV[4] | 0;
     }
 }
-/** SHA1 (RFC 3174) legacy hash function. It was cryptographically broken. */ const sha1 = /* @__PURE__ */ wrapConstructor(()=>new SHA1());
+/** SHA1 (RFC 3174) legacy hash function. It was cryptographically broken. */ const sha1 = /* @__PURE__ */ createHasher(()=>new SHA1());
 
-/** Round constants: first 32 bits of fractional parts of the cube roots of the first 64 primes 2..311). */ // prettier-ignore
-const SHA256_K = /* @__PURE__ */ new Uint32Array([
+/**
+ * Internal helpers for u64. BigUint64Array is too slow as per 2025, so we implement it using Uint32Array.
+ * @todo re-check https://issues.chromium.org/issues/42212588
+ * @module
+ */ const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
+const _32n = /* @__PURE__ */ BigInt(32);
+function fromBig(n, le = false) {
+    if (le) return {
+        h: Number(n & U32_MASK64),
+        l: Number(n >> _32n & U32_MASK64)
+    };
+    return {
+        h: Number(n >> _32n & U32_MASK64) | 0,
+        l: Number(n & U32_MASK64) | 0
+    };
+}
+function split(lst, le = false) {
+    const len = lst.length;
+    let Ah = new Uint32Array(len);
+    let Al = new Uint32Array(len);
+    for(let i = 0; i < len; i++){
+        const { h, l } = fromBig(lst[i], le);
+        [Ah[i], Al[i]] = [
+            h,
+            l
+        ];
+    }
+    return [
+        Ah,
+        Al
+    ];
+}
+// for Shift in [0, 32)
+const shrSH = (h, _l, s)=>h >>> s;
+const shrSL = (h, l, s)=>h << 32 - s | l >>> s;
+// Right rotate for Shift in [1, 32)
+const rotrSH = (h, l, s)=>h >>> s | l << 32 - s;
+const rotrSL = (h, l, s)=>h << 32 - s | l >>> s;
+// Right rotate for Shift in (32, 64), NOTE: 32 is special case.
+const rotrBH = (h, l, s)=>h << 64 - s | l >>> s - 32;
+const rotrBL = (h, l, s)=>h >>> s - 32 | l << 64 - s;
+// Left rotate for Shift in [1, 32)
+const rotlSH = (h, l, s)=>h << s | l >>> 32 - s;
+const rotlSL = (h, l, s)=>l << s | h >>> 32 - s;
+// Left rotate for Shift in (32, 64), NOTE: 32 is special case.
+const rotlBH = (h, l, s)=>l << s - 32 | h >>> 64 - s;
+const rotlBL = (h, l, s)=>h << s - 32 | l >>> 64 - s;
+// JS uses 32-bit signed integers for bitwise operations which means we cannot
+// simple take carry out of low bit sum by shift, we need to use division.
+function add(Ah, Al, Bh, Bl) {
+    const l = (Al >>> 0) + (Bl >>> 0);
+    return {
+        h: Ah + Bh + (l / 2 ** 32 | 0) | 0,
+        l: l | 0
+    };
+}
+// Addition with more than 2 elements
+const add3L = (Al, Bl, Cl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
+const add3H = (low, Ah, Bh, Ch)=>Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
+const add4L = (Al, Bl, Cl, Dl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
+const add4H = (low, Ah, Bh, Ch, Dh)=>Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
+const add5L = (Al, Bl, Cl, Dl, El)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
+const add5H = (low, Ah, Bh, Ch, Dh, Eh)=>Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
+
+/**
+ * Round constants:
+ * First 32 bits of fractional parts of the cube roots of the first 64 primes 2..311)
+ */ // prettier-ignore
+const SHA256_K = /* @__PURE__ */ Uint32Array.from([
     0x428a2f98,
     0x71374491,
     0xb5c0fbcf,
@@ -450,21 +578,7 @@ const SHA256_K = /* @__PURE__ */ new Uint32Array([
     0xbef9a3f7,
     0xc67178f2
 ]);
-/** Initial state: first 32 bits of fractional parts of the square roots of the first 8 primes 2..19. */ // prettier-ignore
-const SHA256_IV = /* @__PURE__ */ new Uint32Array([
-    0x6a09e667,
-    0xbb67ae85,
-    0x3c6ef372,
-    0xa54ff53a,
-    0x510e527f,
-    0x9b05688c,
-    0x1f83d9ab,
-    0x5be0cd19
-]);
-/**
- * Temporary buffer, not used to store anything between runs.
- * Named this way because it matches specification.
- */ const SHA256_W = /* @__PURE__ */ new Uint32Array(64);
+/** Reusable temporary buffer. "W" comes straight from spec. */ const SHA256_W = /* @__PURE__ */ new Uint32Array(64);
 class SHA256 extends HashMD {
     get() {
         const { A, B, C, D, E, F, G, H } = this;
@@ -528,14 +642,14 @@ class SHA256 extends HashMD {
         this.set(A, B, C, D, E, F, G, H);
     }
     roundClean() {
-        SHA256_W.fill(0);
+        clean(SHA256_W);
     }
     destroy() {
         this.set(0, 0, 0, 0, 0, 0, 0, 0);
-        this.buffer.fill(0);
+        clean(this.buffer);
     }
-    constructor(){
-        super(64, 32, 8, false);
+    constructor(outputLen = 32){
+        super(64, outputLen, 8, false);
         // We cannot use array here since array allows indexing by variable
         // which means optimizer/compiler cannot use registers.
         this.A = SHA256_IV[0] | 0;
@@ -548,120 +662,24 @@ class SHA256 extends HashMD {
         this.H = SHA256_IV[7] | 0;
     }
 }
-/**
- * Constants taken from https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf.
- */ class SHA224 extends SHA256 {
+class SHA224 extends SHA256 {
     constructor(){
-        super();
-        this.A = 0xc1059ed8 | 0;
-        this.B = 0x367cd507 | 0;
-        this.C = 0x3070dd17 | 0;
-        this.D = 0xf70e5939 | 0;
-        this.E = 0xffc00b31 | 0;
-        this.F = 0x68581511 | 0;
-        this.G = 0x64f98fa7 | 0;
-        this.H = 0xbefa4fa4 | 0;
-        this.outputLen = 28;
+        super(28);
+        this.A = SHA224_IV[0] | 0;
+        this.B = SHA224_IV[1] | 0;
+        this.C = SHA224_IV[2] | 0;
+        this.D = SHA224_IV[3] | 0;
+        this.E = SHA224_IV[4] | 0;
+        this.F = SHA224_IV[5] | 0;
+        this.G = SHA224_IV[6] | 0;
+        this.H = SHA224_IV[7] | 0;
     }
 }
-/** SHA2-256 hash function */ const sha256 = /* @__PURE__ */ wrapConstructor(()=>new SHA256());
-/** SHA2-224 hash function */ const sha224 = /* @__PURE__ */ wrapConstructor(()=>new SHA224());
-
-/**
- * Internal helpers for u64. BigUint64Array is too slow as per 2025, so we implement it using Uint32Array.
- * @todo re-check https://issues.chromium.org/issues/42212588
- * @module
- */ const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
-const _32n = /* @__PURE__ */ BigInt(32);
-function fromBig(n, le = false) {
-    if (le) return {
-        h: Number(n & U32_MASK64),
-        l: Number(n >> _32n & U32_MASK64)
-    };
-    return {
-        h: Number(n >> _32n & U32_MASK64) | 0,
-        l: Number(n & U32_MASK64) | 0
-    };
-}
-function split(lst, le = false) {
-    let Ah = new Uint32Array(lst.length);
-    let Al = new Uint32Array(lst.length);
-    for(let i = 0; i < lst.length; i++){
-        const { h, l } = fromBig(lst[i], le);
-        [Ah[i], Al[i]] = [
-            h,
-            l
-        ];
-    }
-    return [
-        Ah,
-        Al
-    ];
-}
-const toBig = (h, l)=>BigInt(h >>> 0) << _32n | BigInt(l >>> 0);
-// for Shift in [0, 32)
-const shrSH = (h, _l, s)=>h >>> s;
-const shrSL = (h, l, s)=>h << 32 - s | l >>> s;
-// Right rotate for Shift in [1, 32)
-const rotrSH = (h, l, s)=>h >>> s | l << 32 - s;
-const rotrSL = (h, l, s)=>h << 32 - s | l >>> s;
-// Right rotate for Shift in (32, 64), NOTE: 32 is special case.
-const rotrBH = (h, l, s)=>h << 64 - s | l >>> s - 32;
-const rotrBL = (h, l, s)=>h >>> s - 32 | l << 64 - s;
-// Right rotate for shift===32 (just swaps l&h)
-const rotr32H = (_h, l)=>l;
-const rotr32L = (h, _l)=>h;
-// Left rotate for Shift in [1, 32)
-const rotlSH = (h, l, s)=>h << s | l >>> 32 - s;
-const rotlSL = (h, l, s)=>l << s | h >>> 32 - s;
-// Left rotate for Shift in (32, 64), NOTE: 32 is special case.
-const rotlBH = (h, l, s)=>l << s - 32 | h >>> 64 - s;
-const rotlBL = (h, l, s)=>h << s - 32 | l >>> 64 - s;
-// JS uses 32-bit signed integers for bitwise operations which means we cannot
-// simple take carry out of low bit sum by shift, we need to use division.
-function add(Ah, Al, Bh, Bl) {
-    const l = (Al >>> 0) + (Bl >>> 0);
-    return {
-        h: Ah + Bh + (l / 2 ** 32 | 0) | 0,
-        l: l | 0
-    };
-}
-// Addition with more than 2 elements
-const add3L = (Al, Bl, Cl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
-const add3H = (low, Ah, Bh, Ch)=>Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
-const add4L = (Al, Bl, Cl, Dl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
-const add4H = (low, Ah, Bh, Ch, Dh)=>Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
-const add5L = (Al, Bl, Cl, Dl, El)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
-const add5H = (low, Ah, Bh, Ch, Dh, Eh)=>Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
+// SHA2-512 is slower than sha256 in js because u64 operations are slow.
+// Round contants
+// First 32 bits of the fractional parts of the cube roots of the first 80 primes 2..409
 // prettier-ignore
-const u64 = {
-    fromBig,
-    split,
-    toBig,
-    shrSH,
-    shrSL,
-    rotrSH,
-    rotrSL,
-    rotrBH,
-    rotrBL,
-    rotr32H,
-    rotr32L,
-    rotlSH,
-    rotlSL,
-    rotlBH,
-    rotlBL,
-    add,
-    add3L,
-    add3H,
-    add4L,
-    add4H,
-    add5H,
-    add5L
-};
-
-// Round contants (first 32 bits of the fractional parts of the cube roots of the first 80 primes 2..409):
-// prettier-ignore
-const [SHA512_Kh, SHA512_Kl] = /* @__PURE__ */ (()=>u64.split([
+const K512 = /* @__PURE__ */ (()=>split([
         '0x428a2f98d728ae22',
         '0x7137449123ef65cd',
         '0xb5c0fbcfec4d3b2f',
@@ -743,7 +761,9 @@ const [SHA512_Kh, SHA512_Kl] = /* @__PURE__ */ (()=>u64.split([
         '0x5fcb6fab3ad6faec',
         '0x6c44198c4a475817'
     ].map((n)=>BigInt(n))))();
-// Temporary buffer, not used to store anything between runs
+const SHA512_Kh = /* @__PURE__ */ (()=>K512[0])();
+const SHA512_Kl = /* @__PURE__ */ (()=>K512[1])();
+// Reusable temporary buffers
 const SHA512_W_H = /* @__PURE__ */ new Uint32Array(80);
 const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
 class SHA512 extends HashMD {
@@ -798,16 +818,16 @@ class SHA512 extends HashMD {
             // s0 := (w[i-15] rightrotate 1) xor (w[i-15] rightrotate 8) xor (w[i-15] rightshift 7)
             const W15h = SHA512_W_H[i - 15] | 0;
             const W15l = SHA512_W_L[i - 15] | 0;
-            const s0h = u64.rotrSH(W15h, W15l, 1) ^ u64.rotrSH(W15h, W15l, 8) ^ u64.shrSH(W15h, W15l, 7);
-            const s0l = u64.rotrSL(W15h, W15l, 1) ^ u64.rotrSL(W15h, W15l, 8) ^ u64.shrSL(W15h, W15l, 7);
+            const s0h = rotrSH(W15h, W15l, 1) ^ rotrSH(W15h, W15l, 8) ^ shrSH(W15h, W15l, 7);
+            const s0l = rotrSL(W15h, W15l, 1) ^ rotrSL(W15h, W15l, 8) ^ shrSL(W15h, W15l, 7);
             // s1 := (w[i-2] rightrotate 19) xor (w[i-2] rightrotate 61) xor (w[i-2] rightshift 6)
             const W2h = SHA512_W_H[i - 2] | 0;
             const W2l = SHA512_W_L[i - 2] | 0;
-            const s1h = u64.rotrSH(W2h, W2l, 19) ^ u64.rotrBH(W2h, W2l, 61) ^ u64.shrSH(W2h, W2l, 6);
-            const s1l = u64.rotrSL(W2h, W2l, 19) ^ u64.rotrBL(W2h, W2l, 61) ^ u64.shrSL(W2h, W2l, 6);
+            const s1h = rotrSH(W2h, W2l, 19) ^ rotrBH(W2h, W2l, 61) ^ shrSH(W2h, W2l, 6);
+            const s1l = rotrSL(W2h, W2l, 19) ^ rotrBL(W2h, W2l, 61) ^ shrSL(W2h, W2l, 6);
             // SHA256_W[i] = s0 + s1 + SHA256_W[i - 7] + SHA256_W[i - 16];
-            const SUMl = u64.add4L(s0l, s1l, SHA512_W_L[i - 7], SHA512_W_L[i - 16]);
-            const SUMh = u64.add4H(SUMl, s0h, s1h, SHA512_W_H[i - 7], SHA512_W_H[i - 16]);
+            const SUMl = add4L(s0l, s1l, SHA512_W_L[i - 7], SHA512_W_L[i - 16]);
+            const SUMh = add4H(SUMl, s0h, s1h, SHA512_W_H[i - 7], SHA512_W_H[i - 16]);
             SHA512_W_H[i] = SUMh | 0;
             SHA512_W_L[i] = SUMl | 0;
         }
@@ -815,19 +835,19 @@ class SHA512 extends HashMD {
         // Compression function main loop, 80 rounds
         for(let i = 0; i < 80; i++){
             // S1 := (e rightrotate 14) xor (e rightrotate 18) xor (e rightrotate 41)
-            const sigma1h = u64.rotrSH(Eh, El, 14) ^ u64.rotrSH(Eh, El, 18) ^ u64.rotrBH(Eh, El, 41);
-            const sigma1l = u64.rotrSL(Eh, El, 14) ^ u64.rotrSL(Eh, El, 18) ^ u64.rotrBL(Eh, El, 41);
+            const sigma1h = rotrSH(Eh, El, 14) ^ rotrSH(Eh, El, 18) ^ rotrBH(Eh, El, 41);
+            const sigma1l = rotrSL(Eh, El, 14) ^ rotrSL(Eh, El, 18) ^ rotrBL(Eh, El, 41);
             //const T1 = (H + sigma1 + Chi(E, F, G) + SHA256_K[i] + SHA256_W[i]) | 0;
             const CHIh = Eh & Fh ^ ~Eh & Gh;
             const CHIl = El & Fl ^ ~El & Gl;
             // T1 = H + sigma1 + Chi(E, F, G) + SHA512_K[i] + SHA512_W[i]
             // prettier-ignore
-            const T1ll = u64.add5L(Hl, sigma1l, CHIl, SHA512_Kl[i], SHA512_W_L[i]);
-            const T1h = u64.add5H(T1ll, Hh, sigma1h, CHIh, SHA512_Kh[i], SHA512_W_H[i]);
+            const T1ll = add5L(Hl, sigma1l, CHIl, SHA512_Kl[i], SHA512_W_L[i]);
+            const T1h = add5H(T1ll, Hh, sigma1h, CHIh, SHA512_Kh[i], SHA512_W_H[i]);
             const T1l = T1ll | 0;
             // S0 := (a rightrotate 28) xor (a rightrotate 34) xor (a rightrotate 39)
-            const sigma0h = u64.rotrSH(Ah, Al, 28) ^ u64.rotrBH(Ah, Al, 34) ^ u64.rotrBH(Ah, Al, 39);
-            const sigma0l = u64.rotrSL(Ah, Al, 28) ^ u64.rotrBL(Ah, Al, 34) ^ u64.rotrBL(Ah, Al, 39);
+            const sigma0h = rotrSH(Ah, Al, 28) ^ rotrBH(Ah, Al, 34) ^ rotrBH(Ah, Al, 39);
+            const sigma0l = rotrSL(Ah, Al, 28) ^ rotrBL(Ah, Al, 34) ^ rotrBL(Ah, Al, 39);
             const MAJh = Ah & Bh ^ Ah & Ch ^ Bh & Ch;
             const MAJl = Al & Bl ^ Al & Cl ^ Bl & Cl;
             Hh = Gh | 0;
@@ -836,96 +856,102 @@ class SHA512 extends HashMD {
             Gl = Fl | 0;
             Fh = Eh | 0;
             Fl = El | 0;
-            ({ h: Eh, l: El } = u64.add(Dh | 0, Dl | 0, T1h | 0, T1l | 0));
+            ({ h: Eh, l: El } = add(Dh | 0, Dl | 0, T1h | 0, T1l | 0));
             Dh = Ch | 0;
             Dl = Cl | 0;
             Ch = Bh | 0;
             Cl = Bl | 0;
             Bh = Ah | 0;
             Bl = Al | 0;
-            const All = u64.add3L(T1l, sigma0l, MAJl);
-            Ah = u64.add3H(All, T1h, sigma0h, MAJh);
+            const All = add3L(T1l, sigma0l, MAJl);
+            Ah = add3H(All, T1h, sigma0h, MAJh);
             Al = All | 0;
         }
         // Add the compressed chunk to the current hash value
-        ({ h: Ah, l: Al } = u64.add(this.Ah | 0, this.Al | 0, Ah | 0, Al | 0));
-        ({ h: Bh, l: Bl } = u64.add(this.Bh | 0, this.Bl | 0, Bh | 0, Bl | 0));
-        ({ h: Ch, l: Cl } = u64.add(this.Ch | 0, this.Cl | 0, Ch | 0, Cl | 0));
-        ({ h: Dh, l: Dl } = u64.add(this.Dh | 0, this.Dl | 0, Dh | 0, Dl | 0));
-        ({ h: Eh, l: El } = u64.add(this.Eh | 0, this.El | 0, Eh | 0, El | 0));
-        ({ h: Fh, l: Fl } = u64.add(this.Fh | 0, this.Fl | 0, Fh | 0, Fl | 0));
-        ({ h: Gh, l: Gl } = u64.add(this.Gh | 0, this.Gl | 0, Gh | 0, Gl | 0));
-        ({ h: Hh, l: Hl } = u64.add(this.Hh | 0, this.Hl | 0, Hh | 0, Hl | 0));
+        ({ h: Ah, l: Al } = add(this.Ah | 0, this.Al | 0, Ah | 0, Al | 0));
+        ({ h: Bh, l: Bl } = add(this.Bh | 0, this.Bl | 0, Bh | 0, Bl | 0));
+        ({ h: Ch, l: Cl } = add(this.Ch | 0, this.Cl | 0, Ch | 0, Cl | 0));
+        ({ h: Dh, l: Dl } = add(this.Dh | 0, this.Dl | 0, Dh | 0, Dl | 0));
+        ({ h: Eh, l: El } = add(this.Eh | 0, this.El | 0, Eh | 0, El | 0));
+        ({ h: Fh, l: Fl } = add(this.Fh | 0, this.Fl | 0, Fh | 0, Fl | 0));
+        ({ h: Gh, l: Gl } = add(this.Gh | 0, this.Gl | 0, Gh | 0, Gl | 0));
+        ({ h: Hh, l: Hl } = add(this.Hh | 0, this.Hl | 0, Hh | 0, Hl | 0));
         this.set(Ah, Al, Bh, Bl, Ch, Cl, Dh, Dl, Eh, El, Fh, Fl, Gh, Gl, Hh, Hl);
     }
     roundClean() {
-        SHA512_W_H.fill(0);
-        SHA512_W_L.fill(0);
+        clean(SHA512_W_H, SHA512_W_L);
     }
     destroy() {
-        this.buffer.fill(0);
+        clean(this.buffer);
         this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
-    constructor(){
-        super(128, 64, 16, false);
-        // We cannot use array here since array allows indexing by variable which means optimizer/compiler cannot use registers.
-        // Also looks cleaner and easier to verify with spec.
-        // Initial state (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19):
+    constructor(outputLen = 64){
+        super(128, outputLen, 16, false);
+        // We cannot use array here since array allows indexing by variable
+        // which means optimizer/compiler cannot use registers.
         // h -- high 32 bits, l -- low 32 bits
-        this.Ah = 0x6a09e667 | 0;
-        this.Al = 0xf3bcc908 | 0;
-        this.Bh = 0xbb67ae85 | 0;
-        this.Bl = 0x84caa73b | 0;
-        this.Ch = 0x3c6ef372 | 0;
-        this.Cl = 0xfe94f82b | 0;
-        this.Dh = 0xa54ff53a | 0;
-        this.Dl = 0x5f1d36f1 | 0;
-        this.Eh = 0x510e527f | 0;
-        this.El = 0xade682d1 | 0;
-        this.Fh = 0x9b05688c | 0;
-        this.Fl = 0x2b3e6c1f | 0;
-        this.Gh = 0x1f83d9ab | 0;
-        this.Gl = 0xfb41bd6b | 0;
-        this.Hh = 0x5be0cd19 | 0;
-        this.Hl = 0x137e2179 | 0;
+        this.Ah = SHA512_IV[0] | 0;
+        this.Al = SHA512_IV[1] | 0;
+        this.Bh = SHA512_IV[2] | 0;
+        this.Bl = SHA512_IV[3] | 0;
+        this.Ch = SHA512_IV[4] | 0;
+        this.Cl = SHA512_IV[5] | 0;
+        this.Dh = SHA512_IV[6] | 0;
+        this.Dl = SHA512_IV[7] | 0;
+        this.Eh = SHA512_IV[8] | 0;
+        this.El = SHA512_IV[9] | 0;
+        this.Fh = SHA512_IV[10] | 0;
+        this.Fl = SHA512_IV[11] | 0;
+        this.Gh = SHA512_IV[12] | 0;
+        this.Gl = SHA512_IV[13] | 0;
+        this.Hh = SHA512_IV[14] | 0;
+        this.Hl = SHA512_IV[15] | 0;
     }
 }
 class SHA384 extends SHA512 {
     constructor(){
-        super();
-        // h -- high 32 bits, l -- low 32 bits
-        this.Ah = 0xcbbb9d5d | 0;
-        this.Al = 0xc1059ed8 | 0;
-        this.Bh = 0x629a292a | 0;
-        this.Bl = 0x367cd507 | 0;
-        this.Ch = 0x9159015a | 0;
-        this.Cl = 0x3070dd17 | 0;
-        this.Dh = 0x152fecd8 | 0;
-        this.Dl = 0xf70e5939 | 0;
-        this.Eh = 0x67332667 | 0;
-        this.El = 0xffc00b31 | 0;
-        this.Fh = 0x8eb44a87 | 0;
-        this.Fl = 0x68581511 | 0;
-        this.Gh = 0xdb0c2e0d | 0;
-        this.Gl = 0x64f98fa7 | 0;
-        this.Hh = 0x47b5481d | 0;
-        this.Hl = 0xbefa4fa4 | 0;
-        this.outputLen = 48;
+        super(48);
+        this.Ah = SHA384_IV[0] | 0;
+        this.Al = SHA384_IV[1] | 0;
+        this.Bh = SHA384_IV[2] | 0;
+        this.Bl = SHA384_IV[3] | 0;
+        this.Ch = SHA384_IV[4] | 0;
+        this.Cl = SHA384_IV[5] | 0;
+        this.Dh = SHA384_IV[6] | 0;
+        this.Dl = SHA384_IV[7] | 0;
+        this.Eh = SHA384_IV[8] | 0;
+        this.El = SHA384_IV[9] | 0;
+        this.Fh = SHA384_IV[10] | 0;
+        this.Fl = SHA384_IV[11] | 0;
+        this.Gh = SHA384_IV[12] | 0;
+        this.Gl = SHA384_IV[13] | 0;
+        this.Hh = SHA384_IV[14] | 0;
+        this.Hl = SHA384_IV[15] | 0;
     }
 }
-/** SHA2-512 hash function. */ const sha512 = /* @__PURE__ */ wrapConstructor(()=>new SHA512());
-/** SHA2-384 hash function. */ const sha384 = /* @__PURE__ */ wrapConstructor(()=>new SHA384());
+/**
+ * SHA2-256 hash function from RFC 4634.
+ *
+ * It is the fastest JS hash, even faster than Blake3.
+ * To break sha256 using birthday attack, attackers need to try 2^128 hashes.
+ * BTC network is doing 2^70 hashes/sec (2^95 hashes/year) as per 2025.
+ */ const sha256 = /* @__PURE__ */ createHasher(()=>new SHA256());
+/** SHA2-224 hash function from RFC 4634 */ const sha224 = /* @__PURE__ */ createHasher(()=>new SHA224());
+/** SHA2-512 hash function from RFC 4634. */ const sha512 = /* @__PURE__ */ createHasher(()=>new SHA512());
+/** SHA2-384 hash function from RFC 4634. */ const sha384 = /* @__PURE__ */ createHasher(()=>new SHA384());
 
+// No __PURE__ annotations in sha3 header:
+// EVERYTHING is in fact used on every export.
 // Various per round constants calculations
+const _0n = BigInt(0);
+const _1n = BigInt(1);
+const _2n = BigInt(2);
+const _7n = BigInt(7);
+const _256n = BigInt(256);
+const _0x71n = BigInt(0x71);
 const SHA3_PI = [];
 const SHA3_ROTL = [];
 const _SHA3_IOTA = [];
-const _0n = /* @__PURE__ */ BigInt(0);
-const _1n = /* @__PURE__ */ BigInt(1);
-const _2n = /* @__PURE__ */ BigInt(2);
-const _7n = /* @__PURE__ */ BigInt(7);
-const _256n = /* @__PURE__ */ BigInt(256);
-const _0x71n = /* @__PURE__ */ BigInt(0x71);
 for(let round = 0, R = _1n, x = 1, y = 0; round < 24; round++){
     // Pi
     [x, y] = [
@@ -943,7 +969,9 @@ for(let round = 0, R = _1n, x = 1, y = 0; round < 24; round++){
     }
     _SHA3_IOTA.push(t);
 }
-const [SHA3_IOTA_H, SHA3_IOTA_L] = /* @__PURE__ */ split(_SHA3_IOTA, true);
+const IOTAS = split(_SHA3_IOTA, true);
+const SHA3_IOTA_H = IOTAS[0];
+const SHA3_IOTA_L = IOTAS[1];
 // Left rotation (without 0, 32, 64)
 const rotlH = (h, l, s)=>s > 32 ? rotlBH(h, l, s) : rotlSH(h, l, s);
 const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
@@ -987,20 +1015,24 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         s[0] ^= SHA3_IOTA_H[round];
         s[1] ^= SHA3_IOTA_L[round];
     }
-    B.fill(0);
+    clean(B);
 }
 /** Keccak sponge function. */ class Keccak extends Hash {
+    clone() {
+        return this._cloneInto();
+    }
     keccak() {
-        if (!isLE) byteSwap32(this.state32);
+        swap32IfBE(this.state32);
         keccakP(this.state32, this.rounds);
-        if (!isLE) byteSwap32(this.state32);
+        swap32IfBE(this.state32);
         this.posOut = 0;
         this.pos = 0;
     }
     update(data) {
         aexists(this);
-        const { blockLen, state } = this;
         data = toBytes(data);
+        abytes(data);
+        const { blockLen, state } = this;
         const len = data.length;
         for(let pos = 0; pos < len;){
             const take = Math.min(blockLen - this.pos, len - pos);
@@ -1055,7 +1087,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     }
     destroy() {
         this.destroyed = true;
-        this.state.fill(0);
+        clean(this.state);
     }
     _cloneInto(to) {
         const { blockLen, suffix, outputLen, rounds, enableXOF } = this;
@@ -1075,29 +1107,30 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     // NOTE: we accept arguments in bytes instead of bits here.
     constructor(blockLen, suffix, outputLen, enableXOF = false, rounds = 24){
         super();
+        this.pos = 0;
+        this.posOut = 0;
+        this.finished = false;
+        this.destroyed = false;
+        this.enableXOF = false;
         this.blockLen = blockLen;
         this.suffix = suffix;
         this.outputLen = outputLen;
         this.enableXOF = enableXOF;
         this.rounds = rounds;
-        this.pos = 0;
-        this.posOut = 0;
-        this.finished = false;
-        this.destroyed = false;
         // Can be passed from user as dkLen
         anumber(outputLen);
         // 1600 = 5x5 matrix of 64bit.  1600 bits === 200 bytes
         // 0 < blockLen < 200
-        if (0 >= this.blockLen || this.blockLen >= 200) throw new Error('Sha3 supports only keccak-f1600 function');
+        if (!(0 < blockLen && blockLen < 200)) throw new Error('only keccak-f1600 function is supported');
         this.state = new Uint8Array(200);
         this.state32 = u32(this.state);
     }
 }
-const gen = (suffix, blockLen, outputLen)=>wrapConstructor(()=>new Keccak(blockLen, suffix, outputLen));
-/** SHA3-224 hash function. */ const sha3_224 = /* @__PURE__ */ gen(0x06, 144, 224 / 8);
-/** SHA3-256 hash function. Different from keccak-256. */ const sha3_256 = /* @__PURE__ */ gen(0x06, 136, 256 / 8);
-/** SHA3-384 hash function. */ const sha3_384 = /* @__PURE__ */ gen(0x06, 104, 384 / 8);
-/** SHA3-512 hash function. */ const sha3_512 = /* @__PURE__ */ gen(0x06, 72, 512 / 8);
+const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen, suffix, outputLen));
+/** SHA3-224 hash function. */ const sha3_224 = /* @__PURE__ */ (()=>gen(0x06, 144, 224 / 8))();
+/** SHA3-256 hash function. Different from keccak-256. */ const sha3_256 = /* @__PURE__ */ (()=>gen(0x06, 136, 256 / 8))();
+/** SHA3-384 hash function. */ const sha3_384 = /* @__PURE__ */ (()=>gen(0x06, 104, 384 / 8))();
+/** SHA3-512 hash function. */ const sha3_512 = /* @__PURE__ */ (()=>gen(0x06, 72, 512 / 8))();
 
 /**
  * "globalThis" ponyfill.
@@ -1942,6 +1975,6 @@ const gen = (suffix, blockLen, outputLen)=>wrapConstructor(()=>new Keccak(blockL
 /**
  * Library version.
  * @type {string}
- */ const version = "9.4.0";
+ */ const version = "9.4.1";
 
 export { HOTP, Secret, TOTP, URI, version };

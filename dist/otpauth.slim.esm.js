@@ -1,11 +1,11 @@
-//! otpauth 9.4.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.7.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.4.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 1.8.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
-import { hmac } from '@noble/hashes/hmac';
-import { sha1 } from '@noble/hashes/sha1';
-import { sha512, sha384, sha256, sha224 } from '@noble/hashes/sha2';
-import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3';
+import { hmac } from '@noble/hashes/hmac.js';
+import { sha1 } from '@noble/hashes/legacy.js';
+import { sha512, sha384, sha256, sha224 } from '@noble/hashes/sha2.js';
+import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3.js';
 
 /**
  * Converts an integer to an Uint8Array.
@@ -867,6 +867,6 @@ import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3';
 /**
  * Library version.
  * @type {string}
- */ const version = "9.4.0";
+ */ const version = "9.4.1";
 
 export { HOTP, Secret, TOTP, URI, version };
