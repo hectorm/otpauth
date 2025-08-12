@@ -124,10 +124,10 @@ export default () => {
     plugins: [
       t(replace)(replaceOpts),
       t(virtual)({
-        "@noble/hashes/hmac": mock("hmac"),
-        "@noble/hashes/sha1": mock("sha1"),
-        "@noble/hashes/sha2": mock("sha224", "sha256", "sha384", "sha512"),
-        "@noble/hashes/sha3": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
+        "@noble/hashes/hmac.js": mock("hmac"),
+        "@noble/hashes/legacy.js": mock("sha1"),
+        "@noble/hashes/sha2.js": mock("sha224", "sha256", "sha384", "sha512"),
+        "@noble/hashes/sha3.js": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
       }),
       t(resolve)(),
       t(swc)(swcOpts),
