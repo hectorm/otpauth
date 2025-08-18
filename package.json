@@ -128,8 +128,8 @@
     "@swc/core": "~1.13.3",
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
-    "@types/node": "~24.2.1",
-    "chai": "~5.2.1",
+    "@types/node": "~24.3.0",
+    "chai": "~5.3.1",
     "eslint": "~9.33.0",
     "eslint-config-prettier": "~10.1.8",
     "globals": "~16.3.0",
@@ -138,8 +138,8 @@
     "playwright": "~1.54.2",
     "prettier": "~3.6.2",
     "rimraf": "~6.0.1",
-    "rollup": "~4.46.2",
-    "rollup-plugin-dts": "~6.2.1",
+    "rollup": "~4.46.3",
+    "rollup-plugin-dts": "~6.2.3",
     "typedoc": "~0.28.10",
     "typescript": "~5.9.2"
   }
