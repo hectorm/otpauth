@@ -129,7 +129,7 @@
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/node": "~24.7.1",
-    "chai": "~5.2.1",
+    "chai": "~6.2.0",
     "eslint": "~9.37.0",
     "eslint-config-prettier": "~10.1.8",
     "globals": "~16.4.0",
