@@ -136,7 +136,7 @@
     "mocha": "~11.7.5",
     "npm-run-all2": "~8.0.4",
     "playwright": "~1.57.0",
-    "prettier": "~3.7.3",
+    "prettier": "~3.7.4",
     "rimraf": "~6.1.2",
     "rollup": "~4.53.3",
     "rollup-plugin-dts": "~6.3.0",
