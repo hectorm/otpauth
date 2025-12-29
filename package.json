@@ -118,7 +118,7 @@
     "@noble/hashes": "2.0.1"
   },
   "devDependencies": {
-    "@eslint/core": "~0.16.0",
+    "@eslint/core": "~1.0.0",
     "@eslint/js": "~9.39.1",
     "@rollup/plugin-node-resolve": "~16.0.3",
     "@rollup/plugin-replace": "~6.0.3",
