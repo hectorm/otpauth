@@ -25,9 +25,9 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -45,7 +45,7 @@ jobs:
         run: '[ -z "$(git status --porcelain ./dist/)" ] || { git diff >&2; exit 1; }'
       - name: "Upload dist artifact"
         if: "runner.os == 'Linux'"
-        uses: "actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4"
+        uses: "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
         with:
           name: "dist"
           path: "./dist/"
@@ -70,17 +70,17 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "${{ matrix.node_version }}"
           cache: "npm"
@@ -102,12 +102,12 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
@@ -133,12 +133,12 @@ jobs:
         os: ["ubuntu-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
@@ -164,17 +164,17 @@ jobs:
         os: ["ubuntu-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -196,12 +196,12 @@ jobs:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
@@ -210,7 +210,7 @@ jobs:
         with:
           quickjs-version: "${{ matrix.quickjs_version }}"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -229,17 +229,17 @@ jobs:
       id-token: "write"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
@@ -262,17 +262,17 @@ jobs:
       id-token: "write"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3"
+        uses: "actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8"
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53"
+        uses: "actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
+        uses: "actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f"
         with:
           node-version: "lts/*"
       - name: "Publish"
