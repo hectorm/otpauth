@@ -125,7 +125,7 @@
     "@rollup/plugin-swc": "~0.4.0",
     "@rollup/plugin-terser": "~0.4.4",
     "@rollup/plugin-virtual": "~3.0.2",
-    "@swc/core": "~1.15.7",
+    "@swc/core": "~1.15.8",
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/node": "~24.10.1",
@@ -138,7 +138,7 @@
     "playwright": "~1.57.0",
     "prettier": "~3.7.4",
     "rimraf": "~6.1.2",
-    "rollup": "~4.54.0",
+    "rollup": "~4.55.1",
     "rollup-plugin-dts": "~6.3.0",
     "typedoc": "~0.28.15",
     "typescript": "~5.9.3"
