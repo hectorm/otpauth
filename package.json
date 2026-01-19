@@ -132,7 +132,7 @@
     "chai": "~5.2.1",
     "eslint": "~9.39.2",
     "eslint-config-prettier": "~10.1.8",
-    "globals": "~16.5.0",
+    "globals": "~17.0.0",
     "mocha": "~11.7.5",
     "npm-run-all2": "~8.0.4",
     "playwright": "~1.57.0",
