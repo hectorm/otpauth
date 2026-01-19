@@ -118,14 +118,14 @@
     "@noble/hashes": "2.0.1"
   },
   "devDependencies": {
-    "@eslint/core": "~1.0.0",
+    "@eslint/core": "~1.0.1",
     "@eslint/js": "~9.39.2",
     "@rollup/plugin-node-resolve": "~16.0.3",
     "@rollup/plugin-replace": "~6.0.3",
     "@rollup/plugin-swc": "~0.4.0",
     "@rollup/plugin-terser": "~0.4.4",
     "@rollup/plugin-virtual": "~3.0.2",
-    "@swc/core": "~1.15.7",
+    "@swc/core": "~1.15.8",
     "@types/eslint": "~9.6.1",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/node": "~24.10.1",
@@ -136,11 +136,11 @@
     "mocha": "~11.7.5",
     "npm-run-all2": "~8.0.4",
     "playwright": "~1.57.0",
-    "prettier": "~3.7.4",
+    "prettier": "~3.8.0",
     "rimraf": "~6.1.2",
-    "rollup": "~4.54.0",
+    "rollup": "~4.55.2",
     "rollup-plugin-dts": "~6.3.0",
-    "typedoc": "~0.28.15",
+    "typedoc": "~0.28.16",
     "typescript": "~5.9.3"
   }
 }
