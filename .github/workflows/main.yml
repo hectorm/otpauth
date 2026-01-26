@@ -244,8 +244,6 @@ jobs:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
       - name: "Publish"
-        env:
-          NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}"
         run: |
           PKG_NAME="$(jq -r '.name' ./package.json)"; PKG_VERSION="$(jq -r '.version' ./package.json)"
           if [ "$(npm view "${PKG_NAME:?}" versions --json | jq -r --arg v "${PKG_VERSION:?}" 'index($v)')" = 'null' ]; then
