@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: "CodeQL analysis"
+name: "CodeQL"
 
 on:
   push:
@@ -11,11 +11,15 @@ on:
     - cron: "25 10 * * 3"
   workflow_dispatch:
 
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   analyze:
-    name: "CodeQL analysis (${{ matrix.language }})"
+    name: "Analyze (${{ matrix.language }})"
     runs-on: "ubuntu-latest"
     permissions:
       actions: "read"
@@ -24,7 +28,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["javascript"]
+        include:
+          - { language: "actions", build-mode: "none" }
+          - { language: "javascript-typescript", build-mode: "none" }
     steps:
       - name: "Checkout"
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd"
@@ -32,7 +38,8 @@ jobs:
         uses: "github/codeql-action/init@b20883b0cd1f46c72ae0ba6d1090936928f9fa30"
         with:
           languages: "${{ matrix.language }}"
-      - name: "Autobuild"
-        uses: "github/codeql-action/autobuild@b20883b0cd1f46c72ae0ba6d1090936928f9fa30"
+          build-mode: "${{ matrix.build-mode }}"
       - name: "Perform CodeQL Analysis"
         uses: "github/codeql-action/analyze@b20883b0cd1f46c72ae0ba6d1090936928f9fa30"
+        with:
+          category: "/language:${{matrix.language}}"
