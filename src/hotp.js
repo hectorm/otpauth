@@ -42,6 +42,7 @@ class HOTP {
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Initial counter value.
+   * @param {(key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    */
   constructor({
     issuer = HOTP.defaults.issuer,
@@ -51,6 +52,7 @@ class HOTP {
     algorithm = HOTP.defaults.algorithm,
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
+    hmac,
   } = {}) {
     /**
      * Account provider.
@@ -76,7 +78,7 @@ class HOTP {
      * HMAC hashing algorithm.
      * @type {string}
      */
-    this.algorithm = canonicalizeAlgorithm(algorithm);
+    this.algorithm = typeof hmac === "function" ? algorithm : canonicalizeAlgorithm(algorithm);
     /**
      * Token length.
      * @type {number}
@@ -87,6 +89,11 @@ class HOTP {
      * @type {number}
      */
     this.counter = counter;
+    /**
+     * Custom HMAC function.
+     * @type {((key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    this.hmac = hmac;
   }
 
   /**
@@ -96,6 +103,7 @@ class HOTP {
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
+   * @param {(key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
    */
   static generate({
@@ -103,8 +111,10 @@ class HOTP {
     algorithm = HOTP.defaults.algorithm,
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
+    hmac,
   }) {
-    const digest = hmacDigest(algorithm, secret.bytes, uintDecode(counter));
+    const message = uintDecode(counter);
+    const digest = hmac ? hmac(secret.bytes, message) : hmacDigest(algorithm, secret.bytes, message);
     const offset = digest[digest.byteLength - 1] & 15;
     const otp =
       (((digest[offset] & 127) << 24) |
@@ -128,6 +138,7 @@ class HOTP {
       algorithm: this.algorithm,
       digits: this.digits,
       counter,
+      hmac: this.hmac,
     });
   }
 
@@ -140,6 +151,7 @@ class HOTP {
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
   static validate({
@@ -149,6 +161,7 @@ class HOTP {
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
     window = HOTP.defaults.window,
+    hmac,
   }) {
     // Return early if the token length does not match the digit number.
     if (token.length !== digits) return null;
@@ -161,6 +174,7 @@ class HOTP {
         algorithm,
         digits,
         counter: i,
+        hmac,
       });
       if (timingSafeEqual(token, generatedToken)) {
         delta = i - counter;
@@ -194,6 +208,7 @@ class HOTP {
       digits: this.digits,
       counter,
       window,
+      hmac: this.hmac,
     });
   }
 

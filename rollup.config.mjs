@@ -49,6 +49,12 @@ export default () => {
     `// @ts-nocheck`,
   ].join("\n");
 
+  const bannerBare = [
+    `//! otpauth ${spec.version} | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth`,
+    `/// <reference types="./otpauth.d.ts" />`,
+    `// @ts-nocheck`,
+  ].join("\n");
+
   /** @type {RollupReplaceOptions} */
   const replaceOpts = {
     preventAssignment: true,
@@ -86,16 +92,31 @@ export default () => {
     },
   };
 
+  /** @type {RollupTerserOptions} */
+  const terserBareOpts = {
+    ...terserOpts,
+    format: {
+      ...terserOpts.format,
+      preamble: bannerBare,
+    },
+  };
+
+  /** @type {RollupVirtualOptions} */
+  const mockNodeCrypto = {
+    "node:crypto": mock("createHmac", "randomBytes", "timingSafeEqual"),
+  };
+
+  /** @type {RollupVirtualOptions} */
+  const mockNobleHashes = {
+    "@noble/hashes/hmac.js": mock("hmac"),
+    "@noble/hashes/legacy.js": mock("sha1"),
+    "@noble/hashes/sha2.js": mock("sha224", "sha256", "sha384", "sha512"),
+    "@noble/hashes/sha3.js": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
+  };
+
   /** @type {RollupOptions} */
   const rollupOpts = {
-    plugins: [
-      t(replace)(replaceOpts),
-      t(virtual)({
-        "node:crypto": mock("createHmac", "randomBytes", "timingSafeEqual"),
-      }),
-      t(resolve)(),
-      t(swc)(swcOpts),
-    ],
+    plugins: [t(replace)(replaceOpts), t(virtual)(mockNodeCrypto), t(resolve)(), t(swc)(swcOpts)],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
@@ -121,17 +142,7 @@ export default () => {
 
   /** @type {RollupOptions} */
   const rollupNodeOpts = {
-    plugins: [
-      t(replace)(replaceOpts),
-      t(virtual)({
-        "@noble/hashes/hmac.js": mock("hmac"),
-        "@noble/hashes/legacy.js": mock("sha1"),
-        "@noble/hashes/sha2.js": mock("sha224", "sha256", "sha384", "sha512"),
-        "@noble/hashes/sha3.js": mock("sha3_224", "sha3_256", "sha3_384", "sha3_512"),
-      }),
-      t(resolve)(),
-      t(swc)(swcOpts),
-    ],
+    plugins: [t(replace)(replaceOpts), t(virtual)(mockNobleHashes), t(resolve)(), t(swc)(swcOpts)],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
@@ -141,6 +152,25 @@ export default () => {
   const rollupNodeMinOpts = {
     ...rollupNodeOpts,
     plugins: [rollupNodeOpts.plugins, t(terser)(terserNodeOpts)],
+  };
+
+  /** @type {RollupOptions} */
+  const rollupBareOpts = {
+    plugins: [
+      t(replace)(replaceOpts),
+      t(virtual)({ ...mockNodeCrypto, ...mockNobleHashes }),
+      t(resolve)(),
+      t(swc)(swcOpts),
+    ],
+    onwarn: (warning) => {
+      throw new Error(warning.message);
+    },
+  };
+
+  /** @type {RollupOptions} */
+  const rollupBareMinOpts = {
+    ...rollupBareOpts,
+    plugins: [rollupBareOpts.plugins, t(terser)(terserBareOpts)],
   };
 
   /** @type {OutputOptions} */
@@ -165,6 +195,18 @@ export default () => {
   /** @type {OutputOptions} */
   const outputNodeMinOpts = {
     ...outputNodeOpts,
+    sourcemap: true,
+  };
+
+  /** @type {OutputOptions} */
+  const outputBareOpts = {
+    ...outputOpts,
+    banner: bannerBare,
+  };
+
+  /** @type {OutputOptions} */
+  const outputBareMinOpts = {
+    ...outputBareOpts,
     sourcemap: true,
   };
 
@@ -210,6 +252,16 @@ export default () => {
         { ...outputNodeMinOpts, file: "./dist/otpauth.node.min.mjs", format: "es" },
         { ...outputNodeMinOpts, file: "./dist/otpauth.node.min.cjs", format: "cjs" },
       ],
+    },
+    {
+      ...rollupBareOpts,
+      input: "./src/index.js",
+      output: [{ ...outputBareOpts, file: "./dist/otpauth.bare.esm.js", format: "es" }],
+    },
+    {
+      ...rollupBareMinOpts,
+      input: "./src/index.js",
+      output: [{ ...outputBareMinOpts, file: "./dist/otpauth.bare.esm.min.js", format: "es" }],
     },
     {
       input: "./types/index.d.ts",
