@@ -54,7 +54,7 @@ try {
   });
 
   const chaiJsUri = `data:application/javascript;base64,${fs
-    .readFileSync(require.resolve("chai/chai.js"))
+    .readFileSync(require.resolve("chai/index.js"))
     .toString("base64")}`;
 
   const testJsUri = `data:application/javascript;base64,${fs

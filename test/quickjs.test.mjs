@@ -1,7 +1,6 @@
 // @ts-nocheck
 import * as os from "os";
 import * as std from "std";
-import { assert } from "../node_modules/chai/chai.js";
 
 let testTotalCount = 0;
 let testPassedCount = 0;
@@ -31,9 +30,30 @@ globalThis.it = (name, fn) => {
   }
 };
 
-globalThis.assert = assert;
-globalThis.assertEquals = assert.deepEqual;
-globalThis.assertMatch = assert.match;
+globalThis.assert = (condition) => {
+  if (!condition) throw new Error("Assertion failed");
+};
+
+globalThis.assertEquals = (actual, expected) => {
+  const deepEqual = (a, b) => {
+    if (a === b) return true;
+    if (a instanceof Uint8Array && b instanceof Uint8Array) {
+      return a.length === b.length && a.every((v, i) => v === b[i]);
+    }
+    if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) return false;
+    return keysA.every((k) => deepEqual(a[k], b[k]));
+  };
+  if (!deepEqual(actual, expected)) {
+    throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+  }
+};
+
+globalThis.assertMatch = (string, regex) => {
+  if (!regex.test(string)) throw new Error(`Expected "${string}" to match ${regex}`);
+};
 
 // QuickJS does not support the Web Crypto API.
 if (typeof globalThis.crypto === "undefined") {
