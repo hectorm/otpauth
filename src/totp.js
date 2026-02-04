@@ -41,6 +41,7 @@ class TOTP {
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    */
   constructor({
     issuer = TOTP.defaults.issuer,
@@ -50,6 +51,7 @@ class TOTP {
     algorithm = TOTP.defaults.algorithm,
     digits = TOTP.defaults.digits,
     period = TOTP.defaults.period,
+    hmac,
   } = {}) {
     /**
      * Account provider.
@@ -75,7 +77,7 @@ class TOTP {
      * HMAC hashing algorithm.
      * @type {string}
      */
-    this.algorithm = canonicalizeAlgorithm(algorithm);
+    this.algorithm = hmac ? algorithm : canonicalizeAlgorithm(algorithm);
     /**
      * Token length.
      * @type {number}
@@ -86,6 +88,11 @@ class TOTP {
      * @type {number}
      */
     this.period = period;
+    /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    this.hmac = hmac;
   }
 
   /**
@@ -144,14 +151,16 @@ class TOTP {
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
    */
-  static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now() }) {
+  static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), hmac }) {
     return HOTP.generate({
       secret,
       algorithm,
       digits,
       counter: TOTP.counter({ period, timestamp }),
+      hmac,
     });
   }
 
@@ -168,6 +177,7 @@ class TOTP {
       digits: this.digits,
       period: this.period,
       timestamp,
+      hmac: this.hmac,
     });
   }
 
@@ -181,9 +191,19 @@ class TOTP {
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window }) {
+  static validate({
+    token,
+    secret,
+    algorithm,
+    digits,
+    period = TOTP.defaults.period,
+    timestamp = Date.now(),
+    window,
+    hmac,
+  }) {
     return HOTP.validate({
       token,
       secret,
@@ -191,6 +211,7 @@ class TOTP {
       digits,
       counter: TOTP.counter({ period, timestamp }),
       window,
+      hmac,
     });
   }
 
@@ -211,6 +232,7 @@ class TOTP {
       period: this.period,
       timestamp,
       window,
+      hmac: this.hmac,
     });
   }
 

@@ -1135,6 +1135,64 @@ const cases = [
       },
     },
   },
+  {
+    // 21
+    buffer: new Uint8Array([
+      118, 115, 98, 78, 88, 110, 78, 120, 85, 125, 81, 90, 45, 62, 81, 115, 97, 35, 120, 77, 83, 32, 44, 70, 40, 33, 41,
+      65, 45, 100, 43, 82, 112, 50, 43, 80, 92, 116, 73, 91, 56, 86, 106, 43, 102, 96, 120, 112, 49, 34, 88, 120, 79,
+      90, 53, 52, 63, 122, 109, 100, 101, 44, 70, 77, 91, 50, 95, 38, 77, 75, 112, 61, 104, 116, 117, 68, 122, 98, 56,
+      35, 57, 90, 51, 105, 111,
+    ]).buffer,
+    latin1:
+      "\u0076\u0073\u0062\u004E\u0058\u006E\u004E\u0078\u0055\u007D\u0051\u005A\u002D\u003E\u0051\u0073\u0061\u0023\u0078\u004D\u0053\u0020\u002C\u0046\u0028\u0021\u0029\u0041\u002D\u0064\u002B\u0052\u0070\u0032\u002B\u0050\u005C\u0074\u0049\u005B\u0038\u0056\u006A\u002B\u0066\u0060\u0078\u0070\u0031\u0022\u0058\u0078\u004F\u005A\u0035\u0034\u003F\u007A\u006D\u0064\u0065\u002C\u0046\u004D\u005B\u0032\u005F\u0026\u004D\u004B\u0070\u003D\u0068\u0074\u0075\u0044\u007A\u0062\u0038\u0023\u0039\u005A\u0033\u0069\u006F",
+    utf8: "\u0076\u0073\u0062\u004E\u0058\u006E\u004E\u0078\u0055\u007D\u0051\u005A\u002D\u003E\u0051\u0073\u0061\u0023\u0078\u004D\u0053\u0020\u002C\u0046\u0028\u0021\u0029\u0041\u002D\u0064\u002B\u0052\u0070\u0032\u002B\u0050\u005C\u0074\u0049\u005B\u0038\u0056\u006A\u002B\u0066\u0060\u0078\u0070\u0031\u0022\u0058\u0078\u004F\u005A\u0035\u0034\u003F\u007A\u006D\u0064\u0065\u002C\u0046\u004D\u005B\u0032\u005F\u0026\u004D\u004B\u0070\u003D\u0068\u0074\u0075\u0044\u007A\u0062\u0038\u0023\u0039\u005A\u0033\u0069\u006F",
+    base32:
+      "OZZWETSYNZHHQVL5KFNC2PSRONQSG6CNKMQCYRRIEEUUCLLEFNJHAMRLKBOHISK3HBLGUK3GMB4HAMJCLB4E6WRVGQ7XU3LEMUWEMTK3GJPSMTKLOA6WQ5DVIR5GEOBDHFNDG2LP",
+    hex: "7673624E586E4E78557D515A2D3E51736123784D53202C46282129412D642B5270322B505C74495B38566A2B66607870312258784F5A35343F7A6D64652C464D5B325F264D4B703D687475447A623823395A33696F",
+    hotp: {
+      constructor: {
+        input: {
+          algorithm: "CUSTOM",
+          hmac: () => new Uint8Array([0x00, 0x01, 0xe2, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        },
+      },
+      generate: {
+        input: { counter: 0 },
+        output: "123456",
+      },
+      validate: {
+        input: { token: "123456", counter: 0, window: 10 },
+        output: 0,
+      },
+      toString: {
+        output: [
+          "otpauth://hotp/OTPAuth?secret=OZZWETSYNZHHQVL5KFNC2PSRONQSG6CNKMQCYRRIEEUUCLLEFNJHAMRLKBOHISK3HBLGUK3GMB4HAMJCLB4E6WRVGQ7XU3LEMUWEMTK3GJPSMTKLOA6WQ5DVIR5GEOBDHFNDG2LP&algorithm=CUSTOM&digits=6&counter=0",
+        ],
+      },
+    },
+    totp: {
+      constructor: {
+        input: {
+          algorithm: "CUSTOM",
+          period: 30,
+          hmac: () => new Uint8Array([0x00, 0x01, 0xe2, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        },
+      },
+      generate: {
+        input: { timestamp: 1451606400000 },
+        output: "123456",
+      },
+      validate: {
+        input: { token: "123456", timestamp: 1451606400000, window: 1 },
+        output: 0,
+      },
+      toString: {
+        output: [
+          "otpauth://totp/OTPAuth?secret=OZZWETSYNZHHQVL5KFNC2PSRONQSG6CNKMQCYRRIEEUUCLLEFNJHAMRLKBOHISK3HBLGUK3GMB4HAMJCLB4E6WRVGQ7XU3LEMUWEMTK3GJPSMTKLOA6WQ5DVIR5GEOBDHFNDG2LP&algorithm=CUSTOM&digits=6&period=30",
+        ],
+      },
+    },
+  },
 ];
 
 /* ================================================
@@ -1408,7 +1466,9 @@ describe("URI", () => {
           secret: new OTPAuth.Secret({ buffer: input.buffer }),
         });
 
-        const output = OTPAuth.URI.parse(input.hotp.toString.output[n]);
+        const output = OTPAuth.URI.parse(input.hotp.toString.output[n], {
+          hmac: input.hotp.constructor.input.hmac,
+        });
         assertEquals(output, hotp);
       });
     }
@@ -1422,7 +1482,9 @@ describe("URI", () => {
           secret: new OTPAuth.Secret({ buffer: input.buffer }),
         });
 
-        const output = OTPAuth.URI.parse(input.totp.toString.output[n]);
+        const output = OTPAuth.URI.parse(input.totp.toString.output[n], {
+          hmac: input.totp.constructor.input.hmac,
+        });
         assertEquals(output, totp);
       });
     }

@@ -48,6 +48,20 @@
       },
       "default": "./dist/otpauth.esm.js"
     },
+    "./slim": {
+      "types": {
+        "import": "./dist/otpauth.d.ts",
+        "require": "./dist/otpauth.d.cts"
+      },
+      "default": "./dist/otpauth.slim.esm.js"
+    },
+    "./bare": {
+      "types": {
+        "import": "./dist/otpauth.d.ts",
+        "require": "./dist/otpauth.d.cts"
+      },
+      "default": "./dist/otpauth.bare.esm.js"
+    },
     "./dist/*": {
       "types": {
         "import": "./dist/otpauth.d.ts",
