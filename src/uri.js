@@ -14,10 +14,16 @@ const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-
 const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 
 /**
- * Regex for supported algorithms.
+ * Regex for supported algorithms in built-in HMAC function.
  * @type {RegExp}
  */
 const ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
+
+/**
+ * Regex for custom algorithms in user-defined HMAC function.
+ * @type {RegExp}
+ */
+const ALGORITHM_CUSTOM_REGEX = /^[A-Z0-9]+(?:[_-][A-Z0-9]+)*$/i;
 
 /**
  * Integer regex.
@@ -39,9 +45,11 @@ class URI {
   /**
    * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
    * @param {string} uri Google Authenticator Key URI.
+   * @param {Object} [config] Configuration options.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {HOTP|TOTP} HOTP/TOTP object.
    */
-  static parse(uri) {
+  static parse(uri, { hmac } = {}) {
     let uriGroups;
 
     try {
@@ -126,7 +134,7 @@ class URI {
 
     // Algorithm: optional
     if (typeof uriParams.algorithm !== "undefined") {
-      if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
+      if ((hmac ? ALGORITHM_CUSTOM_REGEX : ALGORITHM_REGEX).test(uriParams.algorithm)) {
         config.algorithm = uriParams.algorithm;
       } else {
         throw new TypeError("Invalid 'algorithm' parameter");
@@ -140,6 +148,11 @@ class URI {
       } else {
         throw new TypeError("Invalid 'digits' parameter");
       }
+    }
+
+    // HMAC: optional
+    if (typeof hmac !== "undefined") {
+      config.hmac = hmac;
     }
 
     return new OTP(config);

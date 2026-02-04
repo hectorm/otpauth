@@ -31,6 +31,8 @@ This section presents an overview of the most common usage patterns, along with 
 
 ```javascript
 import * as OTPAuth from "otpauth";
+// import * as OTPAuth from "otpauth/slim"; // Slim build without bundled dependencies.
+// import * as OTPAuth from "otpauth/bare"; // Bare build with no bundled crypto (requires providing a custom HMAC function).
 
 // Create a new TOTP object.
 let totp = new OTPAuth.TOTP({
@@ -51,6 +53,8 @@ let totp = new OTPAuth.TOTP({
   secret: "US3WHSG7X5KAPV27VANWKQHF3SH3HULL",
   //   or: `OTPAuth.Secret.fromBase32("US3WHSG7X5KAPV27VANWKQHF3SH3HULL")`
   //   or: `new OTPAuth.Secret()`
+  // Custom HMAC function (required for bare build, optional otherwise).
+  // hmac: (algorithm, key, message) => Uint8Array,
 });
 
 // Unless you know what you are doing, it is recommended to use the default
