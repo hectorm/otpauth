@@ -1,4 +1,4 @@
-//! otpauth 9.4.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.5.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 'use strict';
@@ -434,9 +434,14 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
-   */ static generate({ secret, algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter }) {
-        const digest = hmacDigest(algorithm, secret.bytes, uintDecode(counter));
+   */ static generate({ secret, algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, hmac = hmacDigest }) {
+        const message = uintDecode(counter);
+        const digest = hmac(algorithm, secret.bytes, message);
+        if (!digest?.byteLength || digest.byteLength < 19) {
+            throw new TypeError("Return value must be at least 19 bytes");
+        }
         const offset = digest[digest.byteLength - 1] & 15;
         const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
         return otp.toString().padStart(digits, "0");
@@ -451,7 +456,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             secret: this.secret,
             algorithm: this.algorithm,
             digits: this.digits,
-            counter
+            counter,
+            hmac: this.hmac
         });
     }
     /**
@@ -463,8 +469,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window }) {
+   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window, hmac = hmacDigest }) {
         // Return early if the token length does not match the digit number.
         if (token.length !== digits) return null;
         let delta = null;
@@ -473,7 +480,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
                 secret,
                 algorithm,
                 digits,
-                counter: i
+                counter: i,
+                hmac
             });
             if (timingSafeEqual(token, generatedToken)) {
                 delta = i - counter;
@@ -502,7 +510,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             algorithm: this.algorithm,
             digits: this.digits,
             counter,
-            window
+            window,
+            hmac: this.hmac
         });
     }
     /**
@@ -522,7 +531,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Initial counter value.
-   */ constructor({ issuer = HOTP.defaults.issuer, label = HOTP.defaults.label, issuerInLabel = HOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter } = {}){
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
+   */ constructor({ issuer = HOTP.defaults.issuer, label = HOTP.defaults.label, issuerInLabel = HOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, hmac } = {}){
         /**
      * Account provider.
      * @type {string}
@@ -542,7 +552,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = canonicalizeAlgorithm(algorithm);
+     */ this.algorithm = hmac ? algorithm : canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -551,6 +561,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
      * Initial counter value.
      * @type {number}
      */ this.counter = counter;
+        /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */ this.hmac = hmac;
     }
 }
 
@@ -628,8 +642,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
-   */ static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now() }) {
+   */ static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), hmac }) {
         return HOTP.generate({
             secret,
             algorithm,
@@ -637,7 +652,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             counter: TOTP.counter({
                 period,
                 timestamp
-            })
+            }),
+            hmac
         });
     }
     /**
@@ -651,7 +667,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             algorithm: this.algorithm,
             digits: this.digits,
             period: this.period,
-            timestamp
+            timestamp,
+            hmac: this.hmac
         });
     }
     /**
@@ -664,8 +681,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window }) {
+   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window, hmac }) {
         return HOTP.validate({
             token,
             secret,
@@ -675,7 +693,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
                 period,
                 timestamp
             }),
-            window
+            window,
+            hmac
         });
     }
     /**
@@ -693,7 +712,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             digits: this.digits,
             period: this.period,
             timestamp,
-            window
+            window,
+            hmac: this.hmac
         });
     }
     /**
@@ -713,7 +733,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
-   */ constructor({ issuer = TOTP.defaults.issuer, label = TOTP.defaults.label, issuerInLabel = TOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = TOTP.defaults.algorithm, digits = TOTP.defaults.digits, period = TOTP.defaults.period } = {}){
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
+   */ constructor({ issuer = TOTP.defaults.issuer, label = TOTP.defaults.label, issuerInLabel = TOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = TOTP.defaults.algorithm, digits = TOTP.defaults.digits, period = TOTP.defaults.period, hmac } = {}){
         /**
      * Account provider.
      * @type {string}
@@ -733,7 +754,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = canonicalizeAlgorithm(algorithm);
+     */ this.algorithm = hmac ? algorithm : canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -742,6 +763,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
      * Token time-step duration.
      * @type {number}
      */ this.period = period;
+        /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */ this.hmac = hmac;
     }
 }
 
@@ -754,9 +779,13 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @type {RegExp}
  */ const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 /**
- * Regex for supported algorithms.
+ * Regex for supported algorithms in built-in HMAC function.
  * @type {RegExp}
  */ const ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
+/**
+ * Regex for custom algorithms in user-defined HMAC function.
+ * @type {RegExp}
+ */ const ALGORITHM_CUSTOM_REGEX = /^[A-Z0-9]+(?:[_-][A-Z0-9]+)*$/i;
 /**
  * Integer regex.
  * @type {RegExp}
@@ -772,8 +801,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
     /**
    * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
    * @param {string} uri Google Authenticator Key URI.
+   * @param {Object} [config] Configuration options.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {HOTP|TOTP} HOTP/TOTP object.
-   */ static parse(uri) {
+   */ static parse(uri, { hmac } = {}) {
         let uriGroups;
         try {
             uriGroups = uri.match(OTPURI_REGEX);
@@ -844,7 +875,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         }
         // Algorithm: optional
         if (typeof uriParams.algorithm !== "undefined") {
-            if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
+            if ((hmac ? ALGORITHM_CUSTOM_REGEX : ALGORITHM_REGEX).test(uriParams.algorithm)) {
                 config.algorithm = uriParams.algorithm;
             } else {
                 throw new TypeError("Invalid 'algorithm' parameter");
@@ -857,6 +888,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             } else {
                 throw new TypeError("Invalid 'digits' parameter");
             }
+        }
+        // HMAC: optional
+        if (typeof hmac !== "undefined") {
+            config.hmac = hmac;
         }
         return new OTP(config);
     }
@@ -875,7 +910,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.4.1";
+ */ const version = "9.5.0";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;

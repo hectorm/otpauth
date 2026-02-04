@@ -103,13 +103,15 @@ declare class HOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {string} Token.
      */
-    static generate({ secret, algorithm, digits, counter, }: {
+    static generate({ secret, algorithm, digits, counter, hmac, }: {
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): string;
     /**
      * Validates an HOTP token.
@@ -120,15 +122,17 @@ declare class HOTP {
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, counter, window, }: {
+    static validate({ token, secret, algorithm, digits, counter, window, hmac, }: {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
         window?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): number | null;
     /**
      * Creates an HOTP object.
@@ -140,8 +144,9 @@ declare class HOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Initial counter value.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      */
-    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, counter, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, counter, hmac, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
         issuerInLabel?: boolean | undefined;
@@ -149,6 +154,7 @@ declare class HOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     });
     /**
      * Account provider.
@@ -185,6 +191,11 @@ declare class HOTP {
      * @type {number}
      */
     counter: number;
+    /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    hmac: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     /**
      * Generates an HOTP token.
      * @param {Object} [config] Configuration options.
@@ -270,14 +281,16 @@ declare class TOTP {
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {string} Token.
      */
-    static generate({ secret, algorithm, digits, period, timestamp }: {
+    static generate({ secret, algorithm, digits, period, timestamp, hmac }: {
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
         timestamp?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): string;
     /**
      * Validates a TOTP token.
@@ -289,9 +302,10 @@ declare class TOTP {
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, period, timestamp, window }: {
+    static validate({ token, secret, algorithm, digits, period, timestamp, window, hmac, }: {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
@@ -299,6 +313,7 @@ declare class TOTP {
         period?: number | undefined;
         timestamp?: number | undefined;
         window?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): number | null;
     /**
      * Creates a TOTP object.
@@ -310,8 +325,9 @@ declare class TOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      */
-    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, hmac, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
         issuerInLabel?: boolean | undefined;
@@ -319,6 +335,7 @@ declare class TOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     });
     /**
      * Account provider.
@@ -355,6 +372,11 @@ declare class TOTP {
      * @type {number}
      */
     period: number;
+    /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    hmac: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     /**
      * Calculates the counter. i.e. the number of periods since timestamp 0.
      * @param {Object} [config] Configuration options.
@@ -410,9 +432,13 @@ declare class URI {
     /**
      * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
      * @param {string} uri Google Authenticator Key URI.
+     * @param {Object} [config] Configuration options.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {HOTP|TOTP} HOTP/TOTP object.
      */
-    static parse(uri: string): HOTP | TOTP;
+    static parse(uri: string, { hmac }?: {
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
+    }): HOTP | TOTP;
     /**
      * Converts an HOTP/TOTP object to a Google Authenticator key URI.
      * @param {HOTP|TOTP} otp HOTP/TOTP object.

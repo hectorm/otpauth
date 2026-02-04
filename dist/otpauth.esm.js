@@ -1,5 +1,5 @@
-//! otpauth 9.4.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 1.8.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.5.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 2.0.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -22,24 +22,29 @@
 /**
  * Utilities for hex, bytes, CSPRNG.
  * @module
- */ /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ // We use WebCrypto aka globalThis.crypto, which exists in browsers and node.js 16+.
-// node.js versions earlier than v19 don't declare it in global scope.
-// For node.js, package.json#exports field mapping rewrites import
-// from `crypto` to `cryptoNode`, which imports native module.
-// Makes the utils un-importable in browsers without a bundler.
-// Once node.js 18 is deprecated (2025-04-30), we can just drop the import.
-/** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */ function isBytes(a) {
+ */ /*! noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com) */ /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */ function isBytes(a) {
     return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === 'Uint8Array';
 }
-/** Asserts something is positive integer. */ function anumber(n) {
-    if (!Number.isSafeInteger(n) || n < 0) throw new Error('positive integer expected, got ' + n);
+/** Asserts something is positive integer. */ function anumber(n, title = '') {
+    if (!Number.isSafeInteger(n) || n < 0) {
+        const prefix = title && `"${title}" `;
+        throw new Error(`${prefix}expected integer >= 0, got ${n}`);
+    }
 }
-/** Asserts something is Uint8Array. */ function abytes(b, ...lengths) {
-    if (!isBytes(b)) throw new Error('Uint8Array expected');
-    if (lengths.length > 0 && !lengths.includes(b.length)) throw new Error('Uint8Array expected of length ' + lengths + ', got length=' + b.length);
+/** Asserts something is Uint8Array. */ function abytes(value, length, title = '') {
+    const bytes = isBytes(value);
+    const len = value?.length;
+    const needsLen = length !== undefined;
+    if (!bytes || needsLen && len !== length) {
+        const prefix = title && `"${title}" `;
+        const ofLen = needsLen ? ` of length ${length}` : '';
+        const got = bytes ? `length=${len}` : `type=${typeof value}`;
+        throw new Error(prefix + 'expected Uint8Array' + ofLen + ', got ' + got);
+    }
+    return value;
 }
 /** Asserts something is hash */ function ahash(h) {
-    if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash should be wrapped by utils.createHasher');
+    if (typeof h !== 'function' || typeof h.create !== 'function') throw new Error('Hash must wrapped by utils.createHasher');
     anumber(h.outputLen);
     anumber(h.blockLen);
 }
@@ -48,10 +53,10 @@
     if (checkFinished && instance.finished) throw new Error('Hash#digest() has already been called');
 }
 /** Asserts output is properly-sized byte array */ function aoutput(out, instance) {
-    abytes(out);
+    abytes(out, undefined, 'digestInto() output');
     const min = instance.outputLen;
     if (out.length < min) {
-        throw new Error('digestInto() expects output buffer of length at least ' + min);
+        throw new Error('"digestInto() output" expected to be of length >=' + min);
     }
 }
 /** Cast u8 / u16 / u32 to u32. */ function u32(arr) {
@@ -84,34 +89,32 @@
     return arr;
 }
 const swap32IfBE = isLE ? (u)=>u : byteSwap32;
-/**
- * Converts string to bytes using UTF8 encoding.
- * @example utf8ToBytes('abc') // Uint8Array.from([97, 98, 99])
- */ function utf8ToBytes(str) {
-    if (typeof str !== 'string') throw new Error('string expected');
-    return new Uint8Array(new TextEncoder().encode(str)); // https://bugzil.la/1681809
-}
-/**
- * Normalizes (non-hex) string or Uint8Array to Uint8Array.
- * Warning: when Uint8Array is passed, it would NOT get copied.
- * Keep in mind for future mutable operations.
- */ function toBytes(data) {
-    if (typeof data === 'string') data = utf8ToBytes(data);
-    abytes(data);
-    return data;
-}
-/** For runtime check if class implements interface */ class Hash {
-}
-/** Wraps hash function, creating an interface on top of it */ function createHasher(hashCons) {
-    const hashC = (msg)=>hashCons().update(toBytes(msg)).digest();
-    const tmp = hashCons();
+/** Creates function with outputLen, blockLen, create properties from a class constructor. */ function createHasher(hashCons, info = {}) {
+    const hashC = (msg, opts)=>hashCons(opts).update(msg).digest();
+    const tmp = hashCons(undefined);
     hashC.outputLen = tmp.outputLen;
     hashC.blockLen = tmp.blockLen;
-    hashC.create = ()=>hashCons();
-    return hashC;
+    hashC.create = (opts)=>hashCons(opts);
+    Object.assign(hashC, info);
+    return Object.freeze(hashC);
 }
+/** Creates OID opts for NIST hashes, with prefix 06 09 60 86 48 01 65 03 04 02. */ const oidNist = (suffix)=>({
+        oid: Uint8Array.from([
+            0x06,
+            0x09,
+            0x60,
+            0x86,
+            0x48,
+            0x01,
+            0x65,
+            0x03,
+            0x04,
+            0x02,
+            suffix
+        ])
+    });
 
-class HMAC extends Hash {
+/** Internal class for HMAC. */ class _HMAC {
     update(buf) {
         aexists(this);
         this.iHash.update(buf);
@@ -119,7 +122,7 @@ class HMAC extends Hash {
     }
     digestInto(out) {
         aexists(this);
-        abytes(out, this.outputLen);
+        abytes(out, this.outputLen, 'output');
         this.finished = true;
         this.iHash.digestInto(out);
         this.oHash.update(out);
@@ -152,12 +155,11 @@ class HMAC extends Hash {
         this.oHash.destroy();
         this.iHash.destroy();
     }
-    constructor(hash, _key){
-        super();
+    constructor(hash, key){
         this.finished = false;
         this.destroyed = false;
         ahash(hash);
-        const key = toBytes(_key);
+        abytes(key, undefined, 'key');
         this.iHash = hash.create();
         if (typeof this.iHash.update !== 'function') throw new Error('Expected instance of class which extends utils.Hash');
         this.blockLen = this.iHash.blockLen;
@@ -185,20 +187,9 @@ class HMAC extends Hash {
  * import { hmac } from '@noble/hashes/hmac';
  * import { sha256 } from '@noble/hashes/sha2';
  * const mac1 = hmac(sha256, 'key', 'message');
- */ const hmac = (hash, key, message)=>new HMAC(hash, key).update(message).digest();
-hmac.create = (hash, key)=>new HMAC(hash, key);
+ */ const hmac = (hash, key, message)=>new _HMAC(hash, key).update(message).digest();
+hmac.create = (hash, key)=>new _HMAC(hash, key);
 
-/** Polyfill for Safari 14. https://caniuse.com/mdn-javascript_builtins_dataview_setbiguint64 */ function setBigUint64(view, byteOffset, value, isLE) {
-    if (typeof view.setBigUint64 === 'function') return view.setBigUint64(byteOffset, value, isLE);
-    const _32n = BigInt(32);
-    const _u32_max = BigInt(0xffffffff);
-    const wh = Number(value >> _32n & _u32_max);
-    const wl = Number(value & _u32_max);
-    const h = isLE ? 4 : 0;
-    const l = isLE ? 0 : 4;
-    view.setUint32(byteOffset + h, wh, isLE);
-    view.setUint32(byteOffset + l, wl, isLE);
-}
 /** Choice: a ? b : c */ function Chi(a, b, c) {
     return a & b ^ ~a & c;
 }
@@ -208,10 +199,9 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
 /**
  * Merkle-Damgard hash construction base class.
  * Could be used to create MD5, RIPEMD, SHA1, SHA2.
- */ class HashMD extends Hash {
+ */ class HashMD {
     update(data) {
         aexists(this);
-        data = toBytes(data);
         abytes(data);
         const { view, buffer, blockLen } = this;
         const len = data.length;
@@ -258,12 +248,12 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
         // Note: sha512 requires length to be 128bit integer, but length in JS will overflow before that
         // You need to write around 2 exabytes (u64_max / 8 / (1024**6)) for this to happen.
         // So we just write lowest 64 bits of that value.
-        setBigUint64(view, blockLen - 8, BigInt(this.length * 8), isLE);
+        view.setBigUint64(blockLen - 8, BigInt(this.length * 8), isLE);
         this.process(view, 0);
         const oview = createView(out);
         const len = this.outputLen;
-        // NOTE: we do division by 4 later, which should be fused in single op with modulo by JIT
-        if (len % 4) throw new Error('_sha2: outputLen should be aligned to 32bit');
+        // NOTE: we do division by 4 later, which must be fused in single op with modulo by JIT
+        if (len % 4) throw new Error('_sha2: outputLen must be aligned to 32bit');
         const outLen = len / 4;
         const state = this.get();
         if (outLen > state.length) throw new Error('_sha2: outputLen bigger than state');
@@ -291,7 +281,6 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
         return this._cloneInto();
     }
     constructor(blockLen, outputLen, padOffset, isLE){
-        super();
         this.finished = false;
         this.length = 0;
         this.pos = 0;
@@ -373,7 +362,7 @@ hmac.create = (hash, key)=>new HMAC(hash, key);
 ]);
 // Reusable temporary buffer
 const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
-/** SHA1 legacy hash class. */ class SHA1 extends HashMD {
+/** Internal SHA1 legacy hash class. */ class _SHA1 extends HashMD {
     get() {
         const { A, B, C, D, E } = this;
         return [
@@ -434,15 +423,10 @@ const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
         clean(this.buffer);
     }
     constructor(){
-        super(64, 20, 8, false);
-        this.A = SHA1_IV[0] | 0;
-        this.B = SHA1_IV[1] | 0;
-        this.C = SHA1_IV[2] | 0;
-        this.D = SHA1_IV[3] | 0;
-        this.E = SHA1_IV[4] | 0;
+        super(64, 20, 8, false), this.A = SHA1_IV[0] | 0, this.B = SHA1_IV[1] | 0, this.C = SHA1_IV[2] | 0, this.D = SHA1_IV[3] | 0, this.E = SHA1_IV[4] | 0;
     }
 }
-/** SHA1 (RFC 3174) legacy hash function. It was cryptographically broken. */ const sha1 = /* @__PURE__ */ createHasher(()=>new SHA1());
+/** SHA1 (RFC 3174) legacy hash function. It was cryptographically broken. */ const sha1 = /* @__PURE__ */ createHasher(()=>new _SHA1());
 
 /**
  * Internal helpers for u64. BigUint64Array is too slow as per 2025, so we implement it using Uint32Array.
@@ -579,7 +563,7 @@ const SHA256_K = /* @__PURE__ */ Uint32Array.from([
     0xc67178f2
 ]);
 /** Reusable temporary buffer. "W" comes straight from spec. */ const SHA256_W = /* @__PURE__ */ new Uint32Array(64);
-class SHA256 extends HashMD {
+/** Internal 32-byte base SHA2 hash class. */ class SHA2_32B extends HashMD {
     get() {
         const { A, B, C, D, E, F, G, H } = this;
         return [
@@ -648,31 +632,20 @@ class SHA256 extends HashMD {
         this.set(0, 0, 0, 0, 0, 0, 0, 0);
         clean(this.buffer);
     }
-    constructor(outputLen = 32){
+    constructor(outputLen){
         super(64, outputLen, 8, false);
-        // We cannot use array here since array allows indexing by variable
-        // which means optimizer/compiler cannot use registers.
-        this.A = SHA256_IV[0] | 0;
-        this.B = SHA256_IV[1] | 0;
-        this.C = SHA256_IV[2] | 0;
-        this.D = SHA256_IV[3] | 0;
-        this.E = SHA256_IV[4] | 0;
-        this.F = SHA256_IV[5] | 0;
-        this.G = SHA256_IV[6] | 0;
-        this.H = SHA256_IV[7] | 0;
     }
 }
-class SHA224 extends SHA256 {
+/** Internal SHA2-256 hash class. */ class _SHA256 extends SHA2_32B {
     constructor(){
-        super(28);
-        this.A = SHA224_IV[0] | 0;
-        this.B = SHA224_IV[1] | 0;
-        this.C = SHA224_IV[2] | 0;
-        this.D = SHA224_IV[3] | 0;
-        this.E = SHA224_IV[4] | 0;
-        this.F = SHA224_IV[5] | 0;
-        this.G = SHA224_IV[6] | 0;
-        this.H = SHA224_IV[7] | 0;
+        super(32), // We cannot use array here since array allows indexing by variable
+        // which means optimizer/compiler cannot use registers.
+        this.A = SHA256_IV[0] | 0, this.B = SHA256_IV[1] | 0, this.C = SHA256_IV[2] | 0, this.D = SHA256_IV[3] | 0, this.E = SHA256_IV[4] | 0, this.F = SHA256_IV[5] | 0, this.G = SHA256_IV[6] | 0, this.H = SHA256_IV[7] | 0;
+    }
+}
+/** Internal SHA2-224 hash class. */ class _SHA224 extends SHA2_32B {
+    constructor(){
+        super(28), this.A = SHA224_IV[0] | 0, this.B = SHA224_IV[1] | 0, this.C = SHA224_IV[2] | 0, this.D = SHA224_IV[3] | 0, this.E = SHA224_IV[4] | 0, this.F = SHA224_IV[5] | 0, this.G = SHA224_IV[6] | 0, this.H = SHA224_IV[7] | 0;
     }
 }
 // SHA2-512 is slower than sha256 in js because u64 operations are slow.
@@ -766,7 +739,7 @@ const SHA512_Kl = /* @__PURE__ */ (()=>K512[1])();
 // Reusable temporary buffers
 const SHA512_W_H = /* @__PURE__ */ new Uint32Array(80);
 const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
-class SHA512 extends HashMD {
+/** Internal 64-byte base SHA2 hash class. */ class SHA2_64B extends HashMD {
     // prettier-ignore
     get() {
         const { Ah, Al, Bh, Bl, Ch, Cl, Dh, Dl, Eh, El, Fh, Fl, Gh, Gl, Hh, Hl } = this;
@@ -885,60 +858,31 @@ class SHA512 extends HashMD {
         clean(this.buffer);
         this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
-    constructor(outputLen = 64){
+    constructor(outputLen){
         super(128, outputLen, 16, false);
-        // We cannot use array here since array allows indexing by variable
-        // which means optimizer/compiler cannot use registers.
-        // h -- high 32 bits, l -- low 32 bits
-        this.Ah = SHA512_IV[0] | 0;
-        this.Al = SHA512_IV[1] | 0;
-        this.Bh = SHA512_IV[2] | 0;
-        this.Bl = SHA512_IV[3] | 0;
-        this.Ch = SHA512_IV[4] | 0;
-        this.Cl = SHA512_IV[5] | 0;
-        this.Dh = SHA512_IV[6] | 0;
-        this.Dl = SHA512_IV[7] | 0;
-        this.Eh = SHA512_IV[8] | 0;
-        this.El = SHA512_IV[9] | 0;
-        this.Fh = SHA512_IV[10] | 0;
-        this.Fl = SHA512_IV[11] | 0;
-        this.Gh = SHA512_IV[12] | 0;
-        this.Gl = SHA512_IV[13] | 0;
-        this.Hh = SHA512_IV[14] | 0;
-        this.Hl = SHA512_IV[15] | 0;
     }
 }
-class SHA384 extends SHA512 {
+/** Internal SHA2-512 hash class. */ class _SHA512 extends SHA2_64B {
     constructor(){
-        super(48);
-        this.Ah = SHA384_IV[0] | 0;
-        this.Al = SHA384_IV[1] | 0;
-        this.Bh = SHA384_IV[2] | 0;
-        this.Bl = SHA384_IV[3] | 0;
-        this.Ch = SHA384_IV[4] | 0;
-        this.Cl = SHA384_IV[5] | 0;
-        this.Dh = SHA384_IV[6] | 0;
-        this.Dl = SHA384_IV[7] | 0;
-        this.Eh = SHA384_IV[8] | 0;
-        this.El = SHA384_IV[9] | 0;
-        this.Fh = SHA384_IV[10] | 0;
-        this.Fl = SHA384_IV[11] | 0;
-        this.Gh = SHA384_IV[12] | 0;
-        this.Gl = SHA384_IV[13] | 0;
-        this.Hh = SHA384_IV[14] | 0;
-        this.Hl = SHA384_IV[15] | 0;
+        super(64), this.Ah = SHA512_IV[0] | 0, this.Al = SHA512_IV[1] | 0, this.Bh = SHA512_IV[2] | 0, this.Bl = SHA512_IV[3] | 0, this.Ch = SHA512_IV[4] | 0, this.Cl = SHA512_IV[5] | 0, this.Dh = SHA512_IV[6] | 0, this.Dl = SHA512_IV[7] | 0, this.Eh = SHA512_IV[8] | 0, this.El = SHA512_IV[9] | 0, this.Fh = SHA512_IV[10] | 0, this.Fl = SHA512_IV[11] | 0, this.Gh = SHA512_IV[12] | 0, this.Gl = SHA512_IV[13] | 0, this.Hh = SHA512_IV[14] | 0, this.Hl = SHA512_IV[15] | 0;
+    }
+}
+/** Internal SHA2-384 hash class. */ class _SHA384 extends SHA2_64B {
+    constructor(){
+        super(48), this.Ah = SHA384_IV[0] | 0, this.Al = SHA384_IV[1] | 0, this.Bh = SHA384_IV[2] | 0, this.Bl = SHA384_IV[3] | 0, this.Ch = SHA384_IV[4] | 0, this.Cl = SHA384_IV[5] | 0, this.Dh = SHA384_IV[6] | 0, this.Dl = SHA384_IV[7] | 0, this.Eh = SHA384_IV[8] | 0, this.El = SHA384_IV[9] | 0, this.Fh = SHA384_IV[10] | 0, this.Fl = SHA384_IV[11] | 0, this.Gh = SHA384_IV[12] | 0, this.Gl = SHA384_IV[13] | 0, this.Hh = SHA384_IV[14] | 0, this.Hl = SHA384_IV[15] | 0;
     }
 }
 /**
- * SHA2-256 hash function from RFC 4634.
+ * SHA2-256 hash function from RFC 4634. In JS it's the fastest: even faster than Blake3. Some info:
  *
- * It is the fastest JS hash, even faster than Blake3.
- * To break sha256 using birthday attack, attackers need to try 2^128 hashes.
- * BTC network is doing 2^70 hashes/sec (2^95 hashes/year) as per 2025.
- */ const sha256 = /* @__PURE__ */ createHasher(()=>new SHA256());
-/** SHA2-224 hash function from RFC 4634 */ const sha224 = /* @__PURE__ */ createHasher(()=>new SHA224());
-/** SHA2-512 hash function from RFC 4634. */ const sha512 = /* @__PURE__ */ createHasher(()=>new SHA512());
-/** SHA2-384 hash function from RFC 4634. */ const sha384 = /* @__PURE__ */ createHasher(()=>new SHA384());
+ * - Trying 2^128 hashes would get 50% chance of collision, using birthday attack.
+ * - BTC network is doing 2^70 hashes/sec (2^95 hashes/year) as per 2025.
+ * - Each sha256 hash is executing 2^18 bit operations.
+ * - Good 2024 ASICs can do 200Th/sec with 3500 watts of power, corresponding to 2^36 hashes/joule.
+ */ const sha256 = /* @__PURE__ */ createHasher(()=>new _SHA256(), /* @__PURE__ */ oidNist(0x01));
+/** SHA2-224 hash function from RFC 4634 */ const sha224 = /* @__PURE__ */ createHasher(()=>new _SHA224(), /* @__PURE__ */ oidNist(0x04));
+/** SHA2-512 hash function from RFC 4634. */ const sha512 = /* @__PURE__ */ createHasher(()=>new _SHA512(), /* @__PURE__ */ oidNist(0x03));
+/** SHA2-384 hash function from RFC 4634. */ const sha384 = /* @__PURE__ */ createHasher(()=>new _SHA384(), /* @__PURE__ */ oidNist(0x02));
 
 // No __PURE__ annotations in sha3 header:
 // EVERYTHING is in fact used on every export.
@@ -951,7 +895,7 @@ const _256n = BigInt(256);
 const _0x71n = BigInt(0x71);
 const SHA3_PI = [];
 const SHA3_ROTL = [];
-const _SHA3_IOTA = [];
+const _SHA3_IOTA = []; // no pure annotation: var is always used
 for(let round = 0, R = _1n, x = 1, y = 0; round < 24; round++){
     // Pi
     [x, y] = [
@@ -965,7 +909,7 @@ for(let round = 0, R = _1n, x = 1, y = 0; round < 24; round++){
     let t = _0n;
     for(let j = 0; j < 7; j++){
         R = (R << _1n ^ (R >> _7n) * _0x71n) % _256n;
-        if (R & _2n) t ^= _1n << (_1n << /* @__PURE__ */ BigInt(j)) - _1n;
+        if (R & _2n) t ^= _1n << (_1n << BigInt(j)) - _1n;
     }
     _SHA3_IOTA.push(t);
 }
@@ -1017,7 +961,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     }
     clean(B);
 }
-/** Keccak sponge function. */ class Keccak extends Hash {
+/** Keccak sponge function. */ class Keccak {
     clone() {
         return this._cloneInto();
     }
@@ -1030,7 +974,6 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     }
     update(data) {
         aexists(this);
-        data = toBytes(data);
         abytes(data);
         const { blockLen, state } = this;
         const len = data.length;
@@ -1106,7 +1049,6 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     }
     // NOTE: we accept arguments in bytes instead of bits here.
     constructor(blockLen, suffix, outputLen, enableXOF = false, rounds = 24){
-        super();
         this.pos = 0;
         this.posOut = 0;
         this.finished = false;
@@ -1118,7 +1060,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         this.enableXOF = enableXOF;
         this.rounds = rounds;
         // Can be passed from user as dkLen
-        anumber(outputLen);
+        anumber(outputLen, 'outputLen');
         // 1600 = 5x5 matrix of 64bit.  1600 bits === 200 bytes
         // 0 < blockLen < 200
         if (!(0 < blockLen && blockLen < 200)) throw new Error('only keccak-f1600 function is supported');
@@ -1126,11 +1068,11 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         this.state32 = u32(this.state);
     }
 }
-const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen, suffix, outputLen));
-/** SHA3-224 hash function. */ const sha3_224 = /* @__PURE__ */ (()=>gen(0x06, 144, 224 / 8))();
-/** SHA3-256 hash function. Different from keccak-256. */ const sha3_256 = /* @__PURE__ */ (()=>gen(0x06, 136, 256 / 8))();
-/** SHA3-384 hash function. */ const sha3_384 = /* @__PURE__ */ (()=>gen(0x06, 104, 384 / 8))();
-/** SHA3-512 hash function. */ const sha3_512 = /* @__PURE__ */ (()=>gen(0x06, 72, 512 / 8))();
+const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new Keccak(blockLen, suffix, outputLen), info);
+/** SHA3-224 hash function. */ const sha3_224 = /* @__PURE__ */ genKeccak(0x06, 144, 28, /* @__PURE__ */ oidNist(0x07));
+/** SHA3-256 hash function. Different from keccak-256. */ const sha3_256 = /* @__PURE__ */ genKeccak(0x06, 136, 32, /* @__PURE__ */ oidNist(0x08));
+/** SHA3-384 hash function. */ const sha3_384 = /* @__PURE__ */ genKeccak(0x06, 104, 48, /* @__PURE__ */ oidNist(0x09));
+/** SHA3-512 hash function. */ const sha3_512 = /* @__PURE__ */ genKeccak(0x06, 72, 64, /* @__PURE__ */ oidNist(0x0a));
 
 /**
  * "globalThis" ponyfill.
@@ -1534,9 +1476,14 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
-   */ static generate({ secret, algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter }) {
-        const digest = hmacDigest(algorithm, secret.bytes, uintDecode(counter));
+   */ static generate({ secret, algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, hmac = hmacDigest }) {
+        const message = uintDecode(counter);
+        const digest = hmac(algorithm, secret.bytes, message);
+        if (!digest?.byteLength || digest.byteLength < 19) {
+            throw new TypeError("Return value must be at least 19 bytes");
+        }
         const offset = digest[digest.byteLength - 1] & 15;
         const otp = ((digest[offset] & 127) << 24 | (digest[offset + 1] & 255) << 16 | (digest[offset + 2] & 255) << 8 | digest[offset + 3] & 255) % 10 ** digits;
         return otp.toString().padStart(digits, "0");
@@ -1551,7 +1498,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             secret: this.secret,
             algorithm: this.algorithm,
             digits: this.digits,
-            counter
+            counter,
+            hmac: this.hmac
         });
     }
     /**
@@ -1563,8 +1511,9 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window }) {
+   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window, hmac = hmacDigest }) {
         // Return early if the token length does not match the digit number.
         if (token.length !== digits) return null;
         let delta = null;
@@ -1573,7 +1522,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
                 secret,
                 algorithm,
                 digits,
-                counter: i
+                counter: i,
+                hmac
             });
             if (timingSafeEqual(token, generatedToken)) {
                 delta = i - counter;
@@ -1602,7 +1552,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             algorithm: this.algorithm,
             digits: this.digits,
             counter,
-            window
+            window,
+            hmac: this.hmac
         });
     }
     /**
@@ -1622,7 +1573,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Initial counter value.
-   */ constructor({ issuer = HOTP.defaults.issuer, label = HOTP.defaults.label, issuerInLabel = HOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter } = {}){
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
+   */ constructor({ issuer = HOTP.defaults.issuer, label = HOTP.defaults.label, issuerInLabel = HOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, hmac } = {}){
         /**
      * Account provider.
      * @type {string}
@@ -1642,7 +1594,7 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = canonicalizeAlgorithm(algorithm);
+     */ this.algorithm = hmac ? algorithm : canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -1651,6 +1603,10 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
      * Initial counter value.
      * @type {number}
      */ this.counter = counter;
+        /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */ this.hmac = hmac;
     }
 }
 
@@ -1728,8 +1684,9 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
-   */ static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now() }) {
+   */ static generate({ secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), hmac }) {
         return HOTP.generate({
             secret,
             algorithm,
@@ -1737,7 +1694,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             counter: TOTP.counter({
                 period,
                 timestamp
-            })
+            }),
+            hmac
         });
     }
     /**
@@ -1751,7 +1709,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             algorithm: this.algorithm,
             digits: this.digits,
             period: this.period,
-            timestamp
+            timestamp,
+            hmac: this.hmac
         });
     }
     /**
@@ -1764,8 +1723,9 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window }) {
+   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window, hmac }) {
         return HOTP.validate({
             token,
             secret,
@@ -1775,7 +1735,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
                 period,
                 timestamp
             }),
-            window
+            window,
+            hmac
         });
     }
     /**
@@ -1793,7 +1754,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             digits: this.digits,
             period: this.period,
             timestamp,
-            window
+            window,
+            hmac: this.hmac
         });
     }
     /**
@@ -1813,7 +1775,8 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
-   */ constructor({ issuer = TOTP.defaults.issuer, label = TOTP.defaults.label, issuerInLabel = TOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = TOTP.defaults.algorithm, digits = TOTP.defaults.digits, period = TOTP.defaults.period } = {}){
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
+   */ constructor({ issuer = TOTP.defaults.issuer, label = TOTP.defaults.label, issuerInLabel = TOTP.defaults.issuerInLabel, secret = new Secret(), algorithm = TOTP.defaults.algorithm, digits = TOTP.defaults.digits, period = TOTP.defaults.period, hmac } = {}){
         /**
      * Account provider.
      * @type {string}
@@ -1833,7 +1796,7 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
         /**
      * HMAC hashing algorithm.
      * @type {string}
-     */ this.algorithm = canonicalizeAlgorithm(algorithm);
+     */ this.algorithm = hmac ? algorithm : canonicalizeAlgorithm(algorithm);
         /**
      * Token length.
      * @type {number}
@@ -1842,6 +1805,10 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
      * Token time-step duration.
      * @type {number}
      */ this.period = period;
+        /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */ this.hmac = hmac;
     }
 }
 
@@ -1854,9 +1821,13 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
  * @type {RegExp}
  */ const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
 /**
- * Regex for supported algorithms.
+ * Regex for supported algorithms in built-in HMAC function.
  * @type {RegExp}
  */ const ALGORITHM_REGEX = /^SHA(?:1|224|256|384|512|3-224|3-256|3-384|3-512)$/i;
+/**
+ * Regex for custom algorithms in user-defined HMAC function.
+ * @type {RegExp}
+ */ const ALGORITHM_CUSTOM_REGEX = /^[A-Z0-9]+(?:[_-][A-Z0-9]+)*$/i;
 /**
  * Integer regex.
  * @type {RegExp}
@@ -1872,8 +1843,10 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
     /**
    * Parses a Google Authenticator key URI and returns an HOTP/TOTP object.
    * @param {string} uri Google Authenticator Key URI.
+   * @param {Object} [config] Configuration options.
+   * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {HOTP|TOTP} HOTP/TOTP object.
-   */ static parse(uri) {
+   */ static parse(uri, { hmac } = {}) {
         let uriGroups;
         try {
             uriGroups = uri.match(OTPURI_REGEX);
@@ -1944,7 +1917,7 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
         }
         // Algorithm: optional
         if (typeof uriParams.algorithm !== "undefined") {
-            if (ALGORITHM_REGEX.test(uriParams.algorithm)) {
+            if ((hmac ? ALGORITHM_CUSTOM_REGEX : ALGORITHM_REGEX).test(uriParams.algorithm)) {
                 config.algorithm = uriParams.algorithm;
             } else {
                 throw new TypeError("Invalid 'algorithm' parameter");
@@ -1957,6 +1930,10 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
             } else {
                 throw new TypeError("Invalid 'digits' parameter");
             }
+        }
+        // HMAC: optional
+        if (typeof hmac !== "undefined") {
+            config.hmac = hmac;
         }
         return new OTP(config);
     }
@@ -1975,6 +1952,6 @@ const gen = (suffix, blockLen, outputLen)=>createHasher(()=>new Keccak(blockLen,
 /**
  * Library version.
  * @type {string}
- */ const version = "9.4.1";
+ */ const version = "9.5.0";
 
 export { HOTP, Secret, TOTP, URI, version };

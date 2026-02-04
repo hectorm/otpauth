@@ -54,14 +54,16 @@ export class TOTP {
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {string} Token.
      */
-    static generate({ secret, algorithm, digits, period, timestamp }: {
+    static generate({ secret, algorithm, digits, period, timestamp, hmac }: {
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
         timestamp?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): string;
     /**
      * Validates a TOTP token.
@@ -73,9 +75,10 @@ export class TOTP {
      * @param {number} [config.period=30] Token time-step duration.
      * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, period, timestamp, window }: {
+    static validate({ token, secret, algorithm, digits, period, timestamp, window, hmac, }: {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
@@ -83,6 +86,7 @@ export class TOTP {
         period?: number | undefined;
         timestamp?: number | undefined;
         window?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): number | null;
     /**
      * Creates a TOTP object.
@@ -94,8 +98,9 @@ export class TOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.period=30] Token time-step duration.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      */
-    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, period, hmac, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
         issuerInLabel?: boolean | undefined;
@@ -103,6 +108,7 @@ export class TOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         period?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     });
     /**
      * Account provider.
@@ -139,6 +145,11 @@ export class TOTP {
      * @type {number}
      */
     period: number;
+    /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    hmac: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     /**
      * Calculates the counter. i.e. the number of periods since timestamp 0.
      * @param {Object} [config] Configuration options.

@@ -31,13 +31,15 @@ export class HOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {string} Token.
      */
-    static generate({ secret, algorithm, digits, counter, }: {
+    static generate({ secret, algorithm, digits, counter, hmac, }: {
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): string;
     /**
      * Validates an HOTP token.
@@ -48,15 +50,17 @@ export class HOTP {
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, counter, window, }: {
+    static validate({ token, secret, algorithm, digits, counter, window, hmac, }: {
         token: string;
         secret: Secret;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
         window?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): number | null;
     /**
      * Creates an HOTP object.
@@ -68,8 +72,9 @@ export class HOTP {
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Initial counter value.
+     * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      */
-    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, counter, }?: {
+    constructor({ issuer, label, issuerInLabel, secret, algorithm, digits, counter, hmac, }?: {
         issuer?: string | undefined;
         label?: string | undefined;
         issuerInLabel?: boolean | undefined;
@@ -77,6 +82,7 @@ export class HOTP {
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
+        hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     });
     /**
      * Account provider.
@@ -113,6 +119,11 @@ export class HOTP {
      * @type {number}
      */
     counter: number;
+    /**
+     * Custom HMAC function.
+     * @type {((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array)|undefined}
+     */
+    hmac: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     /**
      * Generates an HOTP token.
      * @param {Object} [config] Configuration options.

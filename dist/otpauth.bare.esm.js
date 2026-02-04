@@ -1,12 +1,6 @@
 //! otpauth 9.5.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 2.0.1 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
-import { hmac } from '@noble/hashes/hmac.js';
-import { sha1 } from '@noble/hashes/legacy.js';
-import { sha512, sha384, sha256, sha224 } from '@noble/hashes/sha2.js';
-import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3.js';
-
 /**
  * Converts an integer to an Uint8Array.
  * @param {number} num Integer.
@@ -54,20 +48,6 @@ import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3.js';
 })();
 
 /**
- * @noble/hashes hash functions.
- * @type {Object.<string, sha1|sha224|sha256|sha384|sha512|sha3_224|sha3_256|sha3_384|sha3_512>}
- */ const nobleHashes = {
-    SHA1: sha1,
-    SHA224: sha224,
-    SHA256: sha256,
-    SHA384: sha384,
-    SHA512: sha512,
-    "SHA3-224": sha3_224,
-    "SHA3-256": sha3_256,
-    "SHA3-384": sha3_384,
-    "SHA3-512": sha3_512
-};
-/**
  * Canonicalizes a hash algorithm name.
  * @param {string} algorithm Hash algorithm name.
  * @returns {"SHA1"|"SHA224"|"SHA256"|"SHA384"|"SHA512"|"SHA3-224"|"SHA3-256"|"SHA3-384"|"SHA3-512"} Canonicalized hash algorithm name.
@@ -102,10 +82,7 @@ import { sha3_512, sha3_384, sha3_256, sha3_224 } from '@noble/hashes/sha3.js';
  * @param {Uint8Array} message Message.
  * @returns {Uint8Array} Digest.
  */ const hmacDigest = (algorithm, key, message)=>{
-    if (hmac) {
-        const hash = nobleHashes[algorithm] ?? nobleHashes[canonicalizeAlgorithm(algorithm)];
-        return hmac(hash, key, message);
-    } else {
+    {
         throw new Error("Missing HMAC function");
     }
 };
