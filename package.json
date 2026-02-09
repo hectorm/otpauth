@@ -133,7 +133,7 @@
   },
   "devDependencies": {
     "@eslint/core": "~1.1.0",
-    "@eslint/js": "~9.39.2",
+    "@eslint/js": "~10.0.1",
     "@rollup/plugin-node-resolve": "~16.0.3",
     "@rollup/plugin-replace": "~6.0.3",
     "@rollup/plugin-swc": "~0.4.0",
