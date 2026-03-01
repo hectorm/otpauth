@@ -152,7 +152,7 @@
     "playwright": "~1.58.1",
     "prettier": "~3.8.1",
     "rimraf": "~6.1.2",
-    "rollup": "~4.57.1",
+    "rollup": "~4.59.0",
     "rollup-plugin-dts": "~6.3.0",
     "typedoc": "~0.28.16",
     "typescript": "~5.9.3"
