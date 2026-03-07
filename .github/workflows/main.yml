@@ -27,7 +27,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -80,7 +80,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js ${{ matrix.node_version }}"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "${{ matrix.node_version }}"
           cache: "npm"
@@ -143,7 +143,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Bun ${{ matrix.bun_version }}"
-        uses: "oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3"
+        uses: "oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461"
         with:
           bun-version: "${{ matrix.bun_version }}"
       - name: "Install dependencies"
@@ -174,7 +174,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -210,7 +210,7 @@ jobs:
         with:
           quickjs-version: "${{ matrix.quickjs_version }}"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "lts/*"
           cache: "npm"
@@ -239,7 +239,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
@@ -270,7 +270,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use Node.js lts/*"
-        uses: "actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238"
+        uses: "actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f"
         with:
           node-version: "lts/*"
       - name: "Publish"
