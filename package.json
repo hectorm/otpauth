@@ -144,7 +144,7 @@
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/node": "~25.3.5",
     "chai": "~6.2.2",
-    "eslint": "~9.39.2",
+    "eslint": "~10.0.3",
     "eslint-config-prettier": "~10.1.8",
     "globals": "~17.4.0",
     "mocha": "~11.7.5",
