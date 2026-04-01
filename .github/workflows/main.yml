@@ -75,7 +75,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
@@ -107,12 +107,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Deno ${{ matrix.deno_version }}"
-        uses: "denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb"
+        uses: "denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282"
         with:
           deno-version: "${{ matrix.deno_version }}"
       - name: "Install dependencies"
@@ -138,12 +138,12 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
       - name: "Use Bun ${{ matrix.bun_version }}"
-        uses: "oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461"
+        uses: "oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6"
         with:
           bun-version: "${{ matrix.bun_version }}"
       - name: "Install dependencies"
@@ -169,7 +169,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
@@ -201,7 +201,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
@@ -234,7 +234,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
@@ -265,7 +265,7 @@ jobs:
         shell: "bash"
         run: "rm -rf ./dist/"
       - name: "Download dist artifact"
-        uses: "actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3"
+        uses: "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c"
         with:
           name: "dist"
           path: "./dist/"
@@ -302,4 +302,4 @@ jobs:
     steps:
       - name: "Publish"
         id: "deployment"
-        uses: "actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e"
+        uses: "actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128"
