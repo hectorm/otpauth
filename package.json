@@ -155,6 +155,6 @@
     "rollup": "~4.60.2",
     "rollup-plugin-dts": "~6.4.1",
     "typedoc": "~0.28.19",
-    "typescript": "~5.9.3"
+    "typescript": "~6.0.3"
   }
 }
