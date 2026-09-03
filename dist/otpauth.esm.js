@@ -1,5 +1,5 @@
-//! otpauth 9.5.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
-//! noble-hashes 2.2.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
+//! otpauth 9.5.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! noble-hashes 2.4.0 | (c) Paul Miller | MIT | https://github.com/paulmillr/noble-hashes
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 /**
@@ -35,10 +35,14 @@
     // `BYTES_PER_ELEMENT === 1` keeps the fallback on byte-oriented views.
     return a instanceof Uint8Array || ArrayBuffer.isView(a) && a.constructor.name === 'Uint8Array' && 'BYTES_PER_ELEMENT' in a && a.BYTES_PER_ELEMENT === 1;
 }
+// Shared error-message prefix builder. Only called on throw paths, so assert
+// success paths never pay for the string concatenation.
+const atitle = (title)=>title ? `"${title}" ` : '';
 /**
  * Asserts something is a non-negative integer.
  * @param n - number to validate
  * @param title - label included in thrown errors
+ * @returns The validated number.
  * @throws On wrong argument types. {@link TypeError}
  * @throws On wrong argument ranges or values. {@link RangeError}
  * @example
@@ -47,14 +51,24 @@
  * anumber(32, 'length');
  * ```
  */ function anumber(n, title = '') {
-    if (typeof n !== 'number') {
-        const prefix = title && `"${title}" `;
-        throw new TypeError(`${prefix}expected number, got ${typeof n}`);
-    }
-    if (!Number.isSafeInteger(n) || n < 0) {
-        const prefix = title && `"${title}" `;
-        throw new RangeError(`${prefix}expected integer >= 0, got ${n}`);
-    }
+    if (typeof n !== 'number') throw new TypeError(atitle(title) + 'expected number, got ' + typeof n);
+    if (!Number.isSafeInteger(n) || n < 0) throw new RangeError(atitle(title) + 'expected integer >= 0, got ' + n);
+    return n;
+}
+/**
+ * Asserts something is a boolean.
+ * @param value - value to validate
+ * @param title - label included in thrown errors
+ * @returns The validated boolean.
+ * @throws On wrong argument types. {@link TypeError}
+ * @example
+ * Validate a boolean option.
+ * ```ts
+ * abool(true, 'enableXOF');
+ * ```
+ */ function abool(value, title = '') {
+    if (typeof value !== 'boolean') throw new TypeError(atitle(title) + 'expected boolean, got type=' + typeof value);
+    return value;
 }
 /**
  * Asserts something is Uint8Array.
@@ -70,18 +84,15 @@
  * abytes(new Uint8Array([1, 2, 3]));
  * ```
  */ function abytes(value, length, title = '') {
+    // Success path first: this runs at the start of every update() / digestInto(), and the
+    // common `abytes(data)` form must not pay for length handling it does not use.
+    if (isBytes(value) && (length === undefined)) return value;
     const bytes = isBytes(value);
-    const len = value?.length;
-    const needsLen = length !== undefined;
-    if (!bytes || needsLen) {
-        const prefix = title && `"${title}" `;
-        const ofLen = '';
-        const got = bytes ? `length=${len}` : `type=${typeof value}`;
-        const message = prefix + 'expected Uint8Array' + ofLen + ', got ' + got;
-        if (!bytes) throw new TypeError(message);
-        throw new RangeError(message);
-    }
-    return value;
+    const ofLen = '';
+    const got = bytes ? `length=${value.length}` : `type=${typeof value}`;
+    const message = atitle(title) + 'expected Uint8Array' + ofLen + ', got ' + got;
+    if (!bytes) throw new TypeError(message);
+    throw new RangeError(message);
 }
 /**
  * Asserts something is a wrapped hash constructor.
@@ -97,14 +108,24 @@
  * ahash(sha256);
  * ```
  */ function ahash(h) {
-    if (typeof h !== 'function' || typeof h.create !== 'function') throw new TypeError('Hash must wrapped by utils.createHasher');
+    if (typeof h !== 'function' || typeof h.create !== 'function') throw new TypeError('expected hash wrapped by utils.createHasher');
     anumber(h.outputLen);
     anumber(h.blockLen);
     // HMAC and KDF callers treat these as real byte lengths; allowing zero lets fake wrappers pass
     // validation and can produce empty outputs instead of failing fast.
-    if (h.outputLen < 1) throw new Error('"outputLen" must be >= 1');
-    if (h.blockLen < 1) throw new Error('"blockLen" must be >= 1');
+    if (h.outputLen < 1 || h.blockLen < 1) throw new Error('hash blockLen / outputLen must be >= 1');
 }
+const aobject = (value, label)=>{
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new TypeError((label === 'object' ? '' : `"${label}" `) + 'expected object, got type=' + typeof value);
+};
+const aopts = (value, label)=>{
+    aobject(value, label);
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) throw new TypeError(`"${label}" expected plain object`);
+    // Object.assign() treats an own "__proto__" source key as a write to the target's legacy
+    // prototype setter. Reject it before merging so inherited option values cannot be injected.
+    if (Object.hasOwn(value, '__proto__')) throw new TypeError(`"${label}.__proto__" is not allowed`);
+};
 /**
  * Asserts a hash instance has not been destroyed or finished.
  * @param instance - hash instance to validate
@@ -119,8 +140,10 @@
  * aexists(hash);
  * ```
  */ function aexists(instance, checkFinished = true) {
-    if (instance.destroyed) throw new Error('Hash instance has been destroyed');
-    if (checkFinished && instance.finished) throw new Error('Hash#digest() has already been called');
+    // Runs on every update()/digestInto(); the flags are library-owned booleans, so only their
+    // truthiness is checked - re-validating their type per call was pure hot-path overhead.
+    if (instance.destroyed) throw new Error('hash was destroyed');
+    if (checkFinished && instance.finished) throw new Error('digest() was already called');
 }
 /**
  * Asserts output is a sufficiently-sized byte array.
@@ -138,10 +161,12 @@
  * aoutput(new Uint8Array(hash.outputLen), hash);
  * ```
  */ function aoutput(out, instance) {
-    abytes(out, undefined, 'digestInto() output');
+    abytes(out, undefined, 'output');
+    // `outputLen` is a library-owned readonly number; the negated comparison keeps failing fast
+    // when it is missing/NaN (comparisons with undefined/NaN are false) without an anumber() call.
     const min = instance.outputLen;
-    if (out.length < min) {
-        throw new RangeError('"digestInto() output" expected to be of length >=' + min);
+    if (!(out.length >= min)) {
+        throw new RangeError('"output" expected length >= ' + min);
     }
 }
 /**
@@ -251,6 +276,26 @@
  * ```
  */ const swap32IfBE = isLE ? (u)=>u : byteSwap32;
 /**
+ * Merges default options and passed options.
+ * @param defaults - base option object
+ * @param opts - user overrides
+ * @param title - label included in thrown override errors
+ * @returns Fresh merged option object with a null prototype.
+ * @throws On wrong argument types. {@link TypeError}
+ * @example
+ * Merge user overrides onto default options.
+ * ```ts
+ * checkOpts({ dkLen: 32 }, { asyncTick: 10 });
+ * ```
+ */ function checkOpts(defaults, opts, title = 'opts') {
+    aopts(defaults, 'defaults');
+    if (opts !== undefined) aopts(opts, title);
+    // Callers read optional fields directly, so omitted values must not fall through to ambient
+    // Object.prototype pollution (for example a forged `dkLen` changing SHAKE's default output).
+    const merged = Object.assign(Object.create(null), defaults, opts);
+    return merged;
+}
+/**
  * Creates a callable hash function from a stateful class constructor.
  * @param hashCons - hash constructor or factory
  * @param info - optional metadata such as DER OID
@@ -258,6 +303,7 @@
  *   Wrapper construction eagerly calls `hashCons(undefined)` once to read
  *   `outputLen` / `blockLen`, so constructor side effects happen at module
  *   init time.
+ * @throws On wrong argument types. {@link TypeError}
  * @example
  * Wrap a stateful hash constructor into a callable helper.
  * ```ts
@@ -267,6 +313,8 @@
  * wrapped(new Uint8Array([1]));
  * ```
  */ function createHasher(hashCons, info = {}) {
+    if (typeof hashCons !== 'function') throw new TypeError('"hashCons" expected function, got type=' + typeof hashCons);
+    info = checkOpts({}, info, 'info');
     const hashC = (msg, opts)=>hashCons(opts).update(msg).digest();
     const tmp = hashCons(undefined);
     hashC.outputLen = tmp.outputLen;
@@ -336,12 +384,13 @@
         // Create new instance without calling constructor since the key
         // is already in state and we don't know it.
         to || (to = Object.create(Object.getPrototypeOf(this), {}));
-        const { oHash, iHash, finished, destroyed, blockLen, outputLen } = this;
+        const { oHash, iHash, finished, destroyed, blockLen, outputLen, canXOF } = this;
         to = to;
         to.finished = finished;
         to.destroyed = destroyed;
         to.blockLen = blockLen;
         to.outputLen = outputLen;
+        to.canXOF = canXOF;
         to.oHash = oHash._cloneInto(to.oHash);
         to.iHash = iHash._cloneInto(to.iHash);
         return to;
@@ -361,7 +410,7 @@
         ahash(hash);
         abytes(key, undefined, 'key');
         this.iHash = hash.create();
-        if (typeof this.iHash.update !== 'function') throw new Error('Expected instance of class which extends utils.Hash');
+        if (typeof this.iHash.update !== 'function') throw new Error('expected Hash instance');
         this.blockLen = this.iHash.blockLen;
         this.outputLen = this.iHash.outputLen;
         const blockLen = this.blockLen;
@@ -384,6 +433,89 @@ const hmac = /* @__PURE__ */ (()=>{
     hmac_.create = (hash, key)=>new _HMAC(hash, key);
     return hmac_;
 })();
+
+const U32_MASK64 = /* @__PURE__ */ (()=>BigInt(2 ** 32 - 1))();
+const _32n = /* @__PURE__ */ BigInt(32);
+// Split bigint into two 32-bit halves. With `le=true`, returned fields become `{ h: low, l: high
+// }` to match little-endian word order rather than the property names.
+function fromBig(n, le = false) {
+    if (le) return {
+        h: Number(n & U32_MASK64),
+        l: Number(n >> _32n & U32_MASK64)
+    };
+    return {
+        h: Number(n >> _32n & U32_MASK64) | 0,
+        l: Number(n & U32_MASK64) | 0
+    };
+}
+// Split bigint list into `[highWords, lowWords]` when `le=false`; with `le=true`, the first array
+// holds the low halves because `fromBig(...)` swaps the semantic meaning of `h` and `l`.
+function split(lst, le = false) {
+    const len = lst.length;
+    let Ah = new Uint32Array(len);
+    let Al = new Uint32Array(len);
+    for(let i = 0; i < len; i++){
+        const { h, l } = fromBig(lst[i], le);
+        [Ah[i], Al[i]] = [
+            h,
+            l
+        ];
+    }
+    return [
+        Ah,
+        Al
+    ];
+}
+// Split a JS number into u32 halves without a BigInt allocation. Exact only for integers
+// `0 <= n < 2**53`; callers use it on byte / bit counters, which JS length math caps far below
+// that (an ArrayBuffer cannot exceed 2**53 - 1 bytes).
+const fromNumH = (n)=>n / 2 ** 32 | 0;
+const fromNumL = (n)=>n >>> 0;
+// Drop-in replacement for `view.setBigUint64(byteOffset, BigInt(n), isLE)` without the per-call
+// BigInt allocation. Same `n < 2**53` precondition as `fromNumH`/`fromNumL`.
+function setU64FromNum(view, byteOffset, n, isLE) {
+    const h = fromNumH(n);
+    const l = fromNumL(n);
+    view.setUint32(byteOffset, isLE ? l : h, isLE);
+    view.setUint32(byteOffset + 4, isLE ? h : l, isLE);
+}
+// High 32-bit half of a 64-bit logical right shift for `s` in `0..31`.
+const shrSH = (h, _l, s)=>h >>> s;
+// Low 32-bit half of a 64-bit logical right shift, valid for `s` in `1..31`.
+const shrSL = (h, l, s)=>h << 32 - s | l >>> s;
+// High 32-bit half of a 64-bit right rotate, valid for `s` in `1..31`.
+const rotrSH = (h, l, s)=>h >>> s | l << 32 - s;
+// Low 32-bit half of a 64-bit right rotate, valid for `s` in `1..31`.
+const rotrSL = (h, l, s)=>h << 32 - s | l >>> s;
+// High 32-bit half of a 64-bit right rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
+const rotrBH = (h, l, s)=>h << 64 - s | l >>> s - 32;
+// Low 32-bit half of a 64-bit right rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
+const rotrBL = (h, l, s)=>h >>> s - 32 | l << 64 - s;
+// 64-bit left rotates (rotl*) are not defined here: sha3.ts, their only consumer, keeps
+// local copies so V8 inlines them into keccakP.
+// Add two split 64-bit words and return the split `{ h, l }` sum.
+// JS uses 32-bit signed integers for bitwise operations, so we cannot simply shift the carry out
+// of the low sum and instead use division.
+function add(Ah, Al, Bh, Bl) {
+    const l = (Al >>> 0) + (Bl >>> 0);
+    return {
+        h: Ah + Bh + (l / 2 ** 32 | 0) | 0,
+        l: l | 0
+    };
+}
+// Addition with more than 2 elements
+// Unmasked low-word accumulator for 3-way addition; pass the raw result into `add3H(...)`.
+const add3L = (Al, Bl, Cl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
+// High-word finalize step for 3-way addition; `low` must be the untruncated output of `add3L(...)`.
+const add3H = (low, Ah, Bh, Ch)=>Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
+// Unmasked low-word accumulator for 4-way addition; pass the raw result into `add4H(...)`.
+const add4L = (Al, Bl, Cl, Dl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
+// High-word finalize step for 4-way addition; `low` must be the untruncated output of `add4L(...)`.
+const add4H = (low, Ah, Bh, Ch, Dh)=>Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
+// Unmasked low-word accumulator for 5-way addition; pass the raw result into `add5H(...)`.
+const add5L = (Al, Bl, Cl, Dl, El)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
+// High-word finalize step for 5-way addition; `low` must be the untruncated output of `add5L(...)`.
+const add5H = (low, Ah, Bh, Ch, Dh, Eh)=>Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
 
 /**
  * Shared 32-bit conditional boolean primitive reused by SHA-256, SHA-1, and MD5 `F`.
@@ -440,6 +572,7 @@ const hmac = /* @__PURE__ */ (()=>{
         abytes(data);
         const { view, buffer, blockLen } = this;
         const len = data.length;
+        let processed = false;
         for(let pos = 0; pos < len;){
             const take = Math.min(blockLen - this.pos, len - pos);
             // Fast path only when there is no buffered partial block: `take === blockLen` implies
@@ -447,18 +580,24 @@ const hmac = /* @__PURE__ */ (()=>{
             if (take === blockLen) {
                 const dataView = createView(data);
                 for(; blockLen <= len - pos; pos += blockLen)this.process(dataView, pos);
+                processed = true;
                 continue;
             }
-            buffer.set(data.subarray(pos, pos + take), this.pos);
+            // When the whole input is buffered in one go (common for short messages), passing `data`
+            // directly avoids allocating a subarray view.
+            buffer.set(pos === 0 && take === len ? data : data.subarray(pos, pos + take), this.pos);
             this.pos += take;
             pos += take;
             if (this.pos === blockLen) {
                 this.process(view, 0);
                 this.pos = 0;
+                processed = true;
             }
         }
         this.length += data.length;
-        this.roundClean();
+        // Shared schedule buffers only pick up input-derived words inside process(); if everything
+        // was buffered without processing, there is nothing to zero.
+        if (processed) this.roundClean();
         return this;
     }
     digestInto(out) {
@@ -470,29 +609,32 @@ const hmac = /* @__PURE__ */ (()=>{
         // was previously not allocated here. But it won't change performance.
         const { buffer, view, blockLen, isLE } = this;
         let { pos } = this;
-        // append the bit '1' to the message
+        // append the bit '1' to the message, then zero-pad the rest of the block
         buffer[pos++] = 0b10000000;
-        clean(this.buffer.subarray(pos));
+        buffer.fill(0, pos);
         // we have less than padOffset left in buffer, so we cannot put length in
         // current block, need process it and pad again
         if (this.padOffset > blockLen - pos) {
             this.process(view, 0);
-            pos = 0;
+            buffer.fill(0);
         }
-        // Pad until full block byte with zeros
-        for(let i = pos; i < blockLen; i++)buffer[i] = 0;
         // `padOffset` reserves the whole length field. For SHA-384/512 the high 64 bits stay zero from
         // the padding fill above, and JS will overflow before user input can make that half non-zero.
-        // So we only need to write the low 64 bits here.
-        view.setBigUint64(blockLen - 8, BigInt(this.length * 8), isLE);
+        // So we only need to write the low 64 bits here (`length * 8` only scales the exponent of an
+        // integer below 2**53, so the split inside the helper stays exact).
+        setU64FromNum(view, blockLen - 8, this.length * 8, isLE);
         this.process(view, 0);
-        const oview = createView(out);
+        // The final block above is processed outside update(), so the shared message-schedule
+        // buffers (e.g. SHA256_W) would otherwise retain input-derived words after digest().
+        this.roundClean();
+        // digest() passes our own `buffer` as `out`; reuse its cached view instead of allocating one.
+        const oview = out === buffer ? view : createView(out);
         const len = this.outputLen;
         // NOTE: we do division by 4 later, which must be fused in single op with modulo by JIT
-        if (len % 4) throw new Error('_sha2: outputLen must be aligned to 32bit');
         const outLen = len / 4;
         const state = this.get();
-        if (outLen > state.length) throw new Error('_sha2: outputLen bigger than state');
+        // Subclass-misconfiguration invariant: outputLen must be 32-bit aligned and fit the state.
+        if (len % 4 || outLen > state.length) throw new Error('invalid outputLen');
         for(let i = 0; i < outLen; i++)oview.setUint32(4 * i, state[i], isLE);
     }
     digest() {
@@ -504,17 +646,15 @@ const hmac = /* @__PURE__ */ (()=>{
         this.destroy();
         return res;
     }
-    _cloneInto(to) {
-        to || (to = new this.constructor());
-        to.set(...this.get());
-        const { blockLen, buffer, length, finished, destroyed, pos } = this;
+    _cloneIntoMeta(to) {
+        const { buffer, length, finished, destroyed, pos } = this;
         to.destroyed = destroyed;
         to.finished = finished;
         to.length = length;
         to.pos = pos;
         // Only partial-block bytes need copying: when `length % blockLen === 0`, `pos === 0` and
         // later `update()` / `digestInto()` overwrite `to.buffer` from the start before reading it.
-        if (length % blockLen) to.buffer.set(buffer);
+        if (pos) to.buffer.set(buffer); // Avoid a hot modulo guard.
         return to;
     }
     clone() {
@@ -630,6 +770,10 @@ const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
         this.D = D | 0;
         this.E = E | 0;
     }
+    _cloneInto(to) {
+        (to || (to = new this.constructor())).set(...this.get());
+        return this._cloneIntoMeta(to);
+    }
     process(view, offset) {
         for(let i = 0; i < 16; i++, offset += 4)SHA1_W[i] = view.getUint32(offset, false);
         for(let i = 16; i < 80; i++)SHA1_W[i] = rotl(SHA1_W[i - 3] ^ SHA1_W[i - 8] ^ SHA1_W[i - 14] ^ SHA1_W[i - 16], 1);
@@ -682,6 +826,7 @@ const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
 /**
  * SHA1 (RFC 3174) legacy hash function. It was cryptographically broken.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA1.
@@ -689,82 +834,6 @@ const SHA1_W = /* @__PURE__ */ new Uint32Array(80);
  * sha1(new Uint8Array([97, 98, 99]));
  * ```
  */ const sha1 = /* @__PURE__ */ createHasher(()=>new _SHA1());
-
-const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
-const _32n = /* @__PURE__ */ BigInt(32);
-// Split bigint into two 32-bit halves. With `le=true`, returned fields become `{ h: low, l: high
-// }` to match little-endian word order rather than the property names.
-function fromBig(n, le = false) {
-    if (le) return {
-        h: Number(n & U32_MASK64),
-        l: Number(n >> _32n & U32_MASK64)
-    };
-    return {
-        h: Number(n >> _32n & U32_MASK64) | 0,
-        l: Number(n & U32_MASK64) | 0
-    };
-}
-// Split bigint list into `[highWords, lowWords]` when `le=false`; with `le=true`, the first array
-// holds the low halves because `fromBig(...)` swaps the semantic meaning of `h` and `l`.
-function split(lst, le = false) {
-    const len = lst.length;
-    let Ah = new Uint32Array(len);
-    let Al = new Uint32Array(len);
-    for(let i = 0; i < len; i++){
-        const { h, l } = fromBig(lst[i], le);
-        [Ah[i], Al[i]] = [
-            h,
-            l
-        ];
-    }
-    return [
-        Ah,
-        Al
-    ];
-}
-// High 32-bit half of a 64-bit logical right shift for `s` in `0..31`.
-const shrSH = (h, _l, s)=>h >>> s;
-// Low 32-bit half of a 64-bit logical right shift, valid for `s` in `1..31`.
-const shrSL = (h, l, s)=>h << 32 - s | l >>> s;
-// High 32-bit half of a 64-bit right rotate, valid for `s` in `1..31`.
-const rotrSH = (h, l, s)=>h >>> s | l << 32 - s;
-// Low 32-bit half of a 64-bit right rotate, valid for `s` in `1..31`.
-const rotrSL = (h, l, s)=>h << 32 - s | l >>> s;
-// High 32-bit half of a 64-bit right rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
-const rotrBH = (h, l, s)=>h << 64 - s | l >>> s - 32;
-// Low 32-bit half of a 64-bit right rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
-const rotrBL = (h, l, s)=>h >>> s - 32 | l << 64 - s;
-// High 32-bit half of a 64-bit left rotate, valid for `s` in `1..31`.
-const rotlSH = (h, l, s)=>h << s | l >>> 32 - s;
-// Low 32-bit half of a 64-bit left rotate, valid for `s` in `1..31`.
-const rotlSL = (h, l, s)=>l << s | h >>> 32 - s;
-// High 32-bit half of a 64-bit left rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
-const rotlBH = (h, l, s)=>l << s - 32 | h >>> 64 - s;
-// Low 32-bit half of a 64-bit left rotate, valid for `s` in `33..63`; `32` uses `rotr32*`.
-const rotlBL = (h, l, s)=>h << s - 32 | l >>> 64 - s;
-// Add two split 64-bit words and return the split `{ h, l }` sum.
-// JS uses 32-bit signed integers for bitwise operations, so we cannot simply shift the carry out
-// of the low sum and instead use division.
-function add(Ah, Al, Bh, Bl) {
-    const l = (Al >>> 0) + (Bl >>> 0);
-    return {
-        h: Ah + Bh + (l / 2 ** 32 | 0) | 0,
-        l: l | 0
-    };
-}
-// Addition with more than 2 elements
-// Unmasked low-word accumulator for 3-way addition; pass the raw result into `add3H(...)`.
-const add3L = (Al, Bl, Cl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0);
-// High-word finalize step for 3-way addition; `low` must be the untruncated output of `add3L(...)`.
-const add3H = (low, Ah, Bh, Ch)=>Ah + Bh + Ch + (low / 2 ** 32 | 0) | 0;
-// Unmasked low-word accumulator for 4-way addition; pass the raw result into `add4H(...)`.
-const add4L = (Al, Bl, Cl, Dl)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0);
-// High-word finalize step for 4-way addition; `low` must be the untruncated output of `add4L(...)`.
-const add4H = (low, Ah, Bh, Ch, Dh)=>Ah + Bh + Ch + Dh + (low / 2 ** 32 | 0) | 0;
-// Unmasked low-word accumulator for 5-way addition; pass the raw result into `add5H(...)`.
-const add5L = (Al, Bl, Cl, Dl, El)=>(Al >>> 0) + (Bl >>> 0) + (Cl >>> 0) + (Dl >>> 0) + (El >>> 0);
-// High-word finalize step for 5-way addition; `low` must be the untruncated output of `add5L(...)`.
-const add5H = (low, Ah, Bh, Ch, Dh, Eh)=>Ah + Bh + Ch + Dh + Eh + (low / 2 ** 32 | 0) | 0;
 
 /**
  * SHA-224 / SHA-256 round constants from RFC 6234 §5.1: the first 32 bits
@@ -862,6 +931,10 @@ const SHA256_K = /* @__PURE__ */ Uint32Array.from([
         this.G = G | 0;
         this.H = H | 0;
     }
+    _cloneInto(to) {
+        (to || (to = new this.constructor())).set(...this.get());
+        return this._cloneIntoMeta(to);
+    }
     process(view, offset) {
         // Extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array
         for(let i = 0; i < 16; i++, offset += 4)SHA256_W[i] = view.getUint32(offset, false);
@@ -909,20 +982,30 @@ const SHA256_K = /* @__PURE__ */ Uint32Array.from([
         this.set(0, 0, 0, 0, 0, 0, 0, 0);
         clean(this.buffer);
     }
-    constructor(outputLen){
-        super(64, outputLen, 8, false);
+    constructor(outputLen, IV){
+        super(64, outputLen, 8, false), // We cannot use array here since array allows indexing by variable
+        // which means optimizer/compiler cannot use registers.
+        // Numeric initializers matter: starting the fields as `undefined` changes
+        // V8's field representation and makes sha256 3x slower (measured).
+        this.A = 0, this.B = 0, this.C = 0, this.D = 0, this.E = 0, this.F = 0, this.G = 0, this.H = 0;
+        this.A = IV[0] | 0;
+        this.B = IV[1] | 0;
+        this.C = IV[2] | 0;
+        this.D = IV[3] | 0;
+        this.E = IV[4] | 0;
+        this.F = IV[5] | 0;
+        this.G = IV[6] | 0;
+        this.H = IV[7] | 0;
     }
 }
 /** Internal SHA-256 hash class grounded in RFC 6234 §6.2. */ class _SHA256 extends SHA2_32B {
     constructor(){
-        super(32), // We cannot use array here since array allows indexing by variable
-        // which means optimizer/compiler cannot use registers.
-        this.A = SHA256_IV[0] | 0, this.B = SHA256_IV[1] | 0, this.C = SHA256_IV[2] | 0, this.D = SHA256_IV[3] | 0, this.E = SHA256_IV[4] | 0, this.F = SHA256_IV[5] | 0, this.G = SHA256_IV[6] | 0, this.H = SHA256_IV[7] | 0;
+        super(32, SHA256_IV);
     }
 }
 /** Internal SHA-224 hash class grounded in RFC 6234 §6.2 and §8.5. */ class _SHA224 extends SHA2_32B {
     constructor(){
-        super(28), this.A = SHA224_IV[0] | 0, this.B = SHA224_IV[1] | 0, this.C = SHA224_IV[2] | 0, this.D = SHA224_IV[3] | 0, this.E = SHA224_IV[4] | 0, this.F = SHA224_IV[5] | 0, this.G = SHA224_IV[6] | 0, this.H = SHA224_IV[7] | 0;
+        super(28, SHA224_IV);
     }
 }
 // SHA2-512 is slower than sha256 in js because u64 operations are slow.
@@ -1059,6 +1142,10 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
         this.Hh = Hh | 0;
         this.Hl = Hl | 0;
     }
+    _cloneInto(to) {
+        (to || (to = new this.constructor())).set(...this.get());
+        return this._cloneIntoMeta(to);
+    }
     process(view, offset) {
         // Extend the first 16 words into the remaining 64 words w[16..79] of the message schedule array
         for(let i = 0; i < 16; i++, offset += 4){
@@ -1139,18 +1226,39 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
         clean(this.buffer);
         this.set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
-    constructor(outputLen){
-        super(128, outputLen, 16, false);
+    constructor(outputLen, IV){
+        super(128, outputLen, 16, false), // We cannot use array here since array allows indexing by variable
+        // which means optimizer/compiler cannot use registers.
+        // h -- high 32 bits, l -- low 32 bits
+        // Numeric initializers matter: starting the fields as `undefined` changes
+        // V8's field representation and slows hashing down (measured on sha256).
+        this.Ah = 0, this.Al = 0, this.Bh = 0, this.Bl = 0, this.Ch = 0, this.Cl = 0, this.Dh = 0, this.Dl = 0, this.Eh = 0, this.El = 0, this.Fh = 0, this.Fl = 0, this.Gh = 0, this.Gl = 0, this.Hh = 0, this.Hl = 0;
+        this.Ah = IV[0] | 0;
+        this.Al = IV[1] | 0;
+        this.Bh = IV[2] | 0;
+        this.Bl = IV[3] | 0;
+        this.Ch = IV[4] | 0;
+        this.Cl = IV[5] | 0;
+        this.Dh = IV[6] | 0;
+        this.Dl = IV[7] | 0;
+        this.Eh = IV[8] | 0;
+        this.El = IV[9] | 0;
+        this.Fh = IV[10] | 0;
+        this.Fl = IV[11] | 0;
+        this.Gh = IV[12] | 0;
+        this.Gl = IV[13] | 0;
+        this.Hh = IV[14] | 0;
+        this.Hl = IV[15] | 0;
     }
 }
 /** Internal SHA-512 hash class grounded in RFC 6234 §6.3 and §6.4. */ class _SHA512 extends SHA2_64B {
     constructor(){
-        super(64), this.Ah = SHA512_IV[0] | 0, this.Al = SHA512_IV[1] | 0, this.Bh = SHA512_IV[2] | 0, this.Bl = SHA512_IV[3] | 0, this.Ch = SHA512_IV[4] | 0, this.Cl = SHA512_IV[5] | 0, this.Dh = SHA512_IV[6] | 0, this.Dl = SHA512_IV[7] | 0, this.Eh = SHA512_IV[8] | 0, this.El = SHA512_IV[9] | 0, this.Fh = SHA512_IV[10] | 0, this.Fl = SHA512_IV[11] | 0, this.Gh = SHA512_IV[12] | 0, this.Gl = SHA512_IV[13] | 0, this.Hh = SHA512_IV[14] | 0, this.Hl = SHA512_IV[15] | 0;
+        super(64, SHA512_IV);
     }
 }
 /** Internal SHA-384 hash class grounded in RFC 6234 §6.3 and §6.4. */ class _SHA384 extends SHA2_64B {
     constructor(){
-        super(48), this.Ah = SHA384_IV[0] | 0, this.Al = SHA384_IV[1] | 0, this.Bh = SHA384_IV[2] | 0, this.Bl = SHA384_IV[3] | 0, this.Ch = SHA384_IV[4] | 0, this.Cl = SHA384_IV[5] | 0, this.Dh = SHA384_IV[6] | 0, this.Dl = SHA384_IV[7] | 0, this.Eh = SHA384_IV[8] | 0, this.El = SHA384_IV[9] | 0, this.Fh = SHA384_IV[10] | 0, this.Fl = SHA384_IV[11] | 0, this.Gh = SHA384_IV[12] | 0, this.Gl = SHA384_IV[13] | 0, this.Hh = SHA384_IV[14] | 0, this.Hl = SHA384_IV[15] | 0;
+        super(48, SHA384_IV);
     }
 }
 /**
@@ -1161,6 +1269,7 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
  * - Each sha256 hash is executing 2^18 bit operations.
  * - Good 2024 ASICs can do 200Th/sec with 3500 watts of power, corresponding to 2^36 hashes/joule.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA2-256.
@@ -1171,6 +1280,7 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
 /**
  * SHA2-224 hash function from RFC 4634.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA2-224.
@@ -1181,6 +1291,7 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
 /**
  * SHA2-512 hash function from RFC 4634.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA2-512.
@@ -1191,6 +1302,7 @@ const SHA512_W_L = /* @__PURE__ */ new Uint32Array(80);
 /**
  * SHA2-384 hash function from RFC 4634.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA2-384.
@@ -1236,14 +1348,26 @@ const IOTAS = split(_SHA3_IOTA, true);
 // second-word lane slots rather than `_u64.ts`'s usual high/low naming.
 const SHA3_IOTA_H = IOTAS[0];
 const SHA3_IOTA_L = IOTAS[1];
-// Left rotation (without 0, 32, 64)
+// 64-bit left rotates as u32 pairs. Inlined here (not imported from _u64) so V8 can
+// inline them into keccakP — the import path costs ~24% on sha3_256. SHA3 is the only
+// consumer of left-rotates; other hashes use right-rotates from _u64.
+// Valid for s in 1..31 (SH/SL) and 33..63 (BH/BL); keccak never rotates by 0/32/64.
+const rotlSH = (h, l, s)=>h << s | l >>> 32 - s;
+const rotlSL = (h, l, s)=>l << s | h >>> 32 - s;
+const rotlBH = (h, l, s)=>l << s - 32 | h >>> 64 - s;
+const rotlBL = (h, l, s)=>h << s - 32 | l >>> 64 - s;
 const rotlH = (h, l, s)=>s > 32 ? rotlBH(h, l, s) : rotlSH(h, l, s);
 const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
+// Reused Theta scratch buffer (column parities), same pattern as SHA256_W in sha2.
+// keccakP never calls user code, so the shared buffer cannot be observed mid-permutation.
+const B = new Uint32Array(5 * 2);
 /**
  * `keccakf1600` internal permutation, additionally allows adjusting the round count.
  * @param s - 5x5 Keccak state encoded as 25 lanes split into 50 uint32 words
  *   in this file's local little-endian lane-word order
  * @param rounds - number of rounds to execute
+ * @throws On wrong argument types. {@link TypeError}
+ * @throws On wrong argument ranges or values. {@link RangeError}
  * @throws If `rounds` is outside the supported `1..24` range. {@link Error}
  * @example
  * Permute a Keccak state with the default 24 rounds.
@@ -1251,10 +1375,11 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
  * keccakP(new Uint32Array(50));
  * ```
  */ function keccakP(s, rounds = 24) {
+    if (!(s instanceof Uint32Array)) throw new TypeError('"s" expected Uint32Array(50), got type=' + typeof s);
+    if (s.length !== 50) throw new RangeError('"s" expected Uint32Array(50), got length=' + s.length);
     anumber(rounds, 'rounds');
     // This implementation precomputes only the standard Keccak-f[1600] 24-round Iota table.
     if (rounds < 1 || rounds > 24) throw new Error('"rounds" expected integer 1..24');
-    const B = new Uint32Array(5 * 2);
     // NOTE: all indices are x2 since we store state as u32 instead of u64 (bigints to slow in js)
     for(let round = 24 - rounds; round < 24; round++){
         // Theta θ
@@ -1337,9 +1462,23 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
     update(data) {
         aexists(this);
         abytes(data);
-        const { blockLen, state } = this;
+        const { blockLen, state, state32 } = this;
         const len = data.length;
+        // Absorb full blocks with u32 XORs when both sides are 4-byte aligned.
+        // XOR of same-position words equals XOR of same-position bytes, so this is endianness-safe.
+        const canUseU32 = blockLen % 4 === 0 && data.byteOffset % 4 === 0;
+        const blockLen32 = blockLen / 4;
+        const data32 = canUseU32 && len >= blockLen ? u32(data) : undefined;
         for(let pos = 0; pos < len;){
+            if (data32 !== undefined && this.pos === 0 && pos % 4 === 0 && len - pos >= blockLen) {
+                for(let i = 0, o = pos / 4; i < blockLen32; i++)state32[i] ^= data32[o + i];
+                pos += blockLen;
+                // Subclasses (_KeccakPRG) read `this.pos` inside their `keccak()` override,
+                // so it must reflect the fully-absorbed block before the permutation fires.
+                this.pos = blockLen;
+                this.keccak();
+                continue;
+            }
             const take = Math.min(blockLen - this.pos, len - pos);
             for(let i = 0; i < take; i++)state[this.pos++] ^= data[pos++];
             if (this.pos === blockLen) this.keccak();
@@ -1380,7 +1519,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         // Plain SHA3/Keccak usage with XOF is probably a mistake, but this base
         // class is also reused by SHAKE/cSHAKE/KMAC/TupleHash/ParallelHash/
         // TurboSHAKE/KangarooTwelve wrappers that intentionally enable XOF.
-        if (!this.enableXOF) throw new Error('XOF is not possible for this instance');
+        if (!this.enableXOF) throw new Error('XOF is not enabled');
         return this.writeInto(out);
     }
     xof(bytes) {
@@ -1391,7 +1530,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         aoutput(out, this);
         if (this.finished) throw new Error('digest() was already called');
         // `aoutput(...)` allows oversized buffers; digestInto() must fill only the advertised digest.
-        this.writeInto(out.subarray(0, this.outputLen));
+        this.writeInto(out.length === this.outputLen ? out : out.subarray(0, this.outputLen));
         this.destroy();
     }
     digest() {
@@ -1410,6 +1549,7 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         // the sponge geometry as well as the state words.
         to.blockLen = blockLen;
         to.state32.set(this.state32);
+        // Sponge padding and XOF output are positional, so both offsets are part of the clone state.
         to.pos = this.pos;
         to.posOut = this.posOut;
         to.finished = this.finished;
@@ -1431,6 +1571,10 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         this.finished = false;
         this.destroyed = false;
         this.enableXOF = false;
+        anumber(blockLen, 'blockLen');
+        anumber(suffix, 'suffix');
+        anumber(rounds, 'rounds');
+        abool(enableXOF, 'enableXOF');
         this.blockLen = blockLen;
         this.suffix = suffix;
         this.outputLen = outputLen;
@@ -1439,9 +1583,8 @@ const rotlL = (h, l, s)=>s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s);
         this.rounds = rounds;
         // Can be passed from user as dkLen
         anumber(outputLen, 'outputLen');
-        // 1600 = 5x5 matrix of 64bit.  1600 bits === 200 bytes
-        // 0 < blockLen < 200
-        if (!(0 < blockLen && blockLen < 200)) throw new Error('only keccak-f1600 function is supported');
+        // Only keccak-f1600 is supported: 1600 bits (5x5 matrix of 64bit) === 200 bytes of state.
+        if (!(0 < blockLen && blockLen < 200)) throw new Error('"blockLen" must be 1..199');
         this.state = new Uint8Array(200);
         this.state32 = u32(this.state);
     }
@@ -1450,6 +1593,7 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * SHA3-224 hash function.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA3-224.
@@ -1460,6 +1604,7 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * SHA3-256 hash function. Different from keccak-256.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA3-256.
@@ -1470,6 +1615,7 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * SHA3-384 hash function.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA3-384.
@@ -1480,6 +1626,7 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * SHA3-512 hash function.
  * @param msg - message bytes to hash
+ * @param opts - Reserved hash options.
  * @returns Digest bytes.
  * @example
  * Hash a message with SHA3-512.
@@ -1577,7 +1724,7 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * RFC 4648 base32 alphabet without pad.
  * @type {string}
- */ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+ */ const ALPHABET$1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 /**
  * Converts a base32 string to an Uint8Array (RFC 4648).
  * @see [LinusU/base32-decode](https://github.com/LinusU/base32-decode)
@@ -1585,18 +1732,18 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
  * @returns {Uint8Array} Uint8Array.
  */ const base32Decode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replace(/ /g, "");
-    // Canonicalize to all upper case and remove padding if it exists.
+    str = str.replace(/ /g, "").toUpperCase();
+    // Remove padding if it exists.
     let end = str.length;
     while(str[end - 1] === "=")--end;
-    str = (end < str.length ? str.substring(0, end) : str).toUpperCase();
+    if (end < str.length) str = str.substring(0, end);
     const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
     const arr = new Uint8Array(buf);
     let bits = 0;
     let value = 0;
     let index = 0;
     for(let i = 0; i < str.length; i++){
-        const idx = ALPHABET.indexOf(str[i]);
+        const idx = ALPHABET$1.indexOf(str[i]);
         if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
         value = value << 5 | idx;
         bits += 5;
@@ -1620,27 +1767,34 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
         value = value << 8 | arr[i];
         bits += 8;
         while(bits >= 5){
-            str += ALPHABET[value >>> bits - 5 & 31];
+            str += ALPHABET$1[value >>> bits - 5 & 31];
             bits -= 5;
         }
     }
     if (bits > 0) {
-        str += ALPHABET[value << 5 - bits & 31];
+        str += ALPHABET$1[value << 5 - bits & 31];
     }
     return str;
 };
 
+/**
+ * Hexadecimal alphabet.
+ * @type {string}
+ */ const ALPHABET = "0123456789ABCDEF";
 /**
  * Converts a hexadecimal string to an Uint8Array.
  * @param {string} str Hexadecimal string.
  * @returns {Uint8Array} Uint8Array.
  */ const hexDecode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replace(/ /g, "");
+    str = str.replace(/ /g, "").toUpperCase();
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for(let i = 0; i < str.length; i += 2){
-        arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
+        const hi = ALPHABET.indexOf(str[i]);
+        const lo = ALPHABET.indexOf(str[i + 1]);
+        if (hi === -1 || lo === -1) throw new TypeError(`Invalid character found: ${str.substring(i, i + 2)}`);
+        arr[i / 2] = hi << 4 | lo;
     }
     return arr;
 };
@@ -2366,6 +2520,6 @@ const genKeccak = (suffix, blockLen, outputLen, info = {})=>createHasher(()=>new
 /**
  * Library version.
  * @type {string}
- */ const version = "9.5.1";
+ */ const version = "9.5.2";
 
 export { HOTP, Secret, TOTP, URI, version };

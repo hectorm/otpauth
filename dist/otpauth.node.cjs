@@ -1,4 +1,4 @@
-//! otpauth 9.5.1 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.5.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 'use strict';
@@ -117,7 +117,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * RFC 4648 base32 alphabet without pad.
  * @type {string}
- */ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+ */ const ALPHABET$1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 /**
  * Converts a base32 string to an Uint8Array (RFC 4648).
  * @see [LinusU/base32-decode](https://github.com/LinusU/base32-decode)
@@ -125,18 +125,18 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @returns {Uint8Array} Uint8Array.
  */ const base32Decode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replace(/ /g, "");
-    // Canonicalize to all upper case and remove padding if it exists.
+    str = str.replace(/ /g, "").toUpperCase();
+    // Remove padding if it exists.
     let end = str.length;
     while(str[end - 1] === "=")--end;
-    str = (end < str.length ? str.substring(0, end) : str).toUpperCase();
+    if (end < str.length) str = str.substring(0, end);
     const buf = new ArrayBuffer(str.length * 5 / 8 | 0);
     const arr = new Uint8Array(buf);
     let bits = 0;
     let value = 0;
     let index = 0;
     for(let i = 0; i < str.length; i++){
-        const idx = ALPHABET.indexOf(str[i]);
+        const idx = ALPHABET$1.indexOf(str[i]);
         if (idx === -1) throw new TypeError(`Invalid character found: ${str[i]}`);
         value = value << 5 | idx;
         bits += 5;
@@ -160,27 +160,34 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         value = value << 8 | arr[i];
         bits += 8;
         while(bits >= 5){
-            str += ALPHABET[value >>> bits - 5 & 31];
+            str += ALPHABET$1[value >>> bits - 5 & 31];
             bits -= 5;
         }
     }
     if (bits > 0) {
-        str += ALPHABET[value << 5 - bits & 31];
+        str += ALPHABET$1[value << 5 - bits & 31];
     }
     return str;
 };
 
+/**
+ * Hexadecimal alphabet.
+ * @type {string}
+ */ const ALPHABET = "0123456789ABCDEF";
 /**
  * Converts a hexadecimal string to an Uint8Array.
  * @param {string} str Hexadecimal string.
  * @returns {Uint8Array} Uint8Array.
  */ const hexDecode = (str)=>{
     // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-    str = str.replace(/ /g, "");
+    str = str.replace(/ /g, "").toUpperCase();
     const buf = new ArrayBuffer(str.length / 2);
     const arr = new Uint8Array(buf);
     for(let i = 0; i < str.length; i += 2){
-        arr[i / 2] = parseInt(str.substring(i, i + 2), 16);
+        const hi = ALPHABET.indexOf(str[i]);
+        const lo = ALPHABET.indexOf(str[i + 1]);
+        if (hi === -1 || lo === -1) throw new TypeError(`Invalid character found: ${str.substring(i, i + 2)}`);
+        arr[i / 2] = hi << 4 | lo;
     }
     return arr;
 };
@@ -910,7 +917,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.5.1";
+ */ const version = "9.5.2";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
