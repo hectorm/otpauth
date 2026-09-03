@@ -12,12 +12,12 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
  */
 const base32Decode = (str) => {
   // Remove spaces (although they are not allowed by the spec, some issuers add them for readability).
-  str = str.replace(/ /g, "");
+  str = str.replace(/ /g, "").toUpperCase();
 
-  // Canonicalize to all upper case and remove padding if it exists.
+  // Remove padding if it exists.
   let end = str.length;
   while (str[end - 1] === "=") --end;
-  str = (end < str.length ? str.substring(0, end) : str).toUpperCase();
+  if (end < str.length) str = str.substring(0, end);
 
   const buf = new ArrayBuffer(((str.length * 5) / 8) | 0);
   const arr = new Uint8Array(buf);
