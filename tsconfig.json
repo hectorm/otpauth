@@ -6,6 +6,7 @@
     "skipLibCheck": true,
     "allowJs": true,
     "checkJs": true,
+    "types": ["node"],
     "target": "ESNext",
     "module": "NodeNext",
     "strict": true,
