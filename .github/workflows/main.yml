@@ -206,7 +206,7 @@ jobs:
           name: "dist"
           path: "./dist/"
       - name: "Use QuickJS ${{ matrix.quickjs_version }}"
-        uses: "hectorm/ghaction-setup-quickjs@a76926b17ccd6c00f1dc061f1d2f15a9c2c05ae5"
+        uses: "hectorm/ghaction-setup-quickjs@dddba1092eb3051447e17f0a7f4ef1ea281b6233"
         with:
           quickjs-version: "${{ matrix.quickjs_version }}"
       - name: "Use Node.js lts/*"
