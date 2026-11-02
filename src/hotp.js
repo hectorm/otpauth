@@ -99,7 +99,7 @@ class HOTP {
   /**
    * Generates an HOTP token.
    * @param {Object} config Configuration options.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
@@ -113,8 +113,9 @@ class HOTP {
     counter = HOTP.defaults.counter,
     hmac = hmacDigest,
   }) {
+    const key = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
     const message = uintDecode(counter);
-    const digest = hmac(algorithm, secret.bytes, message);
+    const digest = hmac(algorithm, key.bytes, message);
     if (!digest?.byteLength || digest.byteLength < 19) {
       throw new TypeError("Return value must be at least 19 bytes");
     }
@@ -149,7 +150,7 @@ class HOTP {
    * Validates an HOTP token.
    * @param {Object} config Configuration options.
    * @param {string} config.token Token value.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.

@@ -1351,6 +1351,13 @@ describe("HOTP", () => {
 
       const output = hotp.generate(input.hotp.generate.input);
       assertEquals(output, input.hotp.generate.output);
+
+      const staticOutput = OTPAuth.HOTP.generate({
+        ...input.hotp.constructor.input,
+        ...input.hotp.generate.input,
+        secret: input.base32,
+      });
+      assertEquals(staticOutput, input.hotp.generate.output);
     });
   });
 
@@ -1363,6 +1370,13 @@ describe("HOTP", () => {
 
       const output = hotp.validate(input.hotp.validate.input);
       assertEquals(output, input.hotp.validate.output);
+
+      const staticOutput = OTPAuth.HOTP.validate({
+        ...input.hotp.constructor.input,
+        ...input.hotp.validate.input,
+        secret: input.base32,
+      });
+      assertEquals(staticOutput, input.hotp.validate.output);
     });
   });
 
@@ -1457,6 +1471,13 @@ describe("TOTP", () => {
 
       const output = totp.generate(input.totp.generate.input);
       assertEquals(output, input.totp.generate.output);
+
+      const staticOutput = OTPAuth.TOTP.generate({
+        ...input.totp.constructor.input,
+        ...input.totp.generate.input,
+        secret: input.base32,
+      });
+      assertEquals(staticOutput, input.totp.generate.output);
     });
   });
 
@@ -1469,6 +1490,13 @@ describe("TOTP", () => {
 
       const output = totp.validate(input.totp.validate.input);
       assertEquals(output, input.totp.validate.output);
+
+      const staticOutput = OTPAuth.TOTP.validate({
+        ...input.totp.constructor.input,
+        ...input.totp.validate.input,
+        secret: input.base32,
+      });
+      assertEquals(staticOutput, input.totp.validate.output);
     });
   });
 

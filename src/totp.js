@@ -146,7 +146,7 @@ class TOTP {
   /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
@@ -185,7 +185,7 @@ class TOTP {
    * Validates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {string} config.token Token value.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
