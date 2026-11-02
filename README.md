@@ -69,7 +69,9 @@ let secret = new OTPAuth.Secret({ size: 20 });
 let token = totp.generate();
 
 // Validate a token (returns the token delta or null if it is not found in the
-// search window, in which case it should be considered invalid).
+// search window, in which case it should be considered invalid). Since a valid
+// token can return 0 and null is coerced to 0 in comparisons, always check
+// `delta !== null` explicitly.
 //
 // A search window is useful to account for clock drift between the client and
 // server; however, it should be kept as small as possible to prevent brute
