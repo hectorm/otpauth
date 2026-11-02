@@ -12,7 +12,7 @@ import dts from "rollup-plugin-dts";
 /** @typedef {import("rollup").InputPluginOption} InputPluginOption */
 /** @typedef {import("rollup").OutputOptions} OutputOptions */
 /** @typedef {Parameters<typeof replace.default>[0]} RollupReplaceOptions */
-/** @typedef {Parameters<typeof virtual.default>[0]} RollupVirtualOptions */
+/** @typedef {Parameters<typeof virtual>[0]} RollupVirtualOptions */
 /** @typedef {Parameters<typeof resolve.default>[0]} RollupResolveOptions */
 /** @typedef {Parameters<typeof swc.default>[0]} RollupSwcOptions */
 /** @typedef {Parameters<typeof terser.default>[0]} RollupTerserOptions */
@@ -116,7 +116,7 @@ export default () => {
 
   /** @type {RollupOptions} */
   const rollupOpts = {
-    plugins: [t(replace)(replaceOpts), t(virtual)(mockNodeCrypto), t(resolve)(), t(swc)(swcOpts)],
+    plugins: [t(replace)(replaceOpts), virtual(mockNodeCrypto), t(resolve)(), t(swc)(swcOpts)],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
@@ -142,7 +142,7 @@ export default () => {
 
   /** @type {RollupOptions} */
   const rollupNodeOpts = {
-    plugins: [t(replace)(replaceOpts), t(virtual)(mockNobleHashes), t(resolve)(), t(swc)(swcOpts)],
+    plugins: [t(replace)(replaceOpts), virtual(mockNobleHashes), t(resolve)(), t(swc)(swcOpts)],
     onwarn: (warning) => {
       throw new Error(warning.message);
     },
@@ -158,7 +158,7 @@ export default () => {
   const rollupBareOpts = {
     plugins: [
       t(replace)(replaceOpts),
-      t(virtual)({ ...mockNodeCrypto, ...mockNobleHashes }),
+      virtual({ ...mockNodeCrypto, ...mockNobleHashes }),
       t(resolve)(),
       t(swc)(swcOpts),
     ],
