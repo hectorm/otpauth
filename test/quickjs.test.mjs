@@ -55,6 +55,16 @@ globalThis.assertMatch = (string, regex) => {
   if (!regex.test(string)) throw new Error(`Expected "${string}" to match ${regex}`);
 };
 
+globalThis.assertThrows = (fn, errorClass) => {
+  try {
+    fn();
+  } catch (error) {
+    if (error instanceof errorClass) return;
+    throw new Error(`Expected ${errorClass.name} to be thrown, got ${error?.name}`, { cause: error });
+  }
+  throw new Error(`Expected ${errorClass.name} to be thrown`);
+};
+
 // QuickJS does not support the Web Crypto API.
 if (typeof globalThis.crypto === "undefined") {
   globalThis.crypto = {};

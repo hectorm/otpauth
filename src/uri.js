@@ -11,7 +11,7 @@ const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-
  * RFC 4648 base32 alphabet with pad.
  * @type {RegExp}
  */
-const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
+const SECRET_REGEX = /^[2-7A-Z]{2,}=*$/i;
 
 /**
  * Regex for supported algorithms in built-in HMAC function.

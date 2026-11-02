@@ -9,6 +9,8 @@ globalThis.assert = (a) => expect(a).toBeTruthy();
 globalThis.assertEquals = (a, b) => expect(a).toStrictEqual(b);
 /** @type {(a: string, b: RegExp) => void} */
 globalThis.assertMatch = (a, b) => expect(b.test(a)).toBe(true);
+/** @type {(a: () => unknown, b: ErrorConstructor) => void} */
+globalThis.assertThrows = (a, b) => expect(a).toThrow(b);
 
 if (!("OTPAuth" in globalThis)) {
   globalThis.OTPAuth = await import("../dist/otpauth.esm.js");

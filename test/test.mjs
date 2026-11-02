@@ -8,6 +8,8 @@ const assert = globalThis.assert;
 const assertEquals = globalThis.assertEquals;
 /** @type {(a: string, b: RegExp) => void} */
 const assertMatch = globalThis.assertMatch;
+/** @type {(a: () => unknown, b: ErrorConstructor) => void} */
+const assertThrows = globalThis.assertThrows;
 /** @type {import("../dist/otpauth.d.ts")} */
 const OTPAuth = globalThis.OTPAuth;
 
@@ -1522,6 +1524,12 @@ describe("URI", () => {
         assertEquals(output, totp);
       });
     }
+  });
+
+  it("parse - parameter limits", () => {
+    assertEquals(OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=AA"), new OTPAuth.TOTP({ secret: "AA" }));
+    assertThrows(() => OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=A"), TypeError);
+    assertThrows(() => OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=A======="), TypeError);
   });
 
   cases.forEach((input, index) => {

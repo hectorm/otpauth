@@ -83,6 +83,7 @@ try {
       globalThis.assert = assert;
       globalThis.assertEquals = assert.deepEqual;
       globalThis.assertMatch = assert.match;
+      globalThis.assertThrows = assert.throws;
 
       mocha.setup({ ui: "bdd", reporter: "tap" });
       await import("test");
