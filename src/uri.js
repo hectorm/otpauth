@@ -99,8 +99,13 @@ class URI {
       OTP = HOTP;
 
       // Counter: required
-      if (typeof uriParams.counter !== "undefined" && INTEGER_REGEX.test(uriParams.counter)) {
-        config.counter = parseInt(uriParams.counter, 10);
+      const counter = Number.parseInt(uriParams.counter, 10);
+      if (
+        typeof uriParams.counter !== "undefined" &&
+        INTEGER_REGEX.test(uriParams.counter) &&
+        Number.isSafeInteger(counter)
+      ) {
+        config.counter = counter;
       } else {
         throw new TypeError("Missing or invalid 'counter' parameter");
       }
@@ -109,8 +114,9 @@ class URI {
 
       // Period: optional
       if (typeof uriParams.period !== "undefined") {
-        if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
-          config.period = parseInt(uriParams.period, 10);
+        const period = Number.parseInt(uriParams.period, 10);
+        if (POSITIVE_INTEGER_REGEX.test(uriParams.period) && Number.isSafeInteger(period)) {
+          config.period = period;
         } else {
           throw new TypeError("Invalid 'period' parameter");
         }

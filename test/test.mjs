@@ -1529,10 +1529,24 @@ describe("URI", () => {
   it("parse - parameter limits", () => {
     const secret = "JBSWY3DPEHPK3PXP";
     const totpUri = `otpauth://totp/OTPAuth?secret=${secret}`;
+    const hotpUri = `otpauth://hotp/OTPAuth?secret=${secret}`;
 
     assertEquals(OTPAuth.URI.parse(`${totpUri}&digits=10`), new OTPAuth.TOTP({ secret, digits: 10 }));
     assertThrows(() => OTPAuth.URI.parse(`${totpUri}&digits=11`), TypeError);
     assertThrows(() => OTPAuth.URI.parse(`${totpUri}&digits=1000000000`), TypeError);
+
+    assertEquals(
+      OTPAuth.URI.parse(`${totpUri}&period=9007199254740991`),
+      new OTPAuth.TOTP({ secret, period: 9007199254740991 }),
+    );
+    assertThrows(() => OTPAuth.URI.parse(`${totpUri}&period=9007199254740992`), TypeError);
+    assertThrows(() => OTPAuth.URI.parse(`${totpUri}&period=1${"0".repeat(400)}`), TypeError);
+    assertEquals(
+      OTPAuth.URI.parse(`${hotpUri}&counter=-9007199254740991`),
+      new OTPAuth.HOTP({ secret, counter: -9007199254740991 }),
+    );
+    assertThrows(() => OTPAuth.URI.parse(`${hotpUri}&counter=9007199254740992`), TypeError);
+    assertThrows(() => OTPAuth.URI.parse(`${hotpUri}&counter=1${"0".repeat(400)}`), TypeError);
 
     assertEquals(OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=AA"), new OTPAuth.TOTP({ secret: "AA" }));
     assertThrows(() => OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=A"), TypeError);
