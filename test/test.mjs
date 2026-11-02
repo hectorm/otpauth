@@ -1532,6 +1532,18 @@ describe("URI", () => {
     assertThrows(() => OTPAuth.URI.parse("otpauth://totp/OTPAuth?secret=A======="), TypeError);
   });
 
+  it("parse - lone surrogates", () => {
+    const secret = "JBSWY3DPEHPK3PXP";
+
+    assertThrows(() => OTPAuth.URI.parse(`otpauth://totp/ACME:Ali\uD800ce?secret=${secret}`), URIError);
+    assertThrows(() => OTPAuth.URI.parse(`otpauth://totp/ACME:Ali\uDC00ce?secret=${secret}`), URIError);
+    assertThrows(() => OTPAuth.URI.parse(`otpauth://totp/Alice?issuer=AC\uDC00ME&secret=${secret}`), URIError);
+    assertEquals(
+      OTPAuth.URI.parse(`otpauth://totp/ACME:Ali\uD83D\uDE00ce?secret=${secret}`).toString(),
+      `otpauth://totp/ACME:Ali%F0%9F%98%80ce?issuer=ACME&secret=${secret}&algorithm=SHA1&digits=6&period=30`,
+    );
+  });
+
   cases.forEach((input, index) => {
     it(`stringify[${index}] - HOTP`, () => {
       const hotp = new OTPAuth.HOTP({

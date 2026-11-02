@@ -8,6 +8,12 @@ import { TOTP } from "./totp.js";
 const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-Z0-9.~_-]+=[^?&]*)*)$/i;
 
 /**
+ * Lone surrogate regex.
+ * @type {RegExp}
+ */
+const LONE_SURROGATE_REGEX = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+
+/**
  * RFC 4648 base32 alphabet with pad.
  * @type {RegExp}
  */
@@ -59,7 +65,8 @@ class URI {
       /* Handled below */
     }
 
-    if (!Array.isArray(uriGroups)) {
+    // Reject lone surrogates, they cannot be URI-encoded.
+    if (!Array.isArray(uriGroups) || LONE_SURROGATE_REGEX.test(uri)) {
       throw new URIError("Invalid URI format");
     }
 
