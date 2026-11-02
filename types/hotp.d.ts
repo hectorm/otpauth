@@ -27,7 +27,7 @@ export class HOTP {
     /**
      * Generates an HOTP token.
      * @param {Object} config Configuration options.
-     * @param {Secret} config.secret Secret key.
+     * @param {Secret|string} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
@@ -35,7 +35,7 @@ export class HOTP {
      * @returns {string} Token.
      */
     static generate({ secret, algorithm, digits, counter, hmac, }: {
-        secret: Secret;
+        secret: Secret | string;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
@@ -45,21 +45,23 @@ export class HOTP {
      * Validates an HOTP token.
      * @param {Object} config Configuration options.
      * @param {string} config.token Token value.
-     * @param {Secret} config.secret Secret key.
+     * @param {Secret|string} config.secret Secret key.
      * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
      * @param {number} [config.digits=6] Token length.
      * @param {number} [config.counter=0] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
      * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    static validate({ token, secret, algorithm, digits, counter, window, hmac, }: {
+    static validate({ token, secret, algorithm, digits, counter, window, afterCounter, hmac, }: {
         token: string;
-        secret: Secret;
+        secret: Secret | string;
         algorithm?: string | undefined;
         digits?: number | undefined;
         counter?: number | undefined;
         window?: number | undefined;
+        afterCounter?: number | null | undefined;
         hmac?: ((algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array) | undefined;
     }): number | null;
     /**
@@ -139,12 +141,14 @@ export class HOTP {
      * @param {string} config.token Token value.
      * @param {number} [config.counter=this.counter] Counter value.
      * @param {number} [config.window=1] Window of counter values to test.
+     * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
      * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
      */
-    validate({ token, counter, window }: {
+    validate({ token, counter, window, afterCounter }: {
         token: string;
         counter?: number | undefined;
         window?: number | undefined;
+        afterCounter?: number | null | undefined;
     }): number | null;
     /**
      * Returns a Google Authenticator key URI.

@@ -1,4 +1,4 @@
-//! otpauth 9.5.2 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
+//! otpauth 9.6.0 | (c) Héctor Molinero Fernández | MIT | https://github.com/hectorm/otpauth
 /// <reference types="./otpauth.d.ts" />
 // @ts-nocheck
 'use strict';
@@ -437,15 +437,16 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
     /**
    * Generates an HOTP token.
    * @param {Object} config Configuration options.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {string} Token.
    */ static generate({ secret, algorithm = HOTP.defaults.algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, hmac = hmacDigest }) {
+        const key = typeof secret === "string" ? Secret.fromBase32(secret) : secret;
         const message = uintDecode(counter);
-        const digest = hmac(algorithm, secret.bytes, message);
+        const digest = hmac(algorithm, key.bytes, message);
         if (!digest?.byteLength || digest.byteLength < 19) {
             throw new TypeError("Return value must be at least 19 bytes");
         }
@@ -471,18 +472,20 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * Validates an HOTP token.
    * @param {Object} config Configuration options.
    * @param {string} config.token Token value.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window, hmac = hmacDigest }) {
-        // Return early if the token length does not match the digit number.
-        if (token.length !== digits) return null;
+   */ static validate({ token, secret, algorithm, digits = HOTP.defaults.digits, counter = HOTP.defaults.counter, window = HOTP.defaults.window, afterCounter, hmac = hmacDigest }) {
+        // Return early if the token is not a string, its length does not match the digit number or it contains non-digit characters.
+        if (typeof token !== "string" || token.length !== digits || !/^\d+$/.test(token)) return null;
         let delta = null;
         const check = (/** @type {number} */ i)=>{
+            if (!(i > (afterCounter ?? -Infinity))) return;
             const generatedToken = HOTP.generate({
                 secret,
                 algorithm,
@@ -509,8 +512,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {string} config.token Token value.
    * @param {number} [config.counter=this.counter] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ validate({ token, counter = this.counter, window }) {
+   */ validate({ token, counter = this.counter, window, afterCounter }) {
         return HOTP.validate({
             token,
             secret: this.secret,
@@ -518,6 +522,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             digits: this.digits,
             counter,
             window,
+            afterCounter,
             hmac: this.hmac
         });
     }
@@ -644,7 +649,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
     /**
    * Generates a TOTP token.
    * @param {Object} config Configuration options.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
@@ -682,15 +687,16 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * Validates a TOTP token.
    * @param {Object} config Configuration options.
    * @param {string} config.token Token value.
-   * @param {Secret} config.secret Secret key.
+   * @param {Secret|string} config.secret Secret key.
    * @param {string} [config.algorithm='SHA1'] HMAC hashing algorithm.
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window, hmac }) {
+   */ static validate({ token, secret, algorithm, digits, period = TOTP.defaults.period, timestamp = Date.now(), window, afterCounter, hmac }) {
         return HOTP.validate({
             token,
             secret,
@@ -701,6 +707,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
                 timestamp
             }),
             window,
+            afterCounter,
             hmac
         });
     }
@@ -710,8 +717,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
    * @param {string} config.token Token value.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
-   */ validate({ token, timestamp, window }) {
+   */ validate({ token, timestamp, window, afterCounter }) {
         return TOTP.validate({
             token,
             secret: this.secret,
@@ -720,6 +728,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             period: this.period,
             timestamp,
             window,
+            afterCounter,
             hmac: this.hmac
         });
     }
@@ -782,9 +791,13 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @type {RegExp}
  */ const OTPURI_REGEX = /^otpauth:\/\/([ht]otp)\/(.+)\?([A-Z0-9.~_-]+=[^?&]*(?:&[A-Z0-9.~_-]+=[^?&]*)*)$/i;
 /**
+ * Lone surrogate regex.
+ * @type {RegExp}
+ */ const LONE_SURROGATE_REGEX = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+/**
  * RFC 4648 base32 alphabet with pad.
  * @type {RegExp}
- */ const SECRET_REGEX = /^[2-7A-Z]+=*$/i;
+ */ const SECRET_REGEX = /^[2-7A-Z]{2,}=*$/i;
 /**
  * Regex for supported algorithms in built-in HMAC function.
  * @type {RegExp}
@@ -802,6 +815,10 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
  * @type {RegExp}
  */ const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 /**
+ * Maximum token length.
+ * @type {number}
+ */ const MAX_DIGITS = 10;
+/**
  * HOTP/TOTP object/string conversion.
  * @see [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
  */ class URI {
@@ -818,7 +835,8 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         // eslint-disable-next-line no-unused-vars
         } catch (_) {
         /* Handled below */ }
-        if (!Array.isArray(uriGroups)) {
+        // Reject lone surrogates, they cannot be URI-encoded.
+        if (!Array.isArray(uriGroups) || LONE_SURROGATE_REGEX.test(uri)) {
             throw new URIError("Invalid URI format");
         }
         // Extract URI groups.
@@ -838,8 +856,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         if (uriType === "hotp") {
             OTP = HOTP;
             // Counter: required
-            if (typeof uriParams.counter !== "undefined" && INTEGER_REGEX.test(uriParams.counter)) {
-                config.counter = parseInt(uriParams.counter, 10);
+            const counter = Number.parseInt(uriParams.counter, 10);
+            if (typeof uriParams.counter !== "undefined" && INTEGER_REGEX.test(uriParams.counter) && Number.isSafeInteger(counter)) {
+                config.counter = counter;
             } else {
                 throw new TypeError("Missing or invalid 'counter' parameter");
             }
@@ -847,8 +866,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
             OTP = TOTP;
             // Period: optional
             if (typeof uriParams.period !== "undefined") {
-                if (POSITIVE_INTEGER_REGEX.test(uriParams.period)) {
-                    config.period = parseInt(uriParams.period, 10);
+                const period = Number.parseInt(uriParams.period, 10);
+                if (POSITIVE_INTEGER_REGEX.test(uriParams.period) && Number.isSafeInteger(period)) {
+                    config.period = period;
                 } else {
                     throw new TypeError("Invalid 'period' parameter");
                 }
@@ -890,8 +910,9 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
         }
         // Digits: optional
         if (typeof uriParams.digits !== "undefined") {
-            if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
-                config.digits = parseInt(uriParams.digits, 10);
+            const digits = Number.parseInt(uriParams.digits, 10);
+            if (POSITIVE_INTEGER_REGEX.test(uriParams.digits) && digits <= MAX_DIGITS) {
+                config.digits = digits;
             } else {
                 throw new TypeError("Invalid 'digits' parameter");
             }
@@ -917,7 +938,7 @@ var crypto__namespace = /*#__PURE__*/_interopNamespaceDefault(crypto);
 /**
  * Library version.
  * @type {string}
- */ const version = "9.5.2";
+ */ const version = "9.6.0";
 
 exports.HOTP = HOTP;
 exports.Secret = Secret;
