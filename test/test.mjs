@@ -1364,6 +1364,17 @@ describe("HOTP", () => {
     });
   });
 
+  it("validate - non-digit tokens", () => {
+    const hotp = new OTPAuth.HOTP();
+
+    assertEquals(hotp.validate({ token: "" }), null);
+    assertEquals(hotp.validate({ token: "12345a" }), null);
+    assertEquals(hotp.validate({ token: " 12345" }), null);
+    assertEquals(hotp.validate({ token: "12345\u00E9" }), null);
+    assertEquals(hotp.validate({ token: "1234\uD83D\uDE00" }), null);
+    assertEquals(hotp.validate({ token: "\uFF11\uFF12\uFF13\uFF14\uFF15\uFF16" }), null);
+  });
+
   cases.forEach((input, index) => {
     it(`toString[${index}]`, () => {
       const hotp = new OTPAuth.HOTP({
@@ -1437,6 +1448,17 @@ describe("TOTP", () => {
       const output = totp.validate(input.totp.validate.input);
       assertEquals(output, input.totp.validate.output);
     });
+  });
+
+  it("validate - non-digit tokens", () => {
+    const totp = new OTPAuth.TOTP();
+
+    assertEquals(totp.validate({ token: "" }), null);
+    assertEquals(totp.validate({ token: "12345a" }), null);
+    assertEquals(totp.validate({ token: " 12345" }), null);
+    assertEquals(totp.validate({ token: "12345\u00E9" }), null);
+    assertEquals(totp.validate({ token: "1234\uD83D\uDE00" }), null);
+    assertEquals(totp.validate({ token: "\uFF11\uFF12\uFF13\uFF14\uFF15\uFF16" }), null);
   });
 
   cases.forEach((input, index) => {
