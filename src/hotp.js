@@ -175,7 +175,7 @@ class HOTP {
     let delta = null;
 
     const check = (/** @type {number} */ i) => {
-      if (i <= (afterCounter ?? -Infinity)) return;
+      if (!(i > (afterCounter ?? -Infinity))) return;
       const generatedToken = HOTP.generate({
         secret,
         algorithm,

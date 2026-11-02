@@ -1406,6 +1406,9 @@ describe("HOTP", () => {
     assertEquals(hotp.validate({ token, afterCounter: 9 }), 0);
     assertEquals(hotp.validate({ token, afterCounter: 10 }), null);
     assertEquals(hotp.validate({ token, afterCounter: null }), 0);
+    assertEquals(hotp.validate({ token, afterCounter: NaN }), null);
+    // @ts-expect-error
+    assertEquals(hotp.validate({ token, afterCounter: "abc" }), null);
     assertEquals(hotp.validate({ token: previousToken }), -1);
     assertEquals(hotp.validate({ token: previousToken, afterCounter: 9 }), null);
     assertEquals(hotp.validate({ token: nextToken, afterCounter: 9 }), 1);
@@ -1528,6 +1531,9 @@ describe("TOTP", () => {
     assertEquals(totp.validate({ token, timestamp, afterCounter: counter - 1 }), 0);
     assertEquals(totp.validate({ token, timestamp, afterCounter: counter }), null);
     assertEquals(totp.validate({ token, timestamp, afterCounter: null }), 0);
+    assertEquals(totp.validate({ token, timestamp, afterCounter: NaN }), null);
+    // @ts-expect-error
+    assertEquals(totp.validate({ token, timestamp, afterCounter: "abc" }), null);
     assertEquals(totp.validate({ token: previousToken, timestamp }), -1);
     assertEquals(totp.validate({ token: previousToken, timestamp, afterCounter: counter - 1 }), null);
     assertEquals(totp.validate({ token: nextToken, timestamp, afterCounter: counter }), 1);
