@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Use Node.js lts/*"
         uses: "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1"
         with:
@@ -71,6 +73,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -103,6 +107,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -134,6 +140,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -165,6 +173,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -197,6 +207,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -230,6 +242,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"
@@ -253,7 +267,7 @@ jobs:
   publish-jsr:
     name: "Publish JSR package"
     if: "startsWith(github.ref, 'refs/tags/v')"
-    needs: ["test-node", "test-deno", "test-bun", "test-browser"]
+    needs: ["test-node", "test-deno", "test-bun", "test-browser", "test-quickjs"]
     runs-on: "ubuntu-latest"
     permissions:
       contents: "read"
@@ -261,6 +275,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Remove dist directory"
         shell: "bash"
         run: "rm -rf ./dist/"

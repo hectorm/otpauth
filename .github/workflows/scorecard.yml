@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        with:
+          persist-credentials: false
       - name: "Perform security analysis"
         uses: "ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e"
         with:
