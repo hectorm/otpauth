@@ -1364,9 +1364,15 @@ describe("HOTP", () => {
     });
   });
 
-  it("validate - non-digit tokens", () => {
+  it("validate - invalid tokens", () => {
     const hotp = new OTPAuth.HOTP();
 
+    // @ts-expect-error
+    assertEquals(hotp.validate({ token: undefined }), null);
+    // @ts-expect-error
+    assertEquals(hotp.validate({ token: null }), null);
+    // @ts-expect-error
+    assertEquals(hotp.validate({ token: 123456 }), null);
     assertEquals(hotp.validate({ token: "" }), null);
     assertEquals(hotp.validate({ token: "12345a" }), null);
     assertEquals(hotp.validate({ token: " 12345" }), null);
@@ -1450,9 +1456,15 @@ describe("TOTP", () => {
     });
   });
 
-  it("validate - non-digit tokens", () => {
+  it("validate - invalid tokens", () => {
     const totp = new OTPAuth.TOTP();
 
+    // @ts-expect-error
+    assertEquals(totp.validate({ token: undefined }), null);
+    // @ts-expect-error
+    assertEquals(totp.validate({ token: null }), null);
+    // @ts-expect-error
+    assertEquals(totp.validate({ token: 123456 }), null);
     assertEquals(totp.validate({ token: "" }), null);
     assertEquals(totp.validate({ token: "12345a" }), null);
     assertEquals(totp.validate({ token: " 12345" }), null);

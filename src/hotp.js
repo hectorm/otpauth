@@ -166,8 +166,8 @@ class HOTP {
     window = HOTP.defaults.window,
     hmac = hmacDigest,
   }) {
-    // Return early if the token length does not match the digit number or if it contains non-digit characters.
-    if (token.length !== digits || !/^\d+$/.test(token)) return null;
+    // Return early if the token is not a string, its length does not match the digit number or it contains non-digit characters.
+    if (typeof token !== "string" || token.length !== digits || !/^\d+$/.test(token)) return null;
 
     let delta = null;
 
