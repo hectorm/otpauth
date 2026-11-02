@@ -44,6 +44,12 @@ const INTEGER_REGEX = /^[+-]?\d+$/;
 const POSITIVE_INTEGER_REGEX = /^\+?[1-9]\d*$/;
 
 /**
+ * Maximum token length.
+ * @type {number}
+ */
+const MAX_DIGITS = 10;
+
+/**
  * HOTP/TOTP object/string conversion.
  * @see [Key URI Format](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
  */
@@ -150,8 +156,9 @@ class URI {
 
     // Digits: optional
     if (typeof uriParams.digits !== "undefined") {
-      if (POSITIVE_INTEGER_REGEX.test(uriParams.digits)) {
-        config.digits = parseInt(uriParams.digits, 10);
+      const digits = Number.parseInt(uriParams.digits, 10);
+      if (POSITIVE_INTEGER_REGEX.test(uriParams.digits) && digits <= MAX_DIGITS) {
+        config.digits = digits;
       } else {
         throw new TypeError("Invalid 'digits' parameter");
       }
