@@ -68,6 +68,10 @@ let secret = new OTPAuth.Secret({ size: 20 });
 // Generate a token (returns the current token as a string).
 let token = totp.generate();
 
+// Get the counter value (number of intervals since the Unix epoch).
+let timestamp = Date.now();
+let counter = totp.counter({ timestamp });
+
 // Validate a token (returns the token delta or null if it is not found in the
 // search window, in which case it should be considered invalid). Since a valid
 // token can return 0 and null is coerced to 0 in comparisons, always check
@@ -84,10 +88,11 @@ let token = totp.generate();
 //   https://datatracker.ietf.org/doc/html/rfc6238#section-5
 let delta = totp.validate({ token, window: 1 });
 
-// Get the counter value (number of intervals since the Unix epoch).
-// Useful for implementing techniques against token reuse during the validity
-// period.
-let counter = totp.counter();
+// Alternatively, to prevent token reuse, pass the counter of the last accepted
+// token as `afterCounter` and use the same timestamp as `counter`.
+let lastCounter = null; // Persisted by the application (null if none).
+delta = totp.validate({ token, timestamp, window: 1, afterCounter: lastCounter });
+if (delta !== null) lastCounter = counter + delta;
 
 // Get the remaining milliseconds until the current token changes.
 let remaining = totp.remaining();

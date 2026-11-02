@@ -191,6 +191,7 @@ class TOTP {
    * @param {number} [config.period=30] Token time-step duration.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
@@ -202,6 +203,7 @@ class TOTP {
     period = TOTP.defaults.period,
     timestamp = Date.now(),
     window,
+    afterCounter,
     hmac,
   }) {
     return HOTP.validate({
@@ -211,6 +213,7 @@ class TOTP {
       digits,
       counter: TOTP.counter({ period, timestamp }),
       window,
+      afterCounter,
       hmac,
     });
   }
@@ -221,9 +224,10 @@ class TOTP {
    * @param {string} config.token Token value.
    * @param {number} [config.timestamp=Date.now] Timestamp value in milliseconds.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  validate({ token, timestamp, window }) {
+  validate({ token, timestamp, window, afterCounter }) {
     return TOTP.validate({
       token,
       secret: this.secret,
@@ -232,6 +236,7 @@ class TOTP {
       period: this.period,
       timestamp,
       window,
+      afterCounter,
       hmac: this.hmac,
     });
   }

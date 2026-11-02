@@ -154,6 +154,7 @@ class HOTP {
    * @param {number} [config.digits=6] Token length.
    * @param {number} [config.counter=0] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @param {(algorithm: string, key: Uint8Array, message: Uint8Array) => Uint8Array} [config.hmac] Custom HMAC function.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
@@ -164,6 +165,7 @@ class HOTP {
     digits = HOTP.defaults.digits,
     counter = HOTP.defaults.counter,
     window = HOTP.defaults.window,
+    afterCounter,
     hmac = hmacDigest,
   }) {
     // Return early if the token is not a string, its length does not match the digit number or it contains non-digit characters.
@@ -172,6 +174,7 @@ class HOTP {
     let delta = null;
 
     const check = (/** @type {number} */ i) => {
+      if (i <= (afterCounter ?? -Infinity)) return;
       const generatedToken = HOTP.generate({
         secret,
         algorithm,
@@ -201,9 +204,10 @@ class HOTP {
    * @param {string} config.token Token value.
    * @param {number} [config.counter=this.counter] Counter value.
    * @param {number} [config.window=1] Window of counter values to test.
+   * @param {number|null} [config.afterCounter] Reject tokens with a counter less than or equal to this value.
    * @returns {number|null} Token delta or null if it is not found in the search window, in which case it should be considered invalid.
    */
-  validate({ token, counter = this.counter, window }) {
+  validate({ token, counter = this.counter, window, afterCounter }) {
     return HOTP.validate({
       token,
       secret: this.secret,
@@ -211,6 +215,7 @@ class HOTP {
       digits: this.digits,
       counter,
       window,
+      afterCounter,
       hmac: this.hmac,
     });
   }

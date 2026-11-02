@@ -1383,6 +1383,20 @@ describe("HOTP", () => {
     assertEquals(hotp.validate({ token: "\uFF11\uFF12\uFF13\uFF14\uFF15\uFF16" }), null);
   });
 
+  it("validate - replay protection", () => {
+    const hotp = new OTPAuth.HOTP({ secret: "IOH24TOV7CQJK4T3PYDET2UBQCDPPDZV", counter: 10 });
+    const token = hotp.generate({ counter: 10 });
+    const previousToken = hotp.generate({ counter: 9 });
+    const nextToken = hotp.generate({ counter: 11 });
+
+    assertEquals(hotp.validate({ token, afterCounter: 9 }), 0);
+    assertEquals(hotp.validate({ token, afterCounter: 10 }), null);
+    assertEquals(hotp.validate({ token, afterCounter: null }), 0);
+    assertEquals(hotp.validate({ token: previousToken }), -1);
+    assertEquals(hotp.validate({ token: previousToken, afterCounter: 9 }), null);
+    assertEquals(hotp.validate({ token: nextToken, afterCounter: 9 }), 1);
+  });
+
   cases.forEach((input, index) => {
     it(`toString[${index}]`, () => {
       const hotp = new OTPAuth.HOTP({
@@ -1475,6 +1489,22 @@ describe("TOTP", () => {
     assertEquals(totp.validate({ token: "\uFF11\uFF12\uFF13\uFF14\uFF15\uFF16" }), null);
   });
 
+  it("validate - replay protection", () => {
+    const totp = new OTPAuth.TOTP({ secret: "IOH24TOV7CQJK4T3PYDET2UBQCDPPDZV" });
+    const timestamp = 1451606400000;
+    const counter = totp.counter({ timestamp });
+    const token = totp.generate({ timestamp });
+    const previousToken = totp.generate({ timestamp: timestamp - totp.period * 1000 });
+    const nextToken = totp.generate({ timestamp: timestamp + totp.period * 1000 });
+
+    assertEquals(totp.validate({ token, timestamp, afterCounter: counter - 1 }), 0);
+    assertEquals(totp.validate({ token, timestamp, afterCounter: counter }), null);
+    assertEquals(totp.validate({ token, timestamp, afterCounter: null }), 0);
+    assertEquals(totp.validate({ token: previousToken, timestamp }), -1);
+    assertEquals(totp.validate({ token: previousToken, timestamp, afterCounter: counter - 1 }), null);
+    assertEquals(totp.validate({ token: nextToken, timestamp, afterCounter: counter }), 1);
+  });
+
   cases.forEach((input, index) => {
     it(`toString[${index}]`, () => {
       const totp = new OTPAuth.TOTP({
@@ -1527,7 +1557,7 @@ describe("URI", () => {
   });
 
   it("parse - parameter limits", () => {
-    const secret = "JBSWY3DPEHPK3PXP";
+    const secret = "IOH24TOV7CQJK4T3PYDET2UBQCDPPDZV";
     const totpUri = `otpauth://totp/OTPAuth?secret=${secret}`;
     const hotpUri = `otpauth://hotp/OTPAuth?secret=${secret}`;
 
@@ -1554,7 +1584,7 @@ describe("URI", () => {
   });
 
   it("parse - lone surrogates", () => {
-    const secret = "JBSWY3DPEHPK3PXP";
+    const secret = "IOH24TOV7CQJK4T3PYDET2UBQCDPPDZV";
 
     assertThrows(() => OTPAuth.URI.parse(`otpauth://totp/ACME:Ali\uD800ce?secret=${secret}`), URIError);
     assertThrows(() => OTPAuth.URI.parse(`otpauth://totp/ACME:Ali\uDC00ce?secret=${secret}`), URIError);
