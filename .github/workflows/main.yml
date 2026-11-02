@@ -282,7 +282,7 @@ jobs:
   publish-github-release:
     name: "Publish GitHub release"
     if: "startsWith(github.ref, 'refs/tags/v')"
-    needs: ["test-node", "test-deno", "test-bun", "test-browser"]
+    needs: ["test-node", "test-deno", "test-bun", "test-browser", "test-quickjs"]
     runs-on: "ubuntu-latest"
     permissions:
       contents: "write"
@@ -293,7 +293,7 @@ jobs:
   publish-github-pages:
     name: "Publish GitHub Pages"
     if: "startsWith(github.ref, 'refs/tags/v')"
-    needs: ["test-node", "test-deno", "test-bun", "test-browser"]
+    needs: ["test-node", "test-deno", "test-bun", "test-browser", "test-quickjs"]
     runs-on: "ubuntu-latest"
     permissions:
       id-token: "write"
